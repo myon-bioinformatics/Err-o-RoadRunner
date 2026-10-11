@@ -214,7 +214,7 @@ def main() -> None:
                                 "repo": f"{ORG}/{repo}",
                                 "run_id": run_id,
                                 "artifact": name,
-                                "job": name,
+                                "job": name,  # patched later by patch_junit_manifest_jobs.py
                                 "date": run.get("createdAt", ""),
                                 "xml": str(rel.as_posix()),
                                 "golden": str(

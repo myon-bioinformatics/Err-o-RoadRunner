@@ -1,34 +1,10 @@
 FOUND: exit code: 1
 FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/gh_identity_38042477319_junit-py3.11_15.xml): 2
-FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/gh_identity_38042477319_junit-py3.11_15.xml): AssertionError: assert ['five', 'mis...enty', 'zero'] == ['zero', 'fiv...y', 'missing']
-  
-  At index 0 diff: 'five' != 'zero'
-  
-  Full diff:
-    [
-  +     'five',
-  +     'missing',
-  +     'twenty',
-        'zero',
-  -     'five',
-  -     'twenty',
-  -     'missing',
-    ]
-FOUND: junit failure (last) (<repo>/tests/fixtures/junit_corpus/cases/gh_identity_38042477319_junit-py3.11_15.xml): AssertionError: assert ['five', 'mis...enty', 'zero'] == ['twenty', 'f...o', 'missing']
-  
-  At index 0 diff: 'five' != 'twenty'
-  
-  Full diff:
-    [
-  +     'five',
-  +     'missing',
-        'twenty',
-  -     'five',
-        'zero',
-  -     'missing',
-    ]
+FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/gh_identity_38042477319_junit-py3.11_15.xml): AssertionError: assert ['five', 'mis...enty', 'zero'] == ['zero', 'fiv...y', 'missing']\n  \n  At index 0 diff: 'five' != 'zero'\n  \n  Full diff:\n    [\n  +     'five',\n  +     'missing',\n  +     'twenty',\n        'zero',\n  -     'five',\n  -     'twenty',\n  -     'missing',\n    ]\nAssertionError: assert ['five', 'mis...enty', 'zero'] == ['zero', 'fiv...y', 'missing']\n  \n  At index 0 dif
+FOUND: junit failure (last) (<repo>/tests/fixtures/junit_corpus/cases/gh_identity_38042477319_junit-py3.11_15.xml): AssertionError: assert ['five', 'mis...enty', 'zero'] == ['twenty', 'f...o', 'missing']\n  \n  At index 0 diff: 'five' != 'twenty'\n  \n  Full diff:\n    [\n  +     'five',\n  +     'missing',\n        'twenty',\n  -     'five',\n        'zero',\n  -     'missing',\n    ]\nAssertionError: assert ['five', 'mis...enty', 'zero'] == ['twenty', 'f...o', 'missing']\n  \n  At index 0 diff: 'five' != 'twe
 FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/gh_identity_38042477319_junit-py3.11_15.xml): tests.test_repository_inventory
 FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/gh_identity_38042477319_junit-py3.11_15.xml): AssertionError
+FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/gh_identity_38042477319_junit-py3.11_15.xml): Error: assert ['five', 'mis...enty', 'zero'] == ['zero', 'fiv...y', 'missing']
 FOUND: python version: 3.12.3 (cpython)
 FOUND: node version: v22.14.0
 FOUND: gh version: gh version 2.102.0 (2026-09-30)
@@ -41,17 +17,4 @@ NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/gh_
 NOT FOUND: lock files in project root
 HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/gh_identity_38042477319_junit-py3.11_15.xml): pytest/python
 HINT: junit assertion diff (<repo>/tests/fixtures/junit_corpus/cases/gh_identity_38042477319_junit-py3.11_15.xml):   +     'five',   +     'missing',   +     'twenty',   -     'five',   -     'twenty',   -     'missing',
-HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/gh_identity_38042477319_junit-py3.11_15.xml): AssertionError: assert ['five', 'mis...enty', 'zero'] == ['zero', 'fiv...y', 'missing']
-  
-  At index 0 diff: 'five' != 'zero'
-  
-  Full diff:
-    [
-  +     'five',
-  +     'missing',
-  +     'twenty',
-        'zero',
-  -     'five',
-  -     'twenty',
-  -     'missing',
-    ]
+HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/gh_identity_38042477319_junit-py3.11_15.xml): AssertionError: assert ['five', 'mis...enty', 'zero'] == ['zero', 'fiv...y', 'missing']\n  \n  At index 0 diff: 'five' != 'zero'\n  \n  Full diff:\n    [\n  +     'five',\n  +     'missing',\n  +     'twenty',\n        'zero',\n  -     'five',\n  -     'twenty',\n  -     'missing',\n    ]\nAssertionError: assert ['five', 'mis...enty', 'zero'] == ['zero', 'fiv...y', 'missing']\n  \n  At index 0 dif

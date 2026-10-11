@@ -1,18 +1,9 @@
 FOUND: exit code: 1
 FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38016185213_junit-py3.12_44.xml): 1
-FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38016185213_junit-py3.12_44.xml): AssertionError: assert ['ppt/slides/slide2.xml'] == ['ppt/slides/slide1.xml']
-  
-  At index 0 diff: 'ppt/slides/slide2.xml' != 'ppt/slides/slide1.xml'
-  
-  Full diff:
-    [
-  -     'ppt/slides/slide1.xml',
-  ?                      ^
-  +     'ppt/slides/slide2.xml',
-  ?                      ^
-    ]
+FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38016185213_junit-py3.12_44.xml): AssertionError: assert ['ppt/slides/slide2.xml'] == ['ppt/slides/slide1.xml']\n  \n  At index 0 diff: 'ppt/slides/slide2.xml' != 'ppt/slides/slide1.xml'\n  \n  Full diff:\n    [\n  -     'ppt/slides/slide1.xml',\n  ?                      ^\n  +     'ppt/slides/slide2.xml',\n  ?                      ^\n    ]\nAssertionError: assert ['ppt/slides/slide2.xml'] == ['ppt/slides/slide1.xml']\n  \n  At in
 FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38016185213_junit-py3.12_44.xml): tests.test_pptx_xml_batch
 FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38016185213_junit-py3.12_44.xml): AssertionError
+FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38016185213_junit-py3.12_44.xml): Error: assert ['ppt/slides/slide2.xml'] == ['ppt/slides/slide1.xml']
 FOUND: python version: 3.12.3 (cpython)
 FOUND: node version: v22.14.0
 FOUND: gh version: gh version 2.102.0 (2026-09-30)
@@ -25,14 +16,4 @@ NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/Iro
 NOT FOUND: lock files in project root
 HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38016185213_junit-py3.12_44.xml): pytest/python
 HINT: junit assertion diff (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38016185213_junit-py3.12_44.xml):   -     'ppt/slides/slide1.xml',   +     'ppt/slides/slide2.xml',
-HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38016185213_junit-py3.12_44.xml): AssertionError: assert ['ppt/slides/slide2.xml'] == ['ppt/slides/slide1.xml']
-  
-  At index 0 diff: 'ppt/slides/slide2.xml' != 'ppt/slides/slide1.xml'
-  
-  Full diff:
-    [
-  -     'ppt/slides/slide1.xml',
-  ?                      ^
-  +     'ppt/slides/slide2.xml',
-  ?                      ^
-    ]
+HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38016185213_junit-py3.12_44.xml): AssertionError: assert ['ppt/slides/slide2.xml'] == ['ppt/slides/slide1.xml']\n  \n  At index 0 diff: 'ppt/slides/slide2.xml' != 'ppt/slides/slide1.xml'\n  \n  Full diff:\n    [\n  -     'ppt/slides/slide1.xml',\n  ?                      ^\n  +     'ppt/slides/slide2.xml',\n  ?                      ^\n    ]\nAssertionError: assert ['ppt/slides/slide2.xml'] == ['ppt/slides/slide1.xml']\n  \n  At in

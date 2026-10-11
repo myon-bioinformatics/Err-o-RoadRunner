@@ -1,25 +1,7 @@
 FOUND: exit code: 1
 FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38130693569_junit-python-3.12_79.xml): 11
-FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38130693569_junit-python-3.12_79.xml): assert {'PYTHON': "$...== 'true' }}"} == {'PYTHON': "$...== 'true' }}"}
-  
-  Omitting 3 identical items, use -vv to show
-  Left contains 1 more item:
-  {'E2E': "${{ needs.changes.outputs.e2e == 'true' }}"}
-  
-  Full diff:
-    {
-        'PYTHON': "${{ needs.changes.outputs.python == 'true' || "
-     
-FOUND: junit failure (last) (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38130693569_junit-python-3.12_79.xml): assert {'PYTHON': "$...== 'true' }}"} == {'PYTHON': "$...== 'true' }}"}
-  
-  Omitting 3 identical items, use -vv to show
-  Left contains 1 more item:
-  {'E2E': "${{ needs.changes.outputs.e2e == 'true' }}"}
-  
-  Full diff:
-    {
-        'PYTHON': "${{ needs.changes.outputs.python == 'true' || "
-     
+FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38130693569_junit-python-3.12_79.xml): assert {'PYTHON': "$...== 'true' }}"} == {'PYTHON': "$...== 'true' }}"}\n  \n  Omitting 3 identical items, use -vv to show\n  Left contains 1 more item:\n  {'E2E': "${{ needs.changes.outputs.e2e == 'true' }}"}\n  \n  Full diff:\n    {\n        'PYTHON': "${{ needs.changes.outputs.python == 'true' || "\n        "needs.changes.outputs.workflow == 'true' }}",\n  +     'E2E': "${{ needs.changes.output
+FOUND: junit failure (last) (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38130693569_junit-python-3.12_79.xml): assert {'PYTHON': "$...== 'true' }}"} == {'PYTHON': "$...== 'true' }}"}\n  \n  Omitting 3 identical items, use -vv to show\n  Left contains 1 more item:\n  {'E2E': "${{ needs.changes.outputs.e2e == 'true' }}"}\n  \n  Full diff:\n    {\n        'PYTHON': "${{ needs.changes.outputs.python == 'true' || "\n        "needs.changes.outputs.workflow == 'true' }}",\n  +     'E2E': "${{ needs.changes.output
 FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38130693569_junit-python-3.12_79.xml): tests.test_junit_workflow_contract
 FOUND: python version: 3.12.3 (cpython)
 FOUND: node version: v22.14.0
@@ -29,19 +11,11 @@ FOUND: environment variable names: AGENT_TRANSCRIPTS, CARGO_HOME, CURSOR_AGENT, 
 NOT FOUND: junit errors (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38130693569_junit-python-3.12_79.xml)
 NOT FOUND: junit skipped (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38130693569_junit-python-3.12_79.xml)
 NOT FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38130693569_junit-python-3.12_79.xml)
+NOT FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38130693569_junit-python-3.12_79.xml)
 NOT FOUND: junit system-err (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38130693569_junit-python-3.12_79.xml)
 NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38130693569_junit-python-3.12_79.xml)
 NOT FOUND: lock files in project root
 HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38130693569_junit-python-3.12_79.xml): pytest/python
 HINT: junit pytest assert line (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38130693569_junit-python-3.12_79.xml): E       assert {'PYTHON': "$...== 'true' }}"} == {'PYTHON': "$...== 'true' }}"}
 HINT: junit assertion diff (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38130693569_junit-python-3.12_79.xml):   +     'E2E': "${{ needs.changes.outputs.e2e == 'true' }}",
-HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38130693569_junit-python-3.12_79.xml): assert {'PYTHON': "$...== 'true' }}"} == {'PYTHON': "$...== 'true' }}"}
-  
-  Omitting 3 identical items, use -vv to show
-  Left contains 1 more item:
-  {'E2E': "${{ needs.changes.outputs.e2e == 'true' }}"}
-  
-  Full diff:
-    {
-        'PYTHON': "${{ needs.changes.outputs.python == 'true' || "
-     
+HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38130693569_junit-python-3.12_79.xml): assert {'PYTHON': "$...== 'true' }}"} == {'PYTHON': "$...== 'true' }}"}\n  \n  Omitting 3 identical items, use -vv to show\n  Left contains 1 more item:\n  {'E2E': "${{ needs.changes.outputs.e2e == 'true' }}"}\n  \n  Full diff:\n    {\n        'PYTHON': "${{ needs.changes.outputs.python == 'true' || "\n        "needs.changes.outputs.workflow == 'true' }}",\n  +     'E2E': "${{ needs.changes.output

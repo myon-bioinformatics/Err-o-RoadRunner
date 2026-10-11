@@ -1,39 +1,21 @@
 FOUND: exit code: 1
 FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38015021041_junit-controlled-py3.12_54.xml): 2
-FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38015021041_junit-controlled-py3.12_54.xml): AssertionError: SECRET_MESSAGE
-assert 'actual' == 'SECRET_PARAM_ONE'
-  
-  - SECRET_PARAM_ONE
-  + actual
-FOUND: junit failure (last) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38015021041_junit-controlled-py3.12_54.xml): AssertionError: SECRET_MESSAGE
-assert 'actual' == 'SECRET_PARAM_TWO'
-  
-  - SECRET_PARAM_TWO
-  + actual
+FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38015021041_junit-controlled-py3.12_54.xml): AssertionError: SECRET_MESSAGE\nassert 'actual' == 'SECRET_PARAM_ONE'\n  \n  - SECRET_PARAM_ONE\n  + actual\nAssertionError: SECRET_MESSAGE\nassert 'actual' == 'SECRET_PARAM_ONE'\n  \n  - SECRET_PARAM_ONE\n  + actual\nexpected = 'SECRET_PARAM_ONE'\n\n    @pytest.mark.parametrize("expected", ["SECRET_PARAM_ONE", "SECRET_PARAM_TWO"])\n    def test_wrong_expectation(expected):\n        print("SECRET_
+FOUND: junit failure (last) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38015021041_junit-controlled-py3.12_54.xml): AssertionError: SECRET_MESSAGE\nassert 'actual' == 'SECRET_PARAM_TWO'\n  \n  - SECRET_PARAM_TWO\n  + actual\nAssertionError: SECRET_MESSAGE\nassert 'actual' == 'SECRET_PARAM_TWO'\n  \n  - SECRET_PARAM_TWO\n  + actual\nexpected = 'SECRET_PARAM_TWO'\n\n    @pytest.mark.parametrize("expected", ["SECRET_PARAM_ONE", "SECRET_PARAM_TWO"])\n    def test_wrong_expectation(expected):\n        print("SECRET_
 FOUND: junit errors (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38015021041_junit-controlled-py3.12_54.xml): 1
-FOUND: junit error (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38015021041_junit-controlled-py3.12_54.xml): failed on setup with "AssertionError: assert 'actual_setup' == 'SECRET_SETUP'
-  
-  - SECRET_SETUP
-  + actual_setup"
+FOUND: junit error (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38015021041_junit-controlled-py3.12_54.xml): failed on setup with "AssertionError: assert 'actual_setup' == 'SECRET_SETUP'\n  \n  - SECRET_SETUP\n  + actual_setup"\nfailed on setup with "AssertionError: assert 'actual_setup' == 'SECRET_SETUP'\n  \n  - SECRET_SETUP\n  + actual_setup"\n@pytest.fixture\n    def wrong_setup():\n>       assert "actual_setup" == "SECRET_SETUP"\nE       AssertionError: assert 'actual_setup' == 'SECRET_SETUP'\nE    
 FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38015021041_junit-controlled-py3.12_54.xml): test_controlled
 FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38015021041_junit-controlled-py3.12_54.xml): AssertionError
+FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38015021041_junit-controlled-py3.12_54.xml): Error: SECRET_MESSAGE
 FOUND: junit system-err (first line) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38015021041_junit-controlled-py3.12_54.xml): --------------------------------- Captured Err ---------------------------------
-FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38015021041_junit-controlled-py3.12_54.xml): 1
-FOUND: junit collection error (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38015021041_junit-controlled-py3.12_54.xml): failed on setup with "AssertionError: assert 'actual_setup' == 'SECRET_SETUP'
-  
-  - SECRET_SETUP
-  + actual_setup"
 FOUND: python version: 3.12.3 (cpython)
 FOUND: node version: v22.14.0
 FOUND: gh version: gh version 2.102.0 (2026-09-30)
 FOUND: environment variable count: 39
 FOUND: environment variable names: AGENT_TRANSCRIPTS, CARGO_HOME, CURSOR_AGENT, CURSOR_AGENT_SOCKET, CURSOR_CONVERSATION_ID, CURSOR_REQUEST_ID, CURSOR_RIPGREP_PATH, CURSOR_SPAWN_CWD_HOP, CURSOR_WORKLOAD_CGROUP, DISPLAY, EXEC_DAEMON_STARTUP_TRACEPARENT, FORCE_COLOR, GH_TELEMETRY, GIT_DISCOVERY_ACROSS_FILESYSTEM, GIT_LFS_SKIP_SMUDGE, HOME, LANG, LC_ALL, NO_COLOR, NVM_BIN, NVM_CD_FLAGS, NVM_DIR, NVM_INC, OLDPWD, PATH, PS1, PWD, PYTHONPATH, RUSTUP_HOME, RUST_VERSION, SHELL, SHLVL, TERM, USER, VNC_DPI, VNC_RESOLUTION, _, _ZO_DOCTOR, __CURSOR_SANDBOX_ENV_RESTORE
 NOT FOUND: junit skipped (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38015021041_junit-controlled-py3.12_54.xml)
+NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38015021041_junit-controlled-py3.12_54.xml)
 NOT FOUND: lock files in project root
 HINT: junit pytest assert line (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38015021041_junit-controlled-py3.12_54.xml): E       assert 'actual' == 'SECRET_PARAM_ONE'
 HINT: junit assertion diff (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38015021041_junit-controlled-py3.12_54.xml):   - SECRET_PARAM_ONE   + actual
-HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38015021041_junit-controlled-py3.12_54.xml): AssertionError: SECRET_MESSAGE
-assert 'actual' == 'SECRET_PARAM_ONE'
-  
-  - SECRET_PARAM_ONE
-  + actual
+HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38015021041_junit-controlled-py3.12_54.xml): AssertionError: SECRET_MESSAGE\nassert 'actual' == 'SECRET_PARAM_ONE'\n  \n  - SECRET_PARAM_ONE\n  + actual\nAssertionError: SECRET_MESSAGE\nassert 'actual' == 'SECRET_PARAM_ONE'\n  \n  - SECRET_PARAM_ONE\n  + actual\nexpected = 'SECRET_PARAM_ONE'\n\n    @pytest.mark.parametrize("expected", ["SECRET_PARAM_ONE", "SECRET_PARAM_TWO"])\n    def test_wrong_expectation(expected):\n        print("SECRET_

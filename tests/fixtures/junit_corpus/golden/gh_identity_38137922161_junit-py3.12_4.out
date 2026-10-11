@@ -1,8 +1,6 @@
 FOUND: exit code: 1
 FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/gh_identity_38137922161_junit-py3.12_4.xml): 1
-FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/gh_identity_38137922161_junit-py3.12_4.xml): assert False
- +  where False = <built-in method startswith of str object at 0x7fe164b37690>('#7 open draft')
- +    where <built-in method startswith of str object at 0x7fe164b37690> = "o/r#7 T\n#7 open draft merged=False unstable head=bbbbbbbb work/x -> main\nruns: pending {'success': 1, 'in_progres
+FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/gh_identity_38137922161_junit-py3.12_4.xml): assert False\n +  where False = <built-in method startswith of str object at 0x7fe164b37690>('#7 open draft')\n +    where <built-in method startswith of str object at 0x7fe164b37690> = "o/r#7 T\n#7 open draft merged=False unstable head=bbbbbbbb work/x -> main\nruns: pending {'success': 1, 'in_progress'...re\ncomment u2 t2: comment 2\ncomment u3 t3: comment 3\ncomment u4 t4: comment 4\nreview gpt 
 FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/gh_identity_38137922161_junit-py3.12_4.xml): tests.test_pr_status
 FOUND: python version: 3.12.3 (cpython)
 FOUND: node version: v22.14.0
@@ -12,12 +10,11 @@ FOUND: environment variable names: AGENT_TRANSCRIPTS, CARGO_HOME, CURSOR_AGENT, 
 NOT FOUND: junit errors (<repo>/tests/fixtures/junit_corpus/cases/gh_identity_38137922161_junit-py3.12_4.xml)
 NOT FOUND: junit skipped (<repo>/tests/fixtures/junit_corpus/cases/gh_identity_38137922161_junit-py3.12_4.xml)
 NOT FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/gh_identity_38137922161_junit-py3.12_4.xml)
+NOT FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/gh_identity_38137922161_junit-py3.12_4.xml)
 NOT FOUND: junit system-err (<repo>/tests/fixtures/junit_corpus/cases/gh_identity_38137922161_junit-py3.12_4.xml)
 NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/gh_identity_38137922161_junit-py3.12_4.xml)
 NOT FOUND: lock files in project root
 HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/gh_identity_38137922161_junit-py3.12_4.xml): pytest/python
 HINT: junit pytest assert line (<repo>/tests/fixtures/junit_corpus/cases/gh_identity_38137922161_junit-py3.12_4.xml): E       assert False
 HINT: junit assertion diff (<repo>/tests/fixtures/junit_corpus/cases/gh_identity_38137922161_junit-py3.12_4.xml):  +  where False = <built-in method startswith of str object at 0x7fe164b37690>('#7 open draft')  +    where <built-in method startswith of str object at 0x7fe164b37690> = "o/r#7 T\n#7 open draft merged=False unstable head=bbbbbbbb work/x -> main\nruns: pending {'success': 1, 'in_progress'...re\ncomment u2 t2: comment 2\ncomment u3 t3: comment 3\ncomment u4 t4: comment 4\nreview gpt t9 COMMENTED: S
-HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/gh_identity_38137922161_junit-py3.12_4.xml): assert False
- +  where False = <built-in method startswith of str object at 0x7fe164b37690>('#7 open draft')
- +    where <built-in method startswith of str object at 0x7fe164b37690> = "o/r#7 T\n#7 open draft merged=False unstable head=bbbbbbbb work/x -> main\nruns: pending {'success': 1, 'in_progres
+HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/gh_identity_38137922161_junit-py3.12_4.xml): assert False\n +  where False = <built-in method startswith of str object at 0x7fe164b37690>('#7 open draft')\n +    where <built-in method startswith of str object at 0x7fe164b37690> = "o/r#7 T\n#7 open draft merged=False unstable head=bbbbbbbb work/x -> main\nruns: pending {'success': 1, 'in_progress'...re\ncomment u2 t2: comment 2\ncomment u3 t3: comment 3\ncomment u4 t4: comment 4\nreview gpt 

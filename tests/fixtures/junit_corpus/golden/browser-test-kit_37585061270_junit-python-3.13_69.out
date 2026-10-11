@@ -1,29 +1,10 @@
 FOUND: exit code: 1
 FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37585061270_junit-python-3.13_69.xml): 2
-FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37585061270_junit-python-3.13_69.xml): AssertionError: assert {'scripts/git...robe.py', ...} == {'scripts/gh_...LICENSE', ...}
-  
-  Extra items in the right set:
-  'scripts/gh_identity-LICENSE'
-  'scripts/gh_identity.py'
-  
-  Full diff:
-    {
-  -     'scripts/gh_identity-LICENSE',
-  -     'scripts/gh_identity.py',
-        'scripts/git_in
-FOUND: junit failure (last) (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37585061270_junit-python-3.13_69.xml): AssertionError: assert {'scripts/git...robe.py', ...} == {'scripts/gh_...LICENSE', ...}
-  
-  Extra items in the right set:
-  'scripts/gh_identity-LICENSE'
-  'scripts/gh_identity.py'
-  
-  Full diff:
-    {
-  -     'scripts/gh_identity-LICENSE',
-  -     'scripts/gh_identity.py',
-        'scripts/git_in
+FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37585061270_junit-python-3.13_69.xml): AssertionError: assert {'scripts/git...robe.py', ...} == {'scripts/gh_...LICENSE', ...}\n  \n  Extra items in the right set:\n  'scripts/gh_identity-LICENSE'\n  'scripts/gh_identity.py'\n  \n  Full diff:\n    {\n  -     'scripts/gh_identity-LICENSE',\n  -     'scripts/gh_identity.py',\n        'scripts/git_inspector.provenance.json',\n        'scripts/git_inspector.py',\n        'scripts/myon-bioi
+FOUND: junit failure (last) (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37585061270_junit-python-3.13_69.xml): AssertionError: assert {'scripts/git...robe.py', ...} == {'scripts/gh_...LICENSE', ...}\n  \n  Extra items in the right set:\n  'scripts/gh_identity-LICENSE'\n  'scripts/gh_identity.py'\n  \n  Full diff:\n    {\n  -     'scripts/gh_identity-LICENSE',\n  -     'scripts/gh_identity.py',\n        'scripts/git_inspector.provenance.json',\n        'scripts/git_inspector.py',\n        'scripts/myon-bioi
 FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37585061270_junit-python-3.13_69.xml): tests.python.test_vendor_automation
 FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37585061270_junit-python-3.13_69.xml): AssertionError
+FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37585061270_junit-python-3.13_69.xml): Error: assert {'scripts/git...robe.py', ...} == {'scripts/gh_...LICENSE', ...}
 FOUND: python version: 3.12.3 (cpython)
 FOUND: node version: v22.14.0
 FOUND: gh version: gh version 2.102.0 (2026-09-30)
@@ -36,14 +17,4 @@ NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/bro
 NOT FOUND: lock files in project root
 HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37585061270_junit-python-3.13_69.xml): pytest/python
 HINT: junit assertion diff (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37585061270_junit-python-3.13_69.xml):   -     'scripts/gh_identity-LICENSE',   -     'scripts/gh_identity.py',
-HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37585061270_junit-python-3.13_69.xml): AssertionError: assert {'scripts/git...robe.py', ...} == {'scripts/gh_...LICENSE', ...}
-  
-  Extra items in the right set:
-  'scripts/gh_identity-LICENSE'
-  'scripts/gh_identity.py'
-  
-  Full diff:
-    {
-  -     'scripts/gh_identity-LICENSE',
-  -     'scripts/gh_identity.py',
-        'scripts/git_in
+HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37585061270_junit-python-3.13_69.xml): AssertionError: assert {'scripts/git...robe.py', ...} == {'scripts/gh_...LICENSE', ...}\n  \n  Extra items in the right set:\n  'scripts/gh_identity-LICENSE'\n  'scripts/gh_identity.py'\n  \n  Full diff:\n    {\n  -     'scripts/gh_identity-LICENSE',\n  -     'scripts/gh_identity.py',\n        'scripts/git_inspector.provenance.json',\n        'scripts/git_inspector.py',\n        'scripts/myon-bioi

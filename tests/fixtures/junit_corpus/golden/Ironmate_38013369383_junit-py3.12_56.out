@@ -1,8 +1,9 @@
 FOUND: exit code: 1
 FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38013369383_junit-py3.12_56.xml): 1
-FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38013369383_junit-py3.12_56.xml): TypeError: test_pipeline_opt_in_uses_svg_and_preserves_original.<locals>.fake_render() got an unexpected keyword argument 'foreground'
+FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38013369383_junit-py3.12_56.xml): TypeError: test_pipeline_opt_in_uses_svg_and_preserves_original.<locals>.fake_render() got an unexpected keyword argument 'foreground'\nTypeError: test_pipeline_opt_in_uses_svg_and_preserves_original.<locals>.fake_render() got an unexpected keyword argument 'foreground'\ntests/test_mermaid_svg.py:45: in test_pipeline_opt_in_uses_svg_and_preserves_original\n    result = pptx_pipeline.run(text=sourc
 FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38013369383_junit-py3.12_56.xml): tests.test_mermaid_svg
 FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38013369383_junit-py3.12_56.xml): TypeError
+FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38013369383_junit-py3.12_56.xml): Error: test_pipeline_opt_in_uses_svg_and_preserves_original.<locals>.fake_render() got an unexpected keyword argument 'foreground'
 FOUND: python version: 3.12.3 (cpython)
 FOUND: node version: v22.14.0
 FOUND: gh version: gh version 2.102.0 (2026-09-30)
@@ -14,4 +15,4 @@ NOT FOUND: junit system-err (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_3
 NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38013369383_junit-py3.12_56.xml)
 NOT FOUND: lock files in project root
 HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38013369383_junit-py3.12_56.xml): pytest/python
-HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38013369383_junit-py3.12_56.xml): TypeError: test_pipeline_opt_in_uses_svg_and_preserves_original.<locals>.fake_render() got an unexpected keyword argument 'foreground'
+HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38013369383_junit-py3.12_56.xml): TypeError: test_pipeline_opt_in_uses_svg_and_preserves_original.<locals>.fake_render() got an unexpected keyword argument 'foreground'\nTypeError: test_pipeline_opt_in_uses_svg_and_preserves_original.<locals>.fake_render() got an unexpected keyword argument 'foreground'\ntests/test_mermaid_svg.py:45: in test_pipeline_opt_in_uses_svg_and_preserves_original\n    result = pptx_pipeline.run(text=sourc

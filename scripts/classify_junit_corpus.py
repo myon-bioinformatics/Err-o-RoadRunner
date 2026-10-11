@@ -16,10 +16,10 @@ EMPTY = ROOT / "tests" / "fixtures" / "failure_suite" / "empty_root"
 
 KEY_FOUND = (
     "junit pytest exception type",
-    "junit failure (first)",
-    "junit error (first)",
-    "junit collection error",
-    "junit system-err",
+    "junit dart error (first)",
+    "junit collection error (first)",
+    "junit system-err (first line)",
+    "junit testcase classname (first)",
 )
 
 

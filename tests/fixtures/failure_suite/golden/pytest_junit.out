@@ -1,6 +1,6 @@
 FOUND: exit code: 1
 FOUND: junit failures (<repo>/tests/fixtures/failure_suite/inputs/suite.junit.xml): 1
-FOUND: junit failure (first) (<repo>/tests/fixtures/failure_suite/inputs/suite.junit.xml): assert 0
+FOUND: junit failure (first) (<repo>/tests/fixtures/failure_suite/inputs/suite.junit.xml): assert 0\nassert 0\ndef test_fail():\n>       assert 0\nE       assert 0\n\nsuite_fail.py:2: AssertionError
 FOUND: junit testcase classname (first) (<repo>/tests/fixtures/failure_suite/inputs/suite.junit.xml): tests.fixtures.failure_suite.inputs.suite_fail
 FOUND: python version: 3.12.3 (cpython)
 FOUND: node version: v22.14.0
@@ -10,9 +10,10 @@ FOUND: environment variable names: AGENT_TRANSCRIPTS, CARGO_HOME, CURSOR_AGENT, 
 NOT FOUND: junit errors (<repo>/tests/fixtures/failure_suite/inputs/suite.junit.xml)
 NOT FOUND: junit skipped (<repo>/tests/fixtures/failure_suite/inputs/suite.junit.xml)
 NOT FOUND: junit pytest exception type (<repo>/tests/fixtures/failure_suite/inputs/suite.junit.xml)
+NOT FOUND: junit dart error (first) (<repo>/tests/fixtures/failure_suite/inputs/suite.junit.xml)
 NOT FOUND: junit system-err (<repo>/tests/fixtures/failure_suite/inputs/suite.junit.xml)
 NOT FOUND: junit collection errors (<repo>/tests/fixtures/failure_suite/inputs/suite.junit.xml)
 NOT FOUND: lock files in project root
 HINT: junit framework guess (<repo>/tests/fixtures/failure_suite/inputs/suite.junit.xml): pytest/python
 HINT: junit pytest assert line (<repo>/tests/fixtures/failure_suite/inputs/suite.junit.xml): E       assert 0
-HINT: web search keywords (<repo>/tests/fixtures/failure_suite/inputs/suite.junit.xml): assert 0
+HINT: web search keywords (<repo>/tests/fixtures/failure_suite/inputs/suite.junit.xml): assert 0\nassert 0\ndef test_fail():\n>       assert 0\nE       assert 0\n\nsuite_fail.py:2: AssertionError

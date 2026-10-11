@@ -461,6 +461,12 @@ PYTEST_E_EXC_LINE_RE = re.compile(
 )
 PYTEST_E_ASSERT_LINE_RE = re.compile(r"^\s*E\s+assert\b")
 JUNIT_DIFF_LINE_RE = re.compile(r"^\s*[+-]\s+")
+DART_ERROR_LINE_RE = re.compile(
+    r"(?P<line>(?:\S+\.dart:\d+:\d+:\s*)?Error:\s*.+)$"
+)
+DART_NOISE_LINE_RE = re.compile(
+    r"^-\s+'Object'\s+is\s+from\s+'dart:core'\."
+)
 
 
 def _junit_child_text(parent: ET.Element, local_name: str) -> str:
@@ -493,15 +499,22 @@ def _junit_failure_blob(testcase: ET.Element, elem: ET.Element) -> str:
     return "\n".join(parts)
 
 
+def _junit_flatten_for_report(text: str, limit: int = 400) -> str:
+    flat = text.replace("\r\n", "\n").replace("\r", "\n").replace("\n", "\\n")
+    return flat[:limit]
+
+
 def _junit_snippet(elem: ET.Element, testcase: ET.Element | None = None) -> str:
     msg = sanitize_report_text((elem.attrib.get("message") or "").strip())
     body = sanitize_report_text((elem.text or "").strip())
     if testcase is not None:
         body = _junit_failure_blob(testcase, elem)
+    if msg and body and body not in msg:
+        return _junit_flatten_for_report(f"{msg}\n{body}")
     if msg:
-        return msg[:300]
+        return _junit_flatten_for_report(msg)
     if body:
-        return body.splitlines()[0][:300]
+        return _junit_flatten_for_report(body)
     return "failure"
 
 
@@ -523,10 +536,47 @@ def _junit_pytest_assert_hint(blob: str) -> str:
 
 
 def _junit_diff_hint(blob: str) -> str:
-    lines = [ln for ln in blob.splitlines() if JUNIT_DIFF_LINE_RE.match(ln)]
+    lines = [
+        ln
+        for ln in blob.splitlines()
+        if JUNIT_DIFF_LINE_RE.match(ln) and not DART_NOISE_LINE_RE.match(ln.strip())
+    ]
     if not lines:
         return ""
     return " ".join(lines[:6])[:400]
+
+
+def _junit_dart_error_line(blob: str) -> str:
+    for line in blob.splitlines():
+        stripped = line.strip()
+        if not stripped or DART_NOISE_LINE_RE.match(stripped):
+            continue
+        if stripped.startswith("Try correcting") or stripped.startswith("^"):
+            continue
+        m = DART_ERROR_LINE_RE.search(stripped)
+        if m:
+            return m.group("line")[:400]
+    return ""
+
+
+def _junit_testsuite_collection_errors(root: ET.Element) -> list[str]:
+    """Pytest/JUnit collection failures reported as <error> directly under <testsuite>."""
+    out: list[str] = []
+    for suite in root.iter():
+        if suite.tag.split("}")[-1] != "testsuite":
+            continue
+        for child in suite:
+            if child.tag.split("}")[-1] != "error":
+                continue
+            msg = sanitize_report_text((child.attrib.get("message") or "").strip())
+            body = sanitize_report_text((child.text or "").strip())
+            if msg and body:
+                out.append(_junit_flatten_for_report(f"{msg}\n{body}"))
+            elif msg:
+                out.append(msg[:300])
+            elif body:
+                out.append(_junit_flatten_for_report(body))
+    return out
 
 
 def _junit_framework_hint(classname: str) -> str:
@@ -551,6 +601,7 @@ def parse_junit_xml(text: str, source: str, report: Report) -> None:
     errors: list[str] = []
     skipped: list[str] = []
     failure_blobs: list[str] = []
+    failing_testcases: list[ET.Element] = []
     first_classname = ""
     collection_errors: list[str] = []
     try:
@@ -564,12 +615,14 @@ def parse_junit_xml(text: str, source: str, report: Report) -> None:
                     if child_tag == "failure":
                         if not first_classname:
                             first_classname = (testcase.attrib.get("classname") or "").strip()
+                        failing_testcases.append(testcase)
                         blob = _junit_failure_blob(testcase, child)
                         failure_blobs.append(blob)
                         failures.append(_junit_snippet(child, testcase))
                     elif child_tag == "error":
                         if not first_classname:
                             first_classname = (testcase.attrib.get("classname") or "").strip()
+                        failing_testcases.append(testcase)
                         blob = _junit_failure_blob(testcase, child)
                         failure_blobs.append(blob)
                         errors.append(_junit_snippet(child, testcase))
@@ -584,8 +637,7 @@ def parse_junit_xml(text: str, source: str, report: Report) -> None:
                             skipped.append(body.splitlines()[0][:300])
                         else:
                             skipped.append("skipped")
-            elif tag == "error" and elem.attrib.get("message"):
-                collection_errors.append(sanitize_report_text(elem.attrib["message"])[:300])
+        collection_errors.extend(_junit_testsuite_collection_errors(root))
     except ValueError:
         report.add_found(f"junit xml truncated (tag limit) ({source})")
 
@@ -631,15 +683,18 @@ def parse_junit_xml(text: str, source: str, report: Report) -> None:
             report.add_hint(f"junit assertion diff ({source}): {diff_hint}")
         if "Timeout" in primary_blob or "timed out" in primary_blob.lower():
             report.add_hint(f"junit timeout signal ({source}): possible timeout in failure text")
+        dart_err = _junit_dart_error_line(primary_blob)
+        if dart_err:
+            report.add_found(f"junit dart error (first) ({source}): {dart_err}")
+        else:
+            report.add_not_found(f"junit dart error (first) ({source})")
         syserr = ""
-        for testcase in root.iter():
-            if testcase.tag.split("}")[-1] != "testcase":
-                continue
-            syserr = _junit_child_text(testcase, "system-err")
-            if syserr:
-                break
+        if failing_testcases:
+            syserr = _junit_child_text(failing_testcases[0], "system-err")
         if syserr:
-            report.add_found(f"junit system-err (first line) ({source}): {syserr.splitlines()[0][:300]}")
+            report.add_found(
+                f"junit system-err (first line) ({source}): {syserr.splitlines()[0][:300]}"
+            )
         else:
             report.add_not_found(f"junit system-err ({source})")
 

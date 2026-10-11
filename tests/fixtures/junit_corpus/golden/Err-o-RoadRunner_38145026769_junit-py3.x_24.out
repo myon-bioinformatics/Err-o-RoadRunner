@@ -1,13 +1,9 @@
 FOUND: exit code: 1
 FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38145026769_junit-py3.x_24.xml): 1
-FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38145026769_junit-py3.x_24.xml): AssertionError: assert '0.2.0' == '0.1.0'
-  
-  - 0.1.0
-  ?   ^
-  + 0.2.0
-  ?   ^
+FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38145026769_junit-py3.x_24.xml): AssertionError: assert '0.2.0' == '0.1.0'\n  \n  - 0.1.0\n  ?   ^\n  + 0.2.0\n  ?   ^\nAssertionError: assert '0.2.0' == '0.1.0'\n  \n  - 0.1.0\n  ?   ^\n  + 0.2.0\n  ?   ^\n@pytest.mark.success\n    def test_success_import_and_version() -> None:\n        import err_o_roadrunner as pkg\n    \n>       assert pkg.__version__ == "0.1.0"\nE       AssertionError: assert '0.2.0' == '0.1.0'\nE         \n
 FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38145026769_junit-py3.x_24.xml): tests.test_triage
 FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38145026769_junit-py3.x_24.xml): AssertionError
+FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38145026769_junit-py3.x_24.xml): Error: assert '0.2.0' == '0.1.0'
 FOUND: python version: 3.12.3 (cpython)
 FOUND: node version: v22.14.0
 FOUND: gh version: gh version 2.102.0 (2026-09-30)
@@ -20,9 +16,4 @@ NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/Err
 NOT FOUND: lock files in project root
 HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38145026769_junit-py3.x_24.xml): pytest/python
 HINT: junit assertion diff (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38145026769_junit-py3.x_24.xml):   - 0.1.0   + 0.2.0
-HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38145026769_junit-py3.x_24.xml): AssertionError: assert '0.2.0' == '0.1.0'
-  
-  - 0.1.0
-  ?   ^
-  + 0.2.0
-  ?   ^
+HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38145026769_junit-py3.x_24.xml): AssertionError: assert '0.2.0' == '0.1.0'\n  \n  - 0.1.0\n  ?   ^\n  + 0.2.0\n  ?   ^\nAssertionError: assert '0.2.0' == '0.1.0'\n  \n  - 0.1.0\n  ?   ^\n  + 0.2.0\n  ?   ^\n@pytest.mark.success\n    def test_success_import_and_version() -> None:\n        import err_o_roadrunner as pkg\n    \n>       assert pkg.__version__ == "0.1.0"\nE       AssertionError: assert '0.2.0' == '0.1.0'\nE         \n

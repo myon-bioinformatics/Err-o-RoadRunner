@@ -1,19 +1,10 @@
 FOUND: exit code: 1
 FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38144415509_junit-py3.12_31.xml): 2
-FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38144415509_junit-py3.12_31.xml): AssertionError: assert 'FOUND: exit ..._init__.py)\n' == 'FOUND: exit ..._init__.py)\n'
-  
-  Skipping 217 identical leading characters in diff, use -v to show
-  -  (first): <repo>/tests/fixtures/readme/inputs/_import_err_helper.py:1 in <module>
-  ?           ^  ---
-  +  (first): <repo>/tests/fix
-FOUND: junit failure (last) (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38144415509_junit-py3.12_31.xml): AssertionError: assert 'FOUND: exit ...le handling\n' == 'FOUND: exit ...le handling\n'
-  
-  Skipping 219 identical leading characters in diff, use -v to show
-  - primary): <repo>/tests/fixtures/readme/inputs/chained.py:2 in <module>
-  ?           ^  ---
-  + primary): <repo>/tests/fixtures/readm
+FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38144415509_junit-py3.12_31.xml): AssertionError: assert 'FOUND: exit ..._init__.py)\n' == 'FOUND: exit ..._init__.py)\n'\n  \n  Skipping 217 identical leading characters in diff, use -v to show\n  -  (first): <repo>/tests/fixtures/readme/inputs/_import_err_helper.py:1 in <module>\n  ?           ^  ---\n  +  (first): <repo>/tests/fixtures/readme/inputs/_import_err_helper.py:1 in <module>\n  ?           ^^^ +++++\n  - FOUND: py
+FOUND: junit failure (last) (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38144415509_junit-py3.12_31.xml): AssertionError: assert 'FOUND: exit ...le handling\n' == 'FOUND: exit ...le handling\n'\n  \n  Skipping 219 identical leading characters in diff, use -v to show\n  - primary): <repo>/tests/fixtures/readme/inputs/chained.py:2 in <module>\n  ?           ^  ---\n  + primary): <repo>/tests/fixtures/readme/inputs/chained.py:2 in <module>\n  ?           ^^^ +++++\n  - FOUND: python traceback frame (
 FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38144415509_junit-py3.12_31.xml): tests.test_readme_golden
 FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38144415509_junit-py3.12_31.xml): AssertionError
+FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38144415509_junit-py3.12_31.xml): Error: assert 'FOUND: exit ..._init__.py)\n' == 'FOUND: exit ..._init__.py)\n'
 FOUND: python version: 3.12.3 (cpython)
 FOUND: node version: v22.14.0
 FOUND: gh version: gh version 2.102.0 (2026-09-30)
@@ -26,9 +17,4 @@ NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/Err
 NOT FOUND: lock files in project root
 HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38144415509_junit-py3.12_31.xml): pytest/python
 HINT: junit assertion diff (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38144415509_junit-py3.12_31.xml):   -  (first): <repo>/tests/fixtures/readme/inputs/_import_err_helper.py:1 in <module>   +  (first): <repo>/tests/fixtures/readme/inputs/_import_err_helper.py:1 in <module>   - FOUND: python traceback frame (last): <repo>/tests/fixtures/readme/inputs/_import_err_helper.py:1 in <module>   + FOUND: python traceback frame (last): <repo>/tests/fixtures/readme/inputs/_import_err_helper.py:1 in <
-HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38144415509_junit-py3.12_31.xml): AssertionError: assert 'FOUND: exit ..._init__.py)\n' == 'FOUND: exit ..._init__.py)\n'
-  
-  Skipping 217 identical leading characters in diff, use -v to show
-  -  (first): <repo>/tests/fixtures/readme/inputs/_import_err_helper.py:1 in <module>
-  ?           ^  ---
-  +  (first): <repo>/tests/fix
+HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38144415509_junit-py3.12_31.xml): AssertionError: assert 'FOUND: exit ..._init__.py)\n' == 'FOUND: exit ..._init__.py)\n'\n  \n  Skipping 217 identical leading characters in diff, use -v to show\n  -  (first): <repo>/tests/fixtures/readme/inputs/_import_err_helper.py:1 in <module>\n  ?           ^  ---\n  +  (first): <repo>/tests/fixtures/readme/inputs/_import_err_helper.py:1 in <module>\n  ?           ^^^ +++++\n  - FOUND: py

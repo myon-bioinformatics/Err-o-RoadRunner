@@ -1,9 +1,8 @@
 FOUND: exit code: 1
 FOUND: junit errors (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37603797065_junit-python-3.13_68.xml): 1
-FOUND: junit error (first) (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37603797065_junit-python-3.13_68.xml): collection failure
+FOUND: junit error (first) (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37603797065_junit-python-3.13_68.xml): collection failure\ncollection failure\n/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/site-packages/_pytest/python.py:508: in importtestmodule\n    mod = import_path(\n/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/site-packages/_pytest/pathlib.py:596: in import_path\n    importlib.import_module(module_name)\n/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/importlib/__init_
 FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37603797065_junit-python-3.13_68.xml): SyntaxError
-FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37603797065_junit-python-3.13_68.xml): 1
-FOUND: junit collection error (first) (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37603797065_junit-python-3.13_68.xml): collection failure
+FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37603797065_junit-python-3.13_68.xml): Error: unexpected character after line continuation character
 FOUND: python version: 3.12.3 (cpython)
 FOUND: node version: v22.14.0
 FOUND: gh version: gh version 2.102.0 (2026-09-30)
@@ -12,5 +11,6 @@ FOUND: environment variable names: AGENT_TRANSCRIPTS, CARGO_HOME, CURSOR_AGENT, 
 NOT FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37603797065_junit-python-3.13_68.xml)
 NOT FOUND: junit skipped (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37603797065_junit-python-3.13_68.xml)
 NOT FOUND: junit system-err (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37603797065_junit-python-3.13_68.xml)
+NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37603797065_junit-python-3.13_68.xml)
 NOT FOUND: lock files in project root
-HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37603797065_junit-python-3.13_68.xml): collection failure
+HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37603797065_junit-python-3.13_68.xml): collection failure\ncollection failure\n/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/site-packages/_pytest/python.py:508: in importtestmodule\n    mod = import_path(\n/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/site-packages/_pytest/pathlib.py:596: in import_path\n    importlib.import_module(module_name)\n/opt/hostedtoolcache/Python/3.13.16/x64/lib/python3.13/importlib/__init_

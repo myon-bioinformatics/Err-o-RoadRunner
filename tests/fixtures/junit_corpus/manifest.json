@@ -4,7 +4,7 @@
     "repo": "myon-bioinformatics/gh_identity",
     "run_id": 38137922161,
     "artifact": "junit-py3.10",
-    "job": "junit-py3.10",
+    "job": "test (3.10)",
     "date": "2026-10-11T12:04:58Z",
     "xml": "cases/gh_identity_38137922161_junit-py3.10_0.xml",
     "golden": "golden/gh_identity_38137922161_junit-py3.10_0.out"
@@ -14,7 +14,7 @@
     "repo": "myon-bioinformatics/gh_identity",
     "run_id": 38137922161,
     "artifact": "junit-py3.14",
-    "job": "junit-py3.14",
+    "job": "test (3.10)",
     "date": "2026-10-11T12:04:58Z",
     "xml": "cases/gh_identity_38137922161_junit-py3.14_1.xml",
     "golden": "golden/gh_identity_38137922161_junit-py3.14_1.out"
@@ -24,7 +24,7 @@
     "repo": "myon-bioinformatics/gh_identity",
     "run_id": 38137922161,
     "artifact": "junit-py3.13",
-    "job": "junit-py3.13",
+    "job": "test (3.10)",
     "date": "2026-10-11T12:04:58Z",
     "xml": "cases/gh_identity_38137922161_junit-py3.13_2.xml",
     "golden": "golden/gh_identity_38137922161_junit-py3.13_2.out"
@@ -34,7 +34,7 @@
     "repo": "myon-bioinformatics/gh_identity",
     "run_id": 38137922161,
     "artifact": "junit-py3.11",
-    "job": "junit-py3.11",
+    "job": "test (3.10)",
     "date": "2026-10-11T12:04:58Z",
     "xml": "cases/gh_identity_38137922161_junit-py3.11_3.xml",
     "golden": "golden/gh_identity_38137922161_junit-py3.11_3.out"
@@ -44,7 +44,7 @@
     "repo": "myon-bioinformatics/gh_identity",
     "run_id": 38137922161,
     "artifact": "junit-py3.12",
-    "job": "junit-py3.12",
+    "job": "test (3.10)",
     "date": "2026-10-11T12:04:58Z",
     "xml": "cases/gh_identity_38137922161_junit-py3.12_4.xml",
     "golden": "golden/gh_identity_38137922161_junit-py3.12_4.out"
@@ -54,7 +54,7 @@
     "repo": "myon-bioinformatics/gh_identity",
     "run_id": 38137922161,
     "artifact": "junit-py3.x",
-    "job": "junit-py3.x",
+    "job": "test (3.10)",
     "date": "2026-10-11T12:04:58Z",
     "xml": "cases/gh_identity_38137922161_junit-py3.x_5.xml",
     "golden": "golden/gh_identity_38137922161_junit-py3.x_5.out"
@@ -64,7 +64,7 @@
     "repo": "myon-bioinformatics/gh_identity",
     "run_id": 38137918527,
     "artifact": "junit-py3.11",
-    "job": "junit-py3.11",
+    "job": "test (3.14)",
     "date": "2026-10-11T12:04:55Z",
     "xml": "cases/gh_identity_38137918527_junit-py3.11_6.xml",
     "golden": "golden/gh_identity_38137918527_junit-py3.11_6.out"
@@ -74,7 +74,7 @@
     "repo": "myon-bioinformatics/gh_identity",
     "run_id": 38137918527,
     "artifact": "junit-py3.10",
-    "job": "junit-py3.10",
+    "job": "test (3.14)",
     "date": "2026-10-11T12:04:55Z",
     "xml": "cases/gh_identity_38137918527_junit-py3.10_7.xml",
     "golden": "golden/gh_identity_38137918527_junit-py3.10_7.out"
@@ -84,7 +84,7 @@
     "repo": "myon-bioinformatics/gh_identity",
     "run_id": 38137918527,
     "artifact": "junit-py3.12",
-    "job": "junit-py3.12",
+    "job": "test (3.14)",
     "date": "2026-10-11T12:04:55Z",
     "xml": "cases/gh_identity_38137918527_junit-py3.12_8.xml",
     "golden": "golden/gh_identity_38137918527_junit-py3.12_8.out"
@@ -94,7 +94,7 @@
     "repo": "myon-bioinformatics/gh_identity",
     "run_id": 38137918527,
     "artifact": "junit-py3.13",
-    "job": "junit-py3.13",
+    "job": "test (3.14)",
     "date": "2026-10-11T12:04:55Z",
     "xml": "cases/gh_identity_38137918527_junit-py3.13_9.xml",
     "golden": "golden/gh_identity_38137918527_junit-py3.13_9.out"
@@ -104,7 +104,7 @@
     "repo": "myon-bioinformatics/gh_identity",
     "run_id": 38137918527,
     "artifact": "junit-py3.x",
-    "job": "junit-py3.x",
+    "job": "test (3.14)",
     "date": "2026-10-11T12:04:55Z",
     "xml": "cases/gh_identity_38137918527_junit-py3.x_10.xml",
     "golden": "golden/gh_identity_38137918527_junit-py3.x_10.out"
@@ -114,7 +114,7 @@
     "repo": "myon-bioinformatics/gh_identity",
     "run_id": 38137918527,
     "artifact": "junit-py3.14",
-    "job": "junit-py3.14",
+    "job": "test (3.14)",
     "date": "2026-10-11T12:04:55Z",
     "xml": "cases/gh_identity_38137918527_junit-py3.14_11.xml",
     "golden": "golden/gh_identity_38137918527_junit-py3.14_11.out"
@@ -124,7 +124,7 @@
     "repo": "myon-bioinformatics/gh_identity",
     "run_id": 38042477319,
     "artifact": "junit-py3.14",
-    "job": "junit-py3.14",
+    "job": "test (3.12)",
     "date": "2026-10-10T09:44:55Z",
     "xml": "cases/gh_identity_38042477319_junit-py3.14_12.xml",
     "golden": "golden/gh_identity_38042477319_junit-py3.14_12.out"
@@ -134,7 +134,7 @@
     "repo": "myon-bioinformatics/gh_identity",
     "run_id": 38042477319,
     "artifact": "junit-py3.x",
-    "job": "junit-py3.x",
+    "job": "test (3.12)",
     "date": "2026-10-10T09:44:55Z",
     "xml": "cases/gh_identity_38042477319_junit-py3.x_13.xml",
     "golden": "golden/gh_identity_38042477319_junit-py3.x_13.out"
@@ -144,7 +144,7 @@
     "repo": "myon-bioinformatics/gh_identity",
     "run_id": 38042477319,
     "artifact": "junit-py3.10",
-    "job": "junit-py3.10",
+    "job": "test (3.12)",
     "date": "2026-10-10T09:44:55Z",
     "xml": "cases/gh_identity_38042477319_junit-py3.10_14.xml",
     "golden": "golden/gh_identity_38042477319_junit-py3.10_14.out"
@@ -154,7 +154,7 @@
     "repo": "myon-bioinformatics/gh_identity",
     "run_id": 38042477319,
     "artifact": "junit-py3.11",
-    "job": "junit-py3.11",
+    "job": "test (3.12)",
     "date": "2026-10-10T09:44:55Z",
     "xml": "cases/gh_identity_38042477319_junit-py3.11_15.xml",
     "golden": "golden/gh_identity_38042477319_junit-py3.11_15.out"
@@ -164,7 +164,7 @@
     "repo": "myon-bioinformatics/gh_identity",
     "run_id": 38042477319,
     "artifact": "junit-py3.13",
-    "job": "junit-py3.13",
+    "job": "test (3.12)",
     "date": "2026-10-10T09:44:55Z",
     "xml": "cases/gh_identity_38042477319_junit-py3.13_16.xml",
     "golden": "golden/gh_identity_38042477319_junit-py3.13_16.out"
@@ -174,7 +174,7 @@
     "repo": "myon-bioinformatics/gh_identity",
     "run_id": 38042477319,
     "artifact": "junit-py3.12",
-    "job": "junit-py3.12",
+    "job": "test (3.12)",
     "date": "2026-10-10T09:44:55Z",
     "xml": "cases/gh_identity_38042477319_junit-py3.12_17.xml",
     "golden": "golden/gh_identity_38042477319_junit-py3.12_17.out"
@@ -184,7 +184,7 @@
     "repo": "myon-bioinformatics/gh_identity",
     "run_id": 38042475253,
     "artifact": "junit-py3.x",
-    "job": "junit-py3.x",
+    "job": "test (3.x)",
     "date": "2026-10-10T09:44:52Z",
     "xml": "cases/gh_identity_38042475253_junit-py3.x_18.xml",
     "golden": "golden/gh_identity_38042475253_junit-py3.x_18.out"
@@ -194,7 +194,7 @@
     "repo": "myon-bioinformatics/gh_identity",
     "run_id": 38042475253,
     "artifact": "junit-py3.13",
-    "job": "junit-py3.13",
+    "job": "test (3.x)",
     "date": "2026-10-10T09:44:52Z",
     "xml": "cases/gh_identity_38042475253_junit-py3.13_19.xml",
     "golden": "golden/gh_identity_38042475253_junit-py3.13_19.out"
@@ -204,7 +204,7 @@
     "repo": "myon-bioinformatics/gh_identity",
     "run_id": 38042475253,
     "artifact": "junit-py3.10",
-    "job": "junit-py3.10",
+    "job": "test (3.x)",
     "date": "2026-10-10T09:44:52Z",
     "xml": "cases/gh_identity_38042475253_junit-py3.10_20.xml",
     "golden": "golden/gh_identity_38042475253_junit-py3.10_20.out"
@@ -214,7 +214,7 @@
     "repo": "myon-bioinformatics/gh_identity",
     "run_id": 38042475253,
     "artifact": "junit-py3.11",
-    "job": "junit-py3.11",
+    "job": "test (3.x)",
     "date": "2026-10-10T09:44:52Z",
     "xml": "cases/gh_identity_38042475253_junit-py3.11_21.xml",
     "golden": "golden/gh_identity_38042475253_junit-py3.11_21.out"
@@ -224,7 +224,7 @@
     "repo": "myon-bioinformatics/gh_identity",
     "run_id": 38042475253,
     "artifact": "junit-py3.12",
-    "job": "junit-py3.12",
+    "job": "test (3.x)",
     "date": "2026-10-10T09:44:52Z",
     "xml": "cases/gh_identity_38042475253_junit-py3.12_22.xml",
     "golden": "golden/gh_identity_38042475253_junit-py3.12_22.out"
@@ -234,7 +234,7 @@
     "repo": "myon-bioinformatics/gh_identity",
     "run_id": 38042475253,
     "artifact": "junit-py3.14",
-    "job": "junit-py3.14",
+    "job": "test (3.x)",
     "date": "2026-10-10T09:44:52Z",
     "xml": "cases/gh_identity_38042475253_junit-py3.14_23.xml",
     "golden": "golden/gh_identity_38042475253_junit-py3.14_23.out"
@@ -244,7 +244,7 @@
     "repo": "myon-bioinformatics/Err-o-RoadRunner",
     "run_id": 38145026769,
     "artifact": "junit-py3.x",
-    "job": "junit-py3.x",
+    "job": "pytest (Python 3.11)",
     "date": "2026-10-11T13:54:16Z",
     "xml": "cases/Err-o-RoadRunner_38145026769_junit-py3.x_24.xml",
     "golden": "golden/Err-o-RoadRunner_38145026769_junit-py3.x_24.out"
@@ -254,7 +254,7 @@
     "repo": "myon-bioinformatics/Err-o-RoadRunner",
     "run_id": 38145026769,
     "artifact": "junit-py3.12",
-    "job": "junit-py3.12",
+    "job": "pytest (Python 3.11)",
     "date": "2026-10-11T13:54:16Z",
     "xml": "cases/Err-o-RoadRunner_38145026769_junit-py3.12_25.xml",
     "golden": "golden/Err-o-RoadRunner_38145026769_junit-py3.12_25.out"
@@ -264,7 +264,7 @@
     "repo": "myon-bioinformatics/Err-o-RoadRunner",
     "run_id": 38145026769,
     "artifact": "junit-py3.14",
-    "job": "junit-py3.14",
+    "job": "pytest (Python 3.11)",
     "date": "2026-10-11T13:54:16Z",
     "xml": "cases/Err-o-RoadRunner_38145026769_junit-py3.14_26.xml",
     "golden": "golden/Err-o-RoadRunner_38145026769_junit-py3.14_26.out"
@@ -274,7 +274,7 @@
     "repo": "myon-bioinformatics/Err-o-RoadRunner",
     "run_id": 38145026769,
     "artifact": "junit-py3.11",
-    "job": "junit-py3.11",
+    "job": "pytest (Python 3.11)",
     "date": "2026-10-11T13:54:16Z",
     "xml": "cases/Err-o-RoadRunner_38145026769_junit-py3.11_27.xml",
     "golden": "golden/Err-o-RoadRunner_38145026769_junit-py3.11_27.out"
@@ -284,7 +284,7 @@
     "repo": "myon-bioinformatics/Err-o-RoadRunner",
     "run_id": 38145026769,
     "artifact": "junit-py3.10",
-    "job": "junit-py3.10",
+    "job": "pytest (Python 3.11)",
     "date": "2026-10-11T13:54:16Z",
     "xml": "cases/Err-o-RoadRunner_38145026769_junit-py3.10_28.xml",
     "golden": "golden/Err-o-RoadRunner_38145026769_junit-py3.10_28.out"
@@ -294,7 +294,7 @@
     "repo": "myon-bioinformatics/Err-o-RoadRunner",
     "run_id": 38145026769,
     "artifact": "junit-py3.13",
-    "job": "junit-py3.13",
+    "job": "pytest (Python 3.11)",
     "date": "2026-10-11T13:54:16Z",
     "xml": "cases/Err-o-RoadRunner_38145026769_junit-py3.13_29.xml",
     "golden": "golden/Err-o-RoadRunner_38145026769_junit-py3.13_29.out"
@@ -304,7 +304,7 @@
     "repo": "myon-bioinformatics/Err-o-RoadRunner",
     "run_id": 38144415509,
     "artifact": "junit-py3.x",
-    "job": "junit-py3.x",
+    "job": "pytest (Python 3.13)",
     "date": "2026-10-11T13:45:02Z",
     "xml": "cases/Err-o-RoadRunner_38144415509_junit-py3.x_30.xml",
     "golden": "golden/Err-o-RoadRunner_38144415509_junit-py3.x_30.out"
@@ -314,7 +314,7 @@
     "repo": "myon-bioinformatics/Err-o-RoadRunner",
     "run_id": 38144415509,
     "artifact": "junit-py3.12",
-    "job": "junit-py3.12",
+    "job": "pytest (Python 3.13)",
     "date": "2026-10-11T13:45:02Z",
     "xml": "cases/Err-o-RoadRunner_38144415509_junit-py3.12_31.xml",
     "golden": "golden/Err-o-RoadRunner_38144415509_junit-py3.12_31.out"
@@ -324,7 +324,7 @@
     "repo": "myon-bioinformatics/Err-o-RoadRunner",
     "run_id": 38144415509,
     "artifact": "junit-py3.10",
-    "job": "junit-py3.10",
+    "job": "pytest (Python 3.13)",
     "date": "2026-10-11T13:45:02Z",
     "xml": "cases/Err-o-RoadRunner_38144415509_junit-py3.10_32.xml",
     "golden": "golden/Err-o-RoadRunner_38144415509_junit-py3.10_32.out"
@@ -334,7 +334,7 @@
     "repo": "myon-bioinformatics/Err-o-RoadRunner",
     "run_id": 38144415509,
     "artifact": "junit-py3.14",
-    "job": "junit-py3.14",
+    "job": "pytest (Python 3.13)",
     "date": "2026-10-11T13:45:02Z",
     "xml": "cases/Err-o-RoadRunner_38144415509_junit-py3.14_33.xml",
     "golden": "golden/Err-o-RoadRunner_38144415509_junit-py3.14_33.out"
@@ -344,7 +344,7 @@
     "repo": "myon-bioinformatics/Err-o-RoadRunner",
     "run_id": 38144415509,
     "artifact": "junit-py3.13",
-    "job": "junit-py3.13",
+    "job": "pytest (Python 3.13)",
     "date": "2026-10-11T13:45:02Z",
     "xml": "cases/Err-o-RoadRunner_38144415509_junit-py3.13_34.xml",
     "golden": "golden/Err-o-RoadRunner_38144415509_junit-py3.13_34.out"
@@ -354,7 +354,7 @@
     "repo": "myon-bioinformatics/Err-o-RoadRunner",
     "run_id": 38144415509,
     "artifact": "junit-py3.11",
-    "job": "junit-py3.11",
+    "job": "pytest (Python 3.13)",
     "date": "2026-10-11T13:45:02Z",
     "xml": "cases/Err-o-RoadRunner_38144415509_junit-py3.11_35.xml",
     "golden": "golden/Err-o-RoadRunner_38144415509_junit-py3.11_35.out"
@@ -364,7 +364,7 @@
     "repo": "myon-bioinformatics/Ironmate",
     "run_id": 38027438772,
     "artifact": "junit-controlled-py3.12",
-    "job": "junit-controlled-py3.12",
+    "job": "failure-identity / collect",
     "date": "2026-10-10T05:25:12Z",
     "xml": "cases/Ironmate_38027438772_junit-controlled-py3.12_36.xml",
     "golden": "golden/Ironmate_38027438772_junit-controlled-py3.12_36.out"
@@ -374,7 +374,7 @@
     "repo": "myon-bioinformatics/Ironmate",
     "run_id": 38027438772,
     "artifact": "junit-py3.12",
-    "job": "junit-py3.12",
+    "job": "test",
     "date": "2026-10-10T05:25:12Z",
     "xml": "cases/Ironmate_38027438772_junit-py3.12_37.xml",
     "golden": "golden/Ironmate_38027438772_junit-py3.12_37.out"
@@ -384,7 +384,7 @@
     "repo": "myon-bioinformatics/Ironmate",
     "run_id": 38027304901,
     "artifact": "junit-py3.12",
-    "job": "junit-py3.12",
+    "job": "test",
     "date": "2026-10-10T05:22:46Z",
     "xml": "cases/Ironmate_38027304901_junit-py3.12_38.xml",
     "golden": "golden/Ironmate_38027304901_junit-py3.12_38.out"
@@ -394,7 +394,7 @@
     "repo": "myon-bioinformatics/Ironmate",
     "run_id": 38027304901,
     "artifact": "junit-controlled-py3.12",
-    "job": "junit-controlled-py3.12",
+    "job": "failure-identity / collect",
     "date": "2026-10-10T05:22:46Z",
     "xml": "cases/Ironmate_38027304901_junit-controlled-py3.12_39.xml",
     "golden": "golden/Ironmate_38027304901_junit-controlled-py3.12_39.out"
@@ -404,7 +404,7 @@
     "repo": "myon-bioinformatics/Ironmate",
     "run_id": 38025792384,
     "artifact": "junit-controlled-py3.12",
-    "job": "junit-controlled-py3.12",
+    "job": "failure-identity / collect",
     "date": "2026-10-10T04:56:26Z",
     "xml": "cases/Ironmate_38025792384_junit-controlled-py3.12_40.xml",
     "golden": "golden/Ironmate_38025792384_junit-controlled-py3.12_40.out"
@@ -414,7 +414,7 @@
     "repo": "myon-bioinformatics/Ironmate",
     "run_id": 38025792384,
     "artifact": "junit-py3.12",
-    "job": "junit-py3.12",
+    "job": "test",
     "date": "2026-10-10T04:56:26Z",
     "xml": "cases/Ironmate_38025792384_junit-py3.12_41.xml",
     "golden": "golden/Ironmate_38025792384_junit-py3.12_41.out"
@@ -424,7 +424,7 @@
     "repo": "myon-bioinformatics/Ironmate",
     "run_id": 38025765558,
     "artifact": "junit-py3.12",
-    "job": "junit-py3.12",
+    "job": "test",
     "date": "2026-10-10T04:55:57Z",
     "xml": "cases/Ironmate_38025765558_junit-py3.12_42.xml",
     "golden": "golden/Ironmate_38025765558_junit-py3.12_42.out"
@@ -434,7 +434,7 @@
     "repo": "myon-bioinformatics/Ironmate",
     "run_id": 38025765558,
     "artifact": "junit-controlled-py3.12",
-    "job": "junit-controlled-py3.12",
+    "job": "failure-identity / collect",
     "date": "2026-10-10T04:55:57Z",
     "xml": "cases/Ironmate_38025765558_junit-controlled-py3.12_43.xml",
     "golden": "golden/Ironmate_38025765558_junit-controlled-py3.12_43.out"
@@ -444,7 +444,7 @@
     "repo": "myon-bioinformatics/Ironmate",
     "run_id": 38016185213,
     "artifact": "junit-py3.12",
-    "job": "junit-py3.12",
+    "job": "test",
     "date": "2026-10-10T02:13:45Z",
     "xml": "cases/Ironmate_38016185213_junit-py3.12_44.xml",
     "golden": "golden/Ironmate_38016185213_junit-py3.12_44.out"
@@ -454,7 +454,7 @@
     "repo": "myon-bioinformatics/Ironmate",
     "run_id": 38016185213,
     "artifact": "junit-controlled-py3.12",
-    "job": "junit-controlled-py3.12",
+    "job": "failure-identity / collect",
     "date": "2026-10-10T02:13:45Z",
     "xml": "cases/Ironmate_38016185213_junit-controlled-py3.12_45.xml",
     "golden": "golden/Ironmate_38016185213_junit-controlled-py3.12_45.out"
@@ -464,7 +464,7 @@
     "repo": "myon-bioinformatics/Ironmate",
     "run_id": 38016032291,
     "artifact": "junit-controlled-py3.12",
-    "job": "junit-controlled-py3.12",
+    "job": "failure-identity / collect",
     "date": "2026-10-10T02:11:15Z",
     "xml": "cases/Ironmate_38016032291_junit-controlled-py3.12_46.xml",
     "golden": "golden/Ironmate_38016032291_junit-controlled-py3.12_46.out"
@@ -474,7 +474,7 @@
     "repo": "myon-bioinformatics/Ironmate",
     "run_id": 38016032291,
     "artifact": "junit-py3.12",
-    "job": "junit-py3.12",
+    "job": "test",
     "date": "2026-10-10T02:11:15Z",
     "xml": "cases/Ironmate_38016032291_junit-py3.12_47.xml",
     "golden": "golden/Ironmate_38016032291_junit-py3.12_47.out"
@@ -484,7 +484,7 @@
     "repo": "myon-bioinformatics/Ironmate",
     "run_id": 38015829216,
     "artifact": "junit-py3.12",
-    "job": "junit-py3.12",
+    "job": "test",
     "date": "2026-10-10T02:07:59Z",
     "xml": "cases/Ironmate_38015829216_junit-py3.12_48.xml",
     "golden": "golden/Ironmate_38015829216_junit-py3.12_48.out"
@@ -494,7 +494,7 @@
     "repo": "myon-bioinformatics/Ironmate",
     "run_id": 38015829216,
     "artifact": "junit-controlled-py3.12",
-    "job": "junit-controlled-py3.12",
+    "job": "failure-identity / collect",
     "date": "2026-10-10T02:07:59Z",
     "xml": "cases/Ironmate_38015829216_junit-controlled-py3.12_49.xml",
     "golden": "golden/Ironmate_38015829216_junit-controlled-py3.12_49.out"
@@ -504,7 +504,7 @@
     "repo": "myon-bioinformatics/Ironmate",
     "run_id": 38015820499,
     "artifact": "junit-controlled-py3.12",
-    "job": "junit-controlled-py3.12",
+    "job": "failure-identity / collect",
     "date": "2026-10-10T02:07:50Z",
     "xml": "cases/Ironmate_38015820499_junit-controlled-py3.12_50.xml",
     "golden": "golden/Ironmate_38015820499_junit-controlled-py3.12_50.out"
@@ -514,7 +514,7 @@
     "repo": "myon-bioinformatics/Ironmate",
     "run_id": 38015820499,
     "artifact": "junit-py3.12",
-    "job": "junit-py3.12",
+    "job": "test",
     "date": "2026-10-10T02:07:50Z",
     "xml": "cases/Ironmate_38015820499_junit-py3.12_51.xml",
     "golden": "golden/Ironmate_38015820499_junit-py3.12_51.out"
@@ -524,7 +524,7 @@
     "repo": "myon-bioinformatics/Ironmate",
     "run_id": 38015029924,
     "artifact": "junit-marp",
-    "job": "junit-marp",
+    "job": "Marp real PPTX conversion",
     "date": "2026-10-10T01:55:23Z",
     "xml": "cases/Ironmate_38015029924_junit-marp_52.xml",
     "golden": "golden/Ironmate_38015029924_junit-marp_52.out"
@@ -534,7 +534,7 @@
     "repo": "myon-bioinformatics/Ironmate",
     "run_id": 38015029924,
     "artifact": "junit-controlled-py3.12",
-    "job": "junit-controlled-py3.12",
+    "job": "failure-identity / collect",
     "date": "2026-10-10T01:55:23Z",
     "xml": "cases/Ironmate_38015029924_junit-controlled-py3.12_53.xml",
     "golden": "golden/Ironmate_38015029924_junit-controlled-py3.12_53.out"
@@ -544,7 +544,7 @@
     "repo": "myon-bioinformatics/Ironmate",
     "run_id": 38015021041,
     "artifact": "junit-controlled-py3.12",
-    "job": "junit-controlled-py3.12",
+    "job": "failure-identity / collect",
     "date": "2026-10-10T01:55:14Z",
     "xml": "cases/Ironmate_38015021041_junit-controlled-py3.12_54.xml",
     "golden": "golden/Ironmate_38015021041_junit-controlled-py3.12_54.out"
@@ -554,7 +554,7 @@
     "repo": "myon-bioinformatics/Ironmate",
     "run_id": 38015021041,
     "artifact": "junit-marp",
-    "job": "junit-marp",
+    "job": "Marp real PPTX conversion",
     "date": "2026-10-10T01:55:14Z",
     "xml": "cases/Ironmate_38015021041_junit-marp_55.xml",
     "golden": "golden/Ironmate_38015021041_junit-marp_55.out"
@@ -564,7 +564,7 @@
     "repo": "myon-bioinformatics/Ironmate",
     "run_id": 38013369383,
     "artifact": "junit-py3.12",
-    "job": "junit-py3.12",
+    "job": "test",
     "date": "2026-10-10T01:29:29Z",
     "xml": "cases/Ironmate_38013369383_junit-py3.12_56.xml",
     "golden": "golden/Ironmate_38013369383_junit-py3.12_56.out"
@@ -574,7 +574,7 @@
     "repo": "myon-bioinformatics/Ironmate",
     "run_id": 38013369383,
     "artifact": "junit-controlled-py3.12",
-    "job": "junit-controlled-py3.12",
+    "job": "failure-identity / collect",
     "date": "2026-10-10T01:29:29Z",
     "xml": "cases/Ironmate_38013369383_junit-controlled-py3.12_57.xml",
     "golden": "golden/Ironmate_38013369383_junit-controlled-py3.12_57.out"
@@ -584,7 +584,7 @@
     "repo": "myon-bioinformatics/Ironmate",
     "run_id": 38012731947,
     "artifact": "junit-py3.12",
-    "job": "junit-py3.12",
+    "job": "test",
     "date": "2026-10-10T01:19:27Z",
     "xml": "cases/Ironmate_38012731947_junit-py3.12_58.xml",
     "golden": "golden/Ironmate_38012731947_junit-py3.12_58.out"
@@ -594,7 +594,7 @@
     "repo": "myon-bioinformatics/Ironmate",
     "run_id": 38012731947,
     "artifact": "junit-controlled-py3.12",
-    "job": "junit-controlled-py3.12",
+    "job": "failure-identity / collect",
     "date": "2026-10-10T01:19:27Z",
     "xml": "cases/Ironmate_38012731947_junit-controlled-py3.12_59.xml",
     "golden": "golden/Ironmate_38012731947_junit-controlled-py3.12_59.out"
@@ -604,7 +604,7 @@
     "repo": "myon-bioinformatics/browser-test-kit",
     "run_id": 38008484688,
     "artifact": "junit-controlled-python-3.13",
-    "job": "junit-controlled-python-3.13",
+    "job": "junit-identity / collect",
     "date": "2026-10-10T00:18:36Z",
     "xml": "cases/browser-test-kit_38008484688_junit-controlled-python-3.13_60.xml",
     "golden": "golden/browser-test-kit_38008484688_junit-controlled-python-3.13_60.out"
@@ -614,7 +614,7 @@
     "repo": "myon-bioinformatics/browser-test-kit",
     "run_id": 38008484688,
     "artifact": "junit-python-3.13",
-    "job": "junit-python-3.13",
+    "job": "python",
     "date": "2026-10-10T00:18:36Z",
     "xml": "cases/browser-test-kit_38008484688_junit-python-3.13_61.xml",
     "golden": "golden/browser-test-kit_38008484688_junit-python-3.13_61.out"
@@ -624,7 +624,7 @@
     "repo": "myon-bioinformatics/browser-test-kit",
     "run_id": 37883351127,
     "artifact": "junit-python-3.13",
-    "job": "junit-python-3.13",
+    "job": "python",
     "date": "2026-10-09T04:19:42Z",
     "xml": "cases/browser-test-kit_37883351127_junit-python-3.13_62.xml",
     "golden": "golden/browser-test-kit_37883351127_junit-python-3.13_62.out"
@@ -634,7 +634,7 @@
     "repo": "myon-bioinformatics/browser-test-kit",
     "run_id": 37883351127,
     "artifact": "junit-controlled-python-3.13",
-    "job": "junit-controlled-python-3.13",
+    "job": "junit-identity / collect",
     "date": "2026-10-09T04:19:42Z",
     "xml": "cases/browser-test-kit_37883351127_junit-controlled-python-3.13_63.xml",
     "golden": "golden/browser-test-kit_37883351127_junit-controlled-python-3.13_63.out"
@@ -644,7 +644,7 @@
     "repo": "myon-bioinformatics/browser-test-kit",
     "run_id": 37635631660,
     "artifact": "junit-controlled-python-3.13",
-    "job": "junit-controlled-python-3.13",
+    "job": "junit-identity / collect",
     "date": "2026-10-07T14:18:46Z",
     "xml": "cases/browser-test-kit_37635631660_junit-controlled-python-3.13_64.xml",
     "golden": "golden/browser-test-kit_37635631660_junit-controlled-python-3.13_64.out"
@@ -654,7 +654,7 @@
     "repo": "myon-bioinformatics/browser-test-kit",
     "run_id": 37626688596,
     "artifact": "junit-python-3.13",
-    "job": "junit-python-3.13",
+    "job": "python",
     "date": "2026-10-07T13:12:28Z",
     "xml": "cases/browser-test-kit_37626688596_junit-python-3.13_65.xml",
     "golden": "golden/browser-test-kit_37626688596_junit-python-3.13_65.out"
@@ -664,7 +664,7 @@
     "repo": "myon-bioinformatics/browser-test-kit",
     "run_id": 37626637273,
     "artifact": "junit-python-3.13",
-    "job": "junit-python-3.13",
+    "job": "python",
     "date": "2026-10-07T13:12:04Z",
     "xml": "cases/browser-test-kit_37626637273_junit-python-3.13_66.xml",
     "golden": "golden/browser-test-kit_37626637273_junit-python-3.13_66.out"
@@ -674,7 +674,7 @@
     "repo": "myon-bioinformatics/browser-test-kit",
     "run_id": 37626314225,
     "artifact": "junit-python-3.13",
-    "job": "junit-python-3.13",
+    "job": "python",
     "date": "2026-10-07T13:09:30Z",
     "xml": "cases/browser-test-kit_37626314225_junit-python-3.13_67.xml",
     "golden": "golden/browser-test-kit_37626314225_junit-python-3.13_67.out"
@@ -684,7 +684,7 @@
     "repo": "myon-bioinformatics/browser-test-kit",
     "run_id": 37603797065,
     "artifact": "junit-python-3.13",
-    "job": "junit-python-3.13",
+    "job": "python",
     "date": "2026-10-07T09:54:24Z",
     "xml": "cases/browser-test-kit_37603797065_junit-python-3.13_68.xml",
     "golden": "golden/browser-test-kit_37603797065_junit-python-3.13_68.out"
@@ -694,7 +694,7 @@
     "repo": "myon-bioinformatics/browser-test-kit",
     "run_id": 37585061270,
     "artifact": "junit-python-3.13",
-    "job": "junit-python-3.13",
+    "job": "python",
     "date": "2026-10-07T07:03:57Z",
     "xml": "cases/browser-test-kit_37585061270_junit-python-3.13_69.xml",
     "golden": "golden/browser-test-kit_37585061270_junit-python-3.13_69.out"
@@ -704,7 +704,7 @@
     "repo": "myon-bioinformatics/browser-test-kit",
     "run_id": 37585061270,
     "artifact": "junit-controlled-python-3.13",
-    "job": "junit-controlled-python-3.13",
+    "job": "junit-identity / collect",
     "date": "2026-10-07T07:03:57Z",
     "xml": "cases/browser-test-kit_37585061270_junit-controlled-python-3.13_70.xml",
     "golden": "golden/browser-test-kit_37585061270_junit-controlled-python-3.13_70.out"
@@ -714,7 +714,7 @@
     "repo": "myon-bioinformatics/browser-test-kit",
     "run_id": 37583858072,
     "artifact": "junit-python-3.13",
-    "job": "junit-python-3.13",
+    "job": "python",
     "date": "2026-10-07T06:51:36Z",
     "xml": "cases/browser-test-kit_37583858072_junit-python-3.13_71.xml",
     "golden": "golden/browser-test-kit_37583858072_junit-python-3.13_71.out"
@@ -724,7 +724,7 @@
     "repo": "myon-bioinformatics/browser-test-kit",
     "run_id": 37583858072,
     "artifact": "junit-controlled-python-3.13",
-    "job": "junit-controlled-python-3.13",
+    "job": "junit-identity / collect",
     "date": "2026-10-07T06:51:36Z",
     "xml": "cases/browser-test-kit_37583858072_junit-controlled-python-3.13_72.xml",
     "golden": "golden/browser-test-kit_37583858072_junit-controlled-python-3.13_72.out"
@@ -734,7 +734,7 @@
     "repo": "myon-bioinformatics/flutter_navigation_basic",
     "run_id": 38143010107,
     "artifact": "junit-controlled-python-3.12",
-    "job": "junit-controlled-python-3.12",
+    "job": "Plan expected JUnit reports",
     "date": "2026-10-11T13:23:59Z",
     "xml": "cases/flutter_navigation_basic_38143010107_junit-controlled-python-3.12_73.xml",
     "golden": "golden/flutter_navigation_basic_38143010107_junit-controlled-python-3.12_73.out"
@@ -744,7 +744,7 @@
     "repo": "myon-bioinformatics/flutter_navigation_basic",
     "run_id": 38139683671,
     "artifact": "junit-flutter-refactor",
-    "job": "junit-flutter-refactor",
+    "job": "Flutter shared boundary",
     "date": "2026-10-11T12:32:59Z",
     "xml": "cases/flutter_navigation_basic_38139683671_junit-flutter-refactor_74.xml",
     "golden": "golden/flutter_navigation_basic_38139683671_junit-flutter-refactor_74.out"
@@ -754,7 +754,7 @@
     "repo": "myon-bioinformatics/flutter_navigation_basic",
     "run_id": 38139683671,
     "artifact": "junit-flutter-refactor",
-    "job": "junit-flutter-refactor",
+    "job": "Flutter shared boundary",
     "date": "2026-10-11T12:32:59Z",
     "xml": "cases/flutter_navigation_basic_38139683671_junit-flutter-refactor_75.xml",
     "golden": "golden/flutter_navigation_basic_38139683671_junit-flutter-refactor_75.out"
@@ -764,7 +764,7 @@
     "repo": "myon-bioinformatics/flutter_navigation_basic",
     "run_id": 38139683693,
     "artifact": "junit-controlled-python-3.12",
-    "job": "junit-controlled-python-3.12",
+    "job": "Plan expected JUnit reports",
     "date": "2026-10-11T12:32:59Z",
     "xml": "cases/flutter_navigation_basic_38139683693_junit-controlled-python-3.12_76.xml",
     "golden": "golden/flutter_navigation_basic_38139683693_junit-controlled-python-3.12_76.out"
@@ -774,7 +774,7 @@
     "repo": "myon-bioinformatics/flutter_navigation_basic",
     "run_id": 38139683688,
     "artifact": "junit-flutter-core-1",
-    "job": "junit-flutter-core-1",
+    "job": "Plan expected Flutter JUnit reports",
     "date": "2026-10-11T12:32:59Z",
     "xml": "cases/flutter_navigation_basic_38139683688_junit-flutter-core-1_77.xml",
     "golden": "golden/flutter_navigation_basic_38139683688_junit-flutter-core-1_77.out"
@@ -784,7 +784,7 @@
     "repo": "myon-bioinformatics/flutter_navigation_basic",
     "run_id": 38139683688,
     "artifact": "junit-flutter-core-0",
-    "job": "junit-flutter-core-0",
+    "job": "Plan expected Flutter JUnit reports",
     "date": "2026-10-11T12:32:59Z",
     "xml": "cases/flutter_navigation_basic_38139683688_junit-flutter-core-0_78.xml",
     "golden": "golden/flutter_navigation_basic_38139683688_junit-flutter-core-0_78.out"
@@ -794,7 +794,7 @@
     "repo": "myon-bioinformatics/flutter_navigation_basic",
     "run_id": 38130693569,
     "artifact": "junit-python-3.12",
-    "job": "junit-python-3.12",
+    "job": "Python vendor locked baseline",
     "date": "2026-10-11T10:05:20Z",
     "xml": "cases/flutter_navigation_basic_38130693569_junit-python-3.12_79.xml",
     "golden": "golden/flutter_navigation_basic_38130693569_junit-python-3.12_79.out"
@@ -804,7 +804,7 @@
     "repo": "myon-bioinformatics/flutter_navigation_basic",
     "run_id": 38130693569,
     "artifact": "junit-controlled-python-3.12",
-    "job": "junit-controlled-python-3.12",
+    "job": "Plan expected JUnit reports",
     "date": "2026-10-11T10:05:20Z",
     "xml": "cases/flutter_navigation_basic_38130693569_junit-controlled-python-3.12_80.xml",
     "golden": "golden/flutter_navigation_basic_38130693569_junit-controlled-python-3.12_80.out"
@@ -814,7 +814,7 @@
     "repo": "myon-bioinformatics/Aoi",
     "run_id": 37579788223,
     "artifact": "junit-py3.15",
-    "job": "junit-py3.15",
+    "job": "pytest (Python 3.15)",
     "date": "2026-10-07T06:07:09Z",
     "xml": "cases/Aoi_37579788223_junit-py3.15_81.xml",
     "golden": "golden/Aoi_37579788223_junit-py3.15_81.out"
@@ -824,7 +824,7 @@
     "repo": "myon-bioinformatics/Aoi",
     "run_id": 37579788223,
     "artifact": "junit-py3.13",
-    "job": "junit-py3.13",
+    "job": "pytest (Python 3.15)",
     "date": "2026-10-07T06:07:09Z",
     "xml": "cases/Aoi_37579788223_junit-py3.13_82.xml",
     "golden": "golden/Aoi_37579788223_junit-py3.13_82.out"
@@ -834,7 +834,7 @@
     "repo": "myon-bioinformatics/Aoi",
     "run_id": 37579788223,
     "artifact": "junit-py3.11",
-    "job": "junit-py3.11",
+    "job": "pytest (Python 3.15)",
     "date": "2026-10-07T06:07:09Z",
     "xml": "cases/Aoi_37579788223_junit-py3.11_83.xml",
     "golden": "golden/Aoi_37579788223_junit-py3.11_83.out"
@@ -844,7 +844,7 @@
     "repo": "myon-bioinformatics/Aoi",
     "run_id": 37579788223,
     "artifact": "junit-py3.14",
-    "job": "junit-py3.14",
+    "job": "pytest (Python 3.15)",
     "date": "2026-10-07T06:07:09Z",
     "xml": "cases/Aoi_37579788223_junit-py3.14_84.xml",
     "golden": "golden/Aoi_37579788223_junit-py3.14_84.out"
@@ -854,7 +854,7 @@
     "repo": "myon-bioinformatics/Aoi",
     "run_id": 37579788223,
     "artifact": "junit-py3.12",
-    "job": "junit-py3.12",
+    "job": "pytest (Python 3.15)",
     "date": "2026-10-07T06:07:09Z",
     "xml": "cases/Aoi_37579788223_junit-py3.12_85.xml",
     "golden": "golden/Aoi_37579788223_junit-py3.12_85.out"
@@ -864,7 +864,7 @@
     "repo": "myon-bioinformatics/Aoi",
     "run_id": 37561005125,
     "artifact": "junit-py3.11",
-    "job": "junit-py3.11",
+    "job": "pytest (Python 3.15)",
     "date": "2026-10-07T02:14:09Z",
     "xml": "cases/Aoi_37561005125_junit-py3.11_86.xml",
     "golden": "golden/Aoi_37561005125_junit-py3.11_86.out"
@@ -874,7 +874,7 @@
     "repo": "myon-bioinformatics/Aoi",
     "run_id": 37561005125,
     "artifact": "junit-py3.13",
-    "job": "junit-py3.13",
+    "job": "pytest (Python 3.15)",
     "date": "2026-10-07T02:14:09Z",
     "xml": "cases/Aoi_37561005125_junit-py3.13_87.xml",
     "golden": "golden/Aoi_37561005125_junit-py3.13_87.out"
@@ -884,7 +884,7 @@
     "repo": "myon-bioinformatics/Aoi",
     "run_id": 37561005125,
     "artifact": "junit-py3.14",
-    "job": "junit-py3.14",
+    "job": "pytest (Python 3.15)",
     "date": "2026-10-07T02:14:09Z",
     "xml": "cases/Aoi_37561005125_junit-py3.14_88.xml",
     "golden": "golden/Aoi_37561005125_junit-py3.14_88.out"
@@ -894,7 +894,7 @@
     "repo": "myon-bioinformatics/Aoi",
     "run_id": 37561005125,
     "artifact": "junit-py3.15",
-    "job": "junit-py3.15",
+    "job": "pytest (Python 3.15)",
     "date": "2026-10-07T02:14:09Z",
     "xml": "cases/Aoi_37561005125_junit-py3.15_89.xml",
     "golden": "golden/Aoi_37561005125_junit-py3.15_89.out"
@@ -904,7 +904,7 @@
     "repo": "myon-bioinformatics/Aoi",
     "run_id": 37561005125,
     "artifact": "junit-py3.12",
-    "job": "junit-py3.12",
+    "job": "pytest (Python 3.15)",
     "date": "2026-10-07T02:14:09Z",
     "xml": "cases/Aoi_37561005125_junit-py3.12_90.xml",
     "golden": "golden/Aoi_37561005125_junit-py3.12_90.out"
@@ -914,7 +914,7 @@
     "repo": "myon-bioinformatics/Aoi",
     "run_id": 37560026164,
     "artifact": "junit-py3.15",
-    "job": "junit-py3.15",
+    "job": "pytest (Python 3.11)",
     "date": "2026-10-07T02:02:14Z",
     "xml": "cases/Aoi_37560026164_junit-py3.15_91.xml",
     "golden": "golden/Aoi_37560026164_junit-py3.15_91.out"
@@ -924,7 +924,7 @@
     "repo": "myon-bioinformatics/Aoi",
     "run_id": 37560026164,
     "artifact": "junit-py3.14",
-    "job": "junit-py3.14",
+    "job": "pytest (Python 3.11)",
     "date": "2026-10-07T02:02:14Z",
     "xml": "cases/Aoi_37560026164_junit-py3.14_92.xml",
     "golden": "golden/Aoi_37560026164_junit-py3.14_92.out"
@@ -934,7 +934,7 @@
     "repo": "myon-bioinformatics/Aoi",
     "run_id": 37560026164,
     "artifact": "junit-py3.11",
-    "job": "junit-py3.11",
+    "job": "pytest (Python 3.11)",
     "date": "2026-10-07T02:02:14Z",
     "xml": "cases/Aoi_37560026164_junit-py3.11_93.xml",
     "golden": "golden/Aoi_37560026164_junit-py3.11_93.out"
@@ -944,7 +944,7 @@
     "repo": "myon-bioinformatics/Aoi",
     "run_id": 37560026164,
     "artifact": "junit-py3.12",
-    "job": "junit-py3.12",
+    "job": "pytest (Python 3.11)",
     "date": "2026-10-07T02:02:14Z",
     "xml": "cases/Aoi_37560026164_junit-py3.12_94.xml",
     "golden": "golden/Aoi_37560026164_junit-py3.12_94.out"
@@ -954,7 +954,7 @@
     "repo": "myon-bioinformatics/Aoi",
     "run_id": 37560026164,
     "artifact": "junit-py3.13",
-    "job": "junit-py3.13",
+    "job": "pytest (Python 3.11)",
     "date": "2026-10-07T02:02:14Z",
     "xml": "cases/Aoi_37560026164_junit-py3.13_95.xml",
     "golden": "golden/Aoi_37560026164_junit-py3.13_95.out"
@@ -964,7 +964,7 @@
     "repo": "myon-bioinformatics/Aoi",
     "run_id": 37559206978,
     "artifact": "junit-py3.15",
-    "job": "junit-py3.15",
+    "job": "pytest (Python 3.13)",
     "date": "2026-10-07T01:52:07Z",
     "xml": "cases/Aoi_37559206978_junit-py3.15_96.xml",
     "golden": "golden/Aoi_37559206978_junit-py3.15_96.out"
@@ -974,7 +974,7 @@
     "repo": "myon-bioinformatics/Aoi",
     "run_id": 37559206978,
     "artifact": "junit-py3.12",
-    "job": "junit-py3.12",
+    "job": "pytest (Python 3.13)",
     "date": "2026-10-07T01:52:07Z",
     "xml": "cases/Aoi_37559206978_junit-py3.12_97.xml",
     "golden": "golden/Aoi_37559206978_junit-py3.12_97.out"
@@ -984,7 +984,7 @@
     "repo": "myon-bioinformatics/Aoi",
     "run_id": 37559206978,
     "artifact": "junit-py3.13",
-    "job": "junit-py3.13",
+    "job": "pytest (Python 3.13)",
     "date": "2026-10-07T01:52:07Z",
     "xml": "cases/Aoi_37559206978_junit-py3.13_98.xml",
     "golden": "golden/Aoi_37559206978_junit-py3.13_98.out"
@@ -994,7 +994,7 @@
     "repo": "myon-bioinformatics/Aoi",
     "run_id": 37559206978,
     "artifact": "junit-py3.14",
-    "job": "junit-py3.14",
+    "job": "pytest (Python 3.13)",
     "date": "2026-10-07T01:52:07Z",
     "xml": "cases/Aoi_37559206978_junit-py3.14_99.xml",
     "golden": "golden/Aoi_37559206978_junit-py3.14_99.out"
@@ -1004,7 +1004,7 @@
     "repo": "myon-bioinformatics/Aoi",
     "run_id": 37559206978,
     "artifact": "junit-py3.11",
-    "job": "junit-py3.11",
+    "job": "pytest (Python 3.13)",
     "date": "2026-10-07T01:52:07Z",
     "xml": "cases/Aoi_37559206978_junit-py3.11_100.xml",
     "golden": "golden/Aoi_37559206978_junit-py3.11_100.out"

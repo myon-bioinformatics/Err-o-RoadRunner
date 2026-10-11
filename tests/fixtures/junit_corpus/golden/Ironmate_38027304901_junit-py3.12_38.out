@@ -1,9 +1,10 @@
 FOUND: exit code: 1
 FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38027304901_junit-py3.12_38.xml): 3
-FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38027304901_junit-py3.12_38.xml): NameError: name 'marp_pptx' is not defined
-FOUND: junit failure (last) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38027304901_junit-py3.12_38.xml): NameError: name 'marp_pptx' is not defined
+FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38027304901_junit-py3.12_38.xml): NameError: name 'marp_pptx' is not defined\nNameError: name 'marp_pptx' is not defined\ntests/test_marp_input_modes.py:17: in test_input_modes_share_converter\n    monkeypatch.setattr(marp_pptx, "convert", fake_convert)\n                        ^^^^^^^^^\nE   NameError: name 'marp_pptx' is not defined
+FOUND: junit failure (last) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38027304901_junit-py3.12_38.xml): NameError: name 'marp_pptx' is not defined\nNameError: name 'marp_pptx' is not defined\ntests/test_marp_input_modes.py:17: in test_input_modes_share_converter\n    monkeypatch.setattr(marp_pptx, "convert", fake_convert)\n                        ^^^^^^^^^\nE   NameError: name 'marp_pptx' is not defined
 FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38027304901_junit-py3.12_38.xml): tests.test_marp_input_modes
 FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38027304901_junit-py3.12_38.xml): NameError
+FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38027304901_junit-py3.12_38.xml): Error: name 'marp_pptx' is not defined
 FOUND: python version: 3.12.3 (cpython)
 FOUND: node version: v22.14.0
 FOUND: gh version: gh version 2.102.0 (2026-09-30)
@@ -15,4 +16,4 @@ NOT FOUND: junit system-err (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_3
 NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38027304901_junit-py3.12_38.xml)
 NOT FOUND: lock files in project root
 HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38027304901_junit-py3.12_38.xml): pytest/python
-HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38027304901_junit-py3.12_38.xml): NameError: name 'marp_pptx' is not defined
+HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38027304901_junit-py3.12_38.xml): NameError: name 'marp_pptx' is not defined\nNameError: name 'marp_pptx' is not defined\ntests/test_marp_input_modes.py:17: in test_input_modes_share_converter\n    monkeypatch.setattr(marp_pptx, "convert", fake_convert)\n                        ^^^^^^^^^\nE   NameError: name 'marp_pptx' is not defined

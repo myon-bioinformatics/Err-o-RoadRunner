@@ -1,18 +1,9 @@
 FOUND: exit code: 1
 FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37579788223_junit-py3.15_81.xml): 1
-FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37579788223_junit-py3.15_81.xml): AssertionError: docs/ の直下にあるのに、マスターファイルの一覧（docs/README.md）にない
-assert {'registratio...ata-audit.md'} == set()
-  
-  Extra items in the left set:
-  'registration-metadata-audit.md'
-  
-  Full diff:
-  - set()
-  + {
-  +     'registration-metadata-audit.md',
-  + }
+FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37579788223_junit-py3.15_81.xml): AssertionError: docs/ の直下にあるのに、マスターファイルの一覧（docs/README.md）にない\nassert {'registratio...ata-audit.md'} == set()\n  \n  Extra items in the left set:\n  'registration-metadata-audit.md'\n  \n  Full diff:\n  - set()\n  + {\n  +     'registration-metadata-audit.md',\n  + }\nAssertionError: docs/ の直下にあるのに、マスターファイルの一覧（docs/README.md）にない\nassert {'registratio...ata-audit.md'} == set()\n  \n  Extra items in
 FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37579788223_junit-py3.15_81.xml): nagoyaction.tests.test_docs_masters
 FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37579788223_junit-py3.15_81.xml): AssertionError
+FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37579788223_junit-py3.15_81.xml): Error: docs/ の直下にあるのに、マスターファイルの一覧（docs/README.md）にない
 FOUND: python version: 3.12.3 (cpython)
 FOUND: node version: v22.14.0
 FOUND: gh version: gh version 2.102.0 (2026-09-30)
@@ -26,14 +17,4 @@ NOT FOUND: lock files in project root
 HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37579788223_junit-py3.15_81.xml): pytest/python
 HINT: junit pytest assert line (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37579788223_junit-py3.15_81.xml): E       assert {'registratio...ata-audit.md'} == set()
 HINT: junit assertion diff (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37579788223_junit-py3.15_81.xml):   - set()   + {   +     'registration-metadata-audit.md',   + }
-HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37579788223_junit-py3.15_81.xml): AssertionError: docs/ の直下にあるのに、マスターファイルの一覧（docs/README.md）にない
-assert {'registratio...ata-audit.md'} == set()
-  
-  Extra items in the left set:
-  'registration-metadata-audit.md'
-  
-  Full diff:
-  - set()
-  + {
-  +     'registration-metadata-audit.md',
-  + }
+HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37579788223_junit-py3.15_81.xml): AssertionError: docs/ の直下にあるのに、マスターファイルの一覧（docs/README.md）にない\nassert {'registratio...ata-audit.md'} == set()\n  \n  Extra items in the left set:\n  'registration-metadata-audit.md'\n  \n  Full diff:\n  - set()\n  + {\n  +     'registration-metadata-audit.md',\n  + }\nAssertionError: docs/ の直下にあるのに、マスターファイルの一覧（docs/README.md）にない\nassert {'registratio...ata-audit.md'} == set()\n  \n  Extra items in

@@ -1,9 +1,8 @@
 FOUND: exit code: 1
 FOUND: junit errors (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37560026164_junit-py3.11_93.xml): 1
-FOUND: junit error (first) (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37560026164_junit-py3.11_93.xml): collection failure
+FOUND: junit error (first) (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37560026164_junit-py3.11_93.xml): collection failure\ncollection failure\nImportError while importing test module '<runner-work>/nagoyaction/tests/test_inbox.py'.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\n/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/importlib/__init__.py:126: in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^
 FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37560026164_junit-py3.11_93.xml): ModuleNotFoundError
-FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37560026164_junit-py3.11_93.xml): 1
-FOUND: junit collection error (first) (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37560026164_junit-py3.11_93.xml): collection failure
+FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37560026164_junit-py3.11_93.xml): Error: No module named 'neighbors'
 FOUND: python version: 3.12.3 (cpython)
 FOUND: node version: v22.14.0
 FOUND: gh version: gh version 2.102.0 (2026-09-30)
@@ -12,5 +11,6 @@ FOUND: environment variable names: AGENT_TRANSCRIPTS, CARGO_HOME, CURSOR_AGENT, 
 NOT FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37560026164_junit-py3.11_93.xml)
 NOT FOUND: junit skipped (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37560026164_junit-py3.11_93.xml)
 NOT FOUND: junit system-err (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37560026164_junit-py3.11_93.xml)
+NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37560026164_junit-py3.11_93.xml)
 NOT FOUND: lock files in project root
-HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37560026164_junit-py3.11_93.xml): collection failure
+HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37560026164_junit-py3.11_93.xml): collection failure\ncollection failure\nImportError while importing test module '<runner-work>/nagoyaction/tests/test_inbox.py'.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\n/opt/hostedtoolcache/Python/3.11.16/x64/lib/python3.11/importlib/__init__.py:126: in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^
