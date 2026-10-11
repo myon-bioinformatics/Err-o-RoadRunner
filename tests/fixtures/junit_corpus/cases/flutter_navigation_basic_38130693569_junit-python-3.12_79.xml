@@ -1,0 +1,772 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites><testsuite name="pytest" errors="0" failures="11" skipped="2" tests="737" time="38.987" timestamp="2026-10-11T10:09:05.110242+00:00" hostname="runnervmmprz5"><testcase classname="tests.test_junit_workflow_contract" name="test_failure_evidence_workflow_contract" time="0.033"><failure message="assert {'PYTHON': &quot;$...== 'true' }}&quot;} == {'PYTHON': &quot;$...== 'true' }}&quot;}&#10;  &#10;  Omitting 3 identical items, use -vv to show&#10;  Left contains 1 more item:&#10;  {'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;}&#10;  &#10;  Full diff:&#10;    {&#10;        'PYTHON': &quot;${{ needs.changes.outputs.python == 'true' || &quot;&#10;        &quot;needs.changes.outputs.workflow == 'true' }}&quot;,&#10;  +     'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;,&#10;        'PLAYWRIGHT': &quot;${{ needs.changes.outputs.playwright == 'true' }}&quot;,&#10;        'VALIDATION_BROWSER': &quot;${{ needs.changes.outputs.validation_browser == 'true' }}&quot;,&#10;    }">def test_failure_evidence_workflow_contract():
+&gt;       _assert_contract(yaml.safe_load(WORKFLOW.read_text(encoding="utf-8")))
+
+tests/test_junit_workflow_contract.py:168: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+workflow = {'name': 'Non-Dart checks', True: {'pull_request': {'branches': ['main'], 'paths': ['tool/python/**', 'tool/time/**', ...ub.event.pull_request.number || github.ref }}', 'cancel-in-progress': False}, 'permissions': {'contents': 'read'}, ...}
+
+    def _assert_contract(workflow):
+        producer = workflow["jobs"]["python-pytest"]
+        run = _step(producer, "Run pytest")
+        assert producer.get("continue-on-error", False) is False
+        assert run.get("continue-on-error", False) is False
+        assert run.get("if") is None
+        # The exact normalized command rejects || true, set +e and trailing exit 0.
+        assert " ".join(run["run"].split()) == COMMAND
+        assert run["env"]["FLUTTER_FAILURE_EVIDENCE"] == (
+            "${{ github.workspace }}/build/controlled-failure"
+        )
+        for name, path in (
+            ("junit-python-3.12", "build/test-results/python-3.12.xml"),
+            ("junit-controlled-python-3.12", "build/controlled-failure/"),
+        ):
+            upload = _upload(producer, name)
+            assert producer["steps"].index(run) &lt; producer["steps"].index(upload)
+            assert upload.get("if") == "always()"
+            assert upload.get("continue-on-error", False) is False
+            assert upload["with"]["path"].strip() == path
+            assert upload["with"]["if-no-files-found"] == "error"
+            assert upload["with"]["retention-days"] == 14
+        _assert_playwright_producer(workflow)
+        _assert_validation_browser_producer(workflow)
+        plan = workflow["jobs"]["junit-plan"]
+        assert plan["needs"] == "changes"
+        plan_step = next(item for item in plan["steps"] if item.get("id") == "plan")
+&gt;       assert plan_step["env"] == {
+            "PYTHON": "${{ needs.changes.outputs.python == 'true' || needs.changes.outputs.workflow == 'true' }}",
+            "PLAYWRIGHT": "${{ needs.changes.outputs.playwright == 'true' }}",
+            "VALIDATION_BROWSER": "${{ needs.changes.outputs.validation_browser == 'true' }}",
+        }
+E       assert {'PYTHON': "$...== 'true' }}"} == {'PYTHON': "$...== 'true' }}"}
+E         
+E         Omitting 3 identical items, use -vv to show
+E         Left contains 1 more item:
+E         {'E2E': "${{ needs.changes.outputs.e2e == 'true' }}"}
+E         
+E         Full diff:
+E           {
+E               'PYTHON': "${{ needs.changes.outputs.python == 'true' || "
+E               "needs.changes.outputs.workflow == 'true' }}",
+E         +     'E2E': "${{ needs.changes.outputs.e2e == 'true' }}",
+E               'PLAYWRIGHT': "${{ needs.changes.outputs.playwright == 'true' }}",
+E               'VALIDATION_BROWSER': "${{ needs.changes.outputs.validation_browser == 'true' }}",
+E           }
+
+tests/test_junit_workflow_contract.py:137: AssertionError</failure></testcase><testcase classname="tests.test_junit_workflow_contract" name="test_collection_asset_only_changes_select_python_junit_without_browser[window_034.json-pull_request]" time="0.064"><failure message="assert {'PYTHON': &quot;$...== 'true' }}&quot;} == {'PYTHON': &quot;$...== 'true' }}&quot;}&#10;  &#10;  Omitting 3 identical items, use -vv to show&#10;  Left contains 1 more item:&#10;  {'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;}&#10;  &#10;  Full diff:&#10;    {&#10;        'PYTHON': &quot;${{ needs.changes.outputs.python == 'true' || &quot;&#10;        &quot;needs.changes.outputs.workflow == 'true' }}&quot;,&#10;  +     'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;,&#10;        'PLAYWRIGHT': &quot;${{ needs.changes.outputs.playwright == 'true' }}&quot;,&#10;        'VALIDATION_BROWSER': &quot;${{ needs.changes.outputs.validation_browser == 'true' }}&quot;,&#10;    }">event = 'pull_request', asset = 'window_034.json'
+classify_workflow_asset = &lt;function classify_workflow_asset.&lt;locals&gt;.classify at 0x7f313e636160&gt;
+
+    @pytest.mark.parametrize("event", ["pull_request", "push"])
+    @pytest.mark.parametrize("asset", ["window_034.json", "structure_045.json", "command_051.json"])
+    def test_collection_asset_only_changes_select_python_junit_without_browser(
+        event, asset, classify_workflow_asset,
+    ):
+        # BaseLoader keeps `on` as a key instead of YAML 1.1's boolean True.
+        workflow = yaml.load(WORKFLOW.read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
+        assert "assets/data_processing/**" in workflow["on"][event]["paths"]
+        outputs = classify_workflow_asset(workflow, f"assets/data_processing/{asset}", event)
+        assert outputs["python"] == "true"
+        assert outputs["workflow"] == "false"
+        assert outputs["playwright"] == "false"
+        assert outputs["e2e"] == "false"
+        assert workflow["jobs"]["python-pytest"]["if"] == (
+            "needs.changes.outputs.python == 'true' || needs.changes.outputs.workflow == 'true'"
+        )
+        # The existing contract verifies that this selected producer emits JUnit
+        # and that the collector still runs even when a drift assertion fails.
+&gt;       _assert_contract(yaml.safe_load(WORKFLOW.read_text(encoding="utf-8")))
+
+tests/test_junit_workflow_contract.py:207: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+workflow = {'name': 'Non-Dart checks', True: {'pull_request': {'branches': ['main'], 'paths': ['tool/python/**', 'tool/time/**', ...ub.event.pull_request.number || github.ref }}', 'cancel-in-progress': False}, 'permissions': {'contents': 'read'}, ...}
+
+    def _assert_contract(workflow):
+        producer = workflow["jobs"]["python-pytest"]
+        run = _step(producer, "Run pytest")
+        assert producer.get("continue-on-error", False) is False
+        assert run.get("continue-on-error", False) is False
+        assert run.get("if") is None
+        # The exact normalized command rejects || true, set +e and trailing exit 0.
+        assert " ".join(run["run"].split()) == COMMAND
+        assert run["env"]["FLUTTER_FAILURE_EVIDENCE"] == (
+            "${{ github.workspace }}/build/controlled-failure"
+        )
+        for name, path in (
+            ("junit-python-3.12", "build/test-results/python-3.12.xml"),
+            ("junit-controlled-python-3.12", "build/controlled-failure/"),
+        ):
+            upload = _upload(producer, name)
+            assert producer["steps"].index(run) &lt; producer["steps"].index(upload)
+            assert upload.get("if") == "always()"
+            assert upload.get("continue-on-error", False) is False
+            assert upload["with"]["path"].strip() == path
+            assert upload["with"]["if-no-files-found"] == "error"
+            assert upload["with"]["retention-days"] == 14
+        _assert_playwright_producer(workflow)
+        _assert_validation_browser_producer(workflow)
+        plan = workflow["jobs"]["junit-plan"]
+        assert plan["needs"] == "changes"
+        plan_step = next(item for item in plan["steps"] if item.get("id") == "plan")
+&gt;       assert plan_step["env"] == {
+            "PYTHON": "${{ needs.changes.outputs.python == 'true' || needs.changes.outputs.workflow == 'true' }}",
+            "PLAYWRIGHT": "${{ needs.changes.outputs.playwright == 'true' }}",
+            "VALIDATION_BROWSER": "${{ needs.changes.outputs.validation_browser == 'true' }}",
+        }
+E       assert {'PYTHON': "$...== 'true' }}"} == {'PYTHON': "$...== 'true' }}"}
+E         
+E         Omitting 3 identical items, use -vv to show
+E         Left contains 1 more item:
+E         {'E2E': "${{ needs.changes.outputs.e2e == 'true' }}"}
+E         
+E         Full diff:
+E           {
+E               'PYTHON': "${{ needs.changes.outputs.python == 'true' || "
+E               "needs.changes.outputs.workflow == 'true' }}",
+E         +     'E2E': "${{ needs.changes.outputs.e2e == 'true' }}",
+E               'PLAYWRIGHT': "${{ needs.changes.outputs.playwright == 'true' }}",
+E               'VALIDATION_BROWSER': "${{ needs.changes.outputs.validation_browser == 'true' }}",
+E           }
+
+tests/test_junit_workflow_contract.py:137: AssertionError</failure></testcase><testcase classname="tests.test_junit_workflow_contract" name="test_collection_asset_only_changes_select_python_junit_without_browser[window_034.json-push]" time="0.065"><failure message="assert {'PYTHON': &quot;$...== 'true' }}&quot;} == {'PYTHON': &quot;$...== 'true' }}&quot;}&#10;  &#10;  Omitting 3 identical items, use -vv to show&#10;  Left contains 1 more item:&#10;  {'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;}&#10;  &#10;  Full diff:&#10;    {&#10;        'PYTHON': &quot;${{ needs.changes.outputs.python == 'true' || &quot;&#10;        &quot;needs.changes.outputs.workflow == 'true' }}&quot;,&#10;  +     'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;,&#10;        'PLAYWRIGHT': &quot;${{ needs.changes.outputs.playwright == 'true' }}&quot;,&#10;        'VALIDATION_BROWSER': &quot;${{ needs.changes.outputs.validation_browser == 'true' }}&quot;,&#10;    }">event = 'push', asset = 'window_034.json'
+classify_workflow_asset = &lt;function classify_workflow_asset.&lt;locals&gt;.classify at 0x7f313e6363e0&gt;
+
+    @pytest.mark.parametrize("event", ["pull_request", "push"])
+    @pytest.mark.parametrize("asset", ["window_034.json", "structure_045.json", "command_051.json"])
+    def test_collection_asset_only_changes_select_python_junit_without_browser(
+        event, asset, classify_workflow_asset,
+    ):
+        # BaseLoader keeps `on` as a key instead of YAML 1.1's boolean True.
+        workflow = yaml.load(WORKFLOW.read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
+        assert "assets/data_processing/**" in workflow["on"][event]["paths"]
+        outputs = classify_workflow_asset(workflow, f"assets/data_processing/{asset}", event)
+        assert outputs["python"] == "true"
+        assert outputs["workflow"] == "false"
+        assert outputs["playwright"] == "false"
+        assert outputs["e2e"] == "false"
+        assert workflow["jobs"]["python-pytest"]["if"] == (
+            "needs.changes.outputs.python == 'true' || needs.changes.outputs.workflow == 'true'"
+        )
+        # The existing contract verifies that this selected producer emits JUnit
+        # and that the collector still runs even when a drift assertion fails.
+&gt;       _assert_contract(yaml.safe_load(WORKFLOW.read_text(encoding="utf-8")))
+
+tests/test_junit_workflow_contract.py:207: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+workflow = {'name': 'Non-Dart checks', True: {'pull_request': {'branches': ['main'], 'paths': ['tool/python/**', 'tool/time/**', ...ub.event.pull_request.number || github.ref }}', 'cancel-in-progress': False}, 'permissions': {'contents': 'read'}, ...}
+
+    def _assert_contract(workflow):
+        producer = workflow["jobs"]["python-pytest"]
+        run = _step(producer, "Run pytest")
+        assert producer.get("continue-on-error", False) is False
+        assert run.get("continue-on-error", False) is False
+        assert run.get("if") is None
+        # The exact normalized command rejects || true, set +e and trailing exit 0.
+        assert " ".join(run["run"].split()) == COMMAND
+        assert run["env"]["FLUTTER_FAILURE_EVIDENCE"] == (
+            "${{ github.workspace }}/build/controlled-failure"
+        )
+        for name, path in (
+            ("junit-python-3.12", "build/test-results/python-3.12.xml"),
+            ("junit-controlled-python-3.12", "build/controlled-failure/"),
+        ):
+            upload = _upload(producer, name)
+            assert producer["steps"].index(run) &lt; producer["steps"].index(upload)
+            assert upload.get("if") == "always()"
+            assert upload.get("continue-on-error", False) is False
+            assert upload["with"]["path"].strip() == path
+            assert upload["with"]["if-no-files-found"] == "error"
+            assert upload["with"]["retention-days"] == 14
+        _assert_playwright_producer(workflow)
+        _assert_validation_browser_producer(workflow)
+        plan = workflow["jobs"]["junit-plan"]
+        assert plan["needs"] == "changes"
+        plan_step = next(item for item in plan["steps"] if item.get("id") == "plan")
+&gt;       assert plan_step["env"] == {
+            "PYTHON": "${{ needs.changes.outputs.python == 'true' || needs.changes.outputs.workflow == 'true' }}",
+            "PLAYWRIGHT": "${{ needs.changes.outputs.playwright == 'true' }}",
+            "VALIDATION_BROWSER": "${{ needs.changes.outputs.validation_browser == 'true' }}",
+        }
+E       assert {'PYTHON': "$...== 'true' }}"} == {'PYTHON': "$...== 'true' }}"}
+E         
+E         Omitting 3 identical items, use -vv to show
+E         Left contains 1 more item:
+E         {'E2E': "${{ needs.changes.outputs.e2e == 'true' }}"}
+E         
+E         Full diff:
+E           {
+E               'PYTHON': "${{ needs.changes.outputs.python == 'true' || "
+E               "needs.changes.outputs.workflow == 'true' }}",
+E         +     'E2E': "${{ needs.changes.outputs.e2e == 'true' }}",
+E               'PLAYWRIGHT': "${{ needs.changes.outputs.playwright == 'true' }}",
+E               'VALIDATION_BROWSER': "${{ needs.changes.outputs.validation_browser == 'true' }}",
+E           }
+
+tests/test_junit_workflow_contract.py:137: AssertionError</failure></testcase><testcase classname="tests.test_junit_workflow_contract" name="test_collection_asset_only_changes_select_python_junit_without_browser[structure_045.json-pull_request]" time="0.065"><failure message="assert {'PYTHON': &quot;$...== 'true' }}&quot;} == {'PYTHON': &quot;$...== 'true' }}&quot;}&#10;  &#10;  Omitting 3 identical items, use -vv to show&#10;  Left contains 1 more item:&#10;  {'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;}&#10;  &#10;  Full diff:&#10;    {&#10;        'PYTHON': &quot;${{ needs.changes.outputs.python == 'true' || &quot;&#10;        &quot;needs.changes.outputs.workflow == 'true' }}&quot;,&#10;  +     'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;,&#10;        'PLAYWRIGHT': &quot;${{ needs.changes.outputs.playwright == 'true' }}&quot;,&#10;        'VALIDATION_BROWSER': &quot;${{ needs.changes.outputs.validation_browser == 'true' }}&quot;,&#10;    }">event = 'pull_request', asset = 'structure_045.json'
+classify_workflow_asset = &lt;function classify_workflow_asset.&lt;locals&gt;.classify at 0x7f313e636020&gt;
+
+    @pytest.mark.parametrize("event", ["pull_request", "push"])
+    @pytest.mark.parametrize("asset", ["window_034.json", "structure_045.json", "command_051.json"])
+    def test_collection_asset_only_changes_select_python_junit_without_browser(
+        event, asset, classify_workflow_asset,
+    ):
+        # BaseLoader keeps `on` as a key instead of YAML 1.1's boolean True.
+        workflow = yaml.load(WORKFLOW.read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
+        assert "assets/data_processing/**" in workflow["on"][event]["paths"]
+        outputs = classify_workflow_asset(workflow, f"assets/data_processing/{asset}", event)
+        assert outputs["python"] == "true"
+        assert outputs["workflow"] == "false"
+        assert outputs["playwright"] == "false"
+        assert outputs["e2e"] == "false"
+        assert workflow["jobs"]["python-pytest"]["if"] == (
+            "needs.changes.outputs.python == 'true' || needs.changes.outputs.workflow == 'true'"
+        )
+        # The existing contract verifies that this selected producer emits JUnit
+        # and that the collector still runs even when a drift assertion fails.
+&gt;       _assert_contract(yaml.safe_load(WORKFLOW.read_text(encoding="utf-8")))
+
+tests/test_junit_workflow_contract.py:207: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+workflow = {'name': 'Non-Dart checks', True: {'pull_request': {'branches': ['main'], 'paths': ['tool/python/**', 'tool/time/**', ...ub.event.pull_request.number || github.ref }}', 'cancel-in-progress': False}, 'permissions': {'contents': 'read'}, ...}
+
+    def _assert_contract(workflow):
+        producer = workflow["jobs"]["python-pytest"]
+        run = _step(producer, "Run pytest")
+        assert producer.get("continue-on-error", False) is False
+        assert run.get("continue-on-error", False) is False
+        assert run.get("if") is None
+        # The exact normalized command rejects || true, set +e and trailing exit 0.
+        assert " ".join(run["run"].split()) == COMMAND
+        assert run["env"]["FLUTTER_FAILURE_EVIDENCE"] == (
+            "${{ github.workspace }}/build/controlled-failure"
+        )
+        for name, path in (
+            ("junit-python-3.12", "build/test-results/python-3.12.xml"),
+            ("junit-controlled-python-3.12", "build/controlled-failure/"),
+        ):
+            upload = _upload(producer, name)
+            assert producer["steps"].index(run) &lt; producer["steps"].index(upload)
+            assert upload.get("if") == "always()"
+            assert upload.get("continue-on-error", False) is False
+            assert upload["with"]["path"].strip() == path
+            assert upload["with"]["if-no-files-found"] == "error"
+            assert upload["with"]["retention-days"] == 14
+        _assert_playwright_producer(workflow)
+        _assert_validation_browser_producer(workflow)
+        plan = workflow["jobs"]["junit-plan"]
+        assert plan["needs"] == "changes"
+        plan_step = next(item for item in plan["steps"] if item.get("id") == "plan")
+&gt;       assert plan_step["env"] == {
+            "PYTHON": "${{ needs.changes.outputs.python == 'true' || needs.changes.outputs.workflow == 'true' }}",
+            "PLAYWRIGHT": "${{ needs.changes.outputs.playwright == 'true' }}",
+            "VALIDATION_BROWSER": "${{ needs.changes.outputs.validation_browser == 'true' }}",
+        }
+E       assert {'PYTHON': "$...== 'true' }}"} == {'PYTHON': "$...== 'true' }}"}
+E         
+E         Omitting 3 identical items, use -vv to show
+E         Left contains 1 more item:
+E         {'E2E': "${{ needs.changes.outputs.e2e == 'true' }}"}
+E         
+E         Full diff:
+E           {
+E               'PYTHON': "${{ needs.changes.outputs.python == 'true' || "
+E               "needs.changes.outputs.workflow == 'true' }}",
+E         +     'E2E': "${{ needs.changes.outputs.e2e == 'true' }}",
+E               'PLAYWRIGHT': "${{ needs.changes.outputs.playwright == 'true' }}",
+E               'VALIDATION_BROWSER': "${{ needs.changes.outputs.validation_browser == 'true' }}",
+E           }
+
+tests/test_junit_workflow_contract.py:137: AssertionError</failure></testcase><testcase classname="tests.test_junit_workflow_contract" name="test_collection_asset_only_changes_select_python_junit_without_browser[structure_045.json-push]" time="0.064"><failure message="assert {'PYTHON': &quot;$...== 'true' }}&quot;} == {'PYTHON': &quot;$...== 'true' }}&quot;}&#10;  &#10;  Omitting 3 identical items, use -vv to show&#10;  Left contains 1 more item:&#10;  {'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;}&#10;  &#10;  Full diff:&#10;    {&#10;        'PYTHON': &quot;${{ needs.changes.outputs.python == 'true' || &quot;&#10;        &quot;needs.changes.outputs.workflow == 'true' }}&quot;,&#10;  +     'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;,&#10;        'PLAYWRIGHT': &quot;${{ needs.changes.outputs.playwright == 'true' }}&quot;,&#10;        'VALIDATION_BROWSER': &quot;${{ needs.changes.outputs.validation_browser == 'true' }}&quot;,&#10;    }">event = 'push', asset = 'structure_045.json'
+classify_workflow_asset = &lt;function classify_workflow_asset.&lt;locals&gt;.classify at 0x7f313e636c00&gt;
+
+    @pytest.mark.parametrize("event", ["pull_request", "push"])
+    @pytest.mark.parametrize("asset", ["window_034.json", "structure_045.json", "command_051.json"])
+    def test_collection_asset_only_changes_select_python_junit_without_browser(
+        event, asset, classify_workflow_asset,
+    ):
+        # BaseLoader keeps `on` as a key instead of YAML 1.1's boolean True.
+        workflow = yaml.load(WORKFLOW.read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
+        assert "assets/data_processing/**" in workflow["on"][event]["paths"]
+        outputs = classify_workflow_asset(workflow, f"assets/data_processing/{asset}", event)
+        assert outputs["python"] == "true"
+        assert outputs["workflow"] == "false"
+        assert outputs["playwright"] == "false"
+        assert outputs["e2e"] == "false"
+        assert workflow["jobs"]["python-pytest"]["if"] == (
+            "needs.changes.outputs.python == 'true' || needs.changes.outputs.workflow == 'true'"
+        )
+        # The existing contract verifies that this selected producer emits JUnit
+        # and that the collector still runs even when a drift assertion fails.
+&gt;       _assert_contract(yaml.safe_load(WORKFLOW.read_text(encoding="utf-8")))
+
+tests/test_junit_workflow_contract.py:207: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+workflow = {'name': 'Non-Dart checks', True: {'pull_request': {'branches': ['main'], 'paths': ['tool/python/**', 'tool/time/**', ...ub.event.pull_request.number || github.ref }}', 'cancel-in-progress': False}, 'permissions': {'contents': 'read'}, ...}
+
+    def _assert_contract(workflow):
+        producer = workflow["jobs"]["python-pytest"]
+        run = _step(producer, "Run pytest")
+        assert producer.get("continue-on-error", False) is False
+        assert run.get("continue-on-error", False) is False
+        assert run.get("if") is None
+        # The exact normalized command rejects || true, set +e and trailing exit 0.
+        assert " ".join(run["run"].split()) == COMMAND
+        assert run["env"]["FLUTTER_FAILURE_EVIDENCE"] == (
+            "${{ github.workspace }}/build/controlled-failure"
+        )
+        for name, path in (
+            ("junit-python-3.12", "build/test-results/python-3.12.xml"),
+            ("junit-controlled-python-3.12", "build/controlled-failure/"),
+        ):
+            upload = _upload(producer, name)
+            assert producer["steps"].index(run) &lt; producer["steps"].index(upload)
+            assert upload.get("if") == "always()"
+            assert upload.get("continue-on-error", False) is False
+            assert upload["with"]["path"].strip() == path
+            assert upload["with"]["if-no-files-found"] == "error"
+            assert upload["with"]["retention-days"] == 14
+        _assert_playwright_producer(workflow)
+        _assert_validation_browser_producer(workflow)
+        plan = workflow["jobs"]["junit-plan"]
+        assert plan["needs"] == "changes"
+        plan_step = next(item for item in plan["steps"] if item.get("id") == "plan")
+&gt;       assert plan_step["env"] == {
+            "PYTHON": "${{ needs.changes.outputs.python == 'true' || needs.changes.outputs.workflow == 'true' }}",
+            "PLAYWRIGHT": "${{ needs.changes.outputs.playwright == 'true' }}",
+            "VALIDATION_BROWSER": "${{ needs.changes.outputs.validation_browser == 'true' }}",
+        }
+E       assert {'PYTHON': "$...== 'true' }}"} == {'PYTHON': "$...== 'true' }}"}
+E         
+E         Omitting 3 identical items, use -vv to show
+E         Left contains 1 more item:
+E         {'E2E': "${{ needs.changes.outputs.e2e == 'true' }}"}
+E         
+E         Full diff:
+E           {
+E               'PYTHON': "${{ needs.changes.outputs.python == 'true' || "
+E               "needs.changes.outputs.workflow == 'true' }}",
+E         +     'E2E': "${{ needs.changes.outputs.e2e == 'true' }}",
+E               'PLAYWRIGHT': "${{ needs.changes.outputs.playwright == 'true' }}",
+E               'VALIDATION_BROWSER': "${{ needs.changes.outputs.validation_browser == 'true' }}",
+E           }
+
+tests/test_junit_workflow_contract.py:137: AssertionError</failure></testcase><testcase classname="tests.test_junit_workflow_contract" name="test_collection_asset_only_changes_select_python_junit_without_browser[command_051.json-pull_request]" time="0.064"><failure message="assert {'PYTHON': &quot;$...== 'true' }}&quot;} == {'PYTHON': &quot;$...== 'true' }}&quot;}&#10;  &#10;  Omitting 3 identical items, use -vv to show&#10;  Left contains 1 more item:&#10;  {'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;}&#10;  &#10;  Full diff:&#10;    {&#10;        'PYTHON': &quot;${{ needs.changes.outputs.python == 'true' || &quot;&#10;        &quot;needs.changes.outputs.workflow == 'true' }}&quot;,&#10;  +     'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;,&#10;        'PLAYWRIGHT': &quot;${{ needs.changes.outputs.playwright == 'true' }}&quot;,&#10;        'VALIDATION_BROWSER': &quot;${{ needs.changes.outputs.validation_browser == 'true' }}&quot;,&#10;    }">event = 'pull_request', asset = 'command_051.json'
+classify_workflow_asset = &lt;function classify_workflow_asset.&lt;locals&gt;.classify at 0x7f313e636d40&gt;
+
+    @pytest.mark.parametrize("event", ["pull_request", "push"])
+    @pytest.mark.parametrize("asset", ["window_034.json", "structure_045.json", "command_051.json"])
+    def test_collection_asset_only_changes_select_python_junit_without_browser(
+        event, asset, classify_workflow_asset,
+    ):
+        # BaseLoader keeps `on` as a key instead of YAML 1.1's boolean True.
+        workflow = yaml.load(WORKFLOW.read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
+        assert "assets/data_processing/**" in workflow["on"][event]["paths"]
+        outputs = classify_workflow_asset(workflow, f"assets/data_processing/{asset}", event)
+        assert outputs["python"] == "true"
+        assert outputs["workflow"] == "false"
+        assert outputs["playwright"] == "false"
+        assert outputs["e2e"] == "false"
+        assert workflow["jobs"]["python-pytest"]["if"] == (
+            "needs.changes.outputs.python == 'true' || needs.changes.outputs.workflow == 'true'"
+        )
+        # The existing contract verifies that this selected producer emits JUnit
+        # and that the collector still runs even when a drift assertion fails.
+&gt;       _assert_contract(yaml.safe_load(WORKFLOW.read_text(encoding="utf-8")))
+
+tests/test_junit_workflow_contract.py:207: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+workflow = {'name': 'Non-Dart checks', True: {'pull_request': {'branches': ['main'], 'paths': ['tool/python/**', 'tool/time/**', ...ub.event.pull_request.number || github.ref }}', 'cancel-in-progress': False}, 'permissions': {'contents': 'read'}, ...}
+
+    def _assert_contract(workflow):
+        producer = workflow["jobs"]["python-pytest"]
+        run = _step(producer, "Run pytest")
+        assert producer.get("continue-on-error", False) is False
+        assert run.get("continue-on-error", False) is False
+        assert run.get("if") is None
+        # The exact normalized command rejects || true, set +e and trailing exit 0.
+        assert " ".join(run["run"].split()) == COMMAND
+        assert run["env"]["FLUTTER_FAILURE_EVIDENCE"] == (
+            "${{ github.workspace }}/build/controlled-failure"
+        )
+        for name, path in (
+            ("junit-python-3.12", "build/test-results/python-3.12.xml"),
+            ("junit-controlled-python-3.12", "build/controlled-failure/"),
+        ):
+            upload = _upload(producer, name)
+            assert producer["steps"].index(run) &lt; producer["steps"].index(upload)
+            assert upload.get("if") == "always()"
+            assert upload.get("continue-on-error", False) is False
+            assert upload["with"]["path"].strip() == path
+            assert upload["with"]["if-no-files-found"] == "error"
+            assert upload["with"]["retention-days"] == 14
+        _assert_playwright_producer(workflow)
+        _assert_validation_browser_producer(workflow)
+        plan = workflow["jobs"]["junit-plan"]
+        assert plan["needs"] == "changes"
+        plan_step = next(item for item in plan["steps"] if item.get("id") == "plan")
+&gt;       assert plan_step["env"] == {
+            "PYTHON": "${{ needs.changes.outputs.python == 'true' || needs.changes.outputs.workflow == 'true' }}",
+            "PLAYWRIGHT": "${{ needs.changes.outputs.playwright == 'true' }}",
+            "VALIDATION_BROWSER": "${{ needs.changes.outputs.validation_browser == 'true' }}",
+        }
+E       assert {'PYTHON': "$...== 'true' }}"} == {'PYTHON': "$...== 'true' }}"}
+E         
+E         Omitting 3 identical items, use -vv to show
+E         Left contains 1 more item:
+E         {'E2E': "${{ needs.changes.outputs.e2e == 'true' }}"}
+E         
+E         Full diff:
+E           {
+E               'PYTHON': "${{ needs.changes.outputs.python == 'true' || "
+E               "needs.changes.outputs.workflow == 'true' }}",
+E         +     'E2E': "${{ needs.changes.outputs.e2e == 'true' }}",
+E               'PLAYWRIGHT': "${{ needs.changes.outputs.playwright == 'true' }}",
+E               'VALIDATION_BROWSER': "${{ needs.changes.outputs.validation_browser == 'true' }}",
+E           }
+
+tests/test_junit_workflow_contract.py:137: AssertionError</failure></testcase><testcase classname="tests.test_junit_workflow_contract" name="test_collection_asset_only_changes_select_python_junit_without_browser[command_051.json-push]" time="0.065"><failure message="assert {'PYTHON': &quot;$...== 'true' }}&quot;} == {'PYTHON': &quot;$...== 'true' }}&quot;}&#10;  &#10;  Omitting 3 identical items, use -vv to show&#10;  Left contains 1 more item:&#10;  {'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;}&#10;  &#10;  Full diff:&#10;    {&#10;        'PYTHON': &quot;${{ needs.changes.outputs.python == 'true' || &quot;&#10;        &quot;needs.changes.outputs.workflow == 'true' }}&quot;,&#10;  +     'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;,&#10;        'PLAYWRIGHT': &quot;${{ needs.changes.outputs.playwright == 'true' }}&quot;,&#10;        'VALIDATION_BROWSER': &quot;${{ needs.changes.outputs.validation_browser == 'true' }}&quot;,&#10;    }">event = 'push', asset = 'command_051.json'
+classify_workflow_asset = &lt;function classify_workflow_asset.&lt;locals&gt;.classify at 0x7f313e636160&gt;
+
+    @pytest.mark.parametrize("event", ["pull_request", "push"])
+    @pytest.mark.parametrize("asset", ["window_034.json", "structure_045.json", "command_051.json"])
+    def test_collection_asset_only_changes_select_python_junit_without_browser(
+        event, asset, classify_workflow_asset,
+    ):
+        # BaseLoader keeps `on` as a key instead of YAML 1.1's boolean True.
+        workflow = yaml.load(WORKFLOW.read_text(encoding="utf-8"), Loader=yaml.BaseLoader)
+        assert "assets/data_processing/**" in workflow["on"][event]["paths"]
+        outputs = classify_workflow_asset(workflow, f"assets/data_processing/{asset}", event)
+        assert outputs["python"] == "true"
+        assert outputs["workflow"] == "false"
+        assert outputs["playwright"] == "false"
+        assert outputs["e2e"] == "false"
+        assert workflow["jobs"]["python-pytest"]["if"] == (
+            "needs.changes.outputs.python == 'true' || needs.changes.outputs.workflow == 'true'"
+        )
+        # The existing contract verifies that this selected producer emits JUnit
+        # and that the collector still runs even when a drift assertion fails.
+&gt;       _assert_contract(yaml.safe_load(WORKFLOW.read_text(encoding="utf-8")))
+
+tests/test_junit_workflow_contract.py:207: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+workflow = {'name': 'Non-Dart checks', True: {'pull_request': {'branches': ['main'], 'paths': ['tool/python/**', 'tool/time/**', ...ub.event.pull_request.number || github.ref }}', 'cancel-in-progress': False}, 'permissions': {'contents': 'read'}, ...}
+
+    def _assert_contract(workflow):
+        producer = workflow["jobs"]["python-pytest"]
+        run = _step(producer, "Run pytest")
+        assert producer.get("continue-on-error", False) is False
+        assert run.get("continue-on-error", False) is False
+        assert run.get("if") is None
+        # The exact normalized command rejects || true, set +e and trailing exit 0.
+        assert " ".join(run["run"].split()) == COMMAND
+        assert run["env"]["FLUTTER_FAILURE_EVIDENCE"] == (
+            "${{ github.workspace }}/build/controlled-failure"
+        )
+        for name, path in (
+            ("junit-python-3.12", "build/test-results/python-3.12.xml"),
+            ("junit-controlled-python-3.12", "build/controlled-failure/"),
+        ):
+            upload = _upload(producer, name)
+            assert producer["steps"].index(run) &lt; producer["steps"].index(upload)
+            assert upload.get("if") == "always()"
+            assert upload.get("continue-on-error", False) is False
+            assert upload["with"]["path"].strip() == path
+            assert upload["with"]["if-no-files-found"] == "error"
+            assert upload["with"]["retention-days"] == 14
+        _assert_playwright_producer(workflow)
+        _assert_validation_browser_producer(workflow)
+        plan = workflow["jobs"]["junit-plan"]
+        assert plan["needs"] == "changes"
+        plan_step = next(item for item in plan["steps"] if item.get("id") == "plan")
+&gt;       assert plan_step["env"] == {
+            "PYTHON": "${{ needs.changes.outputs.python == 'true' || needs.changes.outputs.workflow == 'true' }}",
+            "PLAYWRIGHT": "${{ needs.changes.outputs.playwright == 'true' }}",
+            "VALIDATION_BROWSER": "${{ needs.changes.outputs.validation_browser == 'true' }}",
+        }
+E       assert {'PYTHON': "$...== 'true' }}"} == {'PYTHON': "$...== 'true' }}"}
+E         
+E         Omitting 3 identical items, use -vv to show
+E         Left contains 1 more item:
+E         {'E2E': "${{ needs.changes.outputs.e2e == 'true' }}"}
+E         
+E         Full diff:
+E           {
+E               'PYTHON': "${{ needs.changes.outputs.python == 'true' || "
+E               "needs.changes.outputs.workflow == 'true' }}",
+E         +     'E2E': "${{ needs.changes.outputs.e2e == 'true' }}",
+E               'PLAYWRIGHT': "${{ needs.changes.outputs.playwright == 'true' }}",
+E               'VALIDATION_BROWSER': "${{ needs.changes.outputs.validation_browser == 'true' }}",
+E           }
+
+tests/test_junit_workflow_contract.py:137: AssertionError</failure></testcase><testcase classname="tests.test_junit_workflow_contract" name="test_failure_evidence_contract_rejects_unsafe_mutations" time="0.031"><failure message="assert {'PYTHON': &quot;$...== 'true' }}&quot;} == {'PYTHON': &quot;$...== 'true' }}&quot;}&#10;  &#10;  Omitting 3 identical items, use -vv to show&#10;  Left contains 1 more item:&#10;  {'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;}&#10;  &#10;  Full diff:&#10;    {&#10;        'PYTHON': &quot;${{ needs.changes.outputs.python == 'true' || &quot;&#10;        &quot;needs.changes.outputs.workflow == 'true' }}&quot;,&#10;  +     'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;,&#10;        'PLAYWRIGHT': &quot;${{ needs.changes.outputs.playwright == 'true' }}&quot;,&#10;        'VALIDATION_BROWSER': &quot;${{ needs.changes.outputs.validation_browser == 'true' }}&quot;,&#10;    }">def test_failure_evidence_contract_rejects_unsafe_mutations():
+        workflow = yaml.safe_load(WORKFLOW.read_text(encoding="utf-8"))
+&gt;       _assert_contract(workflow)  # A broken baseline must not make all mutants pass.
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_junit_workflow_contract.py:212: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+workflow = {'name': 'Non-Dart checks', True: {'pull_request': {'branches': ['main'], 'paths': ['tool/python/**', 'tool/time/**', ...ub.event.pull_request.number || github.ref }}', 'cancel-in-progress': False}, 'permissions': {'contents': 'read'}, ...}
+
+    def _assert_contract(workflow):
+        producer = workflow["jobs"]["python-pytest"]
+        run = _step(producer, "Run pytest")
+        assert producer.get("continue-on-error", False) is False
+        assert run.get("continue-on-error", False) is False
+        assert run.get("if") is None
+        # The exact normalized command rejects || true, set +e and trailing exit 0.
+        assert " ".join(run["run"].split()) == COMMAND
+        assert run["env"]["FLUTTER_FAILURE_EVIDENCE"] == (
+            "${{ github.workspace }}/build/controlled-failure"
+        )
+        for name, path in (
+            ("junit-python-3.12", "build/test-results/python-3.12.xml"),
+            ("junit-controlled-python-3.12", "build/controlled-failure/"),
+        ):
+            upload = _upload(producer, name)
+            assert producer["steps"].index(run) &lt; producer["steps"].index(upload)
+            assert upload.get("if") == "always()"
+            assert upload.get("continue-on-error", False) is False
+            assert upload["with"]["path"].strip() == path
+            assert upload["with"]["if-no-files-found"] == "error"
+            assert upload["with"]["retention-days"] == 14
+        _assert_playwright_producer(workflow)
+        _assert_validation_browser_producer(workflow)
+        plan = workflow["jobs"]["junit-plan"]
+        assert plan["needs"] == "changes"
+        plan_step = next(item for item in plan["steps"] if item.get("id") == "plan")
+&gt;       assert plan_step["env"] == {
+            "PYTHON": "${{ needs.changes.outputs.python == 'true' || needs.changes.outputs.workflow == 'true' }}",
+            "PLAYWRIGHT": "${{ needs.changes.outputs.playwright == 'true' }}",
+            "VALIDATION_BROWSER": "${{ needs.changes.outputs.validation_browser == 'true' }}",
+        }
+E       assert {'PYTHON': "$...== 'true' }}"} == {'PYTHON': "$...== 'true' }}"}
+E         
+E         Omitting 3 identical items, use -vv to show
+E         Left contains 1 more item:
+E         {'E2E': "${{ needs.changes.outputs.e2e == 'true' }}"}
+E         
+E         Full diff:
+E           {
+E               'PYTHON': "${{ needs.changes.outputs.python == 'true' || "
+E               "needs.changes.outputs.workflow == 'true' }}",
+E         +     'E2E': "${{ needs.changes.outputs.e2e == 'true' }}",
+E               'PLAYWRIGHT': "${{ needs.changes.outputs.playwright == 'true' }}",
+E               'VALIDATION_BROWSER': "${{ needs.changes.outputs.validation_browser == 'true' }}",
+E           }
+
+tests/test_junit_workflow_contract.py:137: AssertionError</failure></testcase><testcase classname="tests.test_junit_workflow_contract" name="test_real_collector_contract_rejects_provenance_mutations[collector names PR merge checkout-${{ github.sha }}-workflow_path0-_assert_contract]" time="0.031"><failure message="assert {'PYTHON': &quot;$...== 'true' }}&quot;} == {'PYTHON': &quot;$...== 'true' }}&quot;}&#10;  &#10;  Omitting 3 identical items, use -vv to show&#10;  Left contains 1 more item:&#10;  {'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;}&#10;  &#10;  Full diff:&#10;    {&#10;        'PYTHON': &quot;${{ needs.changes.outputs.python == 'true' || &quot;&#10;        &quot;needs.changes.outputs.workflow == 'true' }}&quot;,&#10;  +     'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;,&#10;        'PLAYWRIGHT': &quot;${{ needs.changes.outputs.playwright == 'true' }}&quot;,&#10;        'VALIDATION_BROWSER': &quot;${{ needs.changes.outputs.validation_browser == 'true' }}&quot;,&#10;    }">workflow_path = PosixPath('&lt;runner-work&gt;/.github/workflows/non-dart.yml')
+contract = &lt;function _assert_contract at 0x7f314098d080&gt;
+label = 'collector names PR merge checkout', bad_input = '${{ github.sha }}'
+
+    @pytest.mark.parametrize("workflow_path, contract", [
+        (WORKFLOW, _assert_contract),
+        (REFACTOR, _assert_refactor_smoke_collector),
+        (DART, _assert_flutter_workflow_collector),
+    ])
+    @pytest.mark.parametrize("label, bad_input", PROVENANCE_MUTATIONS)
+    def test_real_collector_contract_rejects_provenance_mutations(
+        workflow_path, contract, label, bad_input,
+    ):
+        workflow = yaml.safe_load(workflow_path.read_text(encoding="utf-8"))
+&gt;       contract(workflow)  # The actual production contract must accept the baseline.
+        ^^^^^^^^^^^^^^^^^^
+
+tests/test_junit_workflow_contract.py:391: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+workflow = {'name': 'Non-Dart checks', True: {'pull_request': {'branches': ['main'], 'paths': ['tool/python/**', 'tool/time/**', ...ub.event.pull_request.number || github.ref }}', 'cancel-in-progress': False}, 'permissions': {'contents': 'read'}, ...}
+
+    def _assert_contract(workflow):
+        producer = workflow["jobs"]["python-pytest"]
+        run = _step(producer, "Run pytest")
+        assert producer.get("continue-on-error", False) is False
+        assert run.get("continue-on-error", False) is False
+        assert run.get("if") is None
+        # The exact normalized command rejects || true, set +e and trailing exit 0.
+        assert " ".join(run["run"].split()) == COMMAND
+        assert run["env"]["FLUTTER_FAILURE_EVIDENCE"] == (
+            "${{ github.workspace }}/build/controlled-failure"
+        )
+        for name, path in (
+            ("junit-python-3.12", "build/test-results/python-3.12.xml"),
+            ("junit-controlled-python-3.12", "build/controlled-failure/"),
+        ):
+            upload = _upload(producer, name)
+            assert producer["steps"].index(run) &lt; producer["steps"].index(upload)
+            assert upload.get("if") == "always()"
+            assert upload.get("continue-on-error", False) is False
+            assert upload["with"]["path"].strip() == path
+            assert upload["with"]["if-no-files-found"] == "error"
+            assert upload["with"]["retention-days"] == 14
+        _assert_playwright_producer(workflow)
+        _assert_validation_browser_producer(workflow)
+        plan = workflow["jobs"]["junit-plan"]
+        assert plan["needs"] == "changes"
+        plan_step = next(item for item in plan["steps"] if item.get("id") == "plan")
+&gt;       assert plan_step["env"] == {
+            "PYTHON": "${{ needs.changes.outputs.python == 'true' || needs.changes.outputs.workflow == 'true' }}",
+            "PLAYWRIGHT": "${{ needs.changes.outputs.playwright == 'true' }}",
+            "VALIDATION_BROWSER": "${{ needs.changes.outputs.validation_browser == 'true' }}",
+        }
+E       assert {'PYTHON': "$...== 'true' }}"} == {'PYTHON': "$...== 'true' }}"}
+E         
+E         Omitting 3 identical items, use -vv to show
+E         Left contains 1 more item:
+E         {'E2E': "${{ needs.changes.outputs.e2e == 'true' }}"}
+E         
+E         Full diff:
+E           {
+E               'PYTHON': "${{ needs.changes.outputs.python == 'true' || "
+E               "needs.changes.outputs.workflow == 'true' }}",
+E         +     'E2E': "${{ needs.changes.outputs.e2e == 'true' }}",
+E               'PLAYWRIGHT': "${{ needs.changes.outputs.playwright == 'true' }}",
+E               'VALIDATION_BROWSER': "${{ needs.changes.outputs.validation_browser == 'true' }}",
+E           }
+
+tests/test_junit_workflow_contract.py:137: AssertionError</failure></testcase><testcase classname="tests.test_junit_workflow_contract" name="test_real_collector_contract_rejects_provenance_mutations[collector drops provenance--workflow_path0-_assert_contract]" time="0.031"><failure message="assert {'PYTHON': &quot;$...== 'true' }}&quot;} == {'PYTHON': &quot;$...== 'true' }}&quot;}&#10;  &#10;  Omitting 3 identical items, use -vv to show&#10;  Left contains 1 more item:&#10;  {'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;}&#10;  &#10;  Full diff:&#10;    {&#10;        'PYTHON': &quot;${{ needs.changes.outputs.python == 'true' || &quot;&#10;        &quot;needs.changes.outputs.workflow == 'true' }}&quot;,&#10;  +     'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;,&#10;        'PLAYWRIGHT': &quot;${{ needs.changes.outputs.playwright == 'true' }}&quot;,&#10;        'VALIDATION_BROWSER': &quot;${{ needs.changes.outputs.validation_browser == 'true' }}&quot;,&#10;    }">workflow_path = PosixPath('&lt;runner-work&gt;/.github/workflows/non-dart.yml')
+contract = &lt;function _assert_contract at 0x7f314098d080&gt;
+label = 'collector drops provenance', bad_input = ''
+
+    @pytest.mark.parametrize("workflow_path, contract", [
+        (WORKFLOW, _assert_contract),
+        (REFACTOR, _assert_refactor_smoke_collector),
+        (DART, _assert_flutter_workflow_collector),
+    ])
+    @pytest.mark.parametrize("label, bad_input", PROVENANCE_MUTATIONS)
+    def test_real_collector_contract_rejects_provenance_mutations(
+        workflow_path, contract, label, bad_input,
+    ):
+        workflow = yaml.safe_load(workflow_path.read_text(encoding="utf-8"))
+&gt;       contract(workflow)  # The actual production contract must accept the baseline.
+        ^^^^^^^^^^^^^^^^^^
+
+tests/test_junit_workflow_contract.py:391: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+workflow = {'name': 'Non-Dart checks', True: {'pull_request': {'branches': ['main'], 'paths': ['tool/python/**', 'tool/time/**', ...ub.event.pull_request.number || github.ref }}', 'cancel-in-progress': False}, 'permissions': {'contents': 'read'}, ...}
+
+    def _assert_contract(workflow):
+        producer = workflow["jobs"]["python-pytest"]
+        run = _step(producer, "Run pytest")
+        assert producer.get("continue-on-error", False) is False
+        assert run.get("continue-on-error", False) is False
+        assert run.get("if") is None
+        # The exact normalized command rejects || true, set +e and trailing exit 0.
+        assert " ".join(run["run"].split()) == COMMAND
+        assert run["env"]["FLUTTER_FAILURE_EVIDENCE"] == (
+            "${{ github.workspace }}/build/controlled-failure"
+        )
+        for name, path in (
+            ("junit-python-3.12", "build/test-results/python-3.12.xml"),
+            ("junit-controlled-python-3.12", "build/controlled-failure/"),
+        ):
+            upload = _upload(producer, name)
+            assert producer["steps"].index(run) &lt; producer["steps"].index(upload)
+            assert upload.get("if") == "always()"
+            assert upload.get("continue-on-error", False) is False
+            assert upload["with"]["path"].strip() == path
+            assert upload["with"]["if-no-files-found"] == "error"
+            assert upload["with"]["retention-days"] == 14
+        _assert_playwright_producer(workflow)
+        _assert_validation_browser_producer(workflow)
+        plan = workflow["jobs"]["junit-plan"]
+        assert plan["needs"] == "changes"
+        plan_step = next(item for item in plan["steps"] if item.get("id") == "plan")
+&gt;       assert plan_step["env"] == {
+            "PYTHON": "${{ needs.changes.outputs.python == 'true' || needs.changes.outputs.workflow == 'true' }}",
+            "PLAYWRIGHT": "${{ needs.changes.outputs.playwright == 'true' }}",
+            "VALIDATION_BROWSER": "${{ needs.changes.outputs.validation_browser == 'true' }}",
+        }
+E       assert {'PYTHON': "$...== 'true' }}"} == {'PYTHON': "$...== 'true' }}"}
+E         
+E         Omitting 3 identical items, use -vv to show
+E         Left contains 1 more item:
+E         {'E2E': "${{ needs.changes.outputs.e2e == 'true' }}"}
+E         
+E         Full diff:
+E           {
+E               'PYTHON': "${{ needs.changes.outputs.python == 'true' || "
+E               "needs.changes.outputs.workflow == 'true' }}",
+E         +     'E2E': "${{ needs.changes.outputs.e2e == 'true' }}",
+E               'PLAYWRIGHT': "${{ needs.changes.outputs.playwright == 'true' }}",
+E               'VALIDATION_BROWSER': "${{ needs.changes.outputs.validation_browser == 'true' }}",
+E           }
+
+tests/test_junit_workflow_contract.py:137: AssertionError</failure></testcase><testcase classname="tests.test_junit_workflow_contract" name="test_real_collector_contract_rejects_provenance_mutations[collector loses push fallback-${{ github.event.pull_request.head.sha }}-workflow_path0-_assert_contract]" time="0.032"><failure message="assert {'PYTHON': &quot;$...== 'true' }}&quot;} == {'PYTHON': &quot;$...== 'true' }}&quot;}&#10;  &#10;  Omitting 3 identical items, use -vv to show&#10;  Left contains 1 more item:&#10;  {'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;}&#10;  &#10;  Full diff:&#10;    {&#10;        'PYTHON': &quot;${{ needs.changes.outputs.python == 'true' || &quot;&#10;        &quot;needs.changes.outputs.workflow == 'true' }}&quot;,&#10;  +     'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;,&#10;        'PLAYWRIGHT': &quot;${{ needs.changes.outputs.playwright == 'true' }}&quot;,&#10;        'VALIDATION_BROWSER': &quot;${{ needs.changes.outputs.validation_browser == 'true' }}&quot;,&#10;    }">workflow_path = PosixPath('&lt;runner-work&gt;/.github/workflows/non-dart.yml')
+contract = &lt;function _assert_contract at 0x7f314098d080&gt;
+label = 'collector loses push fallback'
+bad_input = '${{ github.event.pull_request.head.sha }}'
+
+    @pytest.mark.parametrize("workflow_path, contract", [
+        (WORKFLOW, _assert_contract),
+        (REFACTOR, _assert_refactor_smoke_collector),
+        (DART, _assert_flutter_workflow_collector),
+    ])
+    @pytest.mark.parametrize("label, bad_input", PROVENANCE_MUTATIONS)
+    def test_real_collector_contract_rejects_provenance_mutations(
+        workflow_path, contract, label, bad_input,
+    ):
+        workflow = yaml.safe_load(workflow_path.read_text(encoding="utf-8"))
+&gt;       contract(workflow)  # The actual production contract must accept the baseline.
+        ^^^^^^^^^^^^^^^^^^
+
+tests/test_junit_workflow_contract.py:391: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+workflow = {'name': 'Non-Dart checks', True: {'pull_request': {'branches': ['main'], 'paths': ['tool/python/**', 'tool/time/**', ...ub.event.pull_request.number || github.ref }}', 'cancel-in-progress': False}, 'permissions': {'contents': 'read'}, ...}
+
+    def _assert_contract(workflow):
+        producer = workflow["jobs"]["python-pytest"]
+        run = _step(producer, "Run pytest")
+        assert producer.get("continue-on-error", False) is False
+        assert run.get("continue-on-error", False) is False
+        assert run.get("if") is None
+        # The exact normalized command rejects || true, set +e and trailing exit 0.
+        assert " ".join(run["run"].split()) == COMMAND
+        assert run["env"]["FLUTTER_FAILURE_EVIDENCE"] == (
+            "${{ github.workspace }}/build/controlled-failure"
+        )
+        for name, path in (
+            ("junit-python-3.12", "build/test-results/python-3.12.xml"),
+            ("junit-controlled-python-3.12", "build/controlled-failure/"),
+        ):
+            upload = _upload(producer, name)
+            assert producer["steps"].index(run) &lt; producer["steps"].index(upload)
+            assert upload.get("if") == "always()"
+            assert upload.get("continue-on-error", False) is False
+            assert upload["with"]["path"].strip() == path
+            assert upload["with"]["if-no-files-found"] == "error"
+            assert upload["with"]["retention-days"] == 14
+        _assert_playwright_producer(workflow)
+        _assert_validation_browser_producer(workflow)
+        plan = workflow["jobs"]["junit-plan"]
+        assert plan["needs"] == "changes"
+        plan_step = next(item for item in plan["steps"] if item.get("id") == "plan")
+&gt;       assert plan_step["env"] == {
+            "PYTHON": "${{ needs.changes.outputs.python == 'true' || needs.changes.outputs.workflow == 'true' }}",
+            "PLAYWRIGHT": "${{ needs.changes.outputs.playwright == 'true' }}",
+            "VALIDATION_BROWSER": "${{ needs.changes.outputs.validation_browser == 'true' }}",
+        }
+E       assert {'PYTHON': "$...== 'true' }}"} == {'PYTHON': "$...== 'true' }}"}
+E         
+E         Omitting 3 identical items, use -vv to show
+E         Left contains 1 more item:
+E         {'E2E': "${{ needs.changes.outputs.e2e == 'true' }}"}
+E         
+E         Full diff:
+E           {
+E               'PYTHON': "${{ needs.changes.outputs.python == 'true' || "
+E               "needs.changes.outputs.workflow == 'true' }}",
+E         +     'E2E': "${{ needs.changes.outputs.e2e == 'true' }}",
+E               'PLAYWRIGHT': "${{ needs.changes.outputs.playwright == 'true' }}",
+E               'VALIDATION_BROWSER': "${{ needs.changes.outputs.validation_browser == 'true' }}",
+E           }
+
+tests/test_junit_workflow_contract.py:137: AssertionError</failure></testcase></testsuite></testsuites>

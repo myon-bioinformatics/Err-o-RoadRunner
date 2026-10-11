@@ -1,0 +1,19 @@
+FOUND: exit code: 1
+FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_38008484688_junit-python-3.13_61.xml): 3
+FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_38008484688_junit-python-3.13_61.xml): tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_missing_git_keeps_walk_fa0')\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f52d61f9150>\n\n    def test_missing_git_keeps_walk_fallback(tmp_path: Path, monkeypatch) -> None:\n        make_tree(tmp_path)\n        def missing(*args, **kwargs):\n            raise FileNotFoundError("git")\n>       monkeypatch.setattr(repo_overvie
+FOUND: junit failure (last) (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_38008484688_junit-python-3.13_61.xml): tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_churn_missing_git_keeps_m0')\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f52d5fdaf30>\n\n    def test_churn_missing_git_keeps_message(tmp_path: Path, monkeypatch) -> None:\n        def missing(*args, **kwargs):\n            raise FileNotFoundError('git')\n>       monkeypatch.setattr(repo_overview.git_inspector, '_spawn', mi
+FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_38008484688_junit-python-3.13_61.xml): tests.python.test_repo_overview
+FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_38008484688_junit-python-3.13_61.xml): AttributeError
+FOUND: python version: 3.12.3 (cpython)
+FOUND: node version: v22.14.0
+FOUND: gh version: gh version 2.102.0 (2026-09-30)
+FOUND: environment variable count: 38
+FOUND: environment variable names: AGENT_TRANSCRIPTS, CARGO_HOME, CURSOR_AGENT, CURSOR_AGENT_SOCKET, CURSOR_CONVERSATION_ID, CURSOR_REQUEST_ID, CURSOR_RIPGREP_PATH, CURSOR_SPAWN_CWD_HOP, CURSOR_WORKLOAD_CGROUP, DISPLAY, EXEC_DAEMON_STARTUP_TRACEPARENT, FORCE_COLOR, GH_TELEMETRY, GIT_DISCOVERY_ACROSS_FILESYSTEM, GIT_LFS_SKIP_SMUDGE, HOME, LANG, LC_ALL, NO_COLOR, NVM_BIN, NVM_CD_FLAGS, NVM_DIR, NVM_INC, OLDPWD, PATH, PS1, PWD, RUSTUP_HOME, RUST_VERSION, SHELL, SHLVL, TERM, USER, VNC_DPI, VNC_RESOLUTION, _, _ZO_DOCTOR, __CURSOR_SANDBOX_ENV_RESTORE
+NOT FOUND: junit errors (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_38008484688_junit-python-3.13_61.xml)
+NOT FOUND: junit skipped (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_38008484688_junit-python-3.13_61.xml)
+NOT FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_38008484688_junit-python-3.13_61.xml)
+NOT FOUND: junit system-err (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_38008484688_junit-python-3.13_61.xml)
+NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_38008484688_junit-python-3.13_61.xml)
+NOT FOUND: lock files in project root
+HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_38008484688_junit-python-3.13_61.xml): pytest/python
+HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_38008484688_junit-python-3.13_61.xml): tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_missing_git_keeps_walk_fa0')\nmonkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f52d61f9150>\n\n    def test_missing_git_keeps_walk_fallback(tmp_path: Path, monkeypatch) -> None:\n        make_tree(tmp_path)\n        def missing(*args, **kwargs):\n            raise FileNotFoundError("git")\n>       monkeypatch.setattr(repo_overvie

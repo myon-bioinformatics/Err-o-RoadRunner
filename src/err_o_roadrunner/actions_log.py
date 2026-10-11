@@ -52,7 +52,6 @@ def _strip_log_timestamp_prefix(line: str) -> str:
 
 
 def normalize_actions_log_line(line: str) -> str:
-    line = line.rstrip("\r")
     line = _strip_log_timestamp_prefix(line)
     return strip_terminal_controls(line)
 
@@ -62,7 +61,6 @@ def _looks_like_gh_run_view_rest(rest: str) -> bool:
 
 
 def _parse_gh_run_view_raw_line(line: str) -> _ParsedLine | None:
-    line = line.rstrip("\r")
     parts = line.split("\t", 2)
     if len(parts) != 3:
         return None
@@ -78,10 +76,16 @@ def _parse_gh_run_view_raw_line(line: str) -> _ParsedLine | None:
 
 def preprocess_actions_log(text: str) -> tuple[list[_ParsedLine], bool]:
     text = strip_bom(strip_terminal_controls(text))
-    raw_lines = text.splitlines()
+    # splitlines() drops trailing \\r; split on \\n so CRLF lines keep \\r for rstrip in normalize.
+    raw_lines = text.split("\n")
+    if raw_lines and not text.endswith("\n"):
+        pass
+    elif raw_lines and text.endswith("\n") and raw_lines[-1] == "":
+        raw_lines = raw_lines[:-1]
     parsed: list[_ParsedLine] = []
     gh_hits = 0
     for raw in raw_lines:
+        raw = raw.rstrip("\r")
         gh = _parse_gh_run_view_raw_line(raw)
         if gh is not None:
             gh_hits += 1

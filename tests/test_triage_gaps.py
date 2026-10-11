@@ -154,3 +154,16 @@ def test_actions_log_line_crlf_rstrip_required() -> None:
     from err_o_roadrunner.actions_log import normalize_actions_log_line
 
     assert normalize_actions_log_line("payload\r") == "payload"
+
+
+@pytest.mark.gap
+def test_safe_read_text_read_bytes_capped_at_max_read_bytes(tmp_path: Path) -> None:
+    path = tmp_path / "over_cap.bin"
+    extra = 4096
+    path.write_bytes(b"x" * (MAX_READ_BYTES + extra))
+    report = Report()
+    text = safe_read_text(path, report)
+    assert text is not None
+    assert len(text.encode("utf-8")) == MAX_READ_BYTES
+    joined = "\n".join(report.lines())
+    assert f"input truncated (size {MAX_READ_BYTES + extra} > {MAX_READ_BYTES})" in joined

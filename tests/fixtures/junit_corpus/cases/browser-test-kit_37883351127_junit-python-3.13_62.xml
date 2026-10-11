@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="342" time="18.027" timestamp="2026-10-09T04:21:12.661629+00:00" hostname="runnervmmprz5"><testcase classname="tests.python.test_browser_dom_local" name="test_dom_capture_local_page" time="1.042"><failure message="AssertionError: assert ['æ—¥æœ¬èªž',..., '&amp;', 'text'] == ['日本語', 'Body', '&amp;', 'text']&#10;  &#10;  At index 0 diff: 'æ—¥æœ¬èªž' != '日本語'&#10;  &#10;  Full diff:&#10;    [&#10;  -     '日本語',&#10;  +     'æ—¥æœ¬èªž',&#10;        'Body',&#10;        '&amp;',&#10;        'text',&#10;    ]">tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_dom_capture_local_page0')
+
+    def test_dom_capture_local_page(tmp_path):
+        (tmp_path/'index.html').write_text('&lt;main id="body"&gt;&lt;h1&gt;日本語&lt;/h1&gt;&lt;p&gt;Body &amp;amp; text&lt;/p&gt;&lt;/main&gt;',encoding='utf-8')
+        handler=functools.partial(SimpleHTTPRequestHandler,directory=str(tmp_path))
+        server=ThreadingHTTPServer(('127.0.0.1',0),handler)
+        thread=threading.Thread(target=server.serve_forever,daemon=True);thread.start()
+        try:
+            script=Path(__file__).resolve().parents[2]/'examples/capture_browser_dom.py'
+            output=tmp_path/'capture.json'
+            args=[sys.executable,str(script),f'http://127.0.0.1:{server.server_port}/index.html',
+                  '--selector','#body','--output',str(output)]
+            run=subprocess.run(args,capture_output=True,text=True,timeout=90)
+            assert run.returncode==0,run.stderr
+            result=json.loads(output.read_text())
+            assert result['schema']=='btk-browser-dom/1'
+            assert 'Body &amp;amp; text' in result['html']
+&gt;           assert result['visible'].split()==['日本語','Body','&amp;','text']
+E           AssertionError: assert ['æ—¥æœ¬èªž',..., '&amp;', 'text'] == ['日本語', 'Body', '&amp;', 'text']
+E             
+E             At index 0 diff: 'æ—¥æœ¬èªž' != '日本語'
+E             
+E             Full diff:
+E               [
+E             -     '日本語',
+E             +     'æ—¥æœ¬èªž',
+E                   'Body',
+E                   '&amp;',
+E                   'text',
+E               ]
+
+tests/python/test_browser_dom_local.py:26: AssertionError</failure></testcase></testsuite></testsuites>

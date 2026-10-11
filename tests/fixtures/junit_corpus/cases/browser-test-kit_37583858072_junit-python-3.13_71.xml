@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="436" time="18.545" timestamp="2026-10-07T06:52:57.680766+00:00" hostname="runnervm8df0l"><testcase classname="tests.python.test_vendor_automation" name="test_vendor_lock_has_explicit_sources_and_verified_bytes" time="0.002"><failure message="AssertionError: assert 6 == 4&#10; +  where 6 = len({'scripts/git_inspector.py': {'repository': 'myon-bioinformatics/myon-bioinformatics', 'ref': 'refs/heads/main', 'comm...probe', 'ref': 'refs/heads/main', 'commit': '642999cea4185a68bffa7f7ccc46bd78dde03e5a', 'source': 'LICENSE', ...}, ...})&#10; +  and   4 = len({('myon-bioinformatics/myon-bioinformatics', 'LICENSE', 'scripts/myon-bioinformatics-LICENSE'), ('myon-bioinformatics/...LICENSE', 'tests/vendor/xprobe/LICENSE'), ('myon-bioinformatics/xprobe', 'xprobe.py', 'tests/vendor/xprobe/xprobe.py')})">def test_vendor_lock_has_explicit_sources_and_verified_bytes():
+        records = _projector().records(ROOT)
+&gt;       assert len(records) == len(EXPECTED)
+E       AssertionError: assert 6 == 4
+E        +  where 6 = len({'scripts/git_inspector.py': {'repository': 'myon-bioinformatics/myon-bioinformatics', 'ref': 'refs/heads/main', 'comm...probe', 'ref': 'refs/heads/main', 'commit': '642999cea4185a68bffa7f7ccc46bd78dde03e5a', 'source': 'LICENSE', ...}, ...})
+E        +  and   4 = len({('myon-bioinformatics/myon-bioinformatics', 'LICENSE', 'scripts/myon-bioinformatics-LICENSE'), ('myon-bioinformatics/...LICENSE', 'tests/vendor/xprobe/LICENSE'), ('myon-bioinformatics/xprobe', 'xprobe.py', 'tests/vendor/xprobe/xprobe.py')})
+
+tests/python/test_vendor_automation.py:44: AssertionError</failure></testcase><testcase classname="tests.python.test_vendor_automation" name="test_updated_lock_projects_exact_identity_and_keeps_reader_formats" time="0.002"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '/tmp/pytest-of-runner/pytest-0/test_updated_lock_projects_exa0/scripts/gh_identity.py'">tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_updated_lock_projects_exa0')
+
+    def test_updated_lock_projects_exact_identity_and_keeps_reader_formats(tmp_path):
+        _copy_snapshot(tmp_path)
+        lock_path = tmp_path / 'vendor.lock.json'
+        lock = json.loads(lock_path.read_text(encoding='utf-8'))
+        for e in lock['files']:
+            e['commit'] = ('b' if e['source'] == 'LICENSE' else 'a') * 40
+        lock_path.write_text(json.dumps(lock),encoding='utf-8')
+        projector = _projector()
+&gt;       projector.project(tmp_path)
+
+tests/python/test_vendor_automation.py:140: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tool/sync_vendor_provenance.py:49: in project
+    entries = records(root)  # Verify every source/LICENSE before writing any metadata.
+              ^^^^^^^^^^^^^
+tool/sync_vendor_provenance.py:41: in records
+    data = (root / e["destination"]).read_bytes()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.13.15/x64/lib/python3.13/pathlib/_abc.py:625: in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('/tmp/pytest-of-runner/pytest-0/test_updated_lock_projects_exa0/scripts/gh_identity.py')
+mode = 'rb', buffering = -1, encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+&gt;       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '/tmp/pytest-of-runner/pytest-0/test_updated_lock_projects_exa0/scripts/gh_identity.py'
+
+/opt/hostedtoolcache/Python/3.13.15/x64/lib/python3.13/pathlib/_local.py:537: FileNotFoundError</failure></testcase></testsuite></testsuites>

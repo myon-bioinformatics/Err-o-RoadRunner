@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites><testsuite name="pytest" errors="1" failures="0" skipped="0" tests="1" time="0.926" timestamp="2026-10-07T02:02:33.447508+00:00" hostname="runnervm8df0l"><testcase classname="" name="nagoyaction.tests.test_inbox" time="0.000"><error message="collection failure">ImportError while importing test module '&lt;runner-work&gt;/nagoyaction/tests/test_inbox.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+/opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+nagoyaction/tests/test_inbox.py:9: in &lt;module&gt;
+    from inbox import GitHub, State, ask_question, command, git, intake, worker
+nagoyaction/inbox/inbox.py:25: in &lt;module&gt;
+    from feedback import prepare_feedback, observe_report
+nagoyaction/inbox/feedback.py:6: in &lt;module&gt;
+    from neighbors import discover
+E   ModuleNotFoundError: No module named 'neighbors'</error></testcase></testsuite></testsuites>

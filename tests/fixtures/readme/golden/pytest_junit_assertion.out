@@ -7,4 +7,5 @@ FOUND: environment variable names: AGENT_TRANSCRIPTS, CARGO_HOME, CURSOR_AGENT, 
 NOT FOUND: junit failures (<repo>/tests/fixtures/readme/inputs/pytest_assertion.junit.xml)
 NOT FOUND: junit errors (<repo>/tests/fixtures/readme/inputs/pytest_assertion.junit.xml)
 NOT FOUND: junit skipped (<repo>/tests/fixtures/readme/inputs/pytest_assertion.junit.xml)
+NOT FOUND: junit collection errors (<repo>/tests/fixtures/readme/inputs/pytest_assertion.junit.xml)
 NOT FOUND: lock files in project root

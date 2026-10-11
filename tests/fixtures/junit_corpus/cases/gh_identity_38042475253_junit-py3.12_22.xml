@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="605" time="10.650" timestamp="2026-10-10T09:45:02.919872+00:00" hostname="runnervmmprz5"><testcase classname="tests.test_repository_inventory" name="test_inventory_missing_metrics_sort_last[updated-at-updated_at-asc-expected4]" time="0.001"><failure message="AssertionError: assert ['five', 'mis...enty', 'zero'] == ['zero', 'fiv...y', 'missing']&#10;  &#10;  At index 0 diff: 'five' != 'zero'&#10;  &#10;  Full diff:&#10;    [&#10;  +     'five',&#10;  +     'missing',&#10;  +     'twenty',&#10;        'zero',&#10;  -     'five',&#10;  -     'twenty',&#10;  -     'missing',&#10;    ]">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f8468aadac0&gt;
+metric = 'updated-at', field = 'updated_at', order = 'asc'
+expected = ['zero', 'five', 'twenty', 'missing']
+
+    @pytest.mark.parametrize("metric,field,order,expected",[
+        ("run-count","run_count","asc",["zero","five","twenty","missing"]),
+        ("run-count","run_count","desc",["twenty","five","zero","missing"]),
+        ("size-kb","size_kb","asc",["zero","five","twenty","missing"]),
+        ("size-kb","size_kb","desc",["twenty","five","zero","missing"]),
+        ("updated-at","updated_at","asc",["zero","five","twenty","missing"]),
+        ("updated-at","updated_at","desc",["twenty","five","zero","missing"]),
+    ])
+    def test_inventory_missing_metrics_sort_last(monkeypatch,metric,field,order,expected):
+        sizes={"zero":0,"five":5,"twenty":20,"missing":None}
+        dates={"zero":"2026-01-01","five":"2026-02-01",
+               "twenty":"2026-03-01","missing":None}
+        fixtures=[{"name":name,"full_name":"demo/"+name,"private":False,
+                   "archived":False,"size":size,"updated_at":dates[name]}
+                  for name,size in sizes.items()]
+        monkeypatch.setattr(ghi,"_page",lambda *args,**kwargs:(fixtures,{}))
+        calls=[]
+        def get_count(method,path,**kwargs):
+            calls.append(path)
+            name=path.split("/")[2]
+            if name=="missing":
+                raise ghi.Error("permission_or_rate_limit")
+            return {"total_count":sizes[name]}
+        monkeypatch.setattr(ghi,"request",get_count)
+        out=ghi.repository_inventory("demo",fields=(metric,),sort=metric,order=order)
+&gt;       assert [row["name"] for row in out["repositories"]] == (
+            ["zero","five","twenty","missing"] if metric=="size-kb" and order=="asc"
+            else ["twenty","five","zero","missing"] if metric=="size-kb" and order=="desc"
+            else expected
+        )
+E       AssertionError: assert ['five', 'mis...enty', 'zero'] == ['zero', 'fiv...y', 'missing']
+E         
+E         At index 0 diff: 'five' != 'zero'
+E         
+E         Full diff:
+E           [
+E         +     'five',
+E         +     'missing',
+E         +     'twenty',
+E               'zero',
+E         -     'five',
+E         -     'twenty',
+E         -     'missing',
+E           ]
+
+tests/test_repository_inventory.py:85: AssertionError</failure></testcase><testcase classname="tests.test_repository_inventory" name="test_inventory_missing_metrics_sort_last[updated-at-updated_at-desc-expected5]" time="0.001"><failure message="AssertionError: assert ['five', 'mis...enty', 'zero'] == ['twenty', 'f...o', 'missing']&#10;  &#10;  At index 0 diff: 'five' != 'twenty'&#10;  &#10;  Full diff:&#10;    [&#10;  +     'five',&#10;  +     'missing',&#10;        'twenty',&#10;  -     'five',&#10;        'zero',&#10;  -     'missing',&#10;    ]">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f8468aac590&gt;
+metric = 'updated-at', field = 'updated_at', order = 'desc'
+expected = ['twenty', 'five', 'zero', 'missing']
+
+    @pytest.mark.parametrize("metric,field,order,expected",[
+        ("run-count","run_count","asc",["zero","five","twenty","missing"]),
+        ("run-count","run_count","desc",["twenty","five","zero","missing"]),
+        ("size-kb","size_kb","asc",["zero","five","twenty","missing"]),
+        ("size-kb","size_kb","desc",["twenty","five","zero","missing"]),
+        ("updated-at","updated_at","asc",["zero","five","twenty","missing"]),
+        ("updated-at","updated_at","desc",["twenty","five","zero","missing"]),
+    ])
+    def test_inventory_missing_metrics_sort_last(monkeypatch,metric,field,order,expected):
+        sizes={"zero":0,"five":5,"twenty":20,"missing":None}
+        dates={"zero":"2026-01-01","five":"2026-02-01",
+               "twenty":"2026-03-01","missing":None}
+        fixtures=[{"name":name,"full_name":"demo/"+name,"private":False,
+                   "archived":False,"size":size,"updated_at":dates[name]}
+                  for name,size in sizes.items()]
+        monkeypatch.setattr(ghi,"_page",lambda *args,**kwargs:(fixtures,{}))
+        calls=[]
+        def get_count(method,path,**kwargs):
+            calls.append(path)
+            name=path.split("/")[2]
+            if name=="missing":
+                raise ghi.Error("permission_or_rate_limit")
+            return {"total_count":sizes[name]}
+        monkeypatch.setattr(ghi,"request",get_count)
+        out=ghi.repository_inventory("demo",fields=(metric,),sort=metric,order=order)
+&gt;       assert [row["name"] for row in out["repositories"]] == (
+            ["zero","five","twenty","missing"] if metric=="size-kb" and order=="asc"
+            else ["twenty","five","zero","missing"] if metric=="size-kb" and order=="desc"
+            else expected
+        )
+E       AssertionError: assert ['five', 'mis...enty', 'zero'] == ['twenty', 'f...o', 'missing']
+E         
+E         At index 0 diff: 'five' != 'twenty'
+E         
+E         Full diff:
+E           [
+E         +     'five',
+E         +     'missing',
+E               'twenty',
+E         -     'five',
+E               'zero',
+E         -     'missing',
+E           ]
+
+tests/test_repository_inventory.py:85: AssertionError</failure></testcase></testsuite></testsuites>

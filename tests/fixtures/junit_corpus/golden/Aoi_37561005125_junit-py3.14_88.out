@@ -1,0 +1,19 @@
+FOUND: exit code: 1
+FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.14_88.xml): 19
+FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.14_88.xml): cycle = PosixPath('/tmp/pytest-of-runner/pytest-0/test_real_exploration_resume_m0/cycle')\ntmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_real_exploration_resume_m0')\n\n    def test_real_exploration_resume_matches_uninterrupted(cycle, tmp_path):\n        spec = plan('{"sets":["A","B"],"max_depth":2}', cycle)\n>       ex = Explorer(cycle, spec)\n             ^^^^^^^^^^^^^^^^^^^^^\n\nnag
+FOUND: junit failure (last) (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.14_88.xml): def test_registration_status_is_conservative_and_rendered():\n        from ask import registration_status, render\n        posthoc = item()\n        posthoc["posthoc"] = True\n        unknown = item()\n        unknown["id"] = "E2"\n        prereg = item()\n        prereg["id"] = "E3"\n        prereg["preregistered"] = True\n        assert registration_status(posthoc) == "事後構成"\n        assert regi
+FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.14_88.xml): nagoyaction.tests.test_inbox
+FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.14_88.xml): ModuleNotFoundError
+FOUND: python version: 3.12.3 (cpython)
+FOUND: node version: v22.14.0
+FOUND: gh version: gh version 2.102.0 (2026-09-30)
+FOUND: environment variable count: 38
+FOUND: environment variable names: AGENT_TRANSCRIPTS, CARGO_HOME, CURSOR_AGENT, CURSOR_AGENT_SOCKET, CURSOR_CONVERSATION_ID, CURSOR_REQUEST_ID, CURSOR_RIPGREP_PATH, CURSOR_SPAWN_CWD_HOP, CURSOR_WORKLOAD_CGROUP, DISPLAY, EXEC_DAEMON_STARTUP_TRACEPARENT, FORCE_COLOR, GH_TELEMETRY, GIT_DISCOVERY_ACROSS_FILESYSTEM, GIT_LFS_SKIP_SMUDGE, HOME, LANG, LC_ALL, NO_COLOR, NVM_BIN, NVM_CD_FLAGS, NVM_DIR, NVM_INC, OLDPWD, PATH, PS1, PWD, RUSTUP_HOME, RUST_VERSION, SHELL, SHLVL, TERM, USER, VNC_DPI, VNC_RESOLUTION, _, _ZO_DOCTOR, __CURSOR_SANDBOX_ENV_RESTORE
+NOT FOUND: junit errors (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.14_88.xml)
+NOT FOUND: junit skipped (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.14_88.xml)
+NOT FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.14_88.xml)
+NOT FOUND: junit system-err (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.14_88.xml)
+NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.14_88.xml)
+NOT FOUND: lock files in project root
+HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.14_88.xml): pytest/python
+HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.14_88.xml): cycle = PosixPath('/tmp/pytest-of-runner/pytest-0/test_real_exploration_resume_m0/cycle')\ntmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_real_exploration_resume_m0')\n\n    def test_real_exploration_resume_matches_uninterrupted(cycle, tmp_path):\n        spec = plan('{"sets":["A","B"],"max_depth":2}', cycle)\n>       ex = Explorer(cycle, spec)\n             ^^^^^^^^^^^^^^^^^^^^^\n\nnag

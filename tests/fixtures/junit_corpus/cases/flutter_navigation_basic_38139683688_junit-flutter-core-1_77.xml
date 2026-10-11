@@ -1,0 +1,864 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites><testsuite name="flutter" tests="291"><testcase name="loading &lt;runner-work&gt;/test/core/navigation/numbered_routes_observation_test.dart" classname="&lt;runner-work&gt;/test/core/navigation/numbered_routes_observation_test.dart"><error message="Flutter test error">Failed to load "&lt;runner-work&gt;/test/core/navigation/numbered_routes_observation_test.dart":
+Compilation failed for testPath=&lt;runner-work&gt;/test/core/navigation/numbered_routes_observation_test.dart: lib/shared/catalog/catalog_search.dart:1:8: Error: Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory
+import '../screens/generic_screen.dart';
+       ^
+lib/shared/catalog/catalog_search.dart:7:6: Error: Type 'ScreenData' not found.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+     ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:7:37: Error: Type 'ScreenData' not found.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+                                    ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:7:37: Error: 'ScreenData' isn't a type.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+                                    ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:9:34: Error: 'ScreenData' isn't a type.
+  if (query.isEmpty) return List&lt;ScreenData&gt;.of(screens);
+                                 ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:12:14: Error: The getter 'screenDataId' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'screenDataId'.
+      screen.screenDataId.toString(),
+             ^^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:13:23: Error: The getter 'screenDataId' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'screenDataId'.
+      'screen${screen.screenDataId}',
+                      ^^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:14:14: Error: The getter 'name' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'name'.
+      screen.name,
+             ^^^^
+lib/shared/catalog/catalog_search.dart:15:14: Error: The getter 'title' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'title'.
+      screen.title,
+             ^^^^^
+lib/shared/catalog/catalog_search.dart:16:14: Error: The getter 'description' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'description'.
+      screen.description,
+             ^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:17:14: Error: The getter 'category' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'category'.
+      screen.category,
+             ^^^^^^^^
+lib/shared/catalog/catalog_search.dart:18:14: Error: The getter 'domainKey' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'domainKey'.
+      screen.domainKey,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:19:14: Error: The getter 'domainJa' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'domainJa'.
+      screen.domainJa,
+             ^^^^^^^^
+lib/shared/catalog/catalog_search.dart:20:14: Error: The getter 'useCaseJa' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseJa'.
+      screen.useCaseJa,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:21:14: Error: The getter 'useCaseEn' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseEn'.
+      screen.useCaseEn,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:22:14: Error: The getter 'useCaseKey' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseKey'.
+      screen.useCaseKey,
+             ^^^^^^^^^^
+.</error></testcase><testcase name="loading &lt;runner-work&gt;/test/core/navigation/app_route_registry_test.dart" classname="&lt;runner-work&gt;/test/core/navigation/app_route_registry_test.dart"><error message="Flutter test error">Failed to load "&lt;runner-work&gt;/test/core/navigation/app_route_registry_test.dart":
+Compilation failed for testPath=&lt;runner-work&gt;/test/core/navigation/app_route_registry_test.dart: lib/shared/catalog/catalog_search.dart:1:8: Error: Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory
+import '../screens/generic_screen.dart';
+       ^
+lib/shared/catalog/catalog_search.dart:7:6: Error: Type 'ScreenData' not found.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+     ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:7:37: Error: Type 'ScreenData' not found.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+                                    ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:7:37: Error: 'ScreenData' isn't a type.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+                                    ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:9:34: Error: 'ScreenData' isn't a type.
+  if (query.isEmpty) return List&lt;ScreenData&gt;.of(screens);
+                                 ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:12:14: Error: The getter 'screenDataId' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'screenDataId'.
+      screen.screenDataId.toString(),
+             ^^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:13:23: Error: The getter 'screenDataId' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'screenDataId'.
+      'screen${screen.screenDataId}',
+                      ^^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:14:14: Error: The getter 'name' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'name'.
+      screen.name,
+             ^^^^
+lib/shared/catalog/catalog_search.dart:15:14: Error: The getter 'title' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'title'.
+      screen.title,
+             ^^^^^
+lib/shared/catalog/catalog_search.dart:16:14: Error: The getter 'description' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'description'.
+      screen.description,
+             ^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:17:14: Error: The getter 'category' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'category'.
+      screen.category,
+             ^^^^^^^^
+lib/shared/catalog/catalog_search.dart:18:14: Error: The getter 'domainKey' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'domainKey'.
+      screen.domainKey,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:19:14: Error: The getter 'domainJa' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'domainJa'.
+      screen.domainJa,
+             ^^^^^^^^
+lib/shared/catalog/catalog_search.dart:20:14: Error: The getter 'useCaseJa' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseJa'.
+      screen.useCaseJa,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:21:14: Error: The getter 'useCaseEn' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseEn'.
+      screen.useCaseEn,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:22:14: Error: The getter 'useCaseKey' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseKey'.
+      screen.useCaseKey,
+             ^^^^^^^^^^
+.</error></testcase><testcase name="loading &lt;runner-work&gt;/test/screens/home_screen_test.dart" classname="&lt;runner-work&gt;/test/screens/home_screen_test.dart"><error message="Flutter test error">Failed to load "&lt;runner-work&gt;/test/screens/home_screen_test.dart":
+Compilation failed for testPath=&lt;runner-work&gt;/test/screens/home_screen_test.dart: lib/shared/catalog/catalog_search.dart:1:8: Error: Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory
+import '../screens/generic_screen.dart';
+       ^
+lib/shared/catalog/catalog_search.dart:7:6: Error: Type 'ScreenData' not found.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+     ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:7:37: Error: Type 'ScreenData' not found.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+                                    ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:7:37: Error: 'ScreenData' isn't a type.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+                                    ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:9:34: Error: 'ScreenData' isn't a type.
+  if (query.isEmpty) return List&lt;ScreenData&gt;.of(screens);
+                                 ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:12:14: Error: The getter 'screenDataId' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'screenDataId'.
+      screen.screenDataId.toString(),
+             ^^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:13:23: Error: The getter 'screenDataId' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'screenDataId'.
+      'screen${screen.screenDataId}',
+                      ^^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:14:14: Error: The getter 'name' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'name'.
+      screen.name,
+             ^^^^
+lib/shared/catalog/catalog_search.dart:15:14: Error: The getter 'title' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'title'.
+      screen.title,
+             ^^^^^
+lib/shared/catalog/catalog_search.dart:16:14: Error: The getter 'description' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'description'.
+      screen.description,
+             ^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:17:14: Error: The getter 'category' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'category'.
+      screen.category,
+             ^^^^^^^^
+lib/shared/catalog/catalog_search.dart:18:14: Error: The getter 'domainKey' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'domainKey'.
+      screen.domainKey,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:19:14: Error: The getter 'domainJa' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'domainJa'.
+      screen.domainJa,
+             ^^^^^^^^
+lib/shared/catalog/catalog_search.dart:20:14: Error: The getter 'useCaseJa' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseJa'.
+      screen.useCaseJa,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:21:14: Error: The getter 'useCaseEn' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseEn'.
+      screen.useCaseEn,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:22:14: Error: The getter 'useCaseKey' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseKey'.
+      screen.useCaseKey,
+             ^^^^^^^^^^
+.</error></testcase><testcase name="loading &lt;runner-work&gt;/test/screens/ui_showcase_test.dart" classname="&lt;runner-work&gt;/test/screens/ui_showcase_test.dart"><error message="Flutter test error">Failed to load "&lt;runner-work&gt;/test/screens/ui_showcase_test.dart":
+Compilation failed for testPath=&lt;runner-work&gt;/test/screens/ui_showcase_test.dart: lib/shared/catalog/catalog_search.dart:1:8: Error: Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory
+import '../screens/generic_screen.dart';
+       ^
+lib/shared/catalog/catalog_search.dart:7:6: Error: Type 'ScreenData' not found.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+     ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:7:37: Error: Type 'ScreenData' not found.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+                                    ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:7:37: Error: 'ScreenData' isn't a type.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+                                    ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:9:34: Error: 'ScreenData' isn't a type.
+  if (query.isEmpty) return List&lt;ScreenData&gt;.of(screens);
+                                 ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:12:14: Error: The getter 'screenDataId' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'screenDataId'.
+      screen.screenDataId.toString(),
+             ^^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:13:23: Error: The getter 'screenDataId' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'screenDataId'.
+      'screen${screen.screenDataId}',
+                      ^^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:14:14: Error: The getter 'name' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'name'.
+      screen.name,
+             ^^^^
+lib/shared/catalog/catalog_search.dart:15:14: Error: The getter 'title' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'title'.
+      screen.title,
+             ^^^^^
+lib/shared/catalog/catalog_search.dart:16:14: Error: The getter 'description' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'description'.
+      screen.description,
+             ^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:17:14: Error: The getter 'category' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'category'.
+      screen.category,
+             ^^^^^^^^
+lib/shared/catalog/catalog_search.dart:18:14: Error: The getter 'domainKey' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'domainKey'.
+      screen.domainKey,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:19:14: Error: The getter 'domainJa' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'domainJa'.
+      screen.domainJa,
+             ^^^^^^^^
+lib/shared/catalog/catalog_search.dart:20:14: Error: The getter 'useCaseJa' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseJa'.
+      screen.useCaseJa,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:21:14: Error: The getter 'useCaseEn' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseEn'.
+      screen.useCaseEn,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:22:14: Error: The getter 'useCaseKey' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseKey'.
+      screen.useCaseKey,
+             ^^^^^^^^^^
+.</error></testcase><testcase name="loading &lt;runner-work&gt;/test/screens/mini_apps_stage1_test.dart" classname="&lt;runner-work&gt;/test/screens/mini_apps_stage1_test.dart"><error message="Flutter test error">Failed to load "&lt;runner-work&gt;/test/screens/mini_apps_stage1_test.dart":
+Compilation failed for testPath=&lt;runner-work&gt;/test/screens/mini_apps_stage1_test.dart: lib/shared/catalog/catalog_search.dart:1:8: Error: Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory
+import '../screens/generic_screen.dart';
+       ^
+lib/shared/catalog/catalog_search.dart:7:6: Error: Type 'ScreenData' not found.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+     ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:7:37: Error: Type 'ScreenData' not found.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+                                    ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:7:37: Error: 'ScreenData' isn't a type.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+                                    ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:9:34: Error: 'ScreenData' isn't a type.
+  if (query.isEmpty) return List&lt;ScreenData&gt;.of(screens);
+                                 ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:12:14: Error: The getter 'screenDataId' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'screenDataId'.
+      screen.screenDataId.toString(),
+             ^^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:13:23: Error: The getter 'screenDataId' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'screenDataId'.
+      'screen${screen.screenDataId}',
+                      ^^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:14:14: Error: The getter 'name' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'name'.
+      screen.name,
+             ^^^^
+lib/shared/catalog/catalog_search.dart:15:14: Error: The getter 'title' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'title'.
+      screen.title,
+             ^^^^^
+lib/shared/catalog/catalog_search.dart:16:14: Error: The getter 'description' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'description'.
+      screen.description,
+             ^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:17:14: Error: The getter 'category' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'category'.
+      screen.category,
+             ^^^^^^^^
+lib/shared/catalog/catalog_search.dart:18:14: Error: The getter 'domainKey' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'domainKey'.
+      screen.domainKey,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:19:14: Error: The getter 'domainJa' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'domainJa'.
+      screen.domainJa,
+             ^^^^^^^^
+lib/shared/catalog/catalog_search.dart:20:14: Error: The getter 'useCaseJa' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseJa'.
+      screen.useCaseJa,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:21:14: Error: The getter 'useCaseEn' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseEn'.
+      screen.useCaseEn,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:22:14: Error: The getter 'useCaseKey' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseKey'.
+      screen.useCaseKey,
+             ^^^^^^^^^^
+.</error></testcase><testcase name="loading &lt;runner-work&gt;/test/screens/hub_screen_test.dart" classname="&lt;runner-work&gt;/test/screens/hub_screen_test.dart"><error message="Flutter test error">Failed to load "&lt;runner-work&gt;/test/screens/hub_screen_test.dart":
+Compilation failed for testPath=&lt;runner-work&gt;/test/screens/hub_screen_test.dart: lib/shared/catalog/catalog_search.dart:1:8: Error: Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory
+import '../screens/generic_screen.dart';
+       ^
+lib/shared/catalog/catalog_search.dart:7:6: Error: Type 'ScreenData' not found.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+     ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:7:37: Error: Type 'ScreenData' not found.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+                                    ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:7:37: Error: 'ScreenData' isn't a type.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+                                    ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:9:34: Error: 'ScreenData' isn't a type.
+  if (query.isEmpty) return List&lt;ScreenData&gt;.of(screens);
+                                 ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:12:14: Error: The getter 'screenDataId' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'screenDataId'.
+      screen.screenDataId.toString(),
+             ^^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:13:23: Error: The getter 'screenDataId' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'screenDataId'.
+      'screen${screen.screenDataId}',
+                      ^^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:14:14: Error: The getter 'name' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'name'.
+      screen.name,
+             ^^^^
+lib/shared/catalog/catalog_search.dart:15:14: Error: The getter 'title' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'title'.
+      screen.title,
+             ^^^^^
+lib/shared/catalog/catalog_search.dart:16:14: Error: The getter 'description' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'description'.
+      screen.description,
+             ^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:17:14: Error: The getter 'category' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'category'.
+      screen.category,
+             ^^^^^^^^
+lib/shared/catalog/catalog_search.dart:18:14: Error: The getter 'domainKey' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'domainKey'.
+      screen.domainKey,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:19:14: Error: The getter 'domainJa' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'domainJa'.
+      screen.domainJa,
+             ^^^^^^^^
+lib/shared/catalog/catalog_search.dart:20:14: Error: The getter 'useCaseJa' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseJa'.
+      screen.useCaseJa,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:21:14: Error: The getter 'useCaseEn' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseEn'.
+      screen.useCaseEn,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:22:14: Error: The getter 'useCaseKey' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseKey'.
+      screen.useCaseKey,
+             ^^^^^^^^^^
+.</error></testcase><testcase name="loading &lt;runner-work&gt;/test/screens/mini_apps_stage2_test.dart" classname="&lt;runner-work&gt;/test/screens/mini_apps_stage2_test.dart"><error message="Flutter test error">Failed to load "&lt;runner-work&gt;/test/screens/mini_apps_stage2_test.dart":
+Compilation failed for testPath=&lt;runner-work&gt;/test/screens/mini_apps_stage2_test.dart: lib/shared/catalog/catalog_search.dart:1:8: Error: Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory
+import '../screens/generic_screen.dart';
+       ^
+lib/shared/catalog/catalog_search.dart:7:6: Error: Type 'ScreenData' not found.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+     ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:7:37: Error: Type 'ScreenData' not found.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+                                    ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:7:37: Error: 'ScreenData' isn't a type.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+                                    ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:9:34: Error: 'ScreenData' isn't a type.
+  if (query.isEmpty) return List&lt;ScreenData&gt;.of(screens);
+                                 ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:12:14: Error: The getter 'screenDataId' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'screenDataId'.
+      screen.screenDataId.toString(),
+             ^^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:13:23: Error: The getter 'screenDataId' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'screenDataId'.
+      'screen${screen.screenDataId}',
+                      ^^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:14:14: Error: The getter 'name' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'name'.
+      screen.name,
+             ^^^^
+lib/shared/catalog/catalog_search.dart:15:14: Error: The getter 'title' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'title'.
+      screen.title,
+             ^^^^^
+lib/shared/catalog/catalog_search.dart:16:14: Error: The getter 'description' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'description'.
+      screen.description,
+             ^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:17:14: Error: The getter 'category' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'category'.
+      screen.category,
+             ^^^^^^^^
+lib/shared/catalog/catalog_search.dart:18:14: Error: The getter 'domainKey' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'domainKey'.
+      screen.domainKey,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:19:14: Error: The getter 'domainJa' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'domainJa'.
+      screen.domainJa,
+             ^^^^^^^^
+lib/shared/catalog/catalog_search.dart:20:14: Error: The getter 'useCaseJa' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseJa'.
+      screen.useCaseJa,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:21:14: Error: The getter 'useCaseEn' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseEn'.
+      screen.useCaseEn,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:22:14: Error: The getter 'useCaseKey' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseKey'.
+      screen.useCaseKey,
+             ^^^^^^^^^^
+.</error></testcase><testcase name="loading &lt;runner-work&gt;/test/screens/screens_data_test.dart" classname="&lt;runner-work&gt;/test/screens/screens_data_test.dart"><error message="Flutter test error">Failed to load "&lt;runner-work&gt;/test/screens/screens_data_test.dart":
+Compilation failed for testPath=&lt;runner-work&gt;/test/screens/screens_data_test.dart: lib/shared/catalog/catalog_search.dart:1:8: Error: Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory
+import '../screens/generic_screen.dart';
+       ^
+lib/shared/catalog/catalog_search.dart:7:6: Error: Type 'ScreenData' not found.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+     ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:7:37: Error: Type 'ScreenData' not found.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+                                    ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:7:37: Error: 'ScreenData' isn't a type.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+                                    ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:9:34: Error: 'ScreenData' isn't a type.
+  if (query.isEmpty) return List&lt;ScreenData&gt;.of(screens);
+                                 ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:12:14: Error: The getter 'screenDataId' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'screenDataId'.
+      screen.screenDataId.toString(),
+             ^^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:13:23: Error: The getter 'screenDataId' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'screenDataId'.
+      'screen${screen.screenDataId}',
+                      ^^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:14:14: Error: The getter 'name' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'name'.
+      screen.name,
+             ^^^^
+lib/shared/catalog/catalog_search.dart:15:14: Error: The getter 'title' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'title'.
+      screen.title,
+             ^^^^^
+lib/shared/catalog/catalog_search.dart:16:14: Error: The getter 'description' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'description'.
+      screen.description,
+             ^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:17:14: Error: The getter 'category' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'category'.
+      screen.category,
+             ^^^^^^^^
+lib/shared/catalog/catalog_search.dart:18:14: Error: The getter 'domainKey' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'domainKey'.
+      screen.domainKey,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:19:14: Error: The getter 'domainJa' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'domainJa'.
+      screen.domainJa,
+             ^^^^^^^^
+lib/shared/catalog/catalog_search.dart:20:14: Error: The getter 'useCaseJa' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseJa'.
+      screen.useCaseJa,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:21:14: Error: The getter 'useCaseEn' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseEn'.
+      screen.useCaseEn,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:22:14: Error: The getter 'useCaseKey' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseKey'.
+      screen.useCaseKey,
+             ^^^^^^^^^^
+.</error></testcase><testcase name="loading &lt;runner-work&gt;/test/screens/generic_screen_test.dart" classname="&lt;runner-work&gt;/test/screens/generic_screen_test.dart"><error message="Flutter test error">Failed to load "&lt;runner-work&gt;/test/screens/generic_screen_test.dart":
+Compilation failed for testPath=&lt;runner-work&gt;/test/screens/generic_screen_test.dart: lib/shared/catalog/catalog_search.dart:1:8: Error: Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory
+import '../screens/generic_screen.dart';
+       ^
+lib/shared/catalog/catalog_search.dart:7:6: Error: Type 'ScreenData' not found.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+     ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:7:37: Error: Type 'ScreenData' not found.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+                                    ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:7:37: Error: 'ScreenData' isn't a type.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+                                    ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:9:34: Error: 'ScreenData' isn't a type.
+  if (query.isEmpty) return List&lt;ScreenData&gt;.of(screens);
+                                 ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:12:14: Error: The getter 'screenDataId' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'screenDataId'.
+      screen.screenDataId.toString(),
+             ^^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:13:23: Error: The getter 'screenDataId' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'screenDataId'.
+      'screen${screen.screenDataId}',
+                      ^^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:14:14: Error: The getter 'name' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'name'.
+      screen.name,
+             ^^^^
+lib/shared/catalog/catalog_search.dart:15:14: Error: The getter 'title' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'title'.
+      screen.title,
+             ^^^^^
+lib/shared/catalog/catalog_search.dart:16:14: Error: The getter 'description' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'description'.
+      screen.description,
+             ^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:17:14: Error: The getter 'category' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'category'.
+      screen.category,
+             ^^^^^^^^
+lib/shared/catalog/catalog_search.dart:18:14: Error: The getter 'domainKey' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'domainKey'.
+      screen.domainKey,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:19:14: Error: The getter 'domainJa' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'domainJa'.
+      screen.domainJa,
+             ^^^^^^^^
+lib/shared/catalog/catalog_search.dart:20:14: Error: The getter 'useCaseJa' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseJa'.
+      screen.useCaseJa,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:21:14: Error: The getter 'useCaseEn' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseEn'.
+      screen.useCaseEn,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:22:14: Error: The getter 'useCaseKey' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseKey'.
+      screen.useCaseKey,
+             ^^^^^^^^^^
+.</error></testcase><testcase name="loading &lt;runner-work&gt;/test/shared/display/display_german_overflow_test.dart" classname="&lt;runner-work&gt;/test/shared/display/display_german_overflow_test.dart"><error message="Flutter test error">Failed to load "&lt;runner-work&gt;/test/shared/display/display_german_overflow_test.dart":
+Compilation failed for testPath=&lt;runner-work&gt;/test/shared/display/display_german_overflow_test.dart: lib/shared/catalog/catalog_search.dart:1:8: Error: Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory
+import '../screens/generic_screen.dart';
+       ^
+lib/shared/catalog/catalog_search.dart:7:6: Error: Type 'ScreenData' not found.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+     ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:7:37: Error: Type 'ScreenData' not found.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+                                    ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:7:37: Error: 'ScreenData' isn't a type.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+                                    ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:9:34: Error: 'ScreenData' isn't a type.
+  if (query.isEmpty) return List&lt;ScreenData&gt;.of(screens);
+                                 ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:12:14: Error: The getter 'screenDataId' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'screenDataId'.
+      screen.screenDataId.toString(),
+             ^^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:13:23: Error: The getter 'screenDataId' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'screenDataId'.
+      'screen${screen.screenDataId}',
+                      ^^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:14:14: Error: The getter 'name' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'name'.
+      screen.name,
+             ^^^^
+lib/shared/catalog/catalog_search.dart:15:14: Error: The getter 'title' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'title'.
+      screen.title,
+             ^^^^^
+lib/shared/catalog/catalog_search.dart:16:14: Error: The getter 'description' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'description'.
+      screen.description,
+             ^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:17:14: Error: The getter 'category' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'category'.
+      screen.category,
+             ^^^^^^^^
+lib/shared/catalog/catalog_search.dart:18:14: Error: The getter 'domainKey' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'domainKey'.
+      screen.domainKey,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:19:14: Error: The getter 'domainJa' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'domainJa'.
+      screen.domainJa,
+             ^^^^^^^^
+lib/shared/catalog/catalog_search.dart:20:14: Error: The getter 'useCaseJa' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseJa'.
+      screen.useCaseJa,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:21:14: Error: The getter 'useCaseEn' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseEn'.
+      screen.useCaseEn,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:22:14: Error: The getter 'useCaseKey' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseKey'.
+      screen.useCaseKey,
+             ^^^^^^^^^^
+.</error></testcase><testcase name="loading &lt;runner-work&gt;/test/shared/catalog/catalog_search_test.dart" classname="&lt;runner-work&gt;/test/shared/catalog/catalog_search_test.dart"><error message="Flutter test error">Failed to load "&lt;runner-work&gt;/test/shared/catalog/catalog_search_test.dart":
+Compilation failed for testPath=&lt;runner-work&gt;/test/shared/catalog/catalog_search_test.dart: lib/shared/catalog/catalog_search.dart:1:8: Error: Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory
+import '../screens/generic_screen.dart';
+       ^
+lib/shared/catalog/catalog_search.dart:7:6: Error: Type 'ScreenData' not found.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+     ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:7:37: Error: Type 'ScreenData' not found.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+                                    ^^^^^^^^^^
+test/shared/catalog/catalog_search_test.dart:24:32: Error: The getter 'screenDataId' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'screenDataId'.
+    expect(result.map((s) =&gt; s.screenDataId), [5]);
+                               ^^^^^^^^^^^^
+test/shared/catalog/catalog_search_test.dart:34:53: Error: The getter 'screenDataId' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'screenDataId'.
+    expect(searchCatalog(screens, ' ').map((s) =&gt; s.screenDataId), [5, 6]);
+                                                    ^^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:7:37: Error: 'ScreenData' isn't a type.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+                                    ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:9:34: Error: 'ScreenData' isn't a type.
+  if (query.isEmpty) return List&lt;ScreenData&gt;.of(screens);
+                                 ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:12:14: Error: The getter 'screenDataId' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'screenDataId'.
+      screen.screenDataId.toString(),
+             ^^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:13:23: Error: The getter 'screenDataId' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'screenDataId'.
+      'screen${screen.screenDataId}',
+                      ^^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:14:14: Error: The getter 'name' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'name'.
+      screen.name,
+             ^^^^
+lib/shared/catalog/catalog_search.dart:15:14: Error: The getter 'title' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'title'.
+      screen.title,
+             ^^^^^
+lib/shared/catalog/catalog_search.dart:16:14: Error: The getter 'description' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'description'.
+      screen.description,
+             ^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:17:14: Error: The getter 'category' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'category'.
+      screen.category,
+             ^^^^^^^^
+lib/shared/catalog/catalog_search.dart:18:14: Error: The getter 'domainKey' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'domainKey'.
+      screen.domainKey,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:19:14: Error: The getter 'domainJa' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'domainJa'.
+      screen.domainJa,
+             ^^^^^^^^
+lib/shared/catalog/catalog_search.dart:20:14: Error: The getter 'useCaseJa' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseJa'.
+      screen.useCaseJa,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:21:14: Error: The getter 'useCaseEn' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseEn'.
+      screen.useCaseEn,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:22:14: Error: The getter 'useCaseKey' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseKey'.
+      screen.useCaseKey,
+             ^^^^^^^^^^
+.</error></testcase><testcase name="loading &lt;runner-work&gt;/test/features/home/presentation/home_screen_test.dart" classname="&lt;runner-work&gt;/test/features/home/presentation/home_screen_test.dart"><error message="Flutter test error">Failed to load "&lt;runner-work&gt;/test/features/home/presentation/home_screen_test.dart":
+Compilation failed for testPath=&lt;runner-work&gt;/test/features/home/presentation/home_screen_test.dart: lib/shared/catalog/catalog_search.dart:1:8: Error: Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory
+import '../screens/generic_screen.dart';
+       ^
+lib/shared/catalog/catalog_search.dart:7:6: Error: Type 'ScreenData' not found.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+     ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:7:37: Error: Type 'ScreenData' not found.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+                                    ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:7:37: Error: 'ScreenData' isn't a type.
+List&lt;ScreenData&gt; searchCatalog(List&lt;ScreenData&gt; screens, String input) {
+                                    ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:9:34: Error: 'ScreenData' isn't a type.
+  if (query.isEmpty) return List&lt;ScreenData&gt;.of(screens);
+                                 ^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:12:14: Error: The getter 'screenDataId' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'screenDataId'.
+      screen.screenDataId.toString(),
+             ^^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:13:23: Error: The getter 'screenDataId' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'screenDataId'.
+      'screen${screen.screenDataId}',
+                      ^^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:14:14: Error: The getter 'name' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'name'.
+      screen.name,
+             ^^^^
+lib/shared/catalog/catalog_search.dart:15:14: Error: The getter 'title' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'title'.
+      screen.title,
+             ^^^^^
+lib/shared/catalog/catalog_search.dart:16:14: Error: The getter 'description' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'description'.
+      screen.description,
+             ^^^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:17:14: Error: The getter 'category' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'category'.
+      screen.category,
+             ^^^^^^^^
+lib/shared/catalog/catalog_search.dart:18:14: Error: The getter 'domainKey' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'domainKey'.
+      screen.domainKey,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:19:14: Error: The getter 'domainJa' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'domainJa'.
+      screen.domainJa,
+             ^^^^^^^^
+lib/shared/catalog/catalog_search.dart:20:14: Error: The getter 'useCaseJa' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseJa'.
+      screen.useCaseJa,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:21:14: Error: The getter 'useCaseEn' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseEn'.
+      screen.useCaseEn,
+             ^^^^^^^^^
+lib/shared/catalog/catalog_search.dart:22:14: Error: The getter 'useCaseKey' isn't defined for the type 'Object?'.
+ - 'Object' is from 'dart:core'.
+Try correcting the name to the name of an existing getter, or defining a getter or field named 'useCaseKey'.
+      screen.useCaseKey,
+             ^^^^^^^^^^
+.</error></testcase></testsuite></testsuites>

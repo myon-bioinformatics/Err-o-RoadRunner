@@ -10,12 +10,8 @@ import pytest
 
 from err_o_roadrunner.actions_log import normalize_actions_log_line, preprocess_actions_log
 from err_o_roadrunner.triage import MAX_READ_BYTES, triage
-from tests.actions_log_golden_util import (
-    assert_report_has_exact_line,
-    normalize_report,
-    triage_actions_log,
-    triage_actions_log_cli,
-)
+from tests.actions_log_golden_util import normalize_report, triage_actions_log, triage_actions_log_cli
+from tests.report_assert import assert_report_has_exact_line
 
 ROOT = Path(__file__).resolve().parents[1]
 FIX = ROOT / "tests" / "fixtures" / "actions_logs"
@@ -56,8 +52,9 @@ def test_actions_log_workflow_error_command() -> None:
         project_root=ROOT,
     )
     lines = _lines(report)
-    assert_report_has_exact_line(lines, "FOUND: actions log workflow error (first) (actions-log):")
-    assert any("compile failed" in ln for ln in lines)
+    assert_report_has_exact_line(
+        lines, "FOUND: actions log workflow error (first) (actions-log): compile failed"
+    )
 
 
 @pytest.mark.actions
@@ -86,12 +83,14 @@ def test_actions_log_timestamp_strips_single_space_only() -> None:
 def test_actions_log_preprocess_crlf_and_bom() -> None:
     path = FIX / "crlf_bom.log"
     raw = path.read_bytes()
-    assert b"\r" in raw or path.read_text(encoding="utf-8-sig").endswith("7.\n")
-    records, is_gh = preprocess_actions_log(path.read_text(encoding="utf-8-sig"))
+    assert b"\r\n" in raw
+    text = raw.decode("utf-8-sig")
+    records, is_gh = preprocess_actions_log(text)
     lines = [rec.text for rec in records]
     assert not is_gh
+    assert all("\r" not in ln for ln in lines)
     assert lines[0].startswith("##[group]Run echo ok")
-    assert any(ln.startswith("##[error]Process completed with exit code 7.") for ln in lines)
+    assert any(ln == "##[error]Process completed with exit code 7." for ln in lines)
 
 
 @pytest.mark.actions
@@ -122,6 +121,8 @@ def test_actions_log_cli_read_cap() -> None:
         assert proc.returncode == 0
         assert "ACTIONS_LOG_BEYOND_CAP" not in proc.stdout
         assert f"input truncated (size {MAX_READ_BYTES + len(marker)} > {MAX_READ_BYTES})" in proc.stdout
+        assert marker.decode() not in proc.stdout
+        assert proc.stdout.count("z") <= MAX_READ_BYTES
     finally:
         if path.exists():
             path.unlink()
@@ -216,6 +217,18 @@ def test_actions_log_empty_log_failed_file_is_not_found() -> None:
         for ln in lines
     )
     assert not any(ln.startswith("FOUND: actions log failing step") for ln in lines)
+
+
+@pytest.mark.actions
+def test_gh_run_view_line_with_embedded_tab_not_extra_prefix() -> None:
+    text = (
+        "job\tUNKNOWN STEP\t2026-10-11T12:00:00.0000000Z ##[group]Run checkout\n"
+        "job\tUNKNOWN STEP\t2026-10-11T12:00:00.1000000Z hint: \tgit branch\n"
+        "job\tUNKNOWN STEP\t2026-10-11T12:00:01.0000000Z ##[error]Process completed with exit code 1.\n"
+    )
+    records, is_gh = preprocess_actions_log(text)
+    assert is_gh
+    assert records[1].text == "hint: \tgit branch"
 
 
 @pytest.mark.actions
