@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -21,6 +22,8 @@ def normalize_report(text: str) -> str:
     lines: list[str] = []
     for line in text.splitlines():
         line = line.replace(root, "<repo>")
+        line = line.replace("/workspace", "<repo>")
+        line = re.sub(r"/usr/lib/python3\.\d+/", "<pylib>/", line)
         if line.startswith("FOUND: python version:"):
             lines.append("FOUND: python version: <runtime>")
         elif line.startswith("FOUND: node version:"):
