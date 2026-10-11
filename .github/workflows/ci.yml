@@ -63,7 +63,7 @@ jobs:
       actions: read
     uses: myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-junit-identity.yml@d45076d0bacda1f00b3b763cbf33d129387ae4d0
     with:
-      expected-reports: '["junit-py3.10/reports/junit.xml","junit-py3.11/reports/junit.xml","junit-py3.12/reports/junit.xml","junit-py3.13/reports/junit.xml","junit-py3.14/reports/junit.xml","junit-py3.x/reports/junit.xml"]'
+      expected-reports: '["junit-py3.10/junit.xml","junit-py3.11/junit.xml","junit-py3.12/junit.xml","junit-py3.13/junit.xml","junit-py3.14/junit.xml","junit-py3.x/junit.xml"]'
       artifact-pattern: "junit-*"
       output-artifact: failure-identity
       commit-sha: ${{ github.event.pull_request.head.sha || github.sha }}
