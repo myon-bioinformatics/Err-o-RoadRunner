@@ -488,9 +488,17 @@ def _junit_failure_blob(testcase: ET.Element, elem: ET.Element) -> str:
     parts: list[str] = []
     msg = sanitize_report_text((elem.attrib.get("message") or "").strip())
     body = sanitize_report_text((elem.text or "").strip())
-    if msg:
+    if msg and body:
+        if body == msg or msg in body:
+            parts.append(body)
+        elif body in msg:
+            parts.append(msg)
+        else:
+            parts.append(msg)
+            parts.append(body)
+    elif msg:
         parts.append(msg)
-    if body:
+    elif body:
         parts.append(body)
     for extra in ("system-out", "system-err"):
         chunk = _junit_child_text(testcase, extra)
@@ -512,8 +520,13 @@ def _junit_snippet(elem: ET.Element, testcase: ET.Element | None = None) -> str:
         return "failure"
     msg = sanitize_report_text((elem.attrib.get("message") or "").strip())
     body = sanitize_report_text((elem.text or "").strip())
-    if msg and body and body not in msg:
-        return _junit_flatten_for_report(f"{msg}\n{body}")
+    if msg and body:
+        if body == msg or msg in body:
+            return _junit_flatten_for_report(body)
+        if body in msg:
+            return _junit_flatten_for_report(msg)
+        if msg not in body:
+            return _junit_flatten_for_report(f"{msg}\n{body}")
     if msg:
         return _junit_flatten_for_report(msg)
     if body:

@@ -1,14 +1,14 @@
 FOUND: exit code: 1
 FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38027304901_junit-py3.12_38.xml): 3
-FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38027304901_junit-py3.12_38.xml): NameError: name 'marp_pptx' is not defined\ntests/test_marp_input_modes.py:17: in test_input_modes_share_converter\n    monkeypatch.setattr(marp_pptx, "convert", fake_convert)\n                        ^^^^^^^^^\nE   NameError: name 'marp_pptx' is not defined
-FOUND: junit failure (last) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38027304901_junit-py3.12_38.xml): NameError: name 'marp_pptx' is not defined\ntests/test_marp_input_modes.py:17: in test_input_modes_share_converter\n    monkeypatch.setattr(marp_pptx, "convert", fake_convert)\n                        ^^^^^^^^^\nE   NameError: name 'marp_pptx' is not defined
+FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38027304901_junit-py3.12_38.xml): tests/test_marp_input_modes.py:17: in test_input_modes_share_converter\n    monkeypatch.setattr(marp_pptx, "convert", fake_convert)\n                        ^^^^^^^^^\nE   NameError: name 'marp_pptx' is not defined
+FOUND: junit failure (last) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38027304901_junit-py3.12_38.xml): tests/test_marp_input_modes.py:17: in test_input_modes_share_converter\n    monkeypatch.setattr(marp_pptx, "convert", fake_convert)\n                        ^^^^^^^^^\nE   NameError: name 'marp_pptx' is not defined
 FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38027304901_junit-py3.12_38.xml): tests.test_marp_input_modes
 FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38027304901_junit-py3.12_38.xml): NameError
 FOUND: python version: 3.12.3 (cpython)
 FOUND: node version: v22.14.0
 FOUND: gh version: gh version 2.102.0 (2026-09-30)
-FOUND: environment variable count: 39
-FOUND: environment variable names: AGENT_TRANSCRIPTS, CARGO_HOME, CURSOR_AGENT, CURSOR_AGENT_SOCKET, CURSOR_CONVERSATION_ID, CURSOR_REQUEST_ID, CURSOR_RIPGREP_PATH, CURSOR_SPAWN_CWD_HOP, CURSOR_WORKLOAD_CGROUP, DISPLAY, EXEC_DAEMON_STARTUP_TRACEPARENT, FORCE_COLOR, GH_TELEMETRY, GIT_DISCOVERY_ACROSS_FILESYSTEM, GIT_LFS_SKIP_SMUDGE, HOME, LANG, LC_ALL, NO_COLOR, NVM_BIN, NVM_CD_FLAGS, NVM_DIR, NVM_INC, OLDPWD, PATH, PS1, PWD, PYTHONPATH, RUSTUP_HOME, RUST_VERSION, SHELL, SHLVL, TERM, USER, VNC_DPI, VNC_RESOLUTION, _, _ZO_DOCTOR, __CURSOR_SANDBOX_ENV_RESTORE
+FOUND: environment variable count: 38
+FOUND: environment variable names: AGENT_TRANSCRIPTS, CARGO_HOME, CURSOR_AGENT, CURSOR_AGENT_SOCKET, CURSOR_CONVERSATION_ID, CURSOR_REQUEST_ID, CURSOR_RIPGREP_PATH, CURSOR_SPAWN_CWD_HOP, CURSOR_WORKLOAD_CGROUP, DISPLAY, EXEC_DAEMON_STARTUP_TRACEPARENT, FORCE_COLOR, GH_TELEMETRY, GIT_DISCOVERY_ACROSS_FILESYSTEM, GIT_LFS_SKIP_SMUDGE, HOME, LANG, LC_ALL, NO_COLOR, NVM_BIN, NVM_CD_FLAGS, NVM_DIR, NVM_INC, OLDPWD, PATH, PS1, PWD, RUSTUP_HOME, RUST_VERSION, SHELL, SHLVL, TERM, USER, VNC_DPI, VNC_RESOLUTION, _, _ZO_DOCTOR, __CURSOR_SANDBOX_ENV_RESTORE
 NOT FOUND: junit errors (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38027304901_junit-py3.12_38.xml)
 NOT FOUND: junit skipped (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38027304901_junit-py3.12_38.xml)
 NOT FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38027304901_junit-py3.12_38.xml)
@@ -16,4 +16,4 @@ NOT FOUND: junit system-err (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_3
 NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38027304901_junit-py3.12_38.xml)
 NOT FOUND: lock files in project root
 HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38027304901_junit-py3.12_38.xml): pytest/python
-HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38027304901_junit-py3.12_38.xml): NameError: name 'marp_pptx' is not defined\ntests/test_marp_input_modes.py:17: in test_input_modes_share_converter\n    monkeypatch.setattr(marp_pptx, "convert", fake_convert)\n                        ^^^^^^^^^\nE   NameError: name 'marp_pptx' is not defined
+HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38027304901_junit-py3.12_38.xml): tests/test_marp_input_modes.py:17: in test_input_modes_share_converter\n    monkeypatch.setattr(marp_pptx, "convert", fake_convert)\n                        ^^^^^^^^^\nE   NameError: name 'marp_pptx' is not defined
