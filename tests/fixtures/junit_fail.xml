@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="pytest" tests="2" failures="1" errors="0" skipped="0">
+  <testcase classname="tests.test_fail" name="test_widget" time="0.02">
+    <failure message="AssertionError: expected 1 == 2" type="AssertionError">
+AssertionError: expected 1 == 2
+    </failure>
+  </testcase>
+  <testcase classname="tests.test_fail" name="test_other" time="0.01"/>
+</testsuite>

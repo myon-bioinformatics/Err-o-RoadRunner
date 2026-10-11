@@ -1,5 +1,5 @@
-from err_o_roadrunner import idle_status
+from err_o_roadrunner import EXIT_OK, main
 
 
-def test_idle_until_failure() -> None:
-    assert idle_status() == "idle"
+def test_package_entrypoint_exists() -> None:
+    assert main(["--exit-code", "0"]) == EXIT_OK

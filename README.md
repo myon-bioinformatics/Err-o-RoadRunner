@@ -17,13 +17,13 @@ Researching the cause of a Python, Node or GitHub Actions CI failure currently t
   - `FOUND: ...`
   - `NOT FOUND: ...`
   - `HINT: ...`
-- It can optionally attach web search keywords or URLs for the error message.
+- It can optionally attach web search keywords for the error message (no network calls by default).
 
 ## Design principles (draft)
 
 1. **Stays idle in normal times:** it does nothing unless there is an error. It has no daemon and no resident process.
-2. **Python standard library only:** the main implementation should be a single file if possible.
-3. **Node is optional:** if checking a Node failure requires running Node, the Node part may be split into its own file. The Python part, the Node part and a shared core under the repository's name are a possible 2- or 3-file layout.
+2. **Python standard library only:** the main implementation is a single module (`triage.py`) plus a thin `__main__` entry.
+3. **Node is optional:** Node stack parsing is regex-based on log text; no Node runtime is required for triage.
 4. **Read-only:** it never changes code or settings, and it never posts or sends anything.
 5. **Separates facts from guesses:** it shows `FOUND` and `NOT FOUND` explicitly, and labels inferences as `HINT`.
 6. **Independent of AI agents:** the report can be read by humans and by agents alike, and the tool works on its own.
@@ -31,4 +31,62 @@ Researching the cause of a Python, Node or GitHub Actions CI failure currently t
 
 ## Status
 
-The repository has been created and the design is under discussion. There is no implementation yet.
+**First slice (in progress):** read-only triage CLI for Python tracebacks, basic Node stacks, and JUnit XML. GitHub Actions log parsing is not implemented yet.
+
+## CLI usage
+
+After installing the package (`pip install -e .`), run:
+
+```bash
+err-o-roadrunner --exit-code "$?" --stderr /path/to/stderr.txt --junit reports/junit.xml
+```
+
+Or as a module:
+
+```bash
+python -m err_o_roadrunner --exit-code 1 --log failure.log --project-root .
+```
+
+| Flag | Purpose |
+|------|---------|
+| `--exit-code N` | Exit code from the failed command |
+| `--stderr PATH` | Stderr capture file (`-` for stdin) |
+| `--log PATH` | Log file (same safety rules as stderr) |
+| `--junit PATH` | JUnit XML file (repeatable) |
+| `--project-root DIR` | Directory checked for lock files (default: `.`) |
+
+### Exit codes
+
+| Code | Meaning |
+|------|---------|
+| `0` | Triage finished and the report was printed |
+| `2` | Invalid CLI usage |
+
+Triage does not re-raise the original failure; it always aims to print a report instead of crashing.
+
+### Sample report
+
+```text
+FOUND: exit code: 1
+FOUND: python exception type: ValueError
+FOUND: python exception message: bad widget
+FOUND: python traceback frame (first): /app/module.py:10 in run
+FOUND: python traceback frame (last): /app/module.py:10 in run
+FOUND: python traceback frame count: 1
+FOUND: python version: 3.12.8 (cpython)
+NOT FOUND: node binary
+NOT FOUND: gh binary
+NOT FOUND: lock files in project root
+HINT: web search keywords: ValueError bad widget
+```
+
+(Path and lock-file lines depend on your environment.)
+
+## Development
+
+```bash
+python -m pip install -e ".[test]"
+python -m pytest -q tests
+```
+
+Tests are grouped with pytest markers: `success`, `failure`, and `adversarial`.

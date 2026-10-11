@@ -1,8 +1,14 @@
-"""Err-o-RoadRunner package skeleton (no triage logic yet)."""
+"""Err-o-RoadRunner: read-only failure triage (no AI, stdlib only)."""
 
-__version__ = "0.0.0"
+from err_o_roadrunner.triage import EXIT_OK, EXIT_USAGE, Report, main, triage
 
+__version__ = "0.1.0"
 
-def idle_status() -> str:
-    """Return the tool state before any failure is observed."""
-    return "idle"
+__all__ = [
+    "__version__",
+    "EXIT_OK",
+    "EXIT_USAGE",
+    "Report",
+    "main",
+    "triage",
+]
