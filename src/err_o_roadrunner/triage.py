@@ -26,12 +26,15 @@ MAX_ENV_NAMES_LISTED = 40
 # Terminal sequences stripped before removing remaining C0/C1 controls.
 _CSI_BODY = r"[\x30-\x3f]*[\x20-\x2f]*[\x40-\x7e]"
 TERMINAL_SEQUENCE_PATTERNS = (
-    re.compile(r"\x1b\][^\x07\x1b\n]*(?:\x07|\x1b\\)?"),
-    re.compile(r"\x1bP[^\x1b\n]*(?:\x1b\\)?"),
+    re.compile(r"\x1b\][^\x07\x1b\n\u009c]*(?:\x07|\x1b\\|\u009c)?"),
+    re.compile(r"\x1bP[^\x1b\n\u009c]*(?:\x1b\\|\u009c)?"),
     re.compile(r"\x1b\[" + _CSI_BODY),
     re.compile(r"\x9b" + _CSI_BODY),
     re.compile(r"\u009d[^\u009c\n]*\u009c?"),
     re.compile(r"\u0090[^\u009c\n]*\u009c?"),
+    re.compile(r"\x1b_[^\n\u009c]*(?:\x1b\\|\u009c)?"),
+    re.compile(r"\x1b\^[^\n\u009c]*(?:\x1b\\|\u009c)?"),
+    re.compile(r"\x1bX[^\n\u009c]*(?:\x1b\\|\u009c)?"),
     re.compile(r"\x1bc"),
 )
 PYTHON_BUILTIN_EXCEPTIONS = frozenset(
@@ -73,6 +76,13 @@ NODE_ERR_CODE_RE = re.compile(
 )
 NODE_AT_FRAME_RE = re.compile(
     r"^\s*at (?:async )?(?:(?P<func>[^()]+?) \()?(?P<loc>.+):(?P<line>\d+):(?P<col>\d+)\)?(?: \{)?\s*$"
+)
+NODE_AT_LOOSE_RE = re.compile(
+    r"^\s*at (?:async )?(?P<loc>.+):(?P<line>\d+)\s*$"
+)
+NODE_SYNTAX_PATH_RE = re.compile(
+    r"\.(?:ts|tsx|js|mjs|cjs|jsx)(?:\b|:)",
+    re.IGNORECASE,
 )
 
 LOCK_FILES = (
@@ -309,7 +319,14 @@ def _parse_one_python_block(tb: list[str], report: Report, label: str) -> tuple[
     for stripped in tail_lines:
         parsed = parse_exception_summary_line(stripped)
         if parsed:
-            exc_type, exc_msg = parsed
+            name, msg = parsed
+            if name.endswith("Warning"):
+                report.add_hint(f"{_report_key(label, 'warning line after traceback')}: {stripped}")
+                continue
+            if not exc_type:
+                exc_type, exc_msg = name, msg
+            else:
+                report.add_hint(f"{_report_key(label, 'additional exception line')}: {stripped}")
             continue
         if re.match(r"^[A-Za-z_][\w.]*:", stripped):
             report.add_hint(f"{_report_key(label, 'trailing colon line')}: {stripped}")
@@ -377,10 +394,13 @@ def parse_syntax_error(text: str, report: Report) -> None:
 
 def _parse_node_at_line(line: str) -> StackFrame | None:
     m = NODE_AT_FRAME_RE.match(line)
-    if not m:
-        return None
-    func = (m.group("func") or "").strip()
-    return StackFrame(file=m.group("loc"), line=int(m.group("line")), func=func)
+    if m:
+        func = (m.group("func") or "").strip()
+        return StackFrame(file=m.group("loc"), line=int(m.group("line")), func=func)
+    m = NODE_AT_LOOSE_RE.match(line)
+    if m:
+        return StackFrame(file=m.group("loc"), line=int(m.group("line")), func="")
+    return None
 
 
 def parse_node_stack(text: str, report: Report) -> None:
@@ -503,9 +523,21 @@ def _has_syntax_error_line(text: str) -> bool:
     return any(SYNTAX_ERROR_LINE_RE.match(line.strip()) for line in text.splitlines())
 
 
+def _is_node_syntax_error_line(stripped: str) -> bool:
+    m = SYNTAX_ERROR_LINE_RE.match(stripped)
+    if not m:
+        return False
+    msg = (m.group("msg") or "").strip()
+    return bool(NODE_SYNTAX_PATH_RE.search(msg) or msg.startswith("/"))
+
+
 def _looks_like_node_failure(text: str) -> bool:
     for line in text.splitlines():
         stripped = line.strip()
+        if _is_node_syntax_error_line(stripped):
+            return True
+        if NODE_AT_LOOSE_RE.match(line) or NODE_AT_FRAME_RE.match(line):
+            return True
         if SYNTAX_ERROR_LINE_RE.match(stripped):
             continue
         if NODE_ERROR_HEADLINE_RE.match(stripped):
@@ -523,10 +555,10 @@ def detect_and_parse_log(text: str, report: Report) -> None:
         return
     if "Traceback (most recent call last):" in text or any(m in text for m in PYTHON_CHAIN_MARKERS):
         parse_python_traceback(text, report)
-    elif _has_syntax_error_line(text):
-        parse_syntax_error(text, report)
     elif _looks_like_node_failure(text):
         parse_node_stack(text, report)
+    elif _has_syntax_error_line(text):
+        parse_syntax_error(text, report)
     else:
         report.add_not_found("recognized failure pattern in log/stderr")
 
@@ -594,6 +626,7 @@ def triage(
     exit_code: int | None,
     stderr_text: str | None,
     log_text: str | None,
+    actions_log_text: str | None = None,
     junit_paths: Sequence[str],
     project_root: Path | None,
 ) -> Report:
@@ -612,11 +645,11 @@ def triage(
     if log_text is not None:
         texts.append(("log", log_text))
 
-    if not texts and not junit_paths:
+    if not texts and not junit_paths and actions_log_text is None:
         if exit_code == 0:
             report.add_not_found("failure evidence (none supplied)")
         else:
-            report.add_not_found("failure evidence (no stderr, log, or junit)")
+            report.add_not_found("failure evidence (no stderr, log, junit, or actions log)")
 
     for label, text in texts:
         text = strip_terminal_controls(text)
@@ -624,6 +657,14 @@ def triage(
             report.add_not_found(f"{label} text (empty)")
             continue
         detect_and_parse_log(text, report)
+
+    if actions_log_text is not None:
+        from err_o_roadrunner.actions_log import parse_actions_log
+
+        if not actions_log_text.strip():
+            report.add_not_found("actions log text (empty)")
+        else:
+            parse_actions_log(actions_log_text, "actions-log", report)
 
     for raw_path in junit_paths:
         path = Path(raw_path)
@@ -658,6 +699,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="Log file path (same safety rules as --stderr).",
     )
     parser.add_argument(
+        "--actions-log",
+        metavar="PATH",
+        help="Downloaded GitHub Actions job log (same safety rules as --stderr).",
+    )
+    parser.add_argument(
         "--junit",
         action="append",
         default=[],
@@ -686,6 +732,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     report = Report()
     stderr_text = read_stream_arg(args.stderr, report, "stderr")
     log_text = read_stream_arg(args.log, report, "log")
+    actions_log_text = read_stream_arg(args.actions_log, report, "actions-log")
 
     root: Path | None
     try:
@@ -701,6 +748,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         exit_code=args.exit_code,
         stderr_text=stderr_text,
         log_text=log_text,
+        actions_log_text=actions_log_text,
         junit_paths=args.junit,
         project_root=root,
     )

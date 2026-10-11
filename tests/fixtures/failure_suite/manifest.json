@@ -1,0 +1,70 @@
+[
+  {
+    "id": "python_import_error",
+    "category": "python",
+    "stderr": "tests/fixtures/failure_suite/inputs/python_import_error.stderr",
+    "golden": "tests/fixtures/failure_suite/golden/python_import_error.out"
+  },
+  {
+    "id": "python_attribute_error",
+    "category": "python",
+    "stderr": "tests/fixtures/failure_suite/inputs/python_attribute_error.stderr",
+    "golden": "tests/fixtures/failure_suite/golden/python_attribute_error.out"
+  },
+  {
+    "id": "python_type_error",
+    "category": "python",
+    "stderr": "tests/fixtures/failure_suite/inputs/python_type_error.stderr",
+    "golden": "tests/fixtures/failure_suite/golden/python_type_error.out"
+  },
+  {
+    "id": "python_recursion_error",
+    "category": "python",
+    "stderr": "tests/fixtures/failure_suite/inputs/python_recursion_error.stderr",
+    "golden": "tests/fixtures/failure_suite/golden/python_recursion_error.out"
+  },
+  {
+    "id": "python_keyboard_interrupt",
+    "category": "python",
+    "stderr": "tests/fixtures/failure_suite/inputs/python_keyboard_interrupt.stderr",
+    "golden": "tests/fixtures/failure_suite/golden/python_keyboard_interrupt.out"
+  },
+  {
+    "id": "python_timeout",
+    "category": "python",
+    "log": "tests/fixtures/failure_suite/inputs/python_timeout.log",
+    "golden": "tests/fixtures/failure_suite/golden/python_timeout.out"
+  },
+  {
+    "id": "pytest_junit",
+    "category": "junit",
+    "junit": [
+      "tests/fixtures/failure_suite/inputs/suite.junit.xml"
+    ],
+    "golden": "tests/fixtures/failure_suite/golden/pytest_junit.out"
+  },
+  {
+    "id": "actions_python_fail",
+    "category": "actions",
+    "actions_log": "tests/fixtures/failure_suite/inputs/actions_python_fail.log",
+    "golden": "tests/fixtures/failure_suite/golden/actions_python_fail.out"
+  },
+  {
+    "id": "actions_workflow_error",
+    "category": "actions",
+    "actions_log": "tests/fixtures/failure_suite/inputs/actions_workflow_error.log",
+    "golden": "tests/fixtures/failure_suite/golden/actions_workflow_error.out"
+  },
+  {
+    "id": "node_reference_error",
+    "category": "node",
+    "log": "tests/fixtures/failure_suite/inputs/node_reference_error.stderr",
+    "golden": "tests/fixtures/failure_suite/golden/node_reference_error.out"
+  },
+  {
+    "id": "node_syntax_error",
+    "category": "node",
+    "log": "tests/fixtures/failure_suite/inputs/node_syntax_error.stderr",
+    "golden": "tests/fixtures/failure_suite/golden/node_syntax_error.out"
+  }
+]

@@ -1,0 +1,763 @@
+﻿2026-10-11T12:33:07.7201213Z Current runner version: '2.337.0'
+2026-10-11T12:33:07.7227004Z ##[group]Runner Image Provisioner
+2026-10-11T12:33:07.7227869Z Hosted Compute Agent
+2026-10-11T12:33:07.7228496Z Version: 20261002.596
+2026-10-11T12:33:07.7229195Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+2026-10-11T12:33:07.7229982Z Build Date: 2026-10-02T22:28:27Z
+2026-10-11T12:33:07.7230730Z Worker ID: {e0f5f34d-d064-4ca6-9b8e-c2d2f185bed5}
+2026-10-11T12:33:07.7231491Z Region: eastus
+2026-10-11T12:33:07.7232026Z Cloud: Azure
+2026-10-11T12:33:07.7232643Z ##[endgroup]
+2026-10-11T12:33:07.7234577Z ##[group]Operating System
+2026-10-11T12:33:07.7235348Z Ubuntu
+2026-10-11T12:33:07.7235909Z 24.04.5
+2026-10-11T12:33:07.7236468Z LTS
+2026-10-11T12:33:07.7237055Z ##[endgroup]
+2026-10-11T12:33:07.7237666Z ##[group]Runner Image
+2026-10-11T12:33:07.7238316Z Image: ubuntu-24.04
+2026-10-11T12:33:07.7238952Z Version: 20261004.327.1
+2026-10-11T12:33:07.7240262Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261004.327/images/ubuntu/Ubuntu2404-Readme.md
+2026-10-11T12:33:07.7241859Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261004.327
+2026-10-11T12:33:07.7242885Z ##[endgroup]
+2026-10-11T12:33:07.7244437Z ##[group]GITHUB_TOKEN Permissions
+2026-10-11T12:33:07.7246477Z Contents: read
+2026-10-11T12:33:07.7247096Z Metadata: read
+2026-10-11T12:33:07.7247648Z ##[endgroup]
+2026-10-11T12:33:07.7249786Z Secret source: Actions
+2026-10-11T12:33:07.7250848Z Cache mode: write
+2026-10-11T12:33:07.7251569Z Prepare workflow directory
+2026-10-11T12:33:07.7778810Z Prepare all required actions
+2026-10-11T12:33:07.7829013Z Getting action download info
+2026-10-11T12:33:07.9841602Z Download action repository 'actions/checkout@v7' (SHA:3d3c42e5aac5ba805825da76410c181273ba90b1)
+2026-10-11T12:33:08.0722867Z Download action repository 'subosito/flutter-action@v2' (SHA:1a449444c387b1966244ae4d4f8c696479add0b2)
+2026-10-11T12:33:08.1868059Z Download action repository 'actions/setup-node@v7' (SHA:949feb2413d6458794dcd2491c4babbbce0c15c1)
+2026-10-11T12:33:08.3798785Z Download action repository 'actions/upload-artifact@v7' (SHA:cf430e030ddbb5b0abf93d22962f4752f3646cd9)
+2026-10-11T12:33:08.6870922Z Getting action download info
+2026-10-11T12:33:08.7477230Z Download action repository 'actions/cache@v5' (SHA:caa296126883cff596d87d8935842f9db880ef25)
+2026-10-11T12:33:08.9220006Z Complete job name: evidence
+2026-10-11T12:33:09.0109110Z ##[group]Run actions/checkout@v7
+2026-10-11T12:33:09.0110511Z with:
+2026-10-11T12:33:09.0111114Z   ref: 51ef70f1072fea56d348a13cc741f8c77a12f72d
+2026-10-11T12:33:09.0111912Z   fetch-depth: 0
+2026-10-11T12:33:09.0112637Z   repository: myon-bioinformatics/flutter_navigation_basic
+2026-10-11T12:33:09.0121908Z   token: ***
+2026-10-11T12:33:09.0122451Z   ssh-strict: true
+2026-10-11T12:33:09.0122964Z   ssh-user: git
+2026-10-11T12:33:09.0123651Z   persist-credentials: true
+2026-10-11T12:33:09.0124285Z   clean: true
+2026-10-11T12:33:09.0124827Z   sparse-checkout-cone-mode: true
+2026-10-11T12:33:09.0125539Z   fetch-tags: false
+2026-10-11T12:33:09.0126134Z   show-progress: true
+2026-10-11T12:33:09.0126672Z   lfs: false
+2026-10-11T12:33:09.0127152Z   submodules: false
+2026-10-11T12:33:09.0127694Z   set-safe-directory: true
+2026-10-11T12:33:09.0128345Z   allow-unsafe-pr-checkout: false
+2026-10-11T12:33:09.0129300Z env:
+2026-10-11T12:33:09.0129987Z   EXPECTED_SHA: 51ef70f1072fea56d348a13cc741f8c77a12f72d
+2026-10-11T12:33:09.0130817Z ##[endgroup]
+2026-10-11T12:33:09.1211924Z Syncing repository: myon-bioinformatics/flutter_navigation_basic
+2026-10-11T12:33:09.1214815Z ##[group]Getting Git version info
+2026-10-11T12:33:09.1216209Z Working directory is '/home/runner/work/flutter_navigation_basic/flutter_navigation_basic'
+2026-10-11T12:33:09.1217936Z [command]/usr/bin/git version
+2026-10-11T12:33:09.1276464Z git version 2.55.0
+2026-10-11T12:33:09.1299161Z ##[endgroup]
+2026-10-11T12:33:09.1311889Z Temporarily overriding HOME='/home/runner/work/_temp/3b50c74c-ceb5-48ad-9462-b1b53693c3e9' before making global git config changes
+2026-10-11T12:33:09.1314941Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-11T12:33:09.1319709Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/flutter_navigation_basic/flutter_navigation_basic
+2026-10-11T12:33:09.1372993Z Deleting the contents of '/home/runner/work/flutter_navigation_basic/flutter_navigation_basic'
+2026-10-11T12:33:09.1376284Z ##[group]Determining repository object format
+2026-10-11T12:33:09.1377973Z ##[endgroup]
+2026-10-11T12:33:09.1378907Z ##[group]Initializing the repository
+2026-10-11T12:33:09.1383619Z [command]/usr/bin/git init /home/runner/work/flutter_navigation_basic/flutter_navigation_basic
+2026-10-11T12:33:09.1508556Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-11T12:33:09.1511817Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-11T12:33:09.1515150Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-11T12:33:09.1516547Z hint: call:
+2026-10-11T12:33:09.1517033Z hint:
+2026-10-11T12:33:09.1517707Z hint: 	git config --global init.defaultBranch <name>
+2026-10-11T12:33:09.1518570Z hint:
+2026-10-11T12:33:09.1519791Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-11T12:33:09.1521279Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-11T12:33:09.1522390Z hint:
+2026-10-11T12:33:09.1522886Z hint: 	git branch -m <name>
+2026-10-11T12:33:09.1523760Z hint:
+2026-10-11T12:33:09.1524683Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-11T12:33:09.1526702Z Initialized empty Git repository in /home/runner/work/flutter_navigation_basic/flutter_navigation_basic/.git/
+2026-10-11T12:33:09.1529988Z [command]/usr/bin/git remote add origin https://github.com/myon-bioinformatics/flutter_navigation_basic
+2026-10-11T12:33:09.1577230Z ##[endgroup]
+2026-10-11T12:33:09.1578237Z ##[group]Disabling automatic garbage collection
+2026-10-11T12:33:09.1581222Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-11T12:33:09.1617030Z ##[endgroup]
+2026-10-11T12:33:09.1618031Z ##[group]Setting up auth
+2026-10-11T12:33:09.1618799Z Removing SSH command configuration
+2026-10-11T12:33:09.1624160Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-11T12:33:09.1657568Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-11T12:33:09.2008712Z Removing HTTP extra header
+2026-10-11T12:33:09.2015842Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-11T12:33:09.2051422Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-11T12:33:09.2274999Z Removing includeIf entries pointing to credentials config files
+2026-10-11T12:33:09.2279762Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-11T12:33:09.2318404Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-11T12:33:09.2557664Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-c7ed0b00-a5bf-467b-b331-8171540d012e.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-11T12:33:09.2602360Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/flutter_navigation_basic/flutter_navigation_basic/.git.path /home/runner/work/_temp/git-credentials-c7ed0b00-a5bf-467b-b331-8171540d012e.config
+2026-10-11T12:33:09.2635729Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/flutter_navigation_basic/flutter_navigation_basic/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-c7ed0b00-a5bf-467b-b331-8171540d012e.config
+2026-10-11T12:33:09.2670251Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git.path /github/runner_temp/git-credentials-c7ed0b00-a5bf-467b-b331-8171540d012e.config
+2026-10-11T12:33:09.2705799Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.git/worktrees/*.path /github/runner_temp/git-credentials-c7ed0b00-a5bf-467b-b331-8171540d012e.config
+2026-10-11T12:33:09.2734537Z ##[endgroup]
+2026-10-11T12:33:09.2736279Z ##[group]Fetching the repository
+2026-10-11T12:33:09.2743918Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/*
+2026-10-11T12:33:10.0971081Z From https://github.com/myon-bioinformatics/flutter_navigation_basic
+2026-10-11T12:33:10.0974087Z  * [new branch]        agent/latitude-longitude-tool -> origin/agent/latitude-longitude-tool
+2026-10-11T12:33:10.0977727Z  * [new branch]        agent/maps-links-github-revision -> origin/agent/maps-links-github-revision
+2026-10-11T12:33:10.0981142Z  * [new branch]        agent/navigation-hub-i18n -> origin/agent/navigation-hub-i18n
+2026-10-11T12:33:10.0984488Z  * [new branch]        audit/canonical-vendor-stage -> origin/audit/canonical-vendor-stage
+2026-10-11T12:33:10.0988307Z  * [new branch]        audit/multiplatform-runtime-ownership -> origin/audit/multiplatform-runtime-ownership
+2026-10-11T12:33:10.0991957Z  * [new branch]        audit/photo-import-ingress -> origin/audit/photo-import-ingress
+2026-10-11T12:33:10.0995399Z  * [new branch]        chore/codex-claude-automation -> origin/chore/codex-claude-automation
+2026-10-11T12:33:10.0997733Z  * [new branch]        chore/dependency-hygiene-getx-map -> origin/chore/dependency-hygiene-getx-map
+2026-10-11T12:33:10.1000116Z  * [new branch]        chore/ironmate-49-portable-tooling -> origin/chore/ironmate-49-portable-tooling
+2026-10-11T12:33:10.1003312Z  * [new branch]        chore/refresh-github-actions -> origin/chore/refresh-github-actions
+2026-10-11T12:33:10.1006729Z  * [new branch]        chore/relax-test-dependency-bounds -> origin/chore/relax-test-dependency-bounds
+2026-10-11T12:33:10.1009576Z  * [new branch]        chore/remove-entrypoint-ab-103 -> origin/chore/remove-entrypoint-ab-103
+2026-10-11T12:33:10.1012075Z  * [new branch]        chore/remove-entrypoint-ab-dispatch -> origin/chore/remove-entrypoint-ab-dispatch
+2026-10-11T12:33:10.1014643Z  * [new branch]        ci/adopt-shared-vendor-lock -> origin/ci/adopt-shared-vendor-lock
+2026-10-11T12:33:10.1017194Z  * [new branch]        ci/e2e-node22-playwright163 -> origin/ci/e2e-node22-playwright163
+2026-10-11T12:33:10.1020104Z  * [new branch]        ci/reuse-actionlint     -> origin/ci/reuse-actionlint
+2026-10-11T12:33:10.1023094Z  * [new branch]        ci/setup-java-v6-final  -> origin/ci/setup-java-v6-final
+2026-10-11T12:33:10.1027225Z  * [new branch]        ci/setup-java-v6-refresh -> origin/ci/setup-java-v6-refresh
+2026-10-11T12:33:10.1030298Z  * [new branch]        ci/setup-node-v7        -> origin/ci/setup-node-v7
+2026-10-11T12:33:10.1034098Z  * [new branch]        claude/e2e-docker-integration-check -> origin/claude/e2e-docker-integration-check
+2026-10-11T12:33:10.1038078Z  * [new branch]        claude/issue-10-20260813-1435 -> origin/claude/issue-10-20260813-1435
+2026-10-11T12:33:10.1040323Z  * [new branch]        claude/issue-10-20260813-1513 -> origin/claude/issue-10-20260813-1513
+2026-10-11T12:33:10.1042515Z  * [new branch]        claude/issue-102-20261002-2249 -> origin/claude/issue-102-20261002-2249
+2026-10-11T12:33:10.1045741Z  * [new branch]        claude/issue-107-20260927-0633 -> origin/claude/issue-107-20260927-0633
+2026-10-11T12:33:10.1048000Z  * [new branch]        claude/issue-12-20260813-2256 -> origin/claude/issue-12-20260813-2256
+2026-10-11T12:33:10.1050156Z  * [new branch]        claude/issue-15-20260814-0039 -> origin/claude/issue-15-20260814-0039
+2026-10-11T12:33:10.1052631Z  * [new branch]        codex/pattern-catalogue-docker-boundary -> origin/codex/pattern-catalogue-docker-boundary
+2026-10-11T12:33:10.1056068Z  * [new branch]        codex/python-junit-evidence-136 -> origin/codex/python-junit-evidence-136
+2026-10-11T12:33:10.1058730Z  * [new branch]        codex/shared-screenshot-validation -> origin/codex/shared-screenshot-validation
+2026-10-11T12:33:10.1061422Z  * [new branch]        copilot/create-general-app-base -> origin/copilot/create-general-app-base
+2026-10-11T12:33:10.1064382Z  * [new branch]        copilot/expand-navigation-patterns -> origin/copilot/expand-navigation-patterns
+2026-10-11T12:33:10.1067078Z  * [new branch]        copilot/implement-screen1-to-screen198 -> origin/copilot/implement-screen1-to-screen198
+2026-10-11T12:33:10.1069844Z  * [new branch]        copilot/improve-flutter-navigation -> origin/copilot/improve-flutter-navigation
+2026-10-11T12:33:10.1073561Z  * [new branch]        copilot/standardize-url-parameter-retrieval -> origin/copilot/standardize-url-parameter-retrieval
+2026-10-11T12:33:10.1078390Z  * [new branch]        cursor/copilot-wrapper-lifecycle-d1c2 -> origin/cursor/copilot-wrapper-lifecycle-d1c2
+2026-10-11T12:33:10.1082477Z  * [new branch]        cursor/curl-safe-subset-d1c2 -> origin/cursor/curl-safe-subset-d1c2
+2026-10-11T12:33:10.1086327Z  * [new branch]        cursor/door-route-unify-d1c2 -> origin/cursor/door-route-unify-d1c2
+2026-10-11T12:33:10.1090184Z  * [new branch]        cursor/http-request-draft-editor-d1c2 -> origin/cursor/http-request-draft-editor-d1c2
+2026-10-11T12:33:10.1092788Z  * [new branch]        cursor/irony-drag-copilot-fixes-1cbc -> origin/cursor/irony-drag-copilot-fixes-1cbc
+2026-10-11T12:33:10.1095996Z  * [new branch]        cursor/manual-box-i18n-labels-1cbc -> origin/cursor/manual-box-i18n-labels-1cbc
+2026-10-11T12:33:10.1099275Z  * [new branch]        cursor/maps-photo-studio-polish-1cbc -> origin/cursor/maps-photo-studio-polish-1cbc
+2026-10-11T12:33:10.1101680Z  * [new branch]        cursor/mcp-api-integration-d1c2 -> origin/cursor/mcp-api-integration-d1c2
+2026-10-11T12:33:10.1104115Z  * [new branch]        cursor/mcp-foundation-d1c2 -> origin/cursor/mcp-foundation-d1c2
+2026-10-11T12:33:10.1106304Z  * [new branch]        cursor/mock-auth-scenarios-d1c2 -> origin/cursor/mock-auth-scenarios-d1c2
+2026-10-11T12:33:10.1109448Z  * [new branch]        cursor/photo-import-compat-matrix-d1c2 -> origin/cursor/photo-import-compat-matrix-d1c2
+2026-10-11T12:33:10.1114472Z  * [new branch]        cursor/photo-native-import-export-d1c2 -> origin/cursor/photo-native-import-export-d1c2
+2026-10-11T12:33:10.1118913Z  * [new branch]        cursor/photo-studio-export-layers-1cbc -> origin/cursor/photo-studio-export-layers-1cbc
+2026-10-11T12:33:10.1123337Z  * [new branch]        cursor/photo-studio-stamps-shapes-1cbc -> origin/cursor/photo-studio-stamps-shapes-1cbc
+2026-10-11T12:33:10.1127337Z  * [new branch]        cursor/studio-tools-integration-1cbc -> origin/cursor/studio-tools-integration-1cbc
+2026-10-11T12:33:10.1129772Z  * [new branch]        cursor/version-commit-split-d1c2 -> origin/cursor/version-commit-split-d1c2
+2026-10-11T12:33:10.1132291Z  * [new branch]        deps/latest-2026-10     -> origin/deps/latest-2026-10
+2026-10-11T12:33:10.1135433Z  * [new branch]        docs/normalize-antipatterns-filename -> origin/docs/normalize-antipatterns-filename
+2026-10-11T12:33:10.1137781Z  * [new branch]        feat/106-generated-zone-table -> origin/feat/106-generated-zone-table
+2026-10-11T12:33:10.1139949Z  * [new branch]        feat/app-wide-display-catalog -> origin/feat/app-wide-display-catalog
+2026-10-11T12:33:10.1141967Z  * [new branch]        feat/app-wide-i18n-main -> origin/feat/app-wide-i18n-main
+2026-10-11T12:33:10.1144151Z  * [new branch]        feat/base64-image-bridge -> origin/feat/base64-image-bridge
+2026-10-11T12:33:10.1146023Z  * [new branch]        feat/bounding-box-tool  -> origin/feat/bounding-box-tool
+2026-10-11T12:33:10.1147978Z  * [new branch]        feat/build-screen-diagnostics -> origin/feat/build-screen-diagnostics
+2026-10-11T12:33:10.1150352Z  * [new branch]        feat/canonical-repository-metadata -> origin/feat/canonical-repository-metadata
+2026-10-11T12:33:10.1152937Z  * [new branch]        feat/clipboard-shelf-core -> origin/feat/clipboard-shelf-core
+2026-10-11T12:33:10.1155117Z  * [new branch]        feat/clipboard-workbench -> origin/feat/clipboard-workbench
+2026-10-11T12:33:10.1157165Z  * [new branch]        feat/composition-studio-stage1 -> origin/feat/composition-studio-stage1
+2026-10-11T12:33:10.1159375Z  * [new branch]        feat/coordinate-platform-formats -> origin/feat/coordinate-platform-formats
+2026-10-11T12:33:10.1161570Z  * [new branch]        feat/coordinate-tolerance-area -> origin/feat/coordinate-tolerance-area
+2026-10-11T12:33:10.1163772Z  * [new branch]        feat/developer-toolkit  -> origin/feat/developer-toolkit
+2026-10-11T12:33:10.1165630Z  * [new branch]        feat/home-build-revision -> origin/feat/home-build-revision
+2026-10-11T12:33:10.1167668Z  * [new branch]        feat/home-dashboard-weight-badge -> origin/feat/home-dashboard-weight-badge
+2026-10-11T12:33:10.1169808Z  * [new branch]        feat/home-refresh-i18n-audit -> origin/feat/home-refresh-i18n-audit
+2026-10-11T12:33:10.1171744Z  * [new branch]        feat/now-timeline-stage1 -> origin/feat/now-timeline-stage1
+2026-10-11T12:33:10.1173881Z  * [new branch]        feat/now-timeline-stage1-v2 -> origin/feat/now-timeline-stage1-v2
+2026-10-11T12:33:10.1176219Z  * [new branch]        feat/photo-studio-repeat-screen6-search -> origin/feat/photo-studio-repeat-screen6-search
+2026-10-11T12:33:10.1178600Z  * [new branch]        feat/stage1-mini-app-enrichment -> origin/feat/stage1-mini-app-enrichment
+2026-10-11T12:33:10.1180714Z  * [new branch]        feat/stage2-mini-app-controls -> origin/feat/stage2-mini-app-controls
+2026-10-11T12:33:10.1182677Z  * [new branch]        feat/ui-coverage-slimming -> origin/feat/ui-coverage-slimming
+2026-10-11T12:33:10.1185038Z  * [new branch]        feature/external-integration-pages -> origin/feature/external-integration-pages
+2026-10-11T12:33:10.1187198Z  * [new branch]        feature/mock-api-client-demo -> origin/feature/mock-api-client-demo
+2026-10-11T12:33:10.1189377Z  * [new branch]        feature/semantic-screens-web-pages -> origin/feature/semantic-screens-web-pages
+2026-10-11T12:33:10.1191762Z  * [new branch]        fix/103-single-materialapp-bootstrap -> origin/fix/103-single-materialapp-bootstrap
+2026-10-11T12:33:10.1194267Z  * [new branch]        fix/107-direct-deep-link -> origin/fix/107-direct-deep-link
+2026-10-11T12:33:10.1196441Z  * [new branch]        fix/canonical-diagnostics-timestamps -> origin/fix/canonical-diagnostics-timestamps
+2026-10-11T12:33:10.1199050Z  * [new branch]        fix/playwright-browser-install-parity -> origin/fix/playwright-browser-install-parity
+2026-10-11T12:33:10.1201276Z  * [new branch]        fix/pr100-evidence-boundary -> origin/fix/pr100-evidence-boundary
+2026-10-11T12:33:10.1203529Z  * [new branch]        fix/web-weight-diagnostics-strip -> origin/fix/web-weight-diagnostics-strip
+2026-10-11T12:33:10.1205559Z  * [new branch]        gpt/ghi-actions-parity  -> origin/gpt/ghi-actions-parity
+2026-10-11T12:33:10.1207377Z  * [new branch]        gpt/issue-96-e2e-semantics -> origin/gpt/issue-96-e2e-semantics
+2026-10-11T12:33:10.1209479Z  * [new branch]        gpt/playwright-python-cli-snapshots -> origin/gpt/playwright-python-cli-snapshots
+2026-10-11T12:33:10.1211606Z  * [new branch]        gpt/vendor-gh-identity-v01 -> origin/gpt/vendor-gh-identity-v01
+2026-10-11T12:33:10.1213754Z  * [new branch]        gpt/vendor-sync-promote-pin -> origin/gpt/vendor-sync-promote-pin
+2026-10-11T12:33:10.1215455Z  * [new branch]        main                    -> origin/main
+2026-10-11T12:33:10.1217171Z  * [new branch]        refactor/consolidate-home-tools -> origin/refactor/consolidate-home-tools
+2026-10-11T12:33:10.1219550Z  * [new branch]        refactor/flutter-native-shell-latest-stable -> origin/refactor/flutter-native-shell-latest-stable
+2026-10-11T12:33:10.1221842Z  * [new branch]        test/103-entrypoint-ab-probe -> origin/test/103-entrypoint-ab-probe
+2026-10-11T12:33:10.1224507Z  * [new branch]        test/129-diagnostics-evidence-hardening -> origin/test/129-diagnostics-evidence-hardening
+2026-10-11T12:33:10.1226656Z  * [new branch]        test/back-to-hub-key-probe -> origin/test/back-to-hub-key-probe
+2026-10-11T12:33:10.1228421Z  * [new branch]        test/ci-value-density   -> origin/test/ci-value-density
+2026-10-11T12:33:10.1230249Z  * [new branch]        test/photo-fixture-drift-check -> origin/test/photo-fixture-drift-check
+2026-10-11T12:33:10.1232378Z  * [new branch]        test/photo-studio-five-project-e2e -> origin/test/photo-studio-five-project-e2e
+2026-10-11T12:33:10.1234774Z  * [new branch]        test/photo-studio-format-matrix -> origin/test/photo-studio-format-matrix
+2026-10-11T12:33:10.1236862Z  * [new branch]        test/photo-studio-ingress-audit -> origin/test/photo-studio-ingress-audit
+2026-10-11T12:33:10.1238944Z  * [new branch]        test/playwright-browser-parity -> origin/test/playwright-browser-parity
+2026-10-11T12:33:10.1240930Z  * [new branch]        test/portable-five-projects -> origin/test/portable-five-projects
+2026-10-11T12:33:10.1242698Z  * [new branch]        tool/timezone-oracle    -> origin/tool/timezone-oracle
+2026-10-11T12:33:10.1244583Z  * [new branch]        work/audit-observed-sha -> origin/work/audit-observed-sha
+2026-10-11T12:33:10.1246509Z  * [new branch]        work/catalogue-200-and-stub-audit -> origin/work/catalogue-200-and-stub-audit
+2026-10-11T12:33:10.1248580Z  * [new branch]        work/curl-entry-runtime-branch -> origin/work/curl-entry-runtime-branch
+2026-10-11T12:33:10.1250774Z  * [new branch]        work/curl-import-boundary-regressions -> origin/work/curl-import-boundary-regressions
+2026-10-11T12:33:10.1252906Z  * [new branch]        work/curl-issue-display-text -> origin/work/curl-issue-display-text
+2026-10-11T12:33:10.1255101Z  * [new branch]        work/drop-unused-junit-tools -> origin/work/drop-unused-junit-tools
+2026-10-11T12:33:10.1256964Z  * [new branch]        work/ghi-vendor-refresh -> origin/work/ghi-vendor-refresh
+2026-10-11T12:33:10.1258746Z  * [new branch]        work/issue-144-pr-handoff -> origin/work/issue-144-pr-handoff
+2026-10-11T12:33:10.1260654Z  * [new branch]        work/junit-collector-commit-sha -> origin/work/junit-collector-commit-sha
+2026-10-11T12:33:10.1262896Z  * [new branch]        work/junit-parent-strict-sha-pin -> origin/work/junit-parent-strict-sha-pin
+2026-10-11T12:33:10.1265224Z  * [new branch]        work/junit-pr-head-provenance -> origin/work/junit-pr-head-provenance
+2026-10-11T12:33:10.1267282Z  * [new branch]        work/multi-runner-evidence-retry -> origin/work/multi-runner-evidence-retry
+2026-10-11T12:33:10.1269279Z  * [new branch]        work/multilang-junit-bridge -> origin/work/multilang-junit-bridge
+2026-10-11T12:33:10.1271077Z  * [new branch]        work/node-test-cli-junit -> origin/work/node-test-cli-junit
+2026-10-11T12:33:10.1273005Z  * [new branch]        work/pattern-filter-basic-python -> origin/work/pattern-filter-basic-python
+2026-10-11T12:33:10.1275397Z  * [new branch]        work/refactor-smoke-structure-main -> origin/work/refactor-smoke-structure-main
+2026-10-11T12:33:10.1277530Z  * [new branch]        work/remove-shared-legacy-views -> origin/work/remove-shared-legacy-views
+2026-10-11T12:33:10.1279509Z  * [new branch]        work/repository-metadata-ghi -> origin/work/repository-metadata-ghi
+2026-10-11T12:33:10.1281455Z  * [new branch]        work/route-observation-audit -> origin/work/route-observation-audit
+2026-10-11T12:33:10.1283959Z  * [new branch]        work/structure-service-consolidation-20261010 -> origin/work/structure-service-consolidation-20261010
+2026-10-11T12:33:10.1286337Z  * [new branch]        work/tmp-curl-fallback-mutation -> origin/work/tmp-curl-fallback-mutation
+2026-10-11T12:33:10.1287983Z  * [new tag]           v1.0.0                  -> v1.0.0
+2026-10-11T12:33:10.1291408Z [command]/usr/bin/git rev-parse --verify --quiet 51ef70f1072fea56d348a13cc741f8c77a12f72d^{object}
+2026-10-11T12:33:10.1293190Z 51ef70f1072fea56d348a13cc741f8c77a12f72d
+2026-10-11T12:33:10.1296597Z ##[endgroup]
+2026-10-11T12:33:10.1298008Z ##[group]Determining the checkout info
+2026-10-11T12:33:10.1299554Z ##[endgroup]
+2026-10-11T12:33:10.1300498Z [command]/usr/bin/git sparse-checkout disable
+2026-10-11T12:33:10.1303006Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-11T12:33:10.1306399Z ##[group]Checking out the ref
+2026-10-11T12:33:10.1307858Z [command]/usr/bin/git checkout --progress --force 51ef70f1072fea56d348a13cc741f8c77a12f72d
+2026-10-11T12:33:10.3735623Z Note: switching to '51ef70f1072fea56d348a13cc741f8c77a12f72d'.
+2026-10-11T12:33:10.3737636Z 
+2026-10-11T12:33:10.3739280Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-11T12:33:10.3741566Z changes and commit them, and you can discard any commits you make in this
+2026-10-11T12:33:10.3744118Z state without impacting any branches by switching back to a branch.
+2026-10-11T12:33:10.3746161Z 
+2026-10-11T12:33:10.3747727Z If you want to create a new branch to retain commits you create, you may
+2026-10-11T12:33:10.3750429Z do so (now or later) by using -c with the switch command. Example:
+2026-10-11T12:33:10.3751911Z 
+2026-10-11T12:33:10.3752613Z   git switch -c <new-branch-name>
+2026-10-11T12:33:10.3753886Z 
+2026-10-11T12:33:10.3754535Z Or undo this operation with:
+2026-10-11T12:33:10.3755511Z 
+2026-10-11T12:33:10.3756162Z   git switch -
+2026-10-11T12:33:10.3756979Z 
+2026-10-11T12:33:10.3757855Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-11T12:33:10.3758883Z 
+2026-10-11T12:33:10.3759513Z HEAD is now at 51ef70f1 test: use package name declared by pubspec
+2026-10-11T12:33:10.3762795Z ##[endgroup]
+2026-10-11T12:33:10.3798888Z [command]/usr/bin/git log -1 --format=%H
+2026-10-11T12:33:10.3824091Z 51ef70f1072fea56d348a13cc741f8c77a12f72d
+2026-10-11T12:33:10.4190795Z ##[group]Run actions/checkout@v7
+2026-10-11T12:33:10.4191825Z with:
+2026-10-11T12:33:10.4192748Z   repository: myon-bioinformatics/browser-test-kit
+2026-10-11T12:33:10.4194148Z   ref: 3a054c777a98300ee272e4458990b849c32a7ef0
+2026-10-11T12:33:10.4195234Z   path: .browser-test-kit
+2026-10-11T12:33:10.4196169Z   persist-credentials: false
+2026-10-11T12:33:10.4204706Z   token: ***
+2026-10-11T12:33:10.4205537Z   ssh-strict: true
+2026-10-11T12:33:10.4206373Z   ssh-user: git
+2026-10-11T12:33:10.4207178Z   clean: true
+2026-10-11T12:33:10.4208050Z   sparse-checkout-cone-mode: true
+2026-10-11T12:33:10.4209028Z   fetch-depth: 1
+2026-10-11T12:33:10.4209865Z   fetch-tags: false
+2026-10-11T12:33:10.4210722Z   show-progress: true
+2026-10-11T12:33:10.4211584Z   lfs: false
+2026-10-11T12:33:10.4212398Z   submodules: false
+2026-10-11T12:33:10.4213263Z   set-safe-directory: true
+2026-10-11T12:33:10.4214367Z   allow-unsafe-pr-checkout: false
+2026-10-11T12:33:10.4215341Z env:
+2026-10-11T12:33:10.4216337Z   EXPECTED_SHA: 51ef70f1072fea56d348a13cc741f8c77a12f72d
+2026-10-11T12:33:10.4217472Z ##[endgroup]
+2026-10-11T12:33:10.5120939Z Syncing repository: myon-bioinformatics/browser-test-kit
+2026-10-11T12:33:10.5124665Z ##[group]Getting Git version info
+2026-10-11T12:33:10.5127824Z Working directory is '/home/runner/work/flutter_navigation_basic/flutter_navigation_basic/.browser-test-kit'
+2026-10-11T12:33:10.5167340Z [command]/usr/bin/git version
+2026-10-11T12:33:10.5213959Z git version 2.55.0
+2026-10-11T12:33:10.5240914Z ##[endgroup]
+2026-10-11T12:33:10.5264764Z Temporarily overriding HOME='/home/runner/work/_temp/57e9b808-ed60-41a8-ac02-d0c71a7b4b81' before making global git config changes
+2026-10-11T12:33:10.5269019Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-11T12:33:10.5273572Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/flutter_navigation_basic/flutter_navigation_basic/.browser-test-kit
+2026-10-11T12:33:10.5318626Z ##[group]Determining repository object format
+2026-10-11T12:33:10.5320729Z ##[endgroup]
+2026-10-11T12:33:10.5323331Z ##[group]Initializing the repository
+2026-10-11T12:33:10.5328327Z [command]/usr/bin/git init /home/runner/work/flutter_navigation_basic/flutter_navigation_basic/.browser-test-kit
+2026-10-11T12:33:10.5702389Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-10-11T12:33:10.5705343Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-10-11T12:33:10.5708532Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-10-11T12:33:10.5710837Z hint: call:
+2026-10-11T12:33:10.5712866Z hint:
+2026-10-11T12:33:10.5714635Z hint: 	git config --global init.defaultBranch <name>
+2026-10-11T12:33:10.5716261Z hint:
+2026-10-11T12:33:10.5717356Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-10-11T12:33:10.5719218Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-10-11T12:33:10.5720623Z hint:
+2026-10-11T12:33:10.5721443Z hint: 	git branch -m <name>
+2026-10-11T12:33:10.5722355Z hint:
+2026-10-11T12:33:10.5723797Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-10-11T12:33:10.5726088Z Initialized empty Git repository in /home/runner/work/flutter_navigation_basic/flutter_navigation_basic/.browser-test-kit/.git/
+2026-10-11T12:33:10.5729838Z [command]/usr/bin/git remote add origin https://github.com/myon-bioinformatics/browser-test-kit
+2026-10-11T12:33:10.7085199Z ##[endgroup]
+2026-10-11T12:33:10.7088136Z ##[group]Disabling automatic garbage collection
+2026-10-11T12:33:10.7092526Z [command]/usr/bin/git config --local gc.auto 0
+2026-10-11T12:33:10.7133077Z ##[endgroup]
+2026-10-11T12:33:10.7135260Z ##[group]Setting up auth
+2026-10-11T12:33:10.7136878Z Removing SSH command configuration
+2026-10-11T12:33:10.7141429Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-11T12:33:10.7183110Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-11T12:33:10.7433215Z Removing HTTP extra header
+2026-10-11T12:33:10.7442159Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-11T12:33:10.7482206Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-11T12:33:10.7735362Z Removing includeIf entries pointing to credentials config files
+2026-10-11T12:33:10.7740879Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-11T12:33:10.7775501Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-11T12:33:10.8008899Z [command]/usr/bin/git config --file /home/runner/work/_temp/git-credentials-e46ef10f-28b9-4216-a369-28abb35d9297.config http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-10-11T12:33:10.8048418Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/flutter_navigation_basic/flutter_navigation_basic/.browser-test-kit/.git.path /home/runner/work/_temp/git-credentials-e46ef10f-28b9-4216-a369-28abb35d9297.config
+2026-10-11T12:33:10.8080073Z [command]/usr/bin/git config --local includeIf.gitdir:/home/runner/work/flutter_navigation_basic/flutter_navigation_basic/.browser-test-kit/.git/worktrees/*.path /home/runner/work/_temp/git-credentials-e46ef10f-28b9-4216-a369-28abb35d9297.config
+2026-10-11T12:33:10.8111328Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.browser-test-kit/.git.path /github/runner_temp/git-credentials-e46ef10f-28b9-4216-a369-28abb35d9297.config
+2026-10-11T12:33:10.8145364Z [command]/usr/bin/git config --local includeIf.gitdir:/github/workspace/.browser-test-kit/.git/worktrees/*.path /github/runner_temp/git-credentials-e46ef10f-28b9-4216-a369-28abb35d9297.config
+2026-10-11T12:33:10.8174348Z ##[endgroup]
+2026-10-11T12:33:10.8176067Z ##[group]Fetching the repository
+2026-10-11T12:33:10.8181526Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin 3a054c777a98300ee272e4458990b849c32a7ef0
+2026-10-11T12:33:11.0350673Z From https://github.com/myon-bioinformatics/browser-test-kit
+2026-10-11T12:33:11.0353309Z  * branch            3a054c777a98300ee272e4458990b849c32a7ef0 -> FETCH_HEAD
+2026-10-11T12:33:11.0362375Z [command]/usr/bin/git rev-parse --verify --quiet 3a054c777a98300ee272e4458990b849c32a7ef0^{object}
+2026-10-11T12:33:11.0390431Z 3a054c777a98300ee272e4458990b849c32a7ef0
+2026-10-11T12:33:11.0398331Z ##[endgroup]
+2026-10-11T12:33:11.0400224Z ##[group]Determining the checkout info
+2026-10-11T12:33:11.0402747Z ##[endgroup]
+2026-10-11T12:33:11.0404344Z [command]/usr/bin/git sparse-checkout disable
+2026-10-11T12:33:11.0451094Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-10-11T12:33:11.0485191Z ##[group]Checking out the ref
+2026-10-11T12:33:11.0488556Z [command]/usr/bin/git checkout --progress --force 3a054c777a98300ee272e4458990b849c32a7ef0
+2026-10-11T12:33:11.0577458Z Note: switching to '3a054c777a98300ee272e4458990b849c32a7ef0'.
+2026-10-11T12:33:11.0579023Z 
+2026-10-11T12:33:11.0580095Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-11T12:33:11.0584372Z changes and commit them, and you can discard any commits you make in this
+2026-10-11T12:33:11.0588500Z state without impacting any branches by switching back to a branch.
+2026-10-11T12:33:11.0591277Z 
+2026-10-11T12:33:11.0592567Z If you want to create a new branch to retain commits you create, you may
+2026-10-11T12:33:11.0594582Z do so (now or later) by using -c with the switch command. Example:
+2026-10-11T12:33:11.0595514Z 
+2026-10-11T12:33:11.0595975Z   git switch -c <new-branch-name>
+2026-10-11T12:33:11.0596884Z 
+2026-10-11T12:33:11.0597339Z Or undo this operation with:
+2026-10-11T12:33:11.0597967Z 
+2026-10-11T12:33:11.0598421Z   git switch -
+2026-10-11T12:33:11.0599057Z 
+2026-10-11T12:33:11.0599885Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-11T12:33:11.0600959Z 
+2026-10-11T12:33:11.0601951Z HEAD is now at 3a054c7 feat: validate multi-capture screenshot evidence and provenance (#31)
+2026-10-11T12:33:11.0605832Z ##[endgroup]
+2026-10-11T12:33:11.0631344Z [command]/usr/bin/git log -1 --format=%H
+2026-10-11T12:33:11.0657366Z 3a054c777a98300ee272e4458990b849c32a7ef0
+2026-10-11T12:33:11.0669925Z ##[group]Removing auth
+2026-10-11T12:33:11.0671604Z Removing SSH command configuration
+2026-10-11T12:33:11.0674758Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-11T12:33:11.0709470Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-11T12:33:11.0964343Z Removing HTTP extra header
+2026-10-11T12:33:11.0976761Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-11T12:33:11.1017826Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-11T12:33:11.1271128Z Removing includeIf entries pointing to credentials config files
+2026-10-11T12:33:11.1277102Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-11T12:33:11.1309525Z includeif.gitdir:/home/runner/work/flutter_navigation_basic/flutter_navigation_basic/.browser-test-kit/.git.path
+2026-10-11T12:33:11.1312603Z includeif.gitdir:/home/runner/work/flutter_navigation_basic/flutter_navigation_basic/.browser-test-kit/.git/worktrees/*.path
+2026-10-11T12:33:11.1315757Z includeif.gitdir:/github/workspace/.browser-test-kit/.git.path
+2026-10-11T12:33:11.1317790Z includeif.gitdir:/github/workspace/.browser-test-kit/.git/worktrees/*.path
+2026-10-11T12:33:11.1323349Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/flutter_navigation_basic/flutter_navigation_basic/.browser-test-kit/.git.path
+2026-10-11T12:33:11.1350304Z /home/runner/work/_temp/git-credentials-e46ef10f-28b9-4216-a369-28abb35d9297.config
+2026-10-11T12:33:11.1368746Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/flutter_navigation_basic/flutter_navigation_basic/.browser-test-kit/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-e46ef10f\-28b9\-4216\-a369\-28abb35d9297\.config
+2026-10-11T12:33:11.1421274Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/flutter_navigation_basic/flutter_navigation_basic/.browser-test-kit/.git/worktrees/*.path
+2026-10-11T12:33:11.1448018Z /home/runner/work/_temp/git-credentials-e46ef10f-28b9-4216-a369-28abb35d9297.config
+2026-10-11T12:33:11.1462449Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/flutter_navigation_basic/flutter_navigation_basic/.browser-test-kit/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-e46ef10f\-28b9\-4216\-a369\-28abb35d9297\.config
+2026-10-11T12:33:11.1521459Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.browser-test-kit/.git.path
+2026-10-11T12:33:11.1547813Z /github/runner_temp/git-credentials-e46ef10f-28b9-4216-a369-28abb35d9297.config
+2026-10-11T12:33:11.1559679Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.browser-test-kit/.git.path \/github\/runner_temp\/git\-credentials\-e46ef10f\-28b9\-4216\-a369\-28abb35d9297\.config
+2026-10-11T12:33:11.1599928Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.browser-test-kit/.git/worktrees/*.path
+2026-10-11T12:33:11.1625549Z /github/runner_temp/git-credentials-e46ef10f-28b9-4216-a369-28abb35d9297.config
+2026-10-11T12:33:11.1637646Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.browser-test-kit/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-e46ef10f\-28b9\-4216\-a369\-28abb35d9297\.config
+2026-10-11T12:33:11.1685188Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-11T12:33:11.1928431Z Removing credentials config '/home/runner/work/_temp/git-credentials-e46ef10f-28b9-4216-a369-28abb35d9297.config'
+2026-10-11T12:33:11.1942305Z ##[endgroup]
+2026-10-11T12:33:11.2472695Z ##[group]Run subosito/flutter-action@v2
+2026-10-11T12:33:11.2474006Z with:
+2026-10-11T12:33:11.2474803Z   flutter-version: 3.47.0
+2026-10-11T12:33:11.2475674Z   cache: true
+2026-10-11T12:33:11.2476471Z   channel: stable
+2026-10-11T12:33:11.2477272Z   architecture: X64
+2026-10-11T12:33:11.2478129Z   pub-cache-path: default
+2026-10-11T12:33:11.2479072Z   dry-run: false
+2026-10-11T12:33:11.2480033Z   git-source: https://github.com/flutter/flutter.git
+2026-10-11T12:33:11.2481108Z env:
+2026-10-11T12:33:11.2482019Z   EXPECTED_SHA: 51ef70f1072fea56d348a13cc741f8c77a12f72d
+2026-10-11T12:33:11.2483146Z ##[endgroup]
+2026-10-11T12:33:11.2555182Z ##[start-action display=Make yq tool available on Windows runners;id=__subosito_flutter-action.__run]
+2026-10-11T12:33:11.2587138Z ##[end-action id=__subosito_flutter-action.__run;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-11T12:33:11.2593131Z ##[start-action display=Make setup script executable;id=__subosito_flutter-action.__run_2]
+2026-10-11T12:33:11.2661313Z ##[group]Run chmod +x "$GITHUB_ACTION_PATH/setup.sh"
+2026-10-11T12:33:11.2662596Z [36;1mchmod +x "$GITHUB_ACTION_PATH/setup.sh"[0m
+2026-10-11T12:33:11.2941456Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-11T12:33:11.2943272Z env:
+2026-10-11T12:33:11.2944918Z   EXPECTED_SHA: 51ef70f1072fea56d348a13cc741f8c77a12f72d
+2026-10-11T12:33:11.2946529Z ##[endgroup]
+2026-10-11T12:33:11.3108563Z ##[end-action id=__subosito_flutter-action.__run_2;outcome=success;conclusion=success;duration_ms=51]
+2026-10-11T12:33:11.3115582Z ##[start-action display=Set action inputs;id=__subosito_flutter-action.flutter-action]
+2026-10-11T12:33:11.3187840Z ##[group]Run $GITHUB_ACTION_PATH/setup.sh -p \
+2026-10-11T12:33:11.3189113Z [36;1m$GITHUB_ACTION_PATH/setup.sh -p \[0m
+2026-10-11T12:33:11.3190208Z [36;1m  -n '3.47.0' \[0m
+2026-10-11T12:33:11.3191134Z [36;1m  -f '' \[0m
+2026-10-11T12:33:11.3192013Z [36;1m  -a 'X64' \[0m
+2026-10-11T12:33:11.3192898Z [36;1m  -k '' \[0m
+2026-10-11T12:33:11.3193958Z [36;1m  -c '' \[0m
+2026-10-11T12:33:11.3194825Z [36;1m  -l '' \[0m
+2026-10-11T12:33:11.3195705Z [36;1m  -d 'default' \[0m
+2026-10-11T12:33:11.3196828Z [36;1m  -g 'https://github.com/flutter/flutter.git' \[0m
+2026-10-11T12:33:11.3197987Z [36;1m  stable[0m
+2026-10-11T12:33:11.3266681Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-11T12:33:11.3267898Z env:
+2026-10-11T12:33:11.3268883Z   EXPECTED_SHA: 51ef70f1072fea56d348a13cc741f8c77a12f72d
+2026-10-11T12:33:11.3270050Z ##[endgroup]
+2026-10-11T12:33:11.5009549Z ##[end-action id=__subosito_flutter-action.flutter-action;outcome=success;conclusion=success;duration_ms=189]
+2026-10-11T12:33:11.5019229Z ##[start-action display=Cache Flutter;id=__subosito_flutter-action.cache-flutter]
+2026-10-11T12:33:11.5135505Z ##[group]Run actions/cache@v5
+2026-10-11T12:33:11.5136438Z with:
+2026-10-11T12:33:11.5137357Z   path: /opt/hostedtoolcache/flutter/stable-3.47.0-x64
+2026-10-11T12:33:11.5138904Z   key: flutter-linux-stable-3.47.0-x64-4cf24164269a5ebf0c16a028a00727d0e77bbb05
+2026-10-11T12:33:11.5140336Z   enableCrossOsArchive: false
+2026-10-11T12:33:11.5141288Z   fail-on-cache-miss: false
+2026-10-11T12:33:11.5142183Z   lookup-only: false
+2026-10-11T12:33:11.5143032Z   save-always: false
+2026-10-11T12:33:11.5144155Z env:
+2026-10-11T12:33:11.5145067Z   EXPECTED_SHA: 51ef70f1072fea56d348a13cc741f8c77a12f72d
+2026-10-11T12:33:11.5146163Z ##[endgroup]
+2026-10-11T12:33:11.7023085Z Cache hit for: flutter-linux-stable-3.47.0-x64-4cf24164269a5ebf0c16a028a00727d0e77bbb05
+2026-10-11T12:33:12.7585046Z Received 264241152 of 1716788587 (15.4%), 251.7 MBs/sec
+2026-10-11T12:33:13.7553700Z Received 515899392 of 1716788587 (30.1%), 245.4 MBs/sec
+2026-10-11T12:33:14.7562510Z Received 805306368 of 1716788587 (46.9%), 255.5 MBs/sec
+2026-10-11T12:33:15.7571835Z Received 1073741824 of 1716788587 (62.5%), 255.6 MBs/sec
+2026-10-11T12:33:16.7579737Z Received 1346371584 of 1716788587 (78.4%), 256.4 MBs/sec
+2026-10-11T12:33:17.7599182Z Received 1644167168 of 1716788587 (95.8%), 260.9 MBs/sec
+2026-10-11T12:33:17.9957898Z Received 1716788587 of 1716788587 (100.0%), 262.1 MBs/sec
+2026-10-11T12:33:17.9964320Z Cache Size: ~1637 MB (1716788587 B)
+2026-10-11T12:33:18.0114806Z [command]/usr/bin/tar -xf /home/runner/work/_temp/85259845-aad5-4694-b231-73e454d550f4/cache.tzst -P -C /home/runner/work/flutter_navigation_basic/flutter_navigation_basic --use-compress-program unzstd
+2026-10-11T12:33:23.0868065Z Cache restored successfully
+2026-10-11T12:33:24.0295001Z Cache restored from key: flutter-linux-stable-3.47.0-x64-4cf24164269a5ebf0c16a028a00727d0e77bbb05
+2026-10-11T12:33:24.0439166Z ##[end-action id=__subosito_flutter-action.cache-flutter;outcome=success;conclusion=success;duration_ms=12541]
+2026-10-11T12:33:24.0443717Z ##[start-action display=Cache pub dependencies;id=__subosito_flutter-action.cache-pub]
+2026-10-11T12:33:24.7946575Z ##[group]Run actions/cache@v5
+2026-10-11T12:33:24.7946935Z with:
+2026-10-11T12:33:24.7947229Z   path: /home/runner/.pub-cache
+2026-10-11T12:33:24.7948211Z   key: flutter-pub-linux-stable-3.47.0-x64-4cf24164269a5ebf0c16a028a00727d0e77bbb05-e9b92aa1d2234443e60e0be1d8028df5704b3cc404fceea1eca85972f308506f
+2026-10-11T12:33:24.7949216Z   enableCrossOsArchive: false
+2026-10-11T12:33:24.7949535Z   fail-on-cache-miss: false
+2026-10-11T12:33:24.7949834Z   lookup-only: false
+2026-10-11T12:33:24.7950107Z   save-always: false
+2026-10-11T12:33:24.7950360Z env:
+2026-10-11T12:33:24.7950654Z   EXPECTED_SHA: 51ef70f1072fea56d348a13cc741f8c77a12f72d
+2026-10-11T12:33:24.7951048Z ##[endgroup]
+2026-10-11T12:33:24.9805996Z Cache hit for: flutter-pub-linux-stable-3.47.0-x64-4cf24164269a5ebf0c16a028a00727d0e77bbb05-e9b92aa1d2234443e60e0be1d8028df5704b3cc404fceea1eca85972f308506f
+2026-10-11T12:33:25.3976668Z Received 57213992 of 57213992 (100.0%), 160.5 MBs/sec
+2026-10-11T12:33:25.3977428Z Cache Size: ~55 MB (57213992 B)
+2026-10-11T12:33:25.4009246Z [command]/usr/bin/tar -xf /home/runner/work/_temp/4a83911f-9b87-45e5-85ff-ffd575c8b5c2/cache.tzst -P -C /home/runner/work/flutter_navigation_basic/flutter_navigation_basic --use-compress-program unzstd
+2026-10-11T12:33:26.2463261Z Cache restored successfully
+2026-10-11T12:33:26.2574114Z Cache restored from key: flutter-pub-linux-stable-3.47.0-x64-4cf24164269a5ebf0c16a028a00727d0e77bbb05-e9b92aa1d2234443e60e0be1d8028df5704b3cc404fceea1eca85972f308506f
+2026-10-11T12:33:26.2680597Z ##[end-action id=__subosito_flutter-action.cache-pub;outcome=success;conclusion=success;duration_ms=2223]
+2026-10-11T12:33:26.2683636Z ##[start-action display=Run setup script;id=__subosito_flutter-action.__run_3]
+2026-10-11T12:33:26.2721717Z ##[group]Run $GITHUB_ACTION_PATH/setup.sh \
+2026-10-11T12:33:26.2722130Z [36;1m$GITHUB_ACTION_PATH/setup.sh \[0m
+2026-10-11T12:33:26.2722461Z [36;1m  -n '3.47.0' \[0m
+2026-10-11T12:33:26.2722732Z [36;1m  -a 'x64' \[0m
+2026-10-11T12:33:26.2723072Z [36;1m  -c '/opt/hostedtoolcache/flutter/stable-3.47.0-x64' \[0m
+2026-10-11T12:33:26.2723911Z [36;1m  -d '/home/runner/.pub-cache' \[0m
+2026-10-11T12:33:26.2724651Z [36;1m  stable[0m
+2026-10-11T12:33:26.2786999Z shell: /usr/bin/bash --noprofile --norc -e -o pipefail {0}
+2026-10-11T12:33:26.2787458Z env:
+2026-10-11T12:33:26.2787789Z   EXPECTED_SHA: 51ef70f1072fea56d348a13cc741f8c77a12f72d
+2026-10-11T12:33:26.2788223Z ##[endgroup]
+2026-10-11T12:33:26.4255528Z ##[end-action id=__subosito_flutter-action.__run_3;outcome=success;conclusion=success;duration_ms=157]
+2026-10-11T12:33:26.4351189Z ##[group]Run actions/setup-node@v7
+2026-10-11T12:33:26.4351497Z with:
+2026-10-11T12:33:26.4351712Z   node-version: 22
+2026-10-11T12:33:26.4351941Z   check-latest: false
+2026-10-11T12:33:26.4355117Z   token: ***
+2026-10-11T12:33:26.4355363Z   package-manager-cache: true
+2026-10-11T12:33:26.4355630Z env:
+2026-10-11T12:33:26.4355900Z   EXPECTED_SHA: 51ef70f1072fea56d348a13cc741f8c77a12f72d
+2026-10-11T12:33:26.4356350Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.47.0-x64/flutter
+2026-10-11T12:33:26.4356764Z   PUB_CACHE: /home/runner/.pub-cache
+2026-10-11T12:33:26.4357044Z ##[endgroup]
+2026-10-11T12:33:26.5658968Z Found in cache @ /opt/hostedtoolcache/node/22.23.3/x64
+2026-10-11T12:33:26.6419201Z ##[group]Environment details
+2026-10-11T12:33:26.9675558Z node: v22.23.3
+2026-10-11T12:33:26.9675968Z npm: 10.9.9
+2026-10-11T12:33:26.9676253Z yarn: 1.22.22
+2026-10-11T12:33:26.9676950Z ##[endgroup]
+2026-10-11T12:33:26.9826392Z ##[group]Run flutter pub get
+2026-10-11T12:33:26.9826754Z [36;1mflutter pub get[0m
+2026-10-11T12:33:26.9827251Z [36;1mpython3 tool/python/generate_repository_metadata.py --expected-sha "$EXPECTED_SHA"[0m
+2026-10-11T12:33:26.9828143Z [36;1mdart run tool/dev.dart meta --platform web --repository-metadata build/diagnostics/repository/repository-metadata.json[0m
+2026-10-11T12:33:26.9828940Z [36;1mflutter build web --release -t lib/main.dart --base-href '/'[0m
+2026-10-11T12:33:26.9897720Z shell: /usr/bin/bash -e {0}
+2026-10-11T12:33:26.9898066Z env:
+2026-10-11T12:33:26.9898413Z   EXPECTED_SHA: 51ef70f1072fea56d348a13cc741f8c77a12f72d
+2026-10-11T12:33:26.9898990Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.47.0-x64/flutter
+2026-10-11T12:33:26.9899513Z   PUB_CACHE: /home/runner/.pub-cache
+2026-10-11T12:33:26.9899864Z ##[endgroup]
+2026-10-11T12:33:27.2872214Z Resolving dependencies...
+2026-10-11T12:33:27.3481383Z Downloading packages...
+2026-10-11T12:33:27.3853282Z   cross_file 0.3.5+5 (0.4.0 available)
+2026-10-11T12:33:27.3854272Z   image_picker_android 0.8.13+23 (0.8.13+25 available)
+2026-10-11T12:33:27.3854987Z   image_picker_ios 0.8.13+7 (0.8.13+10 available)
+2026-10-11T12:33:27.3855697Z   image_picker_platform_interface 2.11.1 (2.11.2 available)
+2026-10-11T12:33:27.3856764Z   material_color_utilities 0.13.0 (0.13.1 available)
+2026-10-11T12:33:27.3857363Z   meta 1.18.3 (1.19.0 available)
+2026-10-11T12:33:27.3857909Z   test_api 0.7.12 (0.7.15 available)
+2026-10-11T12:33:27.3858490Z   vector_math 2.4.0 (2.4.3 available)
+2026-10-11T12:33:27.3859017Z Got dependencies!
+2026-10-11T12:33:27.3860159Z 8 packages have newer versions incompatible with dependency constraints.
+2026-10-11T12:33:27.3861122Z Try `flutter pub outdated` for more information.
+2026-10-11T12:33:27.4916143Z Upgrading analysis_options.yaml to exclude build and platform directories.
+2026-10-11T12:33:29.5473599Z Build metadata: assets/diagnostics/build_metadata.json
+2026-10-11T12:33:29.7426240Z Resolving dependencies...
+2026-10-11T12:33:29.8127622Z Downloading packages...
+2026-10-11T12:33:29.8511862Z   cross_file 0.3.5+5 (0.4.0 available)
+2026-10-11T12:33:29.8512771Z   image_picker_android 0.8.13+23 (0.8.13+25 available)
+2026-10-11T12:33:29.8513779Z   image_picker_ios 0.8.13+7 (0.8.13+10 available)
+2026-10-11T12:33:29.8514660Z   image_picker_platform_interface 2.11.1 (2.11.2 available)
+2026-10-11T12:33:29.8515483Z   material_color_utilities 0.13.0 (0.13.1 available)
+2026-10-11T12:33:29.8516197Z   meta 1.18.3 (1.19.0 available)
+2026-10-11T12:33:29.8516766Z   test_api 0.7.12 (0.7.15 available)
+2026-10-11T12:33:29.8517331Z   vector_math 2.4.0 (2.4.3 available)
+2026-10-11T12:33:29.8517965Z Got dependencies!
+2026-10-11T12:33:29.8518911Z 8 packages have newer versions incompatible with dependency constraints.
+2026-10-11T12:33:29.8519882Z Try `flutter pub outdated` for more information.
+2026-10-11T12:33:30.9710264Z Compiling lib/main.dart for the Web...                          
+2026-10-11T12:33:30.9719846Z Warning: In index.html:37: Flutter's service worker is deprecated and will be removed in a future Flutter release. See https://github.com/flutter/flutter/issues/156910 for more details.
+2026-10-11T12:33:30.9723048Z Warning: In index.html:46: "FlutterLoader.loadEntrypoint" is deprecated. Use "FlutterLoader.load" instead. See https://docs.flutter.dev/platform-integration/web/initialization for more details.
+2026-10-11T12:34:03.9323112Z Wasm dry run succeeded. Consider building and testing your application with the `--wasm` flag. See docs for more info: https://docs.flutter.dev/platform-integration/web/wasm
+2026-10-11T12:34:03.9324683Z Use --no-wasm-dry-run to disable these warnings.
+2026-10-11T12:34:03.9384867Z Target dart2js failed: ProcessException: Process exited abnormally with exit code 1:
+2026-10-11T12:34:03.9385922Z lib/shared/catalog/catalog_search.dart:1:8:
+2026-10-11T12:34:03.9387742Z Error: Error when reading 'lib/shared/screens/generic_screen.dart': Error reading 'lib/shared/screens/generic_screen.dart'  (No such file or directory)
+2026-10-11T12:34:03.9388959Z import '../screens/generic_screen.dart';
+2026-10-11T12:34:03.9389519Z        ^
+2026-10-11T12:34:03.9390015Z lib/shared/catalog/catalog_search.dart:7:6:
+2026-10-11T12:34:03.9390590Z Error: Type 'ScreenData' not found.
+2026-10-11T12:34:03.9391393Z List<ScreenData> searchCatalog(List<ScreenData> screens, String input) {
+2026-10-11T12:34:03.9392035Z      ^^^^^^^^^^
+2026-10-11T12:34:03.9392515Z lib/shared/catalog/catalog_search.dart:7:37:
+2026-10-11T12:34:03.9393164Z Error: Type 'ScreenData' not found.
+2026-10-11T12:34:03.9394295Z List<ScreenData> searchCatalog(List<ScreenData> screens, String input) {
+2026-10-11T12:34:03.9395024Z                                     ^^^^^^^^^^
+2026-10-11T12:34:03.9395622Z lib/shared/catalog/catalog_search.dart:7:37:
+2026-10-11T12:34:03.9396190Z Error: 'ScreenData' isn't a type.
+2026-10-11T12:34:03.9396940Z List<ScreenData> searchCatalog(List<ScreenData> screens, String input) {
+2026-10-11T12:34:03.9397642Z                                     ^^^^^^^^^^
+2026-10-11T12:34:03.9398229Z lib/shared/catalog/catalog_search.dart:9:34:
+2026-10-11T12:34:03.9398899Z Error: 'ScreenData' isn't a type.
+2026-10-11T12:34:03.9399676Z   if (query.isEmpty) return List<ScreenData>.of(screens);
+2026-10-11T12:34:03.9400278Z                                  ^^^^^^^^^^
+2026-10-11T12:34:03.9401083Z lib/shared/catalog/catalog_search.dart:12:14:
+2026-10-11T12:34:03.9401873Z Error: The getter 'screenDataId' isn't defined for the type 'Object?'.
+2026-10-11T12:34:03.9402546Z  - 'Object' is from 'dart:core'.
+2026-10-11T12:34:03.9403051Z       screen.screenDataId.toString(),
+2026-10-11T12:34:03.9403754Z              ^^^^^^^^^^^^
+2026-10-11T12:34:03.9404186Z lib/shared/catalog/catalog_search.dart:13:23:
+2026-10-11T12:34:03.9404728Z Error: The getter 'screenDataId' isn't defined for the type 'Object?'.
+2026-10-11T12:34:03.9405190Z  - 'Object' is from 'dart:core'.
+2026-10-11T12:34:03.9405521Z       'screen${screen.screenDataId}',
+2026-10-11T12:34:03.9405867Z                       ^^^^^^^^^^^^
+2026-10-11T12:34:03.9406269Z lib/shared/catalog/catalog_search.dart:14:14:
+2026-10-11T12:34:03.9406766Z Error: The getter 'name' isn't defined for the type 'Object?'.
+2026-10-11T12:34:03.9407190Z  - 'Object' is from 'dart:core'.
+2026-10-11T12:34:03.9407480Z       screen.name,
+2026-10-11T12:34:03.9407721Z              ^^^^
+2026-10-11T12:34:03.9408056Z lib/shared/catalog/catalog_search.dart:15:14:
+2026-10-11T12:34:03.9408563Z Error: The getter 'title' isn't defined for the type 'Object?'.
+2026-10-11T12:34:03.9408986Z  - 'Object' is from 'dart:core'.
+2026-10-11T12:34:03.9409269Z       screen.title,
+2026-10-11T12:34:03.9409516Z              ^^^^^
+2026-10-11T12:34:03.9409845Z lib/shared/catalog/catalog_search.dart:16:14:
+2026-10-11T12:34:03.9410384Z Error: The getter 'description' isn't defined for the type 'Object?'.
+2026-10-11T12:34:03.9410830Z  - 'Object' is from 'dart:core'.
+2026-10-11T12:34:03.9411126Z       screen.description,
+2026-10-11T12:34:03.9411388Z              ^^^^^^^^^^^
+2026-10-11T12:34:03.9411752Z lib/shared/catalog/catalog_search.dart:17:14:
+2026-10-11T12:34:03.9412276Z Error: The getter 'category' isn't defined for the type 'Object?'.
+2026-10-11T12:34:03.9412714Z  - 'Object' is from 'dart:core'.
+2026-10-11T12:34:03.9413005Z       screen.category,
+2026-10-11T12:34:03.9413259Z              ^^^^^^^^
+2026-10-11T12:34:03.9413872Z lib/shared/catalog/catalog_search.dart:18:14:
+2026-10-11T12:34:03.9414381Z Error: The getter 'domainKey' isn't defined for the type 'Object?'.
+2026-10-11T12:34:03.9414804Z  - 'Object' is from 'dart:core'.
+2026-10-11T12:34:03.9415086Z       screen.domainKey,
+2026-10-11T12:34:03.9415325Z              ^^^^^^^^^
+2026-10-11T12:34:03.9415650Z lib/shared/catalog/catalog_search.dart:19:14:
+2026-10-11T12:34:03.9416157Z Error: The getter 'domainJa' isn't defined for the type 'Object?'.
+2026-10-11T12:34:03.9416565Z  - 'Object' is from 'dart:core'.
+2026-10-11T12:34:03.9416836Z       screen.domainJa,
+2026-10-11T12:34:03.9417067Z              ^^^^^^^^
+2026-10-11T12:34:03.9417563Z lib/shared/catalog/catalog_search.dart:20:14:
+2026-10-11T12:34:03.9418093Z Error: The getter 'useCaseJa' isn't defined for the type 'Object?'.
+2026-10-11T12:34:03.9418504Z  - 'Object' is from 'dart:core'.
+2026-10-11T12:34:03.9418778Z       screen.useCaseJa,
+2026-10-11T12:34:03.9419016Z              ^^^^^^^^^
+2026-10-11T12:34:03.9419358Z lib/shared/catalog/catalog_search.dart:21:14:
+2026-10-11T12:34:03.9419851Z Error: The getter 'useCaseEn' isn't defined for the type 'Object?'.
+2026-10-11T12:34:03.9420257Z  - 'Object' is from 'dart:core'.
+2026-10-11T12:34:03.9420526Z       screen.useCaseEn,
+2026-10-11T12:34:03.9420757Z              ^^^^^^^^^
+2026-10-11T12:34:03.9421083Z lib/shared/catalog/catalog_search.dart:22:14:
+2026-10-11T12:34:03.9421572Z Error: The getter 'useCaseKey' isn't defined for the type 'Object?'.
+2026-10-11T12:34:03.9421983Z  - 'Object' is from 'dart:core'.
+2026-10-11T12:34:03.9422258Z       screen.useCaseKey,
+2026-10-11T12:34:03.9422508Z              ^^^^^^^^^^
+2026-10-11T12:34:03.9422771Z Error: Compilation failed.
+2026-10-11T12:34:03.9428426Z   Command: /opt/hostedtoolcache/flutter/stable-3.47.0-x64/flutter/bin/cache/dart-sdk/bin/dart compile js --platform-binaries=/opt/hostedtoolcache/flutter/stable-3.47.0-x64/flutter/bin/cache/flutter_web_sdk/kernel --invoker=flutter_tool -Ddart.vm.product=true -DFLUTTER_BUILD_NAME=0.1.0 -DFLUTTER_BUILD_NUMBER=1 -DFLUTTER_VERSION=3.47.0 -DFLUTTER_CHANNEL=stable -DFLUTTER_GIT_URL=https://github.com/flutter/flutter.git -DFLUTTER_FRAMEWORK_REVISION=4cf2416426 -DFLUTTER_ENGINE_REVISION=5f77625673 -DFLUTTER_DART_VERSION=3.13.0 -DFLUTTER_WEB_USE_SKIA=true -DFLUTTER_WEB_USE_SKWASM=false -DFLUTTER_WEB_CANVASKIT_URL=https://www.gstatic.com/flutter-canvaskit/5f77625673248ee5846fbcaf5d3e1a3878386fd7/ --write-resources --enable-experiment=record-use --native-null-assertions --no-source-maps -O4 --minify -o /home/runner/work/flutter_navigation_basic/flutter_navigation_basic/.dart_tool/flutter_build/86d3afee647917960e181217e6ef8aad/app.dill --packages=/home/runner/work/flutter_navigation_basic/flutter_navigation_basic/.dart_tool/package_config.json --cfe-only /home/runner/work/flutter_navigation_basic/flutter_navigation_basic/.dart_tool/flutter_build/86d3afee647917960e181217e6ef8aad/main.dart
+2026-10-11T12:34:03.9433876Z #0      RunResult.throwException (package:flutter_tools/src/base/process.dart:153:5)
+2026-10-11T12:34:03.9434617Z #1      _DefaultProcessUtils.run (package:flutter_tools/src/base/process.dart:379:19)
+2026-10-11T12:34:03.9435078Z <asynchronous suspension>
+2026-10-11T12:34:03.9435632Z #2      Dart2JSTarget.build (package:flutter_tools/src/build_system/targets/web.dart:219:5)
+2026-10-11T12:34:03.9436104Z <asynchronous suspension>
+2026-10-11T12:34:03.9436706Z #3      _BuildInstance._invokeInternal (package:flutter_tools/src/build_system/build_system.dart:937:9)
+2026-10-11T12:34:03.9437215Z <asynchronous suspension>
+2026-10-11T12:34:03.9437662Z #4      Future.wait.<anonymous closure> (dart:async/future.dart:567:21)
+2026-10-11T12:34:03.9438062Z <asynchronous suspension>
+2026-10-11T12:34:03.9438640Z #5      _BuildInstance.invokeTarget (package:flutter_tools/src/build_system/build_system.dart:875:32)
+2026-10-11T12:34:03.9439144Z <asynchronous suspension>
+2026-10-11T12:34:03.9439573Z #6      Future.wait.<anonymous closure> (dart:async/future.dart:567:21)
+2026-10-11T12:34:03.9439963Z <asynchronous suspension>
+2026-10-11T12:34:03.9440533Z #7      _BuildInstance.invokeTarget (package:flutter_tools/src/build_system/build_system.dart:875:32)
+2026-10-11T12:34:03.9441037Z <asynchronous suspension>
+2026-10-11T12:34:03.9441455Z #8      Future.wait.<anonymous closure> (dart:async/future.dart:567:21)
+2026-10-11T12:34:03.9441842Z <asynchronous suspension>
+2026-10-11T12:34:03.9442405Z #9      _BuildInstance.invokeTarget (package:flutter_tools/src/build_system/build_system.dart:875:32)
+2026-10-11T12:34:03.9442905Z <asynchronous suspension>
+2026-10-11T12:34:03.9443929Z #10     FlutterBuildSystem.build (package:flutter_tools/src/build_system/build_system.dart:684:16)
+2026-10-11T12:34:03.9444759Z <asynchronous suspension>
+2026-10-11T12:34:03.9445533Z #11     WebBuilder.buildWeb (package:flutter_tools/src/web/compile.dart:107:34)
+2026-10-11T12:34:03.9446128Z <asynchronous suspension>
+2026-10-11T12:34:03.9446758Z #12     BuildWebCommand.runCommand (package:flutter_tools/src/commands/build_web.dart:293:5)
+2026-10-11T12:34:03.9447515Z <asynchronous suspension>
+2026-10-11T12:34:03.9448242Z #13     FlutterCommand.run.<anonymous closure> (package:flutter_tools/src/runner/flutter_command.dart:1663:27)
+2026-10-11T12:34:03.9448956Z <asynchronous suspension>
+2026-10-11T12:34:03.9449604Z #14     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:154:19)
+2026-10-11T12:34:03.9450294Z <asynchronous suspension>
+2026-10-11T12:34:03.9450851Z #15     CommandRunner.runCommand (package:args/command_runner.dart:212:13)
+2026-10-11T12:34:03.9467235Z <asynchronous suspension>
+2026-10-11T12:34:03.9468635Z #16     FlutterCommandRunner.runCommand.<anonymous closure> (package:flutter_tools/src/runner/flutter_command_runner.dart:496:9)
+2026-10-11T12:34:03.9469643Z <asynchronous suspension>
+2026-10-11T12:34:03.9470538Z #17     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:154:19)
+2026-10-11T12:34:03.9471359Z <asynchronous suspension>
+2026-10-11T12:34:03.9472672Z #18     FlutterCommandRunner.runCommand (package:flutter_tools/src/runner/flutter_command_runner.dart:431:5)
+2026-10-11T12:34:03.9473820Z <asynchronous suspension>
+2026-10-11T12:34:03.9474932Z #19     FlutterCommandRunner.run.<anonymous closure> (package:flutter_tools/src/runner/flutter_command_runner.dart:307:33)
+2026-10-11T12:34:03.9475886Z <asynchronous suspension>
+2026-10-11T12:34:03.9476740Z #20     run.<anonymous closure>.<anonymous closure> (package:flutter_tools/runner.dart:104:11)
+2026-10-11T12:34:03.9477511Z <asynchronous suspension>
+2026-10-11T12:34:03.9478388Z #21     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:154:19)
+2026-10-11T12:34:03.9479195Z <asynchronous suspension>
+2026-10-11T12:34:03.9479805Z #22     main (package:flutter_tools/executable.dart:103:3)
+2026-10-11T12:34:03.9480392Z <asynchronous suspension>
+2026-10-11T12:34:03.9480655Z 
+2026-10-11T12:34:03.9481125Z Compiling lib/main.dart for the Web...                             33.7s
+2026-10-11T12:34:03.9481936Z Error: Failed to compile application for the Web.
+2026-10-11T12:34:03.9506434Z ##[error]Process completed with exit code 1.
+2026-10-11T12:34:03.9595158Z ##[group]Run actions/upload-artifact@v7
+2026-10-11T12:34:03.9595583Z with:
+2026-10-11T12:34:03.9595965Z   name: diagnostics-evidence-51ef70f1072fea56d348a13cc741f8c77a12f72d
+2026-10-11T12:34:03.9596567Z   path: e2e/test-results/
+e2e/playwright-report/
+build/diagnostics/repository/
+
+2026-10-11T12:34:03.9597056Z   if-no-files-found: error
+2026-10-11T12:34:03.9597324Z   retention-days: 14
+2026-10-11T12:34:03.9597579Z   compression-level: 6
+2026-10-11T12:34:03.9597830Z   overwrite: false
+2026-10-11T12:34:03.9598074Z   include-hidden-files: false
+2026-10-11T12:34:03.9598353Z   archive: true
+2026-10-11T12:34:03.9598580Z env:
+2026-10-11T12:34:03.9598852Z   EXPECTED_SHA: 51ef70f1072fea56d348a13cc741f8c77a12f72d
+2026-10-11T12:34:03.9599339Z   FLUTTER_ROOT: /opt/hostedtoolcache/flutter/stable-3.47.0-x64/flutter
+2026-10-11T12:34:03.9599791Z   PUB_CACHE: /home/runner/.pub-cache
+2026-10-11T12:34:03.9600098Z ##[endgroup]
+2026-10-11T12:34:04.1034104Z Multiple search paths detected. Calculating the least common ancestor of all paths
+2026-10-11T12:34:04.1037279Z The least common ancestor is /home/runner/work/flutter_navigation_basic/flutter_navigation_basic. This will be the root directory of the artifact
+2026-10-11T12:34:04.1038428Z With the provided path, there will be 2 files uploaded
+2026-10-11T12:34:04.1041568Z Artifact name is valid!
+2026-10-11T12:34:04.1042497Z Root directory input is valid!
+2026-10-11T12:34:04.2957564Z Uploading artifact: diagnostics-evidence-51ef70f1072fea56d348a13cc741f8c77a12f72d.zip
+2026-10-11T12:34:04.3000574Z Beginning upload of artifact content to blob storage
+2026-10-11T12:34:04.3661089Z Uploaded bytes 1169
+2026-10-11T12:34:04.3799768Z Finished uploading artifact content to blob storage!
+2026-10-11T12:34:04.3801350Z SHA256 digest of uploaded artifact is 533ce65996fd332d09761314c8ab34667dde48f58a6c41771fa9b6549c016cd2
+2026-10-11T12:34:04.3802922Z Finalizing artifact upload
+2026-10-11T12:34:04.6000847Z Artifact diagnostics-evidence-51ef70f1072fea56d348a13cc741f8c77a12f72d successfully finalized. Artifact ID 11702640029
+2026-10-11T12:34:04.6004510Z Artifact diagnostics-evidence-51ef70f1072fea56d348a13cc741f8c77a12f72d has been successfully uploaded! Final size is 1169 bytes. Artifact ID is 11702640029
+2026-10-11T12:34:04.6007300Z Artifact download URL: https://github.com/myon-bioinformatics/flutter_navigation_basic/actions/runs/38139683480/artifacts/11702640029
+2026-10-11T12:34:04.6271068Z Post job cleanup.
+2026-10-11T12:34:04.6275806Z ##[start-action display=Cache pub dependencies;id=__646eb0e4-89ed-44ae-a9d6-5fa7f3accb19.cache-pub]
+2026-10-11T12:34:04.6277956Z ##[end-action id=__646eb0e4-89ed-44ae-a9d6-5fa7f3accb19.cache-pub;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-11T12:34:04.6279883Z ##[start-action display=Cache Flutter;id=__646eb0e4-89ed-44ae-a9d6-5fa7f3accb19.cache-flutter]
+2026-10-11T12:34:04.6282103Z ##[end-action id=__646eb0e4-89ed-44ae-a9d6-5fa7f3accb19.cache-flutter;outcome=skipped;conclusion=skipped;duration_ms=0]
+2026-10-11T12:34:04.6347995Z Post job cleanup.
+2026-10-11T12:34:04.7178905Z [command]/usr/bin/git version
+2026-10-11T12:34:04.7223619Z git version 2.55.0
+2026-10-11T12:34:04.7259675Z Temporarily overriding HOME='/home/runner/work/_temp/20aa2967-ddde-4fe4-adee-7f54db85c754' before making global git config changes
+2026-10-11T12:34:04.7261124Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-11T12:34:04.7265201Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/flutter_navigation_basic/flutter_navigation_basic/.browser-test-kit
+2026-10-11T12:34:04.7298618Z Removing SSH command configuration
+2026-10-11T12:34:04.7305366Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-11T12:34:04.7339457Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-11T12:34:04.7558875Z Removing HTTP extra header
+2026-10-11T12:34:04.7564302Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-11T12:34:04.7596357Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-11T12:34:04.7807391Z Removing includeIf entries pointing to credentials config files
+2026-10-11T12:34:04.7814330Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-11T12:34:04.7878981Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-11T12:34:04.8285745Z Post job cleanup.
+2026-10-11T12:34:04.9151746Z [command]/usr/bin/git version
+2026-10-11T12:34:04.9191399Z git version 2.55.0
+2026-10-11T12:34:04.9229079Z Temporarily overriding HOME='/home/runner/work/_temp/a69272fd-e623-4524-b557-b9b66440b624' before making global git config changes
+2026-10-11T12:34:04.9230814Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-11T12:34:04.9235451Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/flutter_navigation_basic/flutter_navigation_basic
+2026-10-11T12:34:04.9268351Z Removing SSH command configuration
+2026-10-11T12:34:04.9274594Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-10-11T12:34:04.9316945Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-10-11T12:34:04.9555916Z Removing HTTP extra header
+2026-10-11T12:34:04.9561074Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-11T12:34:04.9596938Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-10-11T12:34:04.9822385Z Removing includeIf entries pointing to credentials config files
+2026-10-11T12:34:04.9828876Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-11T12:34:04.9854775Z includeif.gitdir:/home/runner/work/flutter_navigation_basic/flutter_navigation_basic/.git.path
+2026-10-11T12:34:04.9856409Z includeif.gitdir:/home/runner/work/flutter_navigation_basic/flutter_navigation_basic/.git/worktrees/*.path
+2026-10-11T12:34:04.9857565Z includeif.gitdir:/github/workspace/.git.path
+2026-10-11T12:34:04.9858342Z includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-11T12:34:04.9868330Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/flutter_navigation_basic/flutter_navigation_basic/.git.path
+2026-10-11T12:34:04.9890862Z /home/runner/work/_temp/git-credentials-c7ed0b00-a5bf-467b-b331-8171540d012e.config
+2026-10-11T12:34:04.9901287Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/flutter_navigation_basic/flutter_navigation_basic/.git.path \/home\/runner\/work\/_temp\/git\-credentials\-c7ed0b00\-a5bf\-467b\-b331\-8171540d012e\.config
+2026-10-11T12:34:04.9943783Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/home/runner/work/flutter_navigation_basic/flutter_navigation_basic/.git/worktrees/*.path
+2026-10-11T12:34:04.9967217Z /home/runner/work/_temp/git-credentials-c7ed0b00-a5bf-467b-b331-8171540d012e.config
+2026-10-11T12:34:04.9976291Z [command]/usr/bin/git config --local --unset includeif.gitdir:/home/runner/work/flutter_navigation_basic/flutter_navigation_basic/.git/worktrees/*.path \/home\/runner\/work\/_temp\/git\-credentials\-c7ed0b00\-a5bf\-467b\-b331\-8171540d012e\.config
+2026-10-11T12:34:05.0007871Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git.path
+2026-10-11T12:34:05.0029414Z /github/runner_temp/git-credentials-c7ed0b00-a5bf-467b-b331-8171540d012e.config
+2026-10-11T12:34:05.0037981Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git.path \/github\/runner_temp\/git\-credentials\-c7ed0b00\-a5bf\-467b\-b331\-8171540d012e\.config
+2026-10-11T12:34:05.0069949Z [command]/usr/bin/git config --local --get-all includeif.gitdir:/github/workspace/.git/worktrees/*.path
+2026-10-11T12:34:05.0090567Z /github/runner_temp/git-credentials-c7ed0b00-a5bf-467b-b331-8171540d012e.config
+2026-10-11T12:34:05.0098321Z [command]/usr/bin/git config --local --unset includeif.gitdir:/github/workspace/.git/worktrees/*.path \/github\/runner_temp\/git\-credentials\-c7ed0b00\-a5bf\-467b\-b331\-8171540d012e\.config
+2026-10-11T12:34:05.0130303Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-10-11T12:34:05.0359083Z Removing credentials config '/home/runner/work/_temp/git-credentials-c7ed0b00-a5bf-467b-b331-8171540d012e.config'
+2026-10-11T12:34:05.0507248Z Cleaning up orphan processes

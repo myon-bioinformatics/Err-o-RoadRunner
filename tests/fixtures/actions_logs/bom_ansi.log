@@ -1,0 +1,4 @@
+2026-10-11T15:00:00.0000000Z ##[group]Run lint
+2026-10-11T15:00:01.0000000Z [31merror:[0m style check failed
+2026-10-11T15:00:02.0000000Z ##[error]Process completed with exit code 3.
+2026-10-11T15:00:02.0000001Z ##[endgroup]

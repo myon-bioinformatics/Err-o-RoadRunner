@@ -1,0 +1,315 @@
+test (3.11)	UNKNOWN STEP	﻿2026-10-11T12:05:01.3540528Z Current runner version: '2.337.0'
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:01.3574142Z ##[group]Runner Image Provisioner
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:01.3575656Z Hosted Compute Agent
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:01.3576629Z Version: 20261002.596
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:01.3578139Z Commit: c3d12f3313a95f25162a1503be624f3b0617f8c0
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:01.3579396Z Build Date: 2026-10-02T22:28:27Z
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:01.3580478Z Worker ID: {cc04b654-b47e-4b03-8c88-62e0b4108b2d}
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:01.3581782Z Region: eastus
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:01.3582717Z Cloud: Azure
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:01.3583699Z ##[endgroup]
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:01.3586355Z ##[group]Operating System
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:01.3587551Z Ubuntu
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:01.3588739Z 24.04.5
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:01.3589665Z LTS
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:01.3590682Z ##[endgroup]
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:01.3591572Z ##[group]Runner Image
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:01.3592660Z Image: ubuntu-24.04
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:01.3593640Z Version: 20261004.327.1
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:01.3596038Z Included Software: https://github.com/actions/runner-images/blob/ubuntu24/20261004.327/images/ubuntu/Ubuntu2404-Readme.md
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:01.3598992Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu24%2F20261004.327
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:01.3600804Z ##[endgroup]
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:01.3602896Z ##[group]GITHUB_TOKEN Permissions
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:01.3605950Z Contents: read
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:01.3607237Z Metadata: read
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:01.3608283Z Packages: read
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:01.3609195Z ##[endgroup]
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:01.3612169Z Secret source: Actions
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:01.3613837Z Cache mode: write
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:01.3615252Z Prepare workflow directory
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:01.4094547Z Prepare all required actions
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:01.4165368Z Getting action download info
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:01.6158239Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:01.6987930Z Download action repository 'actions/setup-python@v5' (SHA:a26af69be951a213d495a4c3e4e4022e16d87065)
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:01.7739058Z Download action repository 'actions/upload-artifact@v4' (SHA:ea165f8d65b6e75b540449e92b4886f43607fa02)
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:01.9903459Z Complete job name: test (3.11)
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.0727886Z ##[group]Run actions/checkout@v4
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.0728974Z with:
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.0729556Z   repository: myon-bioinformatics/gh_identity
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.0733480Z   token: ***
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.0733903Z   ssh-strict: true
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.0734324Z   ssh-user: git
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.0734765Z   persist-credentials: true
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.0735237Z   clean: true
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.0735668Z   sparse-checkout-cone-mode: true
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.0736186Z   fetch-depth: 1
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.0736602Z   fetch-tags: false
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.0737210Z   show-progress: true
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.0737658Z   lfs: false
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.0738054Z   submodules: false
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.0738495Z   set-safe-directory: true
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.0738999Z   allow-unsafe-pr-checkout: false
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.0740115Z ##[endgroup]
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.1752231Z Syncing repository: myon-bioinformatics/gh_identity
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.1754122Z ##[group]Getting Git version info
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.1754950Z Working directory is '/home/runner/work/gh_identity/gh_identity'
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.1756016Z [command]/usr/bin/git version
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.1818797Z git version 2.55.0
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.1839878Z ##[endgroup]
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.1853635Z Temporarily overriding HOME='/home/runner/work/_temp/8f54d41f-8527-42d4-a824-6ee120f47e55' before making global git config changes
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.1855102Z Adding repository directory to the temporary git global config as a safe directory
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.1859315Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/gh_identity/gh_identity
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.1904265Z Deleting the contents of '/home/runner/work/gh_identity/gh_identity'
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.1909295Z ##[group]Initializing the repository
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.1913318Z [command]/usr/bin/git init /home/runner/work/gh_identity/gh_identity
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.2012865Z hint: Using 'master' as the name for the initial branch. This default branch name
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.2014429Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.2015523Z hint: to use in all of your new repositories, which will suppress this warning,
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.2016367Z hint: call:
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.2017256Z hint:
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.2017934Z hint: 	git config --global init.defaultBranch <name>
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.2018630Z hint:
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.2019288Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.2020367Z hint: 'development'. The just-created branch can be renamed via this command:
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.2021223Z hint:
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.2021693Z hint: 	git branch -m <name>
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.2022230Z hint:
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.2022950Z hint: Disable this message with "git config set advice.defaultBranchName false"
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.2028560Z Initialized empty Git repository in /home/runner/work/gh_identity/gh_identity/.git/
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.2038148Z [command]/usr/bin/git remote add origin https://github.com/myon-bioinformatics/gh_identity
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.2083077Z ##[endgroup]
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.2083882Z ##[group]Disabling automatic garbage collection
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.2087449Z [command]/usr/bin/git config --local gc.auto 0
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.2116352Z ##[endgroup]
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.2117361Z ##[group]Setting up auth
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.2123013Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.2153670Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.2471871Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.2502360Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.2718819Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.2749421Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.2966009Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.3002223Z ##[endgroup]
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.3004372Z ##[group]Fetching the repository
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.3012825Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +3f92068c1ee011a99e6017aaa22212d1ad912123:refs/remotes/pull/37/merge
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5269240Z From https://github.com/myon-bioinformatics/gh_identity
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5270273Z  * [new ref]         3f92068c1ee011a99e6017aaa22212d1ad912123 -> pull/37/merge
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5273453Z ##[endgroup]
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5274196Z ##[group]Determining the checkout info
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5281405Z ##[endgroup]
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5289979Z [command]/usr/bin/git sparse-checkout disable
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5333382Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5363077Z ##[group]Checking out the ref
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5367578Z [command]/usr/bin/git checkout --progress --force refs/remotes/pull/37/merge
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5478841Z Note: switching to 'refs/remotes/pull/37/merge'.
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5479787Z 
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5480739Z You are in 'detached HEAD' state. You can look around, make experimental
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5481752Z changes and commit them, and you can discard any commits you make in this
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5482659Z state without impacting any branches by switching back to a branch.
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5483193Z 
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5483559Z If you want to create a new branch to retain commits you create, you may
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5484714Z do so (now or later) by using -c with the switch command. Example:
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5485472Z 
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5485869Z   git switch -c <new-branch-name>
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5486520Z 
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5486939Z Or undo this operation with:
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5487856Z 
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5488221Z   git switch -
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5488698Z 
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5489391Z Turn off this advice by setting config variable advice.detachedHead to false
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5490428Z 
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5491575Z HEAD is now at 3f92068 Merge 1dd0df9e541f5a08185de9bb6b0ec856cf0e5840 into c0b32411d420a8359cc97be375533c1cce0fbeab
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5582620Z ##[endgroup]
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5584780Z [command]/usr/bin/git log -1 --format=%H
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5585787Z 3f92068c1ee011a99e6017aaa22212d1ad912123
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5854010Z ##[group]Run actions/setup-python@v5
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5854600Z with:
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5855005Z   python-version: 3.11
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5855482Z   check-latest: true
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5859429Z   token: ***
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5859875Z   update-environment: true
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5860372Z   allow-prereleases: false
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5860848Z   freethreaded: false
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.5861281Z ##[endgroup]
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.7194119Z ##[group]Installed versions
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.7323276Z (node:2313) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:02.7324774Z (Use `node --trace-deprecation ...` to show where the warning was created)
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:03.2302645Z Resolved as '3.11.17'
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:03.2329804Z Successfully set up CPython (3.11.17)
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:03.2331935Z ##[endgroup]
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:03.2536491Z ##[group]Run python -m pip install -r tests/requirements.txt
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:03.2537662Z ^[[36;1mpython -m pip install -r tests/requirements.txt^[[0m
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:03.2810290Z shell: /usr/bin/bash -e {0}
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:03.2810906Z env:
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:03.2811406Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.17/x64
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:03.2812155Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.17/x64/lib/pkgconfig
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:03.2812898Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:03.2813569Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:03.2814231Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:03.2814894Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.17/x64/lib
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:03.2815458Z ##[endgroup]
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:04.0584734Z Collecting pytest<10,>=8 (from -r tests/requirements.txt (line 1))
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:04.1092359Z   Downloading pytest-9.1.1-py3-none-any.whl.metadata (7.6 kB)
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:04.1213859Z Collecting iniconfig>=1.0.1 (from pytest<10,>=8->-r tests/requirements.txt (line 1))
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:04.1253914Z   Downloading iniconfig-2.3.1-py3-none-any.whl.metadata (2.8 kB)
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:04.1397291Z Collecting packaging>=22 (from pytest<10,>=8->-r tests/requirements.txt (line 1))
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:04.1436140Z   Downloading packaging-26.3-py3-none-any.whl.metadata (3.5 kB)
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:04.1551270Z Collecting pluggy<2,>=1.5 (from pytest<10,>=8->-r tests/requirements.txt (line 1))
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:04.1589391Z   Downloading pluggy-1.6.0-py3-none-any.whl.metadata (4.8 kB)
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:04.1773411Z Collecting pygments>=2.7.2 (from pytest<10,>=8->-r tests/requirements.txt (line 1))
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:04.1811208Z   Downloading pygments-2.21.0-py3-none-any.whl.metadata (2.5 kB)
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:04.1890762Z Downloading pytest-9.1.1-py3-none-any.whl (386 kB)
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:04.2109740Z Downloading pluggy-1.6.0-py3-none-any.whl (20 kB)
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:04.2168602Z Downloading iniconfig-2.3.1-py3-none-any.whl (7.6 kB)
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:04.2225327Z Downloading packaging-26.3-py3-none-any.whl (129 kB)
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:04.2391443Z Downloading pygments-2.21.0-py3-none-any.whl (1.3 MB)
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:04.2507649Z    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.3/1.3 MB 148.0 MB/s  0:00:00
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:04.3152529Z Installing collected packages: pygments, pluggy, packaging, iniconfig, pytest
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.3414699Z 
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.3424523Z Successfully installed iniconfig-2.3.1 packaging-26.3 pluggy-1.6.0 pygments-2.21.0 pytest-9.1.1
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.3944109Z ##[group]Run python -m py_compile gh_identity.py
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.3944542Z ^[[36;1mpython -m py_compile gh_identity.py^[[0m
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.4009948Z shell: /usr/bin/bash -e {0}
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.4010223Z env:
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.4010509Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.17/x64
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.4010958Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.17/x64/lib/pkgconfig
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.4011396Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.4011793Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.4012174Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.4012602Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.17/x64/lib
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.4012946Z ##[endgroup]
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.4902654Z ##[group]Run python -c "import gh_identity"
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.4903064Z ^[[36;1mpython -c "import gh_identity"^[[0m
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.4969917Z shell: /usr/bin/bash -e {0}
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.4970191Z env:
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.4970473Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.17/x64
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.4970937Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.17/x64/lib/pkgconfig
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.4971370Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.4971765Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.4972145Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.4972534Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.17/x64/lib
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.4972871Z ##[endgroup]
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.5929951Z ##[group]Run python gh_identity.py --help
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.5930363Z ^[[36;1mpython gh_identity.py --help^[[0m
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.6001005Z shell: /usr/bin/bash -e {0}
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.6001316Z env:
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.6001599Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.17/x64
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.6002079Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.17/x64/lib/pkgconfig
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.6002517Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.6002960Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.6003362Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.6003760Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.17/x64/lib
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.6004103Z ##[endgroup]
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.7298654Z usage: gh_identity.py [-h]
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.7305540Z                       {html-content,capabilities,git-status,git-files,git-diff,git-log,git-numstat,git-show,git-blame,git-grep,git-ignore,git-switch,repo-metadata,repo,tree,repos,repo-inventory,issue,content,issues,search,prs,pr,comments,reviews,inline-comments,review-threads,review-observations,workflow-runs,runs,head-runs,artifacts,artifact-file,checks,observe-pr,pr-status,workflow,run,jobs,job-log,step-url,variable-get,variable-set,comment}
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.7312388Z                       ...
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.7313094Z 
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.7313589Z positional arguments:
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.7320259Z   {html-content,capabilities,git-status,git-files,git-diff,git-log,git-numstat,git-show,git-blame,git-grep,git-ignore,git-switch,repo-metadata,repo,tree,repos,repo-inventory,issue,content,issues,search,prs,pr,comments,reviews,inline-comments,review-threads,review-observations,workflow-runs,runs,head-runs,artifacts,artifact-file,checks,observe-pr,pr-status,workflow,run,jobs,job-log,step-url,variable-get,variable-set,comment}
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.7327353Z     repo-metadata       checkout repository metadata (v2 minimal, or v1
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.7328413Z                         compatibility)
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.7329816Z     pr-status           compact status of PRs/Issues: OWNER/REPO N [N...] or
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.7330740Z                         OWNER/REPO#N ...
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.7331381Z 
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.7331764Z options:
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.7332484Z   -h, --help            show this help message and exit
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.7333147Z 
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.7333753Z Global options: --transport auto|gh|urllib, --max-pages N (100), --max-items N
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.7334892Z (10000), --max-bytes N (10000000), --timeout SECONDS (30). Limits are
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.7335796Z cumulative per operation.
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.7572105Z ##[group]Run python -m pytest -q tests --junitxml=reports/junit.xml
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.7572984Z ^[[36;1mpython -m pytest -q tests --junitxml=reports/junit.xml^[[0m
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.7660045Z shell: /usr/bin/bash -e {0}
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.7660316Z env:
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.7660595Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.17/x64
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.7661107Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.17/x64/lib/pkgconfig
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.7661568Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.7661967Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.7662366Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.7662752Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.17/x64/lib
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:05.7663079Z ##[endgroup]
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:09.3276432Z ..................................................................... [ 10%]
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:09.4828634Z ........................................................ [ 18%]
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:11.0504174Z .................................................................... [ 28%]
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:12.2939872Z ........................................................................ [ 39%]
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:14.0778688Z ........................................................................ [ 50%]
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:16.5495155Z ........................................................................ [ 60%]
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:16.6532711Z ...F.................................................................... [ 71%]
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:17.1891825Z ...........................s............................................ [ 82%]
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:17.3229659Z ........................................................................ [ 92%]
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7235285Z .................................................                        [100%]
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7236196Z =================================== FAILURES ===================================
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7238863Z ___________________ test_cli_json_text_and_exclude_override ____________________
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7239589Z 
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7240727Z fake = {'runs': ('bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', ('workflow_dispatch',)), 'checks': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb'}
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7242711Z capsys = <_pytest.capture.CaptureFixture object at 0x7f95c6338a90>
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7243466Z 
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7243893Z     def test_cli_json_text_and_exclude_override(fake, capsys):
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7244584Z         assert g.main(["pr-status", "o/r", "7"]) == 0
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7245355Z         assert json.loads(capsys.readouterr().out)["schema"] == "gh-identity-pr-status/1"
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7246519Z         assert g.main(["pr-status", "o/r", "7", "--text", "--exclude-event", "workflow_dispatch"]) == 0
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7247778Z >       assert capsys.readouterr().out.startswith("#7 open draft")
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7248397Z E       assert False
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7249144Z E        +  where False = <built-in method startswith of str object at 0x7f95c89c9a70>('#7 open draft')
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7251844Z E        +    where <built-in method startswith of str object at 0x7f95c89c9a70> = "o/r#7 T\n#7 open draft merged=False unstable head=bbbbbbbb work/x -> main\nruns: pending {'success': 1, 'in_progress'...re\ncomment u2 t2: comment 2\ncomment u3 t3: comment 3\ncomment u4 t4: comment 4\nreview gpt t9 COMMENTED: Should: 1\n".startswith
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7257651Z E        +      where "o/r#7 T\n#7 open draft merged=False unstable head=bbbbbbbb work/x -> main\nruns: pending {'success': 1, 'in_progress'...re\ncomment u2 t2: comment 2\ncomment u3 t3: comment 3\ncomment u4 t4: comment 4\nreview gpt t9 COMMENTED: Should: 1\n" = CaptureResult(out="o/r#7 T\n#7 open draft merged=False unstable head=bbbbbbbb work/x -> main\nruns: pending {'success'...nt u2 t2: comment 2\ncomment u3 t3: comment 3\ncomment u4 t4: comment 4\nreview gpt t9 COMMENTED: Should: 1\n", err='').out
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7262089Z E        +        where CaptureResult(out="o/r#7 T\n#7 open draft merged=False unstable head=bbbbbbbb work/x -> main\nruns: pending {'success'...nt u2 t2: comment 2\ncomment u3 t3: comment 3\ncomment u4 t4: comment 4\nreview gpt t9 COMMENTED: Should: 1\n", err='') = readouterr()
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7263321Z E        +          where readouterr = <_pytest.capture.CaptureFixture object at 0x7f95c6338a90>.readouterr
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7263715Z 
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7263849Z tests/test_pr_status.py:68: AssertionError
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7264259Z =========================== short test summary info ============================
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7264835Z FAILED tests/test_pr_status.py::test_cli_json_text_and_exclude_override - assert False
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7265426Z  +  where False = <built-in method startswith of str object at 0x7f95c89c9a70>('#7 open draft')
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7266746Z  +    where <built-in method startswith of str object at 0x7f95c89c9a70> = "o/r#7 T\n#7 open draft merged=False unstable head=bbbbbbbb work/x -> main\nruns: pending {'success': 1, 'in_progress'...re\ncomment u2 t2: comment 2\ncomment u3 t3: comment 3\ncomment u4 t4: comment 4\nreview gpt t9 COMMENTED: Should: 1\n".startswith
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7269572Z  +      where "o/r#7 T\n#7 open draft merged=False unstable head=bbbbbbbb work/x -> main\nruns: pending {'success': 1, 'in_progress'...re\ncomment u2 t2: comment 2\ncomment u3 t3: comment 3\ncomment u4 t4: comment 4\nreview gpt t9 COMMENTED: Should: 1\n" = CaptureResult(out="o/r#7 T\n#7 open draft merged=False unstable head=bbbbbbbb work/x -> main\nruns: pending {'success'...nt u2 t2: comment 2\ncomment u3 t3: comment 3\ncomment u4 t4: comment 4\nreview gpt t9 COMMENTED: Should: 1\n", err='').out
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7271904Z  +        where CaptureResult(out="o/r#7 T\n#7 open draft merged=False unstable head=bbbbbbbb work/x -> main\nruns: pending {'success'...nt u2 t2: comment 2\ncomment u3 t3: comment 3\ncomment u4 t4: comment 4\nreview gpt t9 COMMENTED: Should: 1\n", err='') = readouterr()
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7273026Z  +          where readouterr = <_pytest.capture.CaptureFixture object at 0x7f95c6338a90>.readouterr
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7273553Z 1 failed, 672 passed, 1 skipped, 95 subtests passed in 12.54s
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7649648Z ##[error]Process completed with exit code 1.
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7747501Z ##[group]Run actions/upload-artifact@v4
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7747828Z with:
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7748026Z   name: junit-py3.11
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7748260Z   path: reports/junit.xml
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7748491Z   if-no-files-found: warn
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7748711Z   retention-days: 14
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7748922Z   compression-level: 6
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7749132Z   overwrite: false
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7749347Z   include-hidden-files: false
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7749574Z env:
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7749822Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.17/x64
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7750256Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.17/x64/lib/pkgconfig
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7750681Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7751058Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7751433Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.17/x64
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7751846Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.17/x64/lib
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.7752354Z ##[endgroup]
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.9395053Z (node:3614) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.9396401Z (Use `node --trace-deprecation ...` to show where the warning was created)
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.9448451Z With the provided path, there will be 1 file uploaded
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.9453688Z Artifact name is valid!
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:18.9454194Z Root directory input is valid!
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:19.1412599Z Beginning upload of artifact content to blob storage
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:19.1614160Z (node:3614) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:19.1890153Z Uploaded bytes 11816
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:19.2037121Z Finished uploading artifact content to blob storage!
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:19.2038619Z SHA256 digest of uploaded artifact zip is ebb7c70db6ea004f07db6e0ac5621e32aa4881a632f7ea50f49033ff23dd5727
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:19.2040195Z Finalizing artifact upload
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:19.4137702Z Artifact junit-py3.11.zip successfully finalized. Artifact ID 11701297298
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:19.4139346Z Artifact junit-py3.11 has been successfully uploaded! Final size is 11816 bytes. Artifact ID is 11701297298
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:19.4146646Z Artifact download URL: https://github.com/myon-bioinformatics/gh_identity/actions/runs/38137922161/artifacts/11701297298
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:19.4362105Z Post job cleanup.
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:19.5192364Z [command]/usr/bin/git version
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:19.5229434Z git version 2.55.0
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:19.5266304Z Temporarily overriding HOME='/home/runner/work/_temp/4ed94ab2-881b-46bb-8e8c-6a8727306f45' before making global git config changes
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:19.5267612Z Adding repository directory to the temporary git global config as a safe directory
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:19.5273053Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/gh_identity/gh_identity
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:19.5308479Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:19.5344892Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:19.5588252Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:19.5615990Z http.https://github.com/.extraheader
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:19.5627666Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:19.5662592Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:19.5904496Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:19.5939310Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:19.6376839Z Cleaning up orphan processes
+test (3.11)	UNKNOWN STEP	2026-10-11T12:05:19.6641685Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-python@v5, actions/upload-artifact@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

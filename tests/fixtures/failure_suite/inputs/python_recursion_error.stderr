@@ -1,0 +1,7 @@
+Traceback (most recent call last):
+  File "<string>", line 3, in <module>
+  File "<string>", line 2, in f
+  File "<string>", line 2, in f
+  File "<string>", line 2, in f
+  [Previous line repeated 996 more times]
+RecursionError: maximum recursion depth exceeded

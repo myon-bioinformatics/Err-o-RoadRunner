@@ -1,0 +1,4 @@
+2026-10-11T14:00:00.0000000Z ##[group]Run build
+2026-10-11T14:00:01.0000000Z ::error title=Build failed::compile failed
+2026-10-11T14:00:02.0000000Z ##[error]Process completed with exit code 2.
+2026-10-11T14:00:02.0000001Z ##[endgroup]
