@@ -21,6 +21,8 @@ packages = ["src/err_o_roadrunner"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+python_files = ["test_*.py"]
+norecursedirs = [".git", ".venv", "vendor", "tests/fixtures/readme/inputs"]
 markers = [
     "success: triage with no or minimal failure evidence",
     "failure: triage with real tracebacks, junit, or node errors",

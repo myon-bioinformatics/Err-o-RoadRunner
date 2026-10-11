@@ -1,0 +1,12 @@
+Traceback (most recent call last):
+  File "/workspace/tests/fixtures/readme/inputs/chained.py", line 2, in <module>
+    1 / 0
+    ~~^~~
+ZeroDivisionError: division by zero
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspace/tests/fixtures/readme/inputs/chained.py", line 4, in <module>
+    raise ValueError('while handling') from exc
+ValueError: while handling

@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/workspace/tests/fixtures/readme/inputs/_import_err_helper.py", line 1, in <module>
+    from json import ThisNameDoesNotExist
+ImportError: cannot import name 'ThisNameDoesNotExist' from 'json' (/usr/lib/python3.12/json/__init__.py)

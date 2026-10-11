@@ -1,0 +1,114 @@
+[
+  {
+    "id": "python_module_not_found",
+    "title": "Python ModuleNotFoundError",
+    "command": "python -m err_o_roadrunner --exit-code 1 --stderr tests/fixtures/readme/inputs/python_module_not_found.stderr --project-root tests/fixtures/readme/empty_root",
+    "input": "tests/fixtures/readme/inputs/python_module_not_found.stderr",
+    "golden": "tests/fixtures/readme/golden/python_module_not_found.out",
+    "note": "FOUND names the missing module; HINT suggests search terms."
+  },
+  {
+    "id": "python_import_error",
+    "title": "Python ImportError",
+    "command": "python -m err_o_roadrunner --exit-code 1 --stderr tests/fixtures/readme/inputs/python_import_error.stderr --project-root tests/fixtures/readme/empty_root",
+    "input": "tests/fixtures/readme/inputs/python_import_error.stderr",
+    "golden": "tests/fixtures/readme/golden/python_import_error.out",
+    "note": "FOUND captures ImportError and the import stack frame."
+  },
+  {
+    "id": "python_key_error",
+    "title": "Python KeyError",
+    "command": "python -m err_o_roadrunner --exit-code 1 --stderr tests/fixtures/readme/inputs/python_key_error.stderr --project-root tests/fixtures/readme/empty_root",
+    "input": "tests/fixtures/readme/inputs/python_key_error.stderr",
+    "golden": "tests/fixtures/readme/golden/python_key_error.out",
+    "note": "FOUND shows KeyError and the code line frame."
+  },
+  {
+    "id": "python_chained",
+    "title": "Python chained exceptions",
+    "command": "python -m err_o_roadrunner --exit-code 1 --stderr tests/fixtures/readme/inputs/python_chained.stderr --project-root tests/fixtures/readme/empty_root",
+    "input": "tests/fixtures/readme/inputs/python_chained.stderr",
+    "golden": "tests/fixtures/readme/golden/python_chained.out",
+    "note": "FOUND reports both blocks; primary vs chained labels separate causes."
+  },
+  {
+    "id": "python_syntax_error",
+    "title": "Python SyntaxError",
+    "command": "python -m err_o_roadrunner --exit-code 1 --stderr tests/fixtures/readme/inputs/python_syntax_error.stderr --project-root tests/fixtures/readme/empty_root",
+    "input": "tests/fixtures/readme/inputs/python_syntax_error.stderr",
+    "golden": "tests/fixtures/readme/golden/python_syntax_error.out",
+    "note": "FOUND reports SyntaxError even without a full traceback header."
+  },
+  {
+    "id": "python_info_hint",
+    "title": "Log line after traceback (INFO)",
+    "command": "python -m err_o_roadrunner --exit-code 1 --log tests/fixtures/readme/inputs/python_with_info_trailing.log --project-root tests/fixtures/readme/empty_root",
+    "input": "tests/fixtures/readme/inputs/python_with_info_trailing.log",
+    "golden": "tests/fixtures/readme/golden/python_info_hint.out",
+    "note": "HINT records INFO as a trailing colon line, not the exception type."
+  },
+  {
+    "id": "pytest_junit_assertion",
+    "title": "pytest assertion (JUnit XML)",
+    "command": "python -m err_o_roadrunner --exit-code 1 --junit tests/fixtures/readme/inputs/pytest_assertion.junit.xml --project-root tests/fixtures/readme/empty_root",
+    "input": "tests/fixtures/readme/inputs/pytest_assertion.junit.xml",
+    "golden": "tests/fixtures/readme/golden/pytest_junit_assertion.out",
+    "note": "FOUND pulls failure text from JUnit without re-running pytest."
+  },
+  {
+    "id": "junit_mix",
+    "title": "JUnit failure, error, and skipped",
+    "command": "python -m err_o_roadrunner --exit-code 1 --junit tests/fixtures/readme/inputs/junit_mix.xml --project-root tests/fixtures/readme/empty_root",
+    "input": "tests/fixtures/readme/inputs/junit_mix.xml",
+    "golden": "tests/fixtures/readme/golden/junit_mix.out",
+    "note": "FOUND counts failures, errors, and skipped separately."
+  },
+  {
+    "id": "hostile_osc",
+    "title": "Hostile OSC sequences stripped",
+    "command": "python -m err_o_roadrunner --exit-code 1 --stderr tests/fixtures/readme/inputs/hostile_osc.stderr --project-root tests/fixtures/readme/empty_root",
+    "input": "tests/fixtures/readme/inputs/hostile_osc.stderr",
+    "golden": "tests/fixtures/readme/golden/hostile_osc.out",
+    "note": "Report output contains no escape bytes; exception facts still FOUND."
+  },
+  {
+    "id": "hostile_symlink",
+    "title": "Symlink stderr refused",
+    "command": "python -m err_o_roadrunner --exit-code 1 --stderr tests/fixtures/readme/inputs/secret_link.stderr --project-root tests/fixtures/readme/empty_root",
+    "input": "symlink -> python_key_error.stderr",
+    "golden": "tests/fixtures/readme/golden/hostile_symlink.out",
+    "note": "NOT FOUND explains the symlink was not followed."
+  },
+  {
+    "id": "node_module_not_found",
+    "title": "Node Module Not Found",
+    "command": "python -m err_o_roadrunner --exit-code 1 --log tests/fixtures/readme/inputs/node_module_not_found.stderr --project-root tests/fixtures/readme/empty_root",
+    "input": "tests/fixtures/readme/inputs/node_module_not_found.stderr",
+    "golden": "tests/fixtures/readme/golden/node_module_not_found.out",
+    "note": "FOUND captures Node headline and stack frames from real node output."
+  },
+  {
+    "id": "node_type_error",
+    "title": "Node Type Error",
+    "command": "python -m err_o_roadrunner --exit-code 1 --log tests/fixtures/readme/inputs/node_type_error.stderr --project-root tests/fixtures/readme/empty_root",
+    "input": "tests/fixtures/readme/inputs/node_type_error.stderr",
+    "golden": "tests/fixtures/readme/golden/node_type_error.out",
+    "note": "FOUND captures Node headline and stack frames from real node output."
+  },
+  {
+    "id": "node_range_error",
+    "title": "Node Range Error",
+    "command": "python -m err_o_roadrunner --exit-code 1 --log tests/fixtures/readme/inputs/node_range_error.stderr --project-root tests/fixtures/readme/empty_root",
+    "input": "tests/fixtures/readme/inputs/node_range_error.stderr",
+    "golden": "tests/fixtures/readme/golden/node_range_error.out",
+    "note": "FOUND captures Node headline and stack frames from real node output."
+  },
+  {
+    "id": "node_unhandled_rejection",
+    "title": "Node Unhandled Rejection",
+    "command": "python -m err_o_roadrunner --exit-code 1 --log tests/fixtures/readme/inputs/node_unhandled_rejection.stderr --project-root tests/fixtures/readme/empty_root",
+    "input": "tests/fixtures/readme/inputs/node_unhandled_rejection.stderr",
+    "golden": "tests/fixtures/readme/golden/node_unhandled_rejection.out",
+    "note": "FOUND captures Node headline and stack frames from real node output."
+  }
+]
