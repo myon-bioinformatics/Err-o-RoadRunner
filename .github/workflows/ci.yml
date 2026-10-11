@@ -1,0 +1,108 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    name: Change detection
+    uses: myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-change-detection.yml@d45076d0bacda1f00b3b763cbf33d129387ae4d0
+
+  vendor-locked:
+    name: Vendor locked baseline
+    needs: changes
+    if: needs.changes.outputs.non_docs_changed == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Fetch pinned shared vendor tool
+        uses: actions/checkout@v7
+        with:
+          repository: myon-bioinformatics/myon-bioinformatics
+          ref: d45076d0bacda1f00b3b763cbf33d129387ae4d0
+          path: .vendor-sync-tools
+          persist-credentials: false
+      - name: Verify and recreate locked vendor snapshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -S .vendor-sync-tools/vendor_sync.py check --manifest vendor.lock.json
+          python -S - <<'PY'
+          import json
+          from pathlib import Path
+          for entry in json.loads(Path("vendor.lock.json").read_text(encoding="utf-8"))["files"]:
+              Path(entry["destination"]).unlink()
+          PY
+          python -S .vendor-sync-tools/vendor_sync.py materialize --manifest vendor.lock.json
+          python -S .vendor-sync-tools/vendor_sync.py check --manifest vendor.lock.json
+
+  test:
+    name: pytest (Python ${{ matrix.python-version }})
+    needs: [changes, vendor-locked]
+    if: needs.changes.outputs.non_docs_changed == 'true' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14", "3.x"]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+          check-latest: true
+          allow-prereleases: true
+      - run: python -VV
+      - name: Install test dependencies
+        run: python -m pip install -e ".[test]"
+      - name: Compile
+        run: python -m compileall -q src/err_o_roadrunner
+      - name: Import smoke
+        run: python -c "import err_o_roadrunner"
+      - name: Tests with JUnit
+        run: |
+          mkdir -p reports
+          python -m pytest -q tests --junitxml=reports/junit.xml
+      - name: Preserve JUnit report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: junit-py${{ matrix.python-version }}
+          path: reports/junit.xml
+          if-no-files-found: error
+          retention-days: 14
+
+  failure-identity:
+    needs: [changes, test]
+    if: always() && (needs.changes.outputs.non_docs_changed == 'true' || github.event_name == 'workflow_dispatch')
+    permissions:
+      contents: read
+      actions: read
+    uses: myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-junit-identity.yml@d45076d0bacda1f00b3b763cbf33d129387ae4d0
+    with:
+      expected-reports: '["junit-py3.10/junit.xml","junit-py3.11/junit.xml","junit-py3.12/junit.xml","junit-py3.13/junit.xml","junit-py3.14/junit.xml","junit-py3.x/junit.xml"]'
+      artifact-pattern: "junit-*"
+      output-artifact: failure-identity
+      commit-sha: ${{ github.event.pull_request.head.sha || github.sha }}
+
+  actionlint:
+    needs: changes
+    if: needs.changes.outputs.workflow_changed == 'true'
+    uses: myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-actionlint.yml@d45076d0bacda1f00b3b763cbf33d129387ae4d0
