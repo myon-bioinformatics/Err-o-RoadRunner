@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <testsuite name="pytest" tests="1" failures="0" errors="0" skipped="1">
   <testcase classname="tests.test_skip" name="test_flaky" time="0.00">
-    <skipped message="not ready yet"/>
+    <skipped message="not ready yet" />
   </testcase>
 </testsuite>

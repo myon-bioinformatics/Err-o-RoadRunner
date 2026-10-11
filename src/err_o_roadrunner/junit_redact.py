@@ -16,9 +16,31 @@ SECRET_PATTERNS: list[tuple[re.Pattern[str], str]] = [
     (re.compile(r"0x[0-9a-fA-F]{8,}"), "0x<addr>"),
 ]
 
-RUNNER_HOSTNAME_RE = re.compile(r"^runnervm[a-z0-9]+$", re.IGNORECASE)
 ISO_TIMESTAMP_RE = re.compile(
     r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$"
+)
+
+REDACTED_HOST_MARKERS = frozenset(
+    {"<redacted-host>", "&lt;redacted-host&gt;", "redacted-host"}
+)
+REDACTED_TIMESTAMP_MARKERS = frozenset({"<timestamp>", "&lt;timestamp&gt;"})
+
+# Patterns for checked-in fixture scans (paths, tokens, JUnit metadata).
+FIXTURE_LEAK_PATTERNS: list[tuple[str, re.Pattern[str]]] = [
+    ("runner_work_path", re.compile(r"/home/runner/work/")),
+    ("user_home_path", re.compile(r"/Users/[^/\s<\"']+")),
+    ("hostedtoolcache_path", re.compile(r"/opt/hostedtoolcache/")),
+    ("pytest_runner_tmp", re.compile(r"/tmp/pytest-of-runner/")),
+    ("github_app_token", re.compile(r"ghs_[A-Za-z0-9_]{20,}")),
+    ("openai_sk_key", re.compile(r"sk-[A-Za-z0-9]{20,}")),
+    ("bearer_token", re.compile(r"Bearer\s+[A-Za-z0-9._-]{8,}")),
+    ("github_runner_hostname", re.compile(r"hostname=\"runnervm", re.IGNORECASE)),
+]
+
+HOSTNAME_ATTR_RE = re.compile(r"""hostname\s*=\s*["']([^"']*)["']""", re.IGNORECASE)
+TIMESTAMP_ATTR_RE = re.compile(
+    r"""timestamp\s*=\s*["'](\d{4}-\d{2}-\d{2}T[^"']*)["']""",
+    re.IGNORECASE,
 )
 
 
@@ -31,9 +53,10 @@ def redact_text(text: str) -> str:
 def redact_attribute(name: str, value: str) -> str:
     value = redact_text(value)
     key = name.split("}")[-1].lower()
-    if key == "hostname" or key == "host":
-        if RUNNER_HOSTNAME_RE.match(value) or value.startswith("runner"):
-            return "<redacted-host>"
+    if key in ("hostname", "host"):
+        if value in REDACTED_HOST_MARKERS:
+            return value
+        return "<redacted-host>"
     if key == "timestamp" and ISO_TIMESTAMP_RE.match(value):
         return "<timestamp>"
     if key in ("file", "log", "url") and ("/" in value or "\\" in value):
@@ -62,22 +85,31 @@ def redact_xml_document(xml_text: str) -> str:
     )
 
 
-# Patterns that must not appear in checked-in corpus fixtures (scan tests).
-CORPUS_LEAK_PATTERNS: list[tuple[str, re.Pattern[str]]] = [
-    ("github_runner_hostname", re.compile(r'hostname="runnervm', re.IGNORECASE)),
-    ("runner_work_path", re.compile(r"/home/runner/work/")),
-    ("user_home_path", re.compile(r"/Users/[^/\s<]+")),
-    ("hostedtoolcache_path", re.compile(r"/opt/hostedtoolcache/")),
-    ("pytest_runner_tmp", re.compile(r"/tmp/pytest-of-runner/")),
-    ("github_app_token", re.compile(r"ghs_[A-Za-z0-9_]{20,}")),
-    ("openai_sk_key", re.compile(r"sk-[A-Za-z0-9]{20,}")),
-    ("bearer_token", re.compile(r"Bearer\s+[A-Za-z0-9._-]{8,}")),
-]
+def _hostname_attribute_leaks(text: str) -> bool:
+    for match in HOSTNAME_ATTR_RE.finditer(text):
+        value = match.group(1)
+        if value in REDACTED_HOST_MARKERS:
+            continue
+        if value.strip():
+            return True
+    return False
+
+
+def _timestamp_attribute_leaks(text: str) -> bool:
+    return bool(TIMESTAMP_ATTR_RE.search(text))
 
 
 def find_corpus_leaks(text: str) -> list[str]:
     hits: list[str] = []
-    for label, pattern in CORPUS_LEAK_PATTERNS:
+    for label, pattern in FIXTURE_LEAK_PATTERNS:
         if pattern.search(text):
             hits.append(label)
+    if _hostname_attribute_leaks(text):
+        hits.append("hostname_attribute")
+    if _timestamp_attribute_leaks(text):
+        hits.append("iso_timestamp_attribute")
     return hits
+
+
+# Backwards-compatible alias for corpus tooling.
+CORPUS_LEAK_PATTERNS = FIXTURE_LEAK_PATTERNS

@@ -32,6 +32,12 @@ REPOS = [
 
 
 @dataclass(frozen=True)
+class PendingCorpusWrite:
+    rel_path: Path
+    content: str
+
+
+@dataclass(frozen=True)
 class HarvestFailure:
     repo: str
     run_id: int | None
@@ -93,7 +99,27 @@ def list_failed_runs(repo: str, failures: list[HarvestFailure], limit: int = 15)
     )
     if out is None or not out.strip():
         return []
-    return json.loads(out)
+    try:
+        return json.loads(out)
+    except json.JSONDecodeError as exc:
+        failures.append(
+            HarvestFailure(
+                repo=repo,
+                run_id=None,
+                artifact=None,
+                stage="list_failed_runs",
+                detail=f"invalid json: {exc}"[:500],
+            )
+        )
+        return []
+
+
+def is_junit_artifact(name: str) -> bool:
+    return (
+        name.startswith("junit")
+        or name in ("failure-identity", "python-failure-identity")
+        or "junit" in name.lower()
+    )
 
 
 def list_artifacts(repo: str, run_id: int, failures: list[HarvestFailure]) -> list[dict]:
@@ -115,8 +141,20 @@ def list_artifacts(repo: str, run_id: int, failures: list[HarvestFailure]) -> li
     items = []
     for line in out.splitlines():
         line = line.strip()
-        if line:
+        if not line:
+            continue
+        try:
             items.append(json.loads(line))
+        except json.JSONDecodeError as exc:
+            failures.append(
+                HarvestFailure(
+                    repo=repo,
+                    run_id=run_id,
+                    artifact=None,
+                    stage="list_artifacts",
+                    detail=f"invalid json: {exc}"[:500],
+                )
+            )
     return items
 
 
@@ -221,9 +259,12 @@ def serialize_xml(tree: ET.ElementTree) -> str:
     return xml
 
 
-def harvest(entries_limit_per_repo: int = 5) -> tuple[list[dict], list[HarvestFailure]]:
+def harvest(
+    entries_limit_per_repo: int = 5,
+) -> tuple[list[dict], list[HarvestFailure], list[PendingCorpusWrite]]:
     failures: list[HarvestFailure] = []
     entries: list[dict] = []
+    pending: list[PendingCorpusWrite] = []
     seen_hashes: set[str] = set()
 
     for repo in REPOS:
@@ -231,6 +272,8 @@ def harvest(entries_limit_per_repo: int = 5) -> tuple[list[dict], list[HarvestFa
             run_id = int(run["databaseId"])
             for art in list_artifacts(repo, run_id, failures):
                 name = art["name"]
+                if not is_junit_artifact(name):
+                    continue
                 if art.get("expired"):
                     failures.append(
                         HarvestFailure(
@@ -241,13 +284,6 @@ def harvest(entries_limit_per_repo: int = 5) -> tuple[list[dict], list[HarvestFa
                             detail="artifact expired",
                         )
                     )
-                    continue
-                if not (
-                    name.startswith("junit")
-                    or name == "failure-identity"
-                    or name == "python-failure-identity"
-                    or "junit" in name.lower()
-                ):
                     continue
                 with tempfile.TemporaryDirectory() as tmp:
                     dest = Path(tmp)
@@ -277,9 +313,7 @@ def harvest(entries_limit_per_repo: int = 5) -> tuple[list[dict], list[HarvestFa
                         seen_hashes.add(digest)
                         case_id = f"{repo}_{run_id}_{name}_{len(entries)}"
                         rel = Path("cases") / f"{case_id}.xml"
-                        out_path = CORPUS / rel
-                        out_path.parent.mkdir(parents=True, exist_ok=True)
-                        out_path.write_text(xml_text, encoding="utf-8")
+                        pending.append(PendingCorpusWrite(rel_path=rel, content=xml_text))
                         entries.append(
                             {
                                 "id": case_id,
@@ -296,14 +330,26 @@ def harvest(entries_limit_per_repo: int = 5) -> tuple[list[dict], list[HarvestFa
                             break
             if len([e for e in entries if e["id"].startswith(repo)]) >= entries_limit_per_repo:
                 continue
-    return entries, failures
+    return entries, failures, pending
+
+
+def write_manifest_atomic(manifest_path: Path, entries: list[dict]) -> None:
+    manifest_path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = manifest_path.with_suffix(manifest_path.suffix + ".tmp")
+    tmp.write_text(json.dumps(entries, indent=2) + "\n", encoding="utf-8")
+    tmp.replace(manifest_path)
+
+
+def apply_harvest_success(corpus_dir: Path, manifest_path: Path, entries: list[dict], pending: list[PendingCorpusWrite]) -> None:
+    for item in pending:
+        out_path = corpus_dir / item.rel_path
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(item.content, encoding="utf-8")
+    write_manifest_atomic(manifest_path, entries)
 
 
 def main() -> int:
-    CORPUS.mkdir(parents=True, exist_ok=True)
-    entries, failures = harvest()
-    MANIFEST.write_text(json.dumps(entries, indent=2) + "\n", encoding="utf-8")
-    print(f"Wrote {len(entries)} corpus entries to {CORPUS}")
+    entries, failures, pending = harvest()
     if failures:
         report = {
             "entries": len(entries),
@@ -311,6 +357,9 @@ def main() -> int:
         }
         print(json.dumps(report, indent=2), file=sys.stderr)
         return 1
+    CORPUS.mkdir(parents=True, exist_ok=True)
+    apply_harvest_success(CORPUS, MANIFEST, entries, pending)
+    print(f"Wrote {len(entries)} corpus entries to {CORPUS}")
     return 0
 
 
