@@ -8,7 +8,14 @@ from pathlib import Path
 
 import pytest
 
-from err_o_roadrunner.triage import EXIT_OK, EXIT_USAGE, main, triage
+from err_o_roadrunner.triage import (
+    EXIT_OK,
+    EXIT_USAGE,
+    MAX_FRAMES,
+    MAX_READ_BYTES,
+    main,
+    triage,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = Path(__file__).resolve().parent / "fixtures"
@@ -194,15 +201,63 @@ def test_adversarial_ansi_escapes_stripped() -> None:
 def test_adversarial_path_traversal_rejected(tmp_path: Path) -> None:
     proc = run_cli("--exit-code", "1", "--stderr", str(tmp_path / ".." / ".." / "etc" / "passwd"))
     assert proc.returncode == EXIT_OK
-    assert "path traversal rejected" in proc.stdout or "file not readable" in proc.stdout
+    assert "unsafe path (path traversal rejected):" in proc.stdout
+    assert "file not readable" not in proc.stdout
+
+
+@pytest.mark.adversarial
+def test_adversarial_symlink_not_followed(tmp_path: Path) -> None:
+    target = tmp_path / "real.log"
+    target.write_text("hello", encoding="utf-8")
+    link = tmp_path / "link.log"
+    link.symlink_to(target)
+    proc = run_cli("--exit-code", "1", "--log", str(link))
+    assert proc.returncode == EXIT_OK
+    assert "symlink not followed:" in proc.stdout
+
+
+@pytest.mark.adversarial
+def test_adversarial_directory_not_file(tmp_path: Path) -> None:
+    proc = run_cli("--exit-code", "1", "--stderr", str(tmp_path))
+    assert proc.returncode == EXIT_OK
+    assert "not a regular file (directory):" in proc.stdout
+
+
+@pytest.mark.adversarial
+def test_adversarial_missing_file_not_directory_message(tmp_path: Path) -> None:
+    missing = tmp_path / "nope.txt"
+    proc = run_cli("--exit-code", "1", "--stderr", str(missing))
+    assert proc.returncode == EXIT_OK
+    assert "not a regular file (directory)" not in proc.stdout
+    assert "file not readable:" in proc.stdout
+
+
+@pytest.mark.adversarial
+def test_adversarial_read_size_cap_reported(tmp_path: Path) -> None:
+    big = tmp_path / "big.log"
+    big.write_bytes(b"x" * (MAX_READ_BYTES + 1))
+    proc = run_cli("--exit-code", "1", "--log", str(big))
+    assert proc.returncode == EXIT_OK
+    assert f"input truncated (size {MAX_READ_BYTES + 1} > {MAX_READ_BYTES})" in proc.stdout
+
+
+@pytest.mark.adversarial
+def test_adversarial_nul_bytes_reported(tmp_path: Path) -> None:
+    raw = tmp_path / "nul.log"
+    raw.write_bytes(b"Traceback\x00rest")
+    proc = run_cli("--exit-code", "1", "--log", str(raw))
+    assert proc.returncode == EXIT_OK
+    assert "binary or nul bytes present in:" in proc.stdout
 
 
 @pytest.mark.adversarial
 def test_adversarial_deep_stack() -> None:
-    frames = "\n".join(f'  File "f{i}.py", line {i}, in g' for i in range(500))
+    frames = "\n".join(f'  File "f{i}.py", line {i}, in g' for i in range(MAX_FRAMES + 50))
     text = f"Traceback (most recent call last):\n{frames}\nRecursionError: too deep\n"
     report = triage(exit_code=1, stderr_text=text, log_text=None, junit_paths=[], project_root=ROOT)
-    assert any("python traceback frame count:" in ln for ln in report.lines())
+    joined = "\n".join(report.lines())
+    assert f"python traceback frame count: {MAX_FRAMES}" in joined
+    assert f"python traceback frame cap reached ({MAX_FRAMES})" in joined
 
 
 @pytest.mark.adversarial
@@ -240,3 +295,140 @@ def test_adversarial_cli_never_tracebacks_on_bad_flag() -> None:
 @pytest.mark.adversarial
 def test_adversarial_main_invalid_args_code() -> None:
     assert main(["--totally-unknown"]) == EXIT_USAGE
+
+
+@pytest.mark.failure
+def test_regression_junit_failure_message_attribute_without_body() -> None:
+    xml = FIXTURES / "junit_failure_message_only.xml"
+    report = triage(
+        exit_code=1,
+        stderr_text=None,
+        log_text=None,
+        junit_paths=[str(xml)],
+        project_root=ROOT,
+    )
+    joined = "\n".join(report.lines())
+    assert "FOUND: junit failure (first)" in joined
+    assert "expected True is False" in joined
+
+
+@pytest.mark.failure
+def test_regression_junit_skipped_reported() -> None:
+    xml = FIXTURES / "junit_skipped.xml"
+    report = triage(
+        exit_code=1,
+        stderr_text=None,
+        log_text=None,
+        junit_paths=[str(xml)],
+        project_root=ROOT,
+    )
+    joined = "\n".join(report.lines())
+    assert "FOUND: junit skipped" in joined
+    assert "not ready yet" in joined
+
+
+@pytest.mark.failure
+def test_regression_identifier_lines_are_hints_not_exception_type() -> None:
+    text = """\
+Traceback (most recent call last):
+  File "a.py", line 2, in main
+    pass
+not_a_real_exception
+ValueError: final error
+"""
+    report = triage(exit_code=1, stderr_text=text, log_text=None, junit_paths=[], project_root=ROOT)
+    joined = "\n".join(report.lines())
+    assert "FOUND: python exception type: ValueError" in joined
+    assert "FOUND: python exception type: not_a_real_exception" not in joined
+    assert "HINT: uncertain traceback line: not_a_real_exception" in joined
+
+
+@pytest.mark.failure
+def test_regression_chained_python_exceptions() -> None:
+    text = """\
+Traceback (most recent call last):
+  File "a.py", line 1, in first
+    raise ValueError("one")
+ValueError: one
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "b.py", line 2, in second
+    raise TypeError("two")
+TypeError: two
+"""
+    report = triage(exit_code=1, stderr_text=text, log_text=None, junit_paths=[], project_root=ROOT)
+    joined = "\n".join(report.lines())
+    assert "FOUND: python chained traceback blocks: 2" in joined
+    assert "python exception type (primary): ValueError" in joined
+    assert "python exception type (chained-1): TypeError" in joined
+
+
+@pytest.mark.failure
+def test_regression_syntax_error_without_traceback_header() -> None:
+    text = '  File "script.py", line 3\n    print(x\nSyntaxError: invalid syntax\n'
+    report = triage(exit_code=1, stderr_text=text, log_text=None, junit_paths=[], project_root=ROOT)
+    joined = "\n".join(report.lines())
+    assert "FOUND: python exception type: SyntaxError" in joined
+    assert "invalid syntax" in joined
+
+
+@pytest.mark.failure
+def test_regression_node_custom_error_and_err_code() -> None:
+    text = """\
+CustomRangeError: value out of bounds
+    at load (file:///tmp/app.mjs:8:3)
+"""
+    report = triage(exit_code=1, stderr_text=None, log_text=text, junit_paths=[], project_root=ROOT)
+    joined = "\n".join(report.lines())
+    assert "CustomRangeError" in joined
+    assert "file:///tmp/app.mjs:8" in joined
+
+
+@pytest.mark.failure
+def test_regression_node_internal_frame_and_unhandled_rejection() -> None:
+    text = """\
+UnhandledPromiseRejectionWarning: Promise rejected
+    at async main (node:internal/process/task_queues:95:5)
+code: 'ERR_MODULE_NOT_FOUND'
+"""
+    report = triage(exit_code=1, stderr_text=None, log_text=text, junit_paths=[], project_root=ROOT)
+    joined = "\n".join(report.lines())
+    assert "UnhandledPromiseRejectionWarning" in joined
+    assert "node:internal/process/task_queues:95" in joined
+    assert "FOUND: node error code: ERR_MODULE_NOT_FOUND" in joined
+
+
+@pytest.mark.adversarial
+def test_regression_osc8_stripped_from_junit_message(tmp_path: Path) -> None:
+    osc = "\x1b]8;;https://evil.example\x1b\\"
+    xml = tmp_path / "osc.xml"
+    xml.write_text(
+        f'<?xml version="1.0"?><testsuite><testcase name="t">'
+        f'<failure message="{osc}boom"/></testcase></testsuite>',
+        encoding="utf-8",
+    )
+    report = triage(
+        exit_code=1,
+        stderr_text=None,
+        log_text=None,
+        junit_paths=[str(xml)],
+        project_root=ROOT,
+    )
+    joined = "\n".join(report.lines())
+    assert "\x1b]" not in joined
+    assert "boom" in joined
+
+
+@pytest.mark.adversarial
+def test_regression_osc_stripped_from_stderr_traceback() -> None:
+    text = (
+        "\x1b]8;;https://x.example\x1b\\Traceback (most recent call last):\n"
+        '  File "x.py", line 1, in f\n'
+        "RuntimeError: no\n"
+    )
+    report = triage(exit_code=1, stderr_text=text, log_text=None, junit_paths=[], project_root=ROOT)
+    joined = "\n".join(report.lines())
+    assert "\x1b]" not in joined
+    assert "FOUND: python exception type: RuntimeError" in joined

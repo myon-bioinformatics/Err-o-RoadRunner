@@ -6,12 +6,13 @@ import argparse
 import os
 import re
 import shutil
+import stat
 import subprocess
 import sys
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Iterable, Iterator, Sequence
+from typing import Iterator, Sequence
 
 # Stable exit codes (documented in README).
 EXIT_OK = 0
@@ -22,18 +23,40 @@ MAX_XML_TAGS = 100_000
 MAX_FRAMES = 2_000
 MAX_ENV_NAMES_LISTED = 40
 
-ANSI_ESCAPE_RE = re.compile(r"\x1b\[[0-9;]*[A-Za-z]")
+# Terminal control sequences (CSI, OSC incl. OSC 8, DCS, C1 CSI) and other C0 controls.
+_CSI_SEQUENCE = r"\[[\x30-\x3f]*[\x20-\x2f]*[\x40-\x7e]"
+CONTROL_PATTERNS = (
+    re.compile(r"\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)"),
+    re.compile(r"\x1bP[^\x1b]*\x1b\\"),
+    re.compile(r"\x1b" + _CSI_SEQUENCE),
+    re.compile(r"\x9b" + _CSI_SEQUENCE),
+    re.compile(r"[\x00-\x08\x0b-\x0c\x0e-\x1a\x1c-\x1f\x7f]"),
+)
+
 PYTHON_FRAME_RE = re.compile(
     r'^  File "(?P<file>[^"]+)", line (?P<line>\d+)(?:, in (?P<func>.*))?$'
 )
-PYTHON_EXCEPTION_RE = re.compile(
-    r"^(?P<exc>[A-Za-z_][\w.]*)(?::\s*(?P<msg>.*))?$"
+PYTHON_EXCEPTION_FOUND_RE = re.compile(
+    r"^(?P<exc>[A-Za-z_][\w.]*(?:Error|Exception|Warning|Interrupt|Exit|StopIteration|"
+    r"KeyboardInterrupt|SystemExit))(?::\s*(?P<msg>.*))?$"
 )
-NODE_STACK_RE = re.compile(
-    r"^\s*at (?:async )?(?P<func>.*?)? ?\((?P<loc>[^:]+):(?P<line>\d+):(?P<col>\d+)\)\s*$"
+PYTHON_EXCEPTION_COLON_RE = re.compile(
+    r"^(?P<exc>[A-Za-z_][\w.]*):\s*(?P<msg>.*)$"
 )
-NODE_STACK_SIMPLE_RE = re.compile(
-    r"^\s*at (?P<loc>[^\s(]+):(?P<line>\d+):(?P<col>\d+)\s*$"
+PYTHON_CHAIN_MARKERS = (
+    "During handling of the above exception, another exception occurred:",
+    "The above exception was the direct cause of the following exception:",
+)
+SYNTAX_ERROR_LINE_RE = re.compile(
+    r"^(?P<exc>SyntaxError)(?::\s*(?P<msg>.*))?$"
+)
+NODE_ERROR_HEADLINE_RE = re.compile(
+    r"^(?P<head>(?:[A-Za-z_][\w]*Error|Error|UnhandledPromiseRejectionWarning|Unhandled\s+rejection(?:\s+\([^)]+\))?))\s*:\s*(?P<rest>.*)$",
+    re.IGNORECASE,
+)
+NODE_ERR_CODE_RE = re.compile(r"\bcode:\s*['\"]?(ERR_[A-Z0-9_]+)['\"]?", re.IGNORECASE)
+NODE_AT_FRAME_RE = re.compile(
+    r"^\s*at (?:async )?(?:(?P<func>[^()]+?) \()?(?P<loc>.+):(?P<line>\d+):(?P<col>\d+)\)?\s*$"
 )
 
 LOCK_FILES = (
@@ -56,13 +79,13 @@ class Report:
     hints: list[str] = field(default_factory=list)
 
     def add_found(self, line: str) -> None:
-        self.found.append(line)
+        self.found.append(sanitize_report_text(line))
 
     def add_not_found(self, line: str) -> None:
-        self.not_found.append(line)
+        self.not_found.append(sanitize_report_text(line))
 
     def add_hint(self, line: str) -> None:
-        self.hints.append(line)
+        self.hints.append(sanitize_report_text(line))
 
     def extend(self, other: Report) -> None:
         self.found.extend(other.found)
@@ -80,32 +103,62 @@ class Report:
         return out
 
 
+def sanitize_report_text(text: str) -> str:
+    return strip_terminal_controls(text)
+
+
+def strip_terminal_controls(text: str) -> str:
+    out = text
+    for pattern in CONTROL_PATTERNS:
+        out = pattern.sub("", out)
+    return out
+
+
 def strip_ansi(text: str) -> str:
-    return ANSI_ESCAPE_RE.sub("", text)
+    return strip_terminal_controls(text)
 
 
 def safe_read_text(path: Path, report: Report) -> str | None:
-    """Read a user path safely; never follow symlinks outside resolution checks."""
+    """Read a user path safely; never follow symlinks."""
     try:
         raw = path.expanduser()
         if ".." in path.parts:
             report.add_not_found(f"unsafe path (path traversal rejected): {path}")
             return None
-        if not raw.is_file():
-            report.add_not_found(f"file not readable: {path}")
+        try:
+            st = raw.lstat()
+        except OSError as exc:
+            report.add_not_found(f"file not readable: {path} ({type(exc).__name__})")
             return None
-        size = raw.stat().st_size
+        if stat.S_ISLNK(st.st_mode):
+            report.add_not_found(f"symlink not followed: {path}")
+            return None
+        if stat.S_ISDIR(st.st_mode):
+            report.add_not_found(f"not a regular file (directory): {path}")
+            return None
+        if not stat.S_ISREG(st.st_mode):
+            report.add_not_found(f"not a regular file: {path}")
+            return None
+        size = st.st_size
         if size > MAX_READ_BYTES:
             report.add_found(f"input truncated (size {size} > {MAX_READ_BYTES}): {path}")
-        with raw.open("rb") as fh:
-            data = fh.read(MAX_READ_BYTES)
+        flags = os.O_RDONLY
+        if hasattr(os, "O_NOFOLLOW"):
+            flags |= os.O_NOFOLLOW
+        fd = os.open(raw, flags)
+        try:
+            with os.fdopen(fd, "rb") as fh:
+                data = fh.read(MAX_READ_BYTES)
+        except Exception:
+            os.close(fd)
+            raise
     except OSError as exc:
         report.add_not_found(f"file not readable: {path} ({type(exc).__name__})")
         return None
     text = data.decode("utf-8", errors="replace")
-    if "\x00" in text:
+    if b"\x00" in data:
         report.add_found(f"binary or nul bytes present in: {path}")
-    return strip_ansi(text)
+    return strip_terminal_controls(text)
 
 
 def read_stream_arg(value: str | None, report: Report, label: str) -> str | None:
@@ -118,7 +171,9 @@ def read_stream_arg(value: str | None, report: Report, label: str) -> str | None
             report.add_not_found(f"{label} stdin ({type(exc).__name__})")
             return None
         text = data.decode("utf-8", errors="replace")
-        return strip_ansi(text)
+        if b"\x00" in data:
+            report.add_found(f"binary or nul bytes present in: {label} stdin")
+        return strip_terminal_controls(text)
     return safe_read_text(Path(value), report)
 
 
@@ -134,7 +189,7 @@ class StackFrame:
         return f"{self.file}:{self.line}"
 
 
-def parse_python_traceback(text: str, report: Report) -> None:
+def _split_python_trace_blocks(text: str) -> list[list[str]]:
     lines = text.splitlines()
     blocks: list[list[str]] = []
     current: list[str] = []
@@ -143,19 +198,31 @@ def parse_python_traceback(text: str, report: Report) -> None:
             if current:
                 blocks.append(current)
             current = [line]
+        elif line in PYTHON_CHAIN_MARKERS:
+            if current:
+                blocks.append(current)
+            current = []
         elif current:
             current.append(line)
+        elif SYNTAX_ERROR_LINE_RE.match(line.strip()):
+            blocks.append([line])
     if current:
         blocks.append(current)
-    if not blocks:
-        report.add_not_found("python traceback")
-        return
+    return blocks
 
-    tb = blocks[-1]
+
+def _report_key(label: str, phrase: str) -> str:
+    return f"{phrase} ({label})" if label else phrase
+
+
+def _parse_one_python_block(tb: list[str], report: Report, label: str) -> tuple[str, str]:
     frames: list[StackFrame] = []
     exc_type = ""
     exc_msg = ""
-    for line in tb[1:]:
+    uncertain_lines: list[str] = []
+    frame_cap_reported = False
+    start = 1 if tb and tb[0].startswith("Traceback") else 0
+    for line in tb[start:]:
         m = PYTHON_FRAME_RE.match(line)
         if m:
             if len(frames) < MAX_FRAMES:
@@ -166,58 +233,124 @@ def parse_python_traceback(text: str, report: Report) -> None:
                         func=(m.group("func") or "").strip(),
                     )
                 )
+            elif not frame_cap_reported:
+                report.add_found(_report_key(label, f"python traceback frame cap reached ({MAX_FRAMES})"))
+                frame_cap_reported = True
             continue
-        m = PYTHON_EXCEPTION_RE.match(line.strip())
-        if m and m.group("exc"):
-            exc_type = m.group("exc")
-            exc_msg = (m.group("msg") or "").strip()
+        stripped = line.strip()
+        if not stripped or stripped.startswith("^"):
+            continue
+        m_colon = PYTHON_EXCEPTION_COLON_RE.match(stripped)
+        if m_colon:
+            exc_type = m_colon.group("exc")
+            exc_msg = (m_colon.group("msg") or "").strip()
+            continue
+        m_found = PYTHON_EXCEPTION_FOUND_RE.match(stripped)
+        if m_found and not exc_type:
+            exc_type = m_found.group("exc")
+            exc_msg = (m_found.group("msg") or "").strip()
+            continue
+        if re.match(r"^[A-Za-z_][\w.]*$", stripped):
+            uncertain_lines.append(stripped)
 
     if exc_type:
-        report.add_found(f"python exception type: {exc_type}")
+        report.add_found(f"{_report_key(label, 'python exception type')}: {exc_type}")
         if exc_msg:
-            report.add_found(f"python exception message: {exc_msg}")
+            report.add_found(f"{_report_key(label, 'python exception message')}: {exc_msg}")
         else:
-            report.add_not_found("python exception message")
+            report.add_not_found(_report_key(label, "python exception message"))
     else:
-        report.add_not_found("python exception type")
+        report.add_not_found(_report_key(label, "python exception type"))
 
     if frames:
-        report.add_found(f"python traceback frame (first): {frames[0].format()}")
-        report.add_found(f"python traceback frame (last): {frames[-1].format()}")
-        report.add_found(f"python traceback frame count: {len(frames)}")
+        report.add_found(f"{_report_key(label, 'python traceback frame (first)')}: {frames[0].format()}")
+        report.add_found(f"{_report_key(label, 'python traceback frame (last)')}: {frames[-1].format()}")
+        report.add_found(f"{_report_key(label, 'python traceback frame count')}: {len(frames)}")
     else:
-        report.add_not_found("python stack frames")
+        report.add_not_found(_report_key(label, "python stack frames"))
 
-    if exc_type or exc_msg:
-        keywords = " ".join(part for part in (exc_type, exc_msg) if part)
+    for junk in uncertain_lines:
+        report.add_hint(f"{_report_key(label, 'uncertain traceback line')}: {junk}")
+
+    return exc_type, exc_msg
+
+
+def parse_python_traceback(text: str, report: Report) -> None:
+    blocks = _split_python_trace_blocks(text)
+    if not blocks:
+        report.add_not_found("python traceback")
+        return
+
+    if len(blocks) > 1:
+        report.add_found(f"python chained traceback blocks: {len(blocks)}")
+
+    if len(blocks) == 1:
+        block_labels = [""]
+    else:
+        block_labels = ["primary"] + [f"chained-{i}" for i in range(1, len(blocks))]
+    last_type = ""
+    last_msg = ""
+    for block, label in zip(blocks, block_labels):
+        exc_type, exc_msg = _parse_one_python_block(block, report, label)
+        if exc_type:
+            last_type, last_msg = exc_type, exc_msg
+
+    if last_type or last_msg:
+        keywords = " ".join(part for part in (last_type, last_msg) if part)
         report.add_hint(f"web search keywords: {keywords[:500]}")
+
+
+def parse_syntax_error(text: str, report: Report) -> None:
+    for line in text.splitlines():
+        m = SYNTAX_ERROR_LINE_RE.match(line.strip())
+        if m:
+            report.add_found(f"python exception type: {m.group('exc')}")
+            msg = (m.group("msg") or "").strip()
+            if msg:
+                report.add_found(f"python exception message: {msg}")
+            else:
+                report.add_not_found("python exception message")
+            report.add_hint(f"web search keywords: SyntaxError {msg[:400]}")
+            return
+    report.add_not_found("python syntax error")
+
+
+def _parse_node_at_line(line: str) -> StackFrame | None:
+    m = NODE_AT_FRAME_RE.match(line)
+    if not m:
+        return None
+    func = (m.group("func") or "").strip()
+    return StackFrame(file=m.group("loc"), line=int(m.group("line")), func=func)
 
 
 def parse_node_stack(text: str, report: Report) -> None:
     frames: list[StackFrame] = []
     error_lines: list[str] = []
+    err_codes: list[str] = []
     for line in text.splitlines():
         stripped = line.strip()
-        if stripped.startswith("Error:") or stripped.startswith("TypeError:") or stripped.startswith(
-            "ReferenceError:"
-        ):
-            error_lines.append(stripped)
-        m = NODE_STACK_RE.match(line) or NODE_STACK_SIMPLE_RE.match(line)
-        if m:
-            loc = m.group("loc")
-            func = (m.groupdict().get("func") or "").strip()
-            frames.append(
-                StackFrame(
-                    file=loc,
-                    line=int(m.group("line")),
-                    func=func,
-                )
-            )
+        m_head = NODE_ERROR_HEADLINE_RE.match(stripped)
+        if m_head:
+            rest = (m_head.group("rest") or "").strip()
+            headline = m_head.group("head")
+            if rest:
+                error_lines.append(f"{headline}: {rest}")
+            else:
+                error_lines.append(f"{headline}:")
+        m_code = NODE_ERR_CODE_RE.search(stripped)
+        if m_code:
+            err_codes.append(m_code.group(1))
+        frame = _parse_node_at_line(line)
+        if frame:
+            frames.append(frame)
 
     if error_lines:
         report.add_found(f"node error line: {error_lines[0][:500]}")
     else:
         report.add_not_found("node error headline")
+
+    if err_codes:
+        report.add_found(f"node error code: {err_codes[0]}")
 
     if frames:
         report.add_found(f"node stack frame (first): {frames[0].format()}")
@@ -225,6 +358,10 @@ def parse_node_stack(text: str, report: Report) -> None:
         report.add_found(f"node stack frame count: {len(frames)}")
     else:
         report.add_not_found("node stack frames")
+
+    if error_lines or err_codes:
+        hint = error_lines[0] if error_lines else err_codes[0]
+        report.add_hint(f"web search keywords: {hint[:400]}")
 
 
 def _bounded_xml_iter(root: ET.Element) -> Iterator[ET.Element]:
@@ -236,6 +373,16 @@ def _bounded_xml_iter(root: ET.Element) -> Iterator[ET.Element]:
         yield elem
 
 
+def _junit_snippet(elem: ET.Element) -> str:
+    msg = sanitize_report_text((elem.attrib.get("message") or "").strip())
+    body = sanitize_report_text((elem.text or "").strip())
+    if msg:
+        return msg[:300]
+    if body:
+        return body.splitlines()[0][:300]
+    return "failure"
+
+
 def parse_junit_xml(text: str, source: str, report: Report) -> None:
     try:
         root = ET.fromstring(text)
@@ -245,17 +392,23 @@ def parse_junit_xml(text: str, source: str, report: Report) -> None:
 
     failures: list[str] = []
     errors: list[str] = []
+    skipped: list[str] = []
     try:
         for elem in _bounded_xml_iter(root):
             tag = elem.tag.split("}")[-1]
             if tag == "failure":
-                msg = elem.attrib.get("message", "").strip()
-                body = (elem.text or "").strip()
-                snippet = msg or body.splitlines()[0] if body else "failure"
-                failures.append(snippet[:300])
+                failures.append(_junit_snippet(elem))
             elif tag == "error":
-                msg = elem.attrib.get("message", "").strip()
-                errors.append(msg[:300] if msg else "error")
+                errors.append(_junit_snippet(elem))
+            elif tag == "skipped":
+                msg = sanitize_report_text((elem.attrib.get("message") or "").strip())
+                body = sanitize_report_text((elem.text or "").strip())
+                if msg:
+                    skipped.append(msg[:300])
+                elif body:
+                    skipped.append(body.splitlines()[0][:300])
+                else:
+                    skipped.append("skipped")
     except ValueError:
         report.add_found(f"junit xml truncated (tag limit) ({source})")
 
@@ -272,18 +425,42 @@ def parse_junit_xml(text: str, source: str, report: Report) -> None:
     else:
         report.add_not_found(f"junit errors ({source})")
 
+    if skipped:
+        report.add_found(f"junit skipped ({source}): {len(skipped)}")
+        report.add_found(f"junit skipped (first) ({source}): {skipped[0]}")
+    else:
+        report.add_not_found(f"junit skipped ({source})")
+
     if failures or errors:
         sample = failures[0] if failures else errors[0]
         report.add_hint(f"web search keywords ({source}): {sample[:400]}")
+
+
+def _has_syntax_error_line(text: str) -> bool:
+    return any(SYNTAX_ERROR_LINE_RE.match(line.strip()) for line in text.splitlines())
+
+
+def _looks_like_node_failure(text: str) -> bool:
+    for line in text.splitlines():
+        stripped = line.strip()
+        if SYNTAX_ERROR_LINE_RE.match(stripped):
+            continue
+        if NODE_ERROR_HEADLINE_RE.match(stripped):
+            return True
+    if NODE_ERR_CODE_RE.search(text):
+        return True
+    return bool(re.search(r"\n\s*at .+:\d+:\d+", text))
 
 
 def detect_and_parse_log(text: str, report: Report) -> None:
     if not text.strip():
         report.add_not_found("log text (empty)")
         return
-    if "Traceback (most recent call last):" in text:
+    if "Traceback (most recent call last):" in text or any(m in text for m in PYTHON_CHAIN_MARKERS):
         parse_python_traceback(text, report)
-    elif re.search(r"\n\s*at .+:\d+:\d+", text) or text.strip().startswith("Error:"):
+    elif _has_syntax_error_line(text):
+        parse_syntax_error(text, report)
+    elif _looks_like_node_failure(text):
         parse_node_stack(text, report)
     else:
         report.add_not_found("recognized failure pattern in log/stderr")
@@ -377,7 +554,7 @@ def triage(
             report.add_not_found("failure evidence (no stderr, log, or junit)")
 
     for label, text in texts:
-        text = strip_ansi(text)
+        text = strip_terminal_controls(text)
         if not text.strip():
             report.add_not_found(f"{label} text (empty)")
             continue
