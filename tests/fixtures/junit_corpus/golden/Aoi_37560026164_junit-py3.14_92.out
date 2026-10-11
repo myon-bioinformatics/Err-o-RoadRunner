@@ -1,9 +1,9 @@
 FOUND: exit code: 1
 FOUND: junit errors (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37560026164_junit-py3.14_92.xml): 1
-FOUND: junit error (first) (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37560026164_junit-py3.14_92.xml): collection failure\nImportError while importing test module '<runner-work>/nagoyaction/tests/test_inbox.py'.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\n/opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/importlib/__init__.py:88: in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FOUND: junit error (first) (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37560026164_junit-py3.14_92.xml): collection failure\nImportError while importing test module '<runner-work>/nagoyaction/tests/test_inbox.py'.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\n<toolcache>/Python/3.14.7/x64/lib/python3.14/importlib/__init__.py:88: in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37560026164_junit-py3.14_92.xml): ModuleNotFoundError
 FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37560026164_junit-py3.14_92.xml): 1
-FOUND: junit collection error (first) (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37560026164_junit-py3.14_92.xml): collection failure\ncollection failure\nImportError while importing test module '<runner-work>/nagoyaction/tests/test_inbox.py'.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\n/opt/hostedto
+FOUND: junit collection error (first) (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37560026164_junit-py3.14_92.xml): collection failure\ncollection failure\nImportError while importing test module '<runner-work>/nagoyaction/tests/test_inbox.py'.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\n<toolcache>/P
 FOUND: python version: 3.12.3 (cpython)
 FOUND: node version: v22.14.0
 FOUND: gh version: gh version 2.102.0 (2026-09-30)
@@ -14,4 +14,4 @@ NOT FOUND: junit skipped (<repo>/tests/fixtures/junit_corpus/cases/Aoi_375600261
 NOT FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37560026164_junit-py3.14_92.xml)
 NOT FOUND: junit system-err (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37560026164_junit-py3.14_92.xml)
 NOT FOUND: lock files in project root
-HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37560026164_junit-py3.14_92.xml): collection failure\nImportError while importing test module '<runner-work>/nagoyaction/tests/test_inbox.py'.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\n/opt/hostedtoolcache/Python/3.14.7/x64/lib/python3.14/importlib/__init__.py:88: in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37560026164_junit-py3.14_92.xml): collection failure\nImportError while importing test module '<runner-work>/nagoyaction/tests/test_inbox.py'.\nHint: make sure your test modules/packages have valid Python names.\nTraceback:\n<toolcache>/Python/3.14.7/x64/lib/python3.14/importlib/__init__.py:88: in import_module\n    return _bootstrap._gcd_import(name[level:], package, level)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

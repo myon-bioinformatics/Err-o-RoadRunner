@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<testsuites><testsuite name="pytest" errors="1" failures="1" skipped="1" tests="4" time="0.070" timestamp="2026-10-11T10:09:16.956022+00:00" hostname="runnervmmprz5"><testcase classname="test_oracle" name="test_filter_invalid_input_is_not_success[PARAMETER_SENTINEL]" time="0.038"><failure message="AssertionError: ASSERTION_SENTINEL&#10;assert 2 == 0&#10; +  where 2 = CompletedProcess(args=['/opt/hostedtoolcache/Python/3.12.15/x64/bin/python', '-S', '&lt;runner-work&gt;">label = 'PARAMETER_SENTINEL'
+<testsuites><testsuite name="pytest" errors="1" failures="1" skipped="1" tests="4" time="0.070" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="test_oracle" name="test_filter_invalid_input_is_not_success[PARAMETER_SENTINEL]" time="0.038"><failure message="AssertionError: ASSERTION_SENTINEL&#10;assert 2 == 0&#10; +  where 2 = CompletedProcess(args=['&lt;toolcache&gt;/Python/3.12.15/x64/bin/python', '-S', '&lt;runner-work&gt;">label = 'PARAMETER_SENTINEL'
 
     @pytest.mark.parametrize("label", ["PARAMETER_SENTINEL"], ids=["PARAMETER_SENTINEL"])
     def test_filter_invalid_input_is_not_success(label):
@@ -14,7 +14,7 @@
 &gt;       assert result.returncode == 0, "ASSERTION_SENTINEL"
 E       AssertionError: ASSERTION_SENTINEL
 E       assert 2 == 0
-E        +  where 2 = CompletedProcess(args=['/opt/hostedtoolcache/Python/3.12.15/x64/bin/python', '-S', '&lt;runner-work&gt;/tmp/pytest-of-runner/pytest-0/test_oracle_wrapper_junit_pres0/test_oracle.py:23: AssertionError</failure><system-out>--------------------------------- Captured Log ---------------------------------
+E        +  where 2 = CompletedProcess(args=['&lt;toolcache&gt;/Python/3.12.15/x64/bin/python', '-S', '&lt;runner-work&gt;&lt;pytest-tmp&gt;/pytest-0/test_oracle_wrapper_junit_pres0/test_oracle.py:23: AssertionError</failure><system-out>--------------------------------- Captured Log ---------------------------------
 
 --------------------------------- Captured Out ---------------------------------
 STDOUT_SENTINEL
@@ -26,7 +26,7 @@ STDOUT_SENTINEL
 &gt;       raise RuntimeError("SETUP_SENTINEL")
 E       RuntimeError: SETUP_SENTINEL
 
-/tmp/pytest-of-runner/pytest-0/test_oracle_wrapper_junit_pres0/test_oracle.py:27: RuntimeError</error><system-out>--------------------------------- Captured Log ---------------------------------
+&lt;pytest-tmp&gt;/pytest-0/test_oracle_wrapper_junit_pres0/test_oracle.py:27: RuntimeError</error><system-out>--------------------------------- Captured Log ---------------------------------
 
 --------------------------------- Captured Out ---------------------------------
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<testsuites><testsuite name="pytest" errors="0" failures="11" skipped="2" tests="737" time="38.987" timestamp="2026-10-11T10:09:05.110242+00:00" hostname="runnervmmprz5"><testcase classname="tests.test_junit_workflow_contract" name="test_failure_evidence_workflow_contract" time="0.033"><failure message="assert {'PYTHON': &quot;$...== 'true' }}&quot;} == {'PYTHON': &quot;$...== 'true' }}&quot;}&#10;  &#10;  Omitting 3 identical items, use -vv to show&#10;  Left contains 1 more item:&#10;  {'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;}&#10;  &#10;  Full diff:&#10;    {&#10;        'PYTHON': &quot;${{ needs.changes.outputs.python == 'true' || &quot;&#10;        &quot;needs.changes.outputs.workflow == 'true' }}&quot;,&#10;  +     'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;,&#10;        'PLAYWRIGHT': &quot;${{ needs.changes.outputs.playwright == 'true' }}&quot;,&#10;        'VALIDATION_BROWSER': &quot;${{ needs.changes.outputs.validation_browser == 'true' }}&quot;,&#10;    }">def test_failure_evidence_workflow_contract():
+<testsuites><testsuite name="pytest" errors="0" failures="11" skipped="2" tests="737" time="38.987" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_junit_workflow_contract" name="test_failure_evidence_workflow_contract" time="0.033"><failure message="assert {'PYTHON': &quot;$...== 'true' }}&quot;} == {'PYTHON': &quot;$...== 'true' }}&quot;}&#10;  &#10;  Omitting 3 identical items, use -vv to show&#10;  Left contains 1 more item:&#10;  {'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;}&#10;  &#10;  Full diff:&#10;    {&#10;        'PYTHON': &quot;${{ needs.changes.outputs.python == 'true' || &quot;&#10;        &quot;needs.changes.outputs.workflow == 'true' }}&quot;,&#10;  +     'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;,&#10;        'PLAYWRIGHT': &quot;${{ needs.changes.outputs.playwright == 'true' }}&quot;,&#10;        'VALIDATION_BROWSER': &quot;${{ needs.changes.outputs.validation_browser == 'true' }}&quot;,&#10;    }">def test_failure_evidence_workflow_contract():
 &gt;       _assert_contract(yaml.safe_load(WORKFLOW.read_text(encoding="utf-8")))
 
 tests/test_junit_workflow_contract.py:168: 
@@ -55,7 +55,7 @@ E               'VALIDATION_BROWSER': "${{ needs.changes.outputs.validation_brow
 E           }
 
 tests/test_junit_workflow_contract.py:137: AssertionError</failure></testcase><testcase classname="tests.test_junit_workflow_contract" name="test_collection_asset_only_changes_select_python_junit_without_browser[window_034.json-pull_request]" time="0.064"><failure message="assert {'PYTHON': &quot;$...== 'true' }}&quot;} == {'PYTHON': &quot;$...== 'true' }}&quot;}&#10;  &#10;  Omitting 3 identical items, use -vv to show&#10;  Left contains 1 more item:&#10;  {'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;}&#10;  &#10;  Full diff:&#10;    {&#10;        'PYTHON': &quot;${{ needs.changes.outputs.python == 'true' || &quot;&#10;        &quot;needs.changes.outputs.workflow == 'true' }}&quot;,&#10;  +     'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;,&#10;        'PLAYWRIGHT': &quot;${{ needs.changes.outputs.playwright == 'true' }}&quot;,&#10;        'VALIDATION_BROWSER': &quot;${{ needs.changes.outputs.validation_browser == 'true' }}&quot;,&#10;    }">event = 'pull_request', asset = 'window_034.json'
-classify_workflow_asset = &lt;function classify_workflow_asset.&lt;locals&gt;.classify at 0x7f313e636160&gt;
+classify_workflow_asset = &lt;function classify_workflow_asset.&lt;locals&gt;.classify at 0x&lt;addr&gt;&gt;
 
     @pytest.mark.parametrize("event", ["pull_request", "push"])
     @pytest.mark.parametrize("asset", ["window_034.json", "structure_045.json", "command_051.json"])
@@ -130,7 +130,7 @@ E               'VALIDATION_BROWSER': "${{ needs.changes.outputs.validation_brow
 E           }
 
 tests/test_junit_workflow_contract.py:137: AssertionError</failure></testcase><testcase classname="tests.test_junit_workflow_contract" name="test_collection_asset_only_changes_select_python_junit_without_browser[window_034.json-push]" time="0.065"><failure message="assert {'PYTHON': &quot;$...== 'true' }}&quot;} == {'PYTHON': &quot;$...== 'true' }}&quot;}&#10;  &#10;  Omitting 3 identical items, use -vv to show&#10;  Left contains 1 more item:&#10;  {'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;}&#10;  &#10;  Full diff:&#10;    {&#10;        'PYTHON': &quot;${{ needs.changes.outputs.python == 'true' || &quot;&#10;        &quot;needs.changes.outputs.workflow == 'true' }}&quot;,&#10;  +     'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;,&#10;        'PLAYWRIGHT': &quot;${{ needs.changes.outputs.playwright == 'true' }}&quot;,&#10;        'VALIDATION_BROWSER': &quot;${{ needs.changes.outputs.validation_browser == 'true' }}&quot;,&#10;    }">event = 'push', asset = 'window_034.json'
-classify_workflow_asset = &lt;function classify_workflow_asset.&lt;locals&gt;.classify at 0x7f313e6363e0&gt;
+classify_workflow_asset = &lt;function classify_workflow_asset.&lt;locals&gt;.classify at 0x&lt;addr&gt;&gt;
 
     @pytest.mark.parametrize("event", ["pull_request", "push"])
     @pytest.mark.parametrize("asset", ["window_034.json", "structure_045.json", "command_051.json"])
@@ -205,7 +205,7 @@ E               'VALIDATION_BROWSER': "${{ needs.changes.outputs.validation_brow
 E           }
 
 tests/test_junit_workflow_contract.py:137: AssertionError</failure></testcase><testcase classname="tests.test_junit_workflow_contract" name="test_collection_asset_only_changes_select_python_junit_without_browser[structure_045.json-pull_request]" time="0.065"><failure message="assert {'PYTHON': &quot;$...== 'true' }}&quot;} == {'PYTHON': &quot;$...== 'true' }}&quot;}&#10;  &#10;  Omitting 3 identical items, use -vv to show&#10;  Left contains 1 more item:&#10;  {'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;}&#10;  &#10;  Full diff:&#10;    {&#10;        'PYTHON': &quot;${{ needs.changes.outputs.python == 'true' || &quot;&#10;        &quot;needs.changes.outputs.workflow == 'true' }}&quot;,&#10;  +     'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;,&#10;        'PLAYWRIGHT': &quot;${{ needs.changes.outputs.playwright == 'true' }}&quot;,&#10;        'VALIDATION_BROWSER': &quot;${{ needs.changes.outputs.validation_browser == 'true' }}&quot;,&#10;    }">event = 'pull_request', asset = 'structure_045.json'
-classify_workflow_asset = &lt;function classify_workflow_asset.&lt;locals&gt;.classify at 0x7f313e636020&gt;
+classify_workflow_asset = &lt;function classify_workflow_asset.&lt;locals&gt;.classify at 0x&lt;addr&gt;&gt;
 
     @pytest.mark.parametrize("event", ["pull_request", "push"])
     @pytest.mark.parametrize("asset", ["window_034.json", "structure_045.json", "command_051.json"])
@@ -280,7 +280,7 @@ E               'VALIDATION_BROWSER': "${{ needs.changes.outputs.validation_brow
 E           }
 
 tests/test_junit_workflow_contract.py:137: AssertionError</failure></testcase><testcase classname="tests.test_junit_workflow_contract" name="test_collection_asset_only_changes_select_python_junit_without_browser[structure_045.json-push]" time="0.064"><failure message="assert {'PYTHON': &quot;$...== 'true' }}&quot;} == {'PYTHON': &quot;$...== 'true' }}&quot;}&#10;  &#10;  Omitting 3 identical items, use -vv to show&#10;  Left contains 1 more item:&#10;  {'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;}&#10;  &#10;  Full diff:&#10;    {&#10;        'PYTHON': &quot;${{ needs.changes.outputs.python == 'true' || &quot;&#10;        &quot;needs.changes.outputs.workflow == 'true' }}&quot;,&#10;  +     'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;,&#10;        'PLAYWRIGHT': &quot;${{ needs.changes.outputs.playwright == 'true' }}&quot;,&#10;        'VALIDATION_BROWSER': &quot;${{ needs.changes.outputs.validation_browser == 'true' }}&quot;,&#10;    }">event = 'push', asset = 'structure_045.json'
-classify_workflow_asset = &lt;function classify_workflow_asset.&lt;locals&gt;.classify at 0x7f313e636c00&gt;
+classify_workflow_asset = &lt;function classify_workflow_asset.&lt;locals&gt;.classify at 0x&lt;addr&gt;&gt;
 
     @pytest.mark.parametrize("event", ["pull_request", "push"])
     @pytest.mark.parametrize("asset", ["window_034.json", "structure_045.json", "command_051.json"])
@@ -355,7 +355,7 @@ E               'VALIDATION_BROWSER': "${{ needs.changes.outputs.validation_brow
 E           }
 
 tests/test_junit_workflow_contract.py:137: AssertionError</failure></testcase><testcase classname="tests.test_junit_workflow_contract" name="test_collection_asset_only_changes_select_python_junit_without_browser[command_051.json-pull_request]" time="0.064"><failure message="assert {'PYTHON': &quot;$...== 'true' }}&quot;} == {'PYTHON': &quot;$...== 'true' }}&quot;}&#10;  &#10;  Omitting 3 identical items, use -vv to show&#10;  Left contains 1 more item:&#10;  {'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;}&#10;  &#10;  Full diff:&#10;    {&#10;        'PYTHON': &quot;${{ needs.changes.outputs.python == 'true' || &quot;&#10;        &quot;needs.changes.outputs.workflow == 'true' }}&quot;,&#10;  +     'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;,&#10;        'PLAYWRIGHT': &quot;${{ needs.changes.outputs.playwright == 'true' }}&quot;,&#10;        'VALIDATION_BROWSER': &quot;${{ needs.changes.outputs.validation_browser == 'true' }}&quot;,&#10;    }">event = 'pull_request', asset = 'command_051.json'
-classify_workflow_asset = &lt;function classify_workflow_asset.&lt;locals&gt;.classify at 0x7f313e636d40&gt;
+classify_workflow_asset = &lt;function classify_workflow_asset.&lt;locals&gt;.classify at 0x&lt;addr&gt;&gt;
 
     @pytest.mark.parametrize("event", ["pull_request", "push"])
     @pytest.mark.parametrize("asset", ["window_034.json", "structure_045.json", "command_051.json"])
@@ -430,7 +430,7 @@ E               'VALIDATION_BROWSER': "${{ needs.changes.outputs.validation_brow
 E           }
 
 tests/test_junit_workflow_contract.py:137: AssertionError</failure></testcase><testcase classname="tests.test_junit_workflow_contract" name="test_collection_asset_only_changes_select_python_junit_without_browser[command_051.json-push]" time="0.065"><failure message="assert {'PYTHON': &quot;$...== 'true' }}&quot;} == {'PYTHON': &quot;$...== 'true' }}&quot;}&#10;  &#10;  Omitting 3 identical items, use -vv to show&#10;  Left contains 1 more item:&#10;  {'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;}&#10;  &#10;  Full diff:&#10;    {&#10;        'PYTHON': &quot;${{ needs.changes.outputs.python == 'true' || &quot;&#10;        &quot;needs.changes.outputs.workflow == 'true' }}&quot;,&#10;  +     'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;,&#10;        'PLAYWRIGHT': &quot;${{ needs.changes.outputs.playwright == 'true' }}&quot;,&#10;        'VALIDATION_BROWSER': &quot;${{ needs.changes.outputs.validation_browser == 'true' }}&quot;,&#10;    }">event = 'push', asset = 'command_051.json'
-classify_workflow_asset = &lt;function classify_workflow_asset.&lt;locals&gt;.classify at 0x7f313e636160&gt;
+classify_workflow_asset = &lt;function classify_workflow_asset.&lt;locals&gt;.classify at 0x&lt;addr&gt;&gt;
 
     @pytest.mark.parametrize("event", ["pull_request", "push"])
     @pytest.mark.parametrize("asset", ["window_034.json", "structure_045.json", "command_051.json"])
@@ -562,7 +562,7 @@ E               'VALIDATION_BROWSER': "${{ needs.changes.outputs.validation_brow
 E           }
 
 tests/test_junit_workflow_contract.py:137: AssertionError</failure></testcase><testcase classname="tests.test_junit_workflow_contract" name="test_real_collector_contract_rejects_provenance_mutations[collector names PR merge checkout-${{ github.sha }}-workflow_path0-_assert_contract]" time="0.031"><failure message="assert {'PYTHON': &quot;$...== 'true' }}&quot;} == {'PYTHON': &quot;$...== 'true' }}&quot;}&#10;  &#10;  Omitting 3 identical items, use -vv to show&#10;  Left contains 1 more item:&#10;  {'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;}&#10;  &#10;  Full diff:&#10;    {&#10;        'PYTHON': &quot;${{ needs.changes.outputs.python == 'true' || &quot;&#10;        &quot;needs.changes.outputs.workflow == 'true' }}&quot;,&#10;  +     'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;,&#10;        'PLAYWRIGHT': &quot;${{ needs.changes.outputs.playwright == 'true' }}&quot;,&#10;        'VALIDATION_BROWSER': &quot;${{ needs.changes.outputs.validation_browser == 'true' }}&quot;,&#10;    }">workflow_path = PosixPath('&lt;runner-work&gt;/.github/workflows/non-dart.yml')
-contract = &lt;function _assert_contract at 0x7f314098d080&gt;
+contract = &lt;function _assert_contract at 0x&lt;addr&gt;&gt;
 label = 'collector names PR merge checkout', bad_input = '${{ github.sha }}'
 
     @pytest.mark.parametrize("workflow_path, contract", [
@@ -631,7 +631,7 @@ E               'VALIDATION_BROWSER': "${{ needs.changes.outputs.validation_brow
 E           }
 
 tests/test_junit_workflow_contract.py:137: AssertionError</failure></testcase><testcase classname="tests.test_junit_workflow_contract" name="test_real_collector_contract_rejects_provenance_mutations[collector drops provenance--workflow_path0-_assert_contract]" time="0.031"><failure message="assert {'PYTHON': &quot;$...== 'true' }}&quot;} == {'PYTHON': &quot;$...== 'true' }}&quot;}&#10;  &#10;  Omitting 3 identical items, use -vv to show&#10;  Left contains 1 more item:&#10;  {'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;}&#10;  &#10;  Full diff:&#10;    {&#10;        'PYTHON': &quot;${{ needs.changes.outputs.python == 'true' || &quot;&#10;        &quot;needs.changes.outputs.workflow == 'true' }}&quot;,&#10;  +     'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;,&#10;        'PLAYWRIGHT': &quot;${{ needs.changes.outputs.playwright == 'true' }}&quot;,&#10;        'VALIDATION_BROWSER': &quot;${{ needs.changes.outputs.validation_browser == 'true' }}&quot;,&#10;    }">workflow_path = PosixPath('&lt;runner-work&gt;/.github/workflows/non-dart.yml')
-contract = &lt;function _assert_contract at 0x7f314098d080&gt;
+contract = &lt;function _assert_contract at 0x&lt;addr&gt;&gt;
 label = 'collector drops provenance', bad_input = ''
 
     @pytest.mark.parametrize("workflow_path, contract", [
@@ -700,7 +700,7 @@ E               'VALIDATION_BROWSER': "${{ needs.changes.outputs.validation_brow
 E           }
 
 tests/test_junit_workflow_contract.py:137: AssertionError</failure></testcase><testcase classname="tests.test_junit_workflow_contract" name="test_real_collector_contract_rejects_provenance_mutations[collector loses push fallback-${{ github.event.pull_request.head.sha }}-workflow_path0-_assert_contract]" time="0.032"><failure message="assert {'PYTHON': &quot;$...== 'true' }}&quot;} == {'PYTHON': &quot;$...== 'true' }}&quot;}&#10;  &#10;  Omitting 3 identical items, use -vv to show&#10;  Left contains 1 more item:&#10;  {'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;}&#10;  &#10;  Full diff:&#10;    {&#10;        'PYTHON': &quot;${{ needs.changes.outputs.python == 'true' || &quot;&#10;        &quot;needs.changes.outputs.workflow == 'true' }}&quot;,&#10;  +     'E2E': &quot;${{ needs.changes.outputs.e2e == 'true' }}&quot;,&#10;        'PLAYWRIGHT': &quot;${{ needs.changes.outputs.playwright == 'true' }}&quot;,&#10;        'VALIDATION_BROWSER': &quot;${{ needs.changes.outputs.validation_browser == 'true' }}&quot;,&#10;    }">workflow_path = PosixPath('&lt;runner-work&gt;/.github/workflows/non-dart.yml')
-contract = &lt;function _assert_contract at 0x7f314098d080&gt;
+contract = &lt;function _assert_contract at 0x&lt;addr&gt;&gt;
 label = 'collector loses push fallback'
 bad_input = '${{ github.event.pull_request.head.sha }}'
 

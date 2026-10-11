@@ -4,16 +4,20 @@
 from __future__ import annotations
 
 import json
-import re
 import subprocess
+import sys
 import tempfile
 import xml.etree.ElementTree as ET
-from datetime import datetime, timezone
+from dataclasses import dataclass
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CORPUS = ROOT / "tests" / "fixtures" / "junit_corpus"
 MANIFEST = CORPUS / "manifest.json"
+
+sys.path.insert(0, str(ROOT / "src"))
+
+from err_o_roadrunner.junit_redact import redact_attribute, redact_text
 
 ORG = "myon-bioinformatics"
 REPOS = [
@@ -26,22 +30,26 @@ REPOS = [
     "Aoi",
 ]
 
-SECRET_PATTERNS = [
-    (re.compile(r"ghs_[A-Za-z0-9_]{20,}"), "ghs_<redacted>"),
-    (re.compile(r"Bearer\s+[A-Za-z0-9._-]+"), "Bearer <redacted>"),
-    (re.compile(r"sk-[A-Za-z0-9]{20,}"), "sk-<redacted>"),
-    (re.compile(r"/home/runner/work/[^/]+/[^/]+"), "<runner-work>"),
-    (re.compile(r"/Users/[^/\s]+"), "<user-home>"),
-]
+
+@dataclass(frozen=True)
+class HarvestFailure:
+    repo: str
+    run_id: int | None
+    artifact: str | None
+    stage: str
+    detail: str
+
+    def as_dict(self) -> dict:
+        return {
+            "repo": self.repo,
+            "run_id": self.run_id,
+            "artifact": self.artifact,
+            "stage": self.stage,
+            "detail": self.detail,
+        }
 
 
-def redact(text: str) -> str:
-    for pattern, repl in SECRET_PATTERNS:
-        text = pattern.sub(repl, text)
-    return text
-
-
-def run_gh(args: list[str]) -> str:
+def run_gh(args: list[str], failures: list[HarvestFailure], *, repo: str, run_id: int | None, artifact: str | None, stage: str) -> str | None:
     proc = subprocess.run(
         ["gh", *args],
         capture_output=True,
@@ -49,11 +57,21 @@ def run_gh(args: list[str]) -> str:
         check=False,
     )
     if proc.returncode != 0:
-        return ""
+        detail = (proc.stderr or proc.stdout or "").strip() or f"gh exit {proc.returncode}"
+        failures.append(
+            HarvestFailure(
+                repo=repo,
+                run_id=run_id,
+                artifact=artifact,
+                stage=stage,
+                detail=detail[:500],
+            )
+        )
+        return None
     return proc.stdout
 
 
-def list_failed_runs(repo: str, limit: int = 15) -> list[dict]:
+def list_failed_runs(repo: str, failures: list[HarvestFailure], limit: int = 15) -> list[dict]:
     out = run_gh(
         [
             "run",
@@ -66,23 +84,33 @@ def list_failed_runs(repo: str, limit: int = 15) -> list[dict]:
             str(limit),
             "--json",
             "databaseId,displayTitle,createdAt",
-        ]
+        ],
+        failures,
+        repo=repo,
+        run_id=None,
+        artifact=None,
+        stage="list_failed_runs",
     )
-    if not out.strip():
+    if out is None or not out.strip():
         return []
     return json.loads(out)
 
 
-def list_artifacts(repo: str, run_id: int) -> list[dict]:
+def list_artifacts(repo: str, run_id: int, failures: list[HarvestFailure]) -> list[dict]:
     out = run_gh(
         [
             "api",
             f"repos/{ORG}/{repo}/actions/runs/{run_id}/artifacts",
             "--jq",
             ".artifacts[] | {name,id,expired}",
-        ]
+        ],
+        failures,
+        repo=repo,
+        run_id=run_id,
+        artifact=None,
+        stage="list_artifacts",
     )
-    if not out.strip():
+    if out is None or not out.strip():
         return []
     items = []
     for line in out.splitlines():
@@ -92,7 +120,13 @@ def list_artifacts(repo: str, run_id: int) -> list[dict]:
     return items
 
 
-def download_artifact(repo: str, run_id: int, name: str, dest: Path) -> bool:
+def download_artifact(
+    repo: str,
+    run_id: int,
+    name: str,
+    dest: Path,
+    failures: list[HarvestFailure],
+) -> bool:
     proc = subprocess.run(
         ["gh", "run", "download", str(run_id), "--repo", f"{ORG}/{repo}", "-n", name],
         cwd=dest,
@@ -100,7 +134,19 @@ def download_artifact(repo: str, run_id: int, name: str, dest: Path) -> bool:
         text=True,
         check=False,
     )
-    return proc.returncode == 0
+    if proc.returncode != 0:
+        detail = (proc.stderr or proc.stdout or "").strip() or f"download exit {proc.returncode}"
+        failures.append(
+            HarvestFailure(
+                repo=repo,
+                run_id=run_id,
+                artifact=name,
+                stage="download_artifact",
+                detail=detail[:500],
+            )
+        )
+        return False
+    return True
 
 
 def find_junit_xml(folder: Path) -> list[Path]:
@@ -109,10 +155,10 @@ def find_junit_xml(folder: Path) -> list[Path]:
 
 def _clone_element(elem: ET.Element) -> ET.Element:
     tag = elem.tag.split("}")[-1]
-    attribs = {k: redact(v) for k, v in elem.attrib.items()}
+    attribs = {k: redact_attribute(k, v) for k, v in elem.attrib.items()}
     clone = ET.Element(tag, attrib=attribs)
-    clone.text = redact(elem.text) if elem.text else elem.text
-    clone.tail = redact(elem.tail) if elem.tail else elem.tail
+    clone.text = redact_text(elem.text) if elem.text else elem.text
+    clone.tail = redact_text(elem.tail) if elem.tail else elem.tail
     for child in elem:
         clone.append(_clone_element(child))
     return clone
@@ -123,18 +169,24 @@ def extract_failing_xml(tree: ET.ElementTree) -> ET.ElementTree | None:
     tag = root.tag.split("}")[-1]
     if tag == "testsuites":
         suites = [c for c in root if c.tag.split("}")[-1] == "testsuite"]
+        root_attribs = {k: redact_attribute(k, v) for k, v in root.attrib.items()}
     elif tag == "testsuite":
         suites = [root]
+        root_attribs = {}
     else:
         return None
 
-    new_root = ET.Element("testsuites")
+    new_root = ET.Element("testsuites", attrib=root_attribs)
     kept_any = False
     for suite in suites:
-        new_suite = ET.Element("testsuite", attrib=dict(suite.attrib))
-        for testcase in suite:
-            if testcase.tag.split("}")[-1] != "testcase":
+        new_suite = ET.Element(
+            "testsuite",
+            attrib={k: redact_attribute(k, v) for k, v in suite.attrib.items()},
+        )
+        for child in suite:
+            if child.tag.split("}")[-1] != "testcase":
                 continue
+            testcase = child
             fail_children = [
                 c
                 for c in testcase
@@ -142,11 +194,16 @@ def extract_failing_xml(tree: ET.ElementTree) -> ET.ElementTree | None:
             ]
             if not fail_children:
                 continue
-            tc_attribs = {k: redact(v) for k, v in testcase.attrib.items()}
+            tc_attribs = {k: redact_attribute(k, v) for k, v in testcase.attrib.items()}
             new_tc = ET.Element("testcase", attrib=tc_attribs)
-            for child in testcase:
-                if child.tag.split("}")[-1] in ("failure", "error", "system-out", "system-err"):
-                    new_tc.append(_clone_element(child))
+            for tc_child in testcase:
+                if tc_child.tag.split("}")[-1] in (
+                    "failure",
+                    "error",
+                    "system-out",
+                    "system-err",
+                ):
+                    new_tc.append(_clone_element(tc_child))
             new_suite.append(new_tc)
             kept_any = True
         if len(new_suite):
@@ -164,21 +221,27 @@ def serialize_xml(tree: ET.ElementTree) -> str:
     return xml
 
 
-def main() -> None:
-    CORPUS.mkdir(parents=True, exist_ok=True)
+def harvest(entries_limit_per_repo: int = 5) -> tuple[list[dict], list[HarvestFailure]]:
+    failures: list[HarvestFailure] = []
     entries: list[dict] = []
     seen_hashes: set[str] = set()
 
     for repo in REPOS:
-        for run in list_failed_runs(repo):
+        for run in list_failed_runs(repo, failures):
             run_id = int(run["databaseId"])
-            title = run.get("displayTitle") or ""
-            if "Copilot Code Review" in title and "pytest" not in title.lower():
-                pass  # still try artifacts; some copilot runs lack junit
-            for art in list_artifacts(repo, run_id):
-                if art.get("expired"):
-                    continue
+            for art in list_artifacts(repo, run_id, failures):
                 name = art["name"]
+                if art.get("expired"):
+                    failures.append(
+                        HarvestFailure(
+                            repo=repo,
+                            run_id=run_id,
+                            artifact=name,
+                            stage="artifact_expired",
+                            detail="artifact expired",
+                        )
+                    )
+                    continue
                 if not (
                     name.startswith("junit")
                     or name == "failure-identity"
@@ -188,12 +251,21 @@ def main() -> None:
                     continue
                 with tempfile.TemporaryDirectory() as tmp:
                     dest = Path(tmp)
-                    if not download_artifact(repo, run_id, name, dest):
+                    if not download_artifact(repo, run_id, name, dest, failures):
                         continue
                     for xml_path in find_junit_xml(dest):
                         try:
                             tree = ET.parse(xml_path)
-                        except ET.ParseError:
+                        except ET.ParseError as exc:
+                            failures.append(
+                                HarvestFailure(
+                                    repo=repo,
+                                    run_id=run_id,
+                                    artifact=name,
+                                    stage="parse_xml",
+                                    detail=str(exc)[:500],
+                                )
+                            )
                             continue
                         trimmed = extract_failing_xml(tree)
                         if trimmed is None:
@@ -214,22 +286,33 @@ def main() -> None:
                                 "repo": f"{ORG}/{repo}",
                                 "run_id": run_id,
                                 "artifact": name,
-                                "job": name,  # patched later by patch_junit_manifest_jobs.py
+                                "job": name,
                                 "date": run.get("createdAt", ""),
                                 "xml": str(rel.as_posix()),
-                                "golden": str(
-                                    Path("golden") / f"{case_id}.out"
-                                ),
+                                "golden": str(Path("golden") / f"{case_id}.out"),
                             }
                         )
-                        if len([e for e in entries if repo in e["id"]]) >= 5:
+                        if len([e for e in entries if repo in e["id"]]) >= entries_limit_per_repo:
                             break
-            if len([e for e in entries if e["id"].startswith(repo)]) >= 5:
+            if len([e for e in entries if e["id"].startswith(repo)]) >= entries_limit_per_repo:
                 continue
+    return entries, failures
 
+
+def main() -> int:
+    CORPUS.mkdir(parents=True, exist_ok=True)
+    entries, failures = harvest()
     MANIFEST.write_text(json.dumps(entries, indent=2) + "\n", encoding="utf-8")
     print(f"Wrote {len(entries)} corpus entries to {CORPUS}")
+    if failures:
+        report = {
+            "entries": len(entries),
+            "failures": [f.as_dict() for f in failures],
+        }
+        print(json.dumps(report, indent=2), file=sys.stderr)
+        return 1
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

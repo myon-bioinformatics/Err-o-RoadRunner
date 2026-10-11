@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<testsuites><testsuite name="pytest" errors="1" failures="1" skipped="2" tests="5" time="0.022" timestamp="2026-10-09T04:21:19.741887+00:00" hostname="runnervmmprz5"><testcase classname="test_fixture" name="test_fail[PARAMETER_SENTINEL]" time="0.000"><failure message="AssertionError: ASSERTION_SENTINEL&#10;assert False">value = 'PARAMETER_SENTINEL'
+<testsuites><testsuite name="pytest" errors="1" failures="1" skipped="2" tests="5" time="0.022" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="test_fixture" name="test_fail[PARAMETER_SENTINEL]" time="0.000"><failure message="AssertionError: ASSERTION_SENTINEL&#10;assert False">value = 'PARAMETER_SENTINEL'
 
     @pytest.mark.parametrize("value", ["PARAMETER_SENTINEL"], ids=["PARAMETER_SENTINEL"])
     def test_fail(value):

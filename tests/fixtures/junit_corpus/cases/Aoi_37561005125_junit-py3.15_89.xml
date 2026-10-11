@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<testsuites><testsuite name="pytest" errors="0" failures="19" skipped="24" tests="570" time="5.123" timestamp="2026-10-07T02:15:08.499278+00:00" hostname="runnervm8df0l"><testcase classname="nagoyaction.tests.test_inbox" name="test_real_exploration_resume_matches_uninterrupted" time="0.001"><failure message="ModuleNotFoundError: No module named 'sets'. Did you mean: 'tests'?">cycle = PosixPath('/tmp/pytest-of-runner/pytest-0/test_real_exploration_resume_m0/cycle')
-tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_real_exploration_resume_m0')
+<testsuites><testsuite name="pytest" errors="0" failures="19" skipped="24" tests="570" time="5.123" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="nagoyaction.tests.test_inbox" name="test_real_exploration_resume_matches_uninterrupted" time="0.001"><failure message="ModuleNotFoundError: No module named 'sets'. Did you mean: 'tests'?">cycle = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_real_exploration_resume_m0/cycle')
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_real_exploration_resume_m0')
 
     def test_real_exploration_resume_matches_uninterrupted(cycle, tmp_path):
         spec = plan('{"sets":["A","B"],"max_depth":2}', cycle)
@@ -10,8 +10,8 @@ tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_real_exploration_resum
 nagoyaction/tests/test_inbox.py:111: 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = &lt;exploration.Explorer object at 0x7f6dae073cb0&gt;
-cycle = PosixPath('/tmp/pytest-of-runner/pytest-0/test_real_exploration_resume_m0/cycle')
+self = &lt;exploration.Explorer object at 0x&lt;addr&gt;&gt;
+cycle = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_real_exploration_resume_m0/cycle')
 spec = {'sets': ['A', 'B'], 'seed': None, 'max_depth': 2, 'max_candidates': 50000, ...}
 
     def __init__(self, cycle: Path, spec: dict):
@@ -20,7 +20,7 @@ spec = {'sets': ['A', 'B'], 'seed': None, 'max_depth': 2, 'max_candidates': 5000
 &gt;       import sets as st
 E       ModuleNotFoundError: No module named 'sets'. Did you mean: 'tests'?
 
-pythdragoras/exploration.py:110: ModuleNotFoundError</failure></testcase><testcase classname="nagoyaction.tests.test_inbox" name="test_exploration_deadline_and_candidate_bound" time="0.002"><failure message="ModuleNotFoundError: No module named 'sets'. Did you mean: 'tests'?">cycle = PosixPath('/tmp/pytest-of-runner/pytest-0/test_exploration_deadline_and_0/cycle')
+pythdragoras/exploration.py:110: ModuleNotFoundError</failure></testcase><testcase classname="nagoyaction.tests.test_inbox" name="test_exploration_deadline_and_candidate_bound" time="0.002"><failure message="ModuleNotFoundError: No module named 'sets'. Did you mean: 'tests'?">cycle = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_exploration_deadline_and_0/cycle')
 
     def test_exploration_deadline_and_candidate_bound(cycle):
         spec = plan('{"sets":["A","B"]}', cycle)
@@ -31,8 +31,8 @@ pythdragoras/exploration.py:110: ModuleNotFoundError</failure></testcase><testca
 nagoyaction/tests/test_inbox.py:134: 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = &lt;exploration.Explorer object at 0x7f6dae17ae90&gt;
-cycle = PosixPath('/tmp/pytest-of-runner/pytest-0/test_exploration_deadline_and_0/cycle')
+self = &lt;exploration.Explorer object at 0x&lt;addr&gt;&gt;
+cycle = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_exploration_deadline_and_0/cycle')
 spec = {'sets': ['A', 'B'], 'seed': None, 'max_depth': 3, 'max_candidates': 5, ...}
 
     def __init__(self, cycle: Path, spec: dict):
@@ -41,9 +41,9 @@ spec = {'sets': ['A', 'B'], 'seed': None, 'max_depth': 3, 'max_candidates': 5, .
 &gt;       import sets as st
 E       ModuleNotFoundError: No module named 'sets'. Did you mean: 'tests'?
 
-pythdragoras/exploration.py:110: ModuleNotFoundError</failure></testcase><testcase classname="nagoyaction.tests.test_inbox" name="test_bot_intake_worker_completion_and_retry" time="0.002"><failure message="AssertionError: assert 0 == 1&#10; +  where 0 = len([])&#10; +    where [] = list(&lt;map object at 0x7f6dadd2afc0&gt;)&#10; +      where &lt;map object at 0x7f6dadd2afc0&gt; = glob('*.json')&#10; +        where glob = (PosixPath('/tmp/pytest-of-runner/pytest-0/test_bot_intake_worker_complet0/state') / 'requests').glob&#10; +          where PosixPath('/tmp/pytest-of-runner/pytest-0/test_bot_intake_worker_complet0/state') = &lt;test_inbox.DiskState object at 0x7f6dae0dc050&gt;.path">cycle = PosixPath('/tmp/pytest-of-runner/pytest-0/test_bot_intake_worker_complet0/cycle')
-tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_bot_intake_worker_complet0')
-monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f6dae0879b0&gt;
+pythdragoras/exploration.py:110: ModuleNotFoundError</failure></testcase><testcase classname="nagoyaction.tests.test_inbox" name="test_bot_intake_worker_completion_and_retry" time="0.002"><failure message="AssertionError: assert 0 == 1&#10; +  where 0 = len([])&#10; +    where [] = list(&lt;map object at 0x&lt;addr&gt;&gt;)&#10; +      where &lt;map object at 0x&lt;addr&gt;&gt; = glob('*.json')&#10; +        where glob = (PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_bot_intake_worker_complet0/state') / 'requests').glob&#10; +          where PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_bot_intake_worker_complet0/state') = &lt;test_inbox.DiskState object at 0x&lt;addr&gt;&gt;.path">cycle = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_bot_intake_worker_complet0/cycle')
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_bot_intake_worker_complet0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
 
     def test_bot_intake_worker_completion_and_retry(cycle, tmp_path, monkeypatch):
         import inbox
@@ -56,14 +56,14 @@ monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f6dae0879b0&gt;
 &gt;       assert len(list((state.path / "requests").glob("*.json"))) == 1
 E       AssertionError: assert 0 == 1
 E        +  where 0 = len([])
-E        +    where [] = list(&lt;map object at 0x7f6dadd2afc0&gt;)
-E        +      where &lt;map object at 0x7f6dadd2afc0&gt; = glob('*.json')
-E        +        where glob = (PosixPath('/tmp/pytest-of-runner/pytest-0/test_bot_intake_worker_complet0/state') / 'requests').glob
-E        +          where PosixPath('/tmp/pytest-of-runner/pytest-0/test_bot_intake_worker_complet0/state') = &lt;test_inbox.DiskState object at 0x7f6dae0dc050&gt;.path
+E        +    where [] = list(&lt;map object at 0x&lt;addr&gt;&gt;)
+E        +      where &lt;map object at 0x&lt;addr&gt;&gt; = glob('*.json')
+E        +        where glob = (PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_bot_intake_worker_complet0/state') / 'requests').glob
+E        +          where PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_bot_intake_worker_complet0/state') = &lt;test_inbox.DiskState object at 0x&lt;addr&gt;&gt;.path
 
-nagoyaction/tests/test_inbox.py:221: AssertionError</failure></testcase><testcase classname="nagoyaction.tests.test_inbox" name="test_worker_refuses_to_mix_changed_inputs" time="0.001"><failure message="StopIteration">cycle = PosixPath('/tmp/pytest-of-runner/pytest-0/test_worker_refuses_to_mix_cha0/cycle')
-tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_worker_refuses_to_mix_cha0')
-monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f6dade68650&gt;
+nagoyaction/tests/test_inbox.py:221: AssertionError</failure></testcase><testcase classname="nagoyaction.tests.test_inbox" name="test_worker_refuses_to_mix_changed_inputs" time="0.001"><failure message="StopIteration">cycle = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_worker_refuses_to_mix_cha0/cycle')
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_worker_refuses_to_mix_cha0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
 
     def test_worker_refuses_to_mix_changed_inputs(cycle, tmp_path, monkeypatch):
         import inbox
@@ -77,9 +77,9 @@ monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f6dade68650&gt;
                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 E       StopIteration
 
-nagoyaction/tests/test_inbox.py:257: StopIteration</failure></testcase><testcase classname="nagoyaction.tests.test_inbox" name="test_automatic_worker_without_comments_prepares_and_finishes" time="0.003"><failure message="ModuleNotFoundError: No module named 'neighbors'">cycle = PosixPath('/tmp/pytest-of-runner/pytest-0/test_automatic_worker_without_0/cycle')
-tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_automatic_worker_without_0')
-monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f6daddbd6d0&gt;
+nagoyaction/tests/test_inbox.py:257: StopIteration</failure></testcase><testcase classname="nagoyaction.tests.test_inbox" name="test_automatic_worker_without_comments_prepares_and_finishes" time="0.003"><failure message="ModuleNotFoundError: No module named 'neighbors'">cycle = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_automatic_worker_without_0/cycle')
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_automatic_worker_without_0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
 
     def test_automatic_worker_without_comments_prepares_and_finishes(cycle, tmp_path, monkeypatch):
         import inbox
@@ -108,8 +108,8 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 &gt;   from neighbors import discover
 E   ModuleNotFoundError: No module named 'neighbors'
 
-nagoyaction/inbox/feedback.py:6: ModuleNotFoundError</failure></testcase><testcase classname="nagoyaction.tests.test_inbox" name="test_neighbor_feedback_html_roundtrip_and_restart" time="0.002"><failure message="ModuleNotFoundError: No module named 'neighbors'">cycle = PosixPath('/tmp/pytest-of-runner/pytest-0/test_neighbor_feedback_html_ro0/cycle')
-tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_neighbor_feedback_html_ro0')
+nagoyaction/inbox/feedback.py:6: ModuleNotFoundError</failure></testcase><testcase classname="nagoyaction.tests.test_inbox" name="test_neighbor_feedback_html_roundtrip_and_restart" time="0.002"><failure message="ModuleNotFoundError: No module named 'neighbors'">cycle = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_neighbor_feedback_html_ro0/cycle')
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_neighbor_feedback_html_ro0')
 
     def test_neighbor_feedback_html_roundtrip_and_restart(cycle, tmp_path):
 &gt;       from feedback import prepare_feedback, observe_report
@@ -125,9 +125,9 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 &gt;   from neighbors import discover
 E   ModuleNotFoundError: No module named 'neighbors'
 
-nagoyaction/inbox/feedback.py:6: ModuleNotFoundError</failure></testcase><testcase classname="nagoyaction.tests.test_inbox" name="test_worker_bundled_completion_recovers_lost_response" time="0.002"><failure message="AssertionError: assert 0 == 1&#10; +  where 0 = len([])&#10; +    where [] = list(&lt;map object at 0x7f6db92fd8c0&gt;)&#10; +      where &lt;map object at 0x7f6db92fd8c0&gt; = glob('run-results-*.json')&#10; +        where glob = (PosixPath('/tmp/pytest-of-runner/pytest-0/test_worker_bundled_completion0/state') / 'pending-replies').glob&#10; +          where PosixPath('/tmp/pytest-of-runner/pytest-0/test_worker_bundled_completion0/state') = &lt;test_inbox.DiskState object at 0x7f6dae0a15b0&gt;.path">cycle = PosixPath('/tmp/pytest-of-runner/pytest-0/test_worker_bundled_completion0/cycle')
-tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_worker_bundled_completion0')
-monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f6dadd42c10&gt;
+nagoyaction/inbox/feedback.py:6: ModuleNotFoundError</failure></testcase><testcase classname="nagoyaction.tests.test_inbox" name="test_worker_bundled_completion_recovers_lost_response" time="0.002"><failure message="AssertionError: assert 0 == 1&#10; +  where 0 = len([])&#10; +    where [] = list(&lt;map object at 0x&lt;addr&gt;&gt;)&#10; +      where &lt;map object at 0x&lt;addr&gt;&gt; = glob('run-results-*.json')&#10; +        where glob = (PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_worker_bundled_completion0/state') / 'pending-replies').glob&#10; +          where PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_worker_bundled_completion0/state') = &lt;test_inbox.DiskState object at 0x&lt;addr&gt;&gt;.path">cycle = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_worker_bundled_completion0/cycle')
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_worker_bundled_completion0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
 
     def test_worker_bundled_completion_recovers_lost_response(cycle, tmp_path, monkeypatch):
         import inbox
@@ -146,14 +146,14 @@ monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f6dadd42c10&gt;
 &gt;       assert len(list((state.path/'pending-replies').glob('run-results-*.json'))) == 1
 E       AssertionError: assert 0 == 1
 E        +  where 0 = len([])
-E        +    where [] = list(&lt;map object at 0x7f6db92fd8c0&gt;)
-E        +      where &lt;map object at 0x7f6db92fd8c0&gt; = glob('run-results-*.json')
-E        +        where glob = (PosixPath('/tmp/pytest-of-runner/pytest-0/test_worker_bundled_completion0/state') / 'pending-replies').glob
-E        +          where PosixPath('/tmp/pytest-of-runner/pytest-0/test_worker_bundled_completion0/state') = &lt;test_inbox.DiskState object at 0x7f6dae0a15b0&gt;.path
+E        +    where [] = list(&lt;map object at 0x&lt;addr&gt;&gt;)
+E        +      where &lt;map object at 0x&lt;addr&gt;&gt; = glob('run-results-*.json')
+E        +        where glob = (PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_worker_bundled_completion0/state') / 'pending-replies').glob
+E        +          where PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_worker_bundled_completion0/state') = &lt;test_inbox.DiskState object at 0x&lt;addr&gt;&gt;.path
 
-nagoyaction/tests/test_inbox.py:379: AssertionError</failure></testcase><testcase classname="nagoyaction.tests.test_inbox" name="test_worker_comment_get_failure_does_not_interrupt_evaluation" time="0.001"><failure message="StopIteration">cycle = PosixPath('/tmp/pytest-of-runner/pytest-0/test_worker_comment_get_failur0/cycle')
-tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_worker_comment_get_failur0')
-monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f6dadf342c0&gt;
+nagoyaction/tests/test_inbox.py:379: AssertionError</failure></testcase><testcase classname="nagoyaction.tests.test_inbox" name="test_worker_comment_get_failure_does_not_interrupt_evaluation" time="0.001"><failure message="StopIteration">cycle = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_worker_comment_get_failur0/cycle')
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_worker_comment_get_failur0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
 
     def test_worker_comment_get_failure_does_not_interrupt_evaluation(cycle, tmp_path, monkeypatch):
         import inbox
@@ -169,9 +169,9 @@ monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f6dadf342c0&gt;
                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 E       StopIteration
 
-nagoyaction/tests/test_inbox.py:412: StopIteration</failure></testcase><testcase classname="nagoyaction.tests.test_inbox" name="test_stopped_manual_job_is_not_selected_automatically" time="0.001"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '/tmp/pytest-of-runner/pytest-0/test_stopped_manual_job_is_not0/state/requests/501.json'">cycle = PosixPath('/tmp/pytest-of-runner/pytest-0/test_stopped_manual_job_is_not0/cycle')
-tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_stopped_manual_job_is_not0')
-monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f6dadf11e50&gt;
+nagoyaction/tests/test_inbox.py:412: StopIteration</failure></testcase><testcase classname="nagoyaction.tests.test_inbox" name="test_stopped_manual_job_is_not_selected_automatically" time="0.001"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '&lt;pytest-tmp&gt;/pytest-0/test_stopped_manual_job_is_not0/state/requests/501.json'">cycle = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_stopped_manual_job_is_not0/cycle')
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_stopped_manual_job_is_not0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
 
     def test_stopped_manual_job_is_not_selected_automatically(cycle, tmp_path, monkeypatch):
         import inbox
@@ -186,12 +186,12 @@ monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f6dadf11e50&gt;
 
 nagoyaction/tests/test_inbox.py:447: 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
-/opt/hostedtoolcache/Python/3.15.0-rc.3/x64/lib/python3.15/pathlib/__init__.py:986: in read_text
+&lt;toolcache&gt;/Python/3.15.0-rc.3/x64/lib/python3.15/pathlib/__init__.py:986: in read_text
     with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = PosixPath('/tmp/pytest-of-runner/pytest-0/test_stopped_manual_job_is_not0/state/requests/501.json')
+self = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_stopped_manual_job_is_not0/state/requests/501.json')
 mode = 'r', buffering = -1, encoding = 'utf-8', errors = None, newline = None
 
     def open(self, mode='r', buffering=-1, encoding=None,
@@ -204,11 +204,11 @@ mode = 'r', buffering = -1, encoding = 'utf-8', errors = None, newline = None
             encoding = io.text_encoding(encoding)
 &gt;       return io.open(self, mode, buffering, encoding, errors, newline)
                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-E       FileNotFoundError: [Errno 2] No such file or directory: '/tmp/pytest-of-runner/pytest-0/test_stopped_manual_job_is_not0/state/requests/501.json'
+E       FileNotFoundError: [Errno 2] No such file or directory: '&lt;pytest-tmp&gt;/pytest-0/test_stopped_manual_job_is_not0/state/requests/501.json'
 
-/opt/hostedtoolcache/Python/3.15.0-rc.3/x64/lib/python3.15/pathlib/__init__.py:970: FileNotFoundError</failure></testcase><testcase classname="nagoyaction.tests.test_inbox" name="test_trusted_exploration_has_five_pending_requests_per_author" time="0.002"><failure message="AssertionError: assert 0 == 5&#10; +  where 0 = len([])&#10; +    where [] = list(&lt;map object at 0x7f6db9481940&gt;)&#10; +      where &lt;map object at 0x7f6db9481940&gt; = glob('*.json')&#10; +        where glob = (PosixPath('/tmp/pytest-of-runner/pytest-0/test_trusted_exploration_has_f0/state') / 'requests').glob&#10; +          where PosixPath('/tmp/pytest-of-runner/pytest-0/test_trusted_exploration_has_f0/state') = &lt;test_inbox.DiskState object at 0x7f6dade69650&gt;.path">cycle = PosixPath('/tmp/pytest-of-runner/pytest-0/test_trusted_exploration_has_f0/cycle')
-tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_trusted_exploration_has_f0')
-monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f6daded6fc0&gt;
+&lt;toolcache&gt;/Python/3.15.0-rc.3/x64/lib/python3.15/pathlib/__init__.py:970: FileNotFoundError</failure></testcase><testcase classname="nagoyaction.tests.test_inbox" name="test_trusted_exploration_has_five_pending_requests_per_author" time="0.002"><failure message="AssertionError: assert 0 == 5&#10; +  where 0 = len([])&#10; +    where [] = list(&lt;map object at 0x&lt;addr&gt;&gt;)&#10; +      where &lt;map object at 0x&lt;addr&gt;&gt; = glob('*.json')&#10; +        where glob = (PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_trusted_exploration_has_f0/state') / 'requests').glob&#10; +          where PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_trusted_exploration_has_f0/state') = &lt;test_inbox.DiskState object at 0x&lt;addr&gt;&gt;.path">cycle = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_trusted_exploration_has_f0/cycle')
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_trusted_exploration_has_f0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
 
     def test_trusted_exploration_has_five_pending_requests_per_author(cycle, tmp_path, monkeypatch):
         import inbox
@@ -219,14 +219,14 @@ monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f6daded6fc0&gt;
 &gt;       assert len(list((state.path/'requests').glob('*.json'))) == 5
 E       AssertionError: assert 0 == 5
 E        +  where 0 = len([])
-E        +    where [] = list(&lt;map object at 0x7f6db9481940&gt;)
-E        +      where &lt;map object at 0x7f6db9481940&gt; = glob('*.json')
-E        +        where glob = (PosixPath('/tmp/pytest-of-runner/pytest-0/test_trusted_exploration_has_f0/state') / 'requests').glob
-E        +          where PosixPath('/tmp/pytest-of-runner/pytest-0/test_trusted_exploration_has_f0/state') = &lt;test_inbox.DiskState object at 0x7f6dade69650&gt;.path
+E        +    where [] = list(&lt;map object at 0x&lt;addr&gt;&gt;)
+E        +      where &lt;map object at 0x&lt;addr&gt;&gt; = glob('*.json')
+E        +        where glob = (PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_trusted_exploration_has_f0/state') / 'requests').glob
+E        +          where PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_trusted_exploration_has_f0/state') = &lt;test_inbox.DiskState object at 0x&lt;addr&gt;&gt;.path
 
-nagoyaction/tests/test_inbox.py:462: AssertionError</failure></testcase><testcase classname="nagoyaction.tests.test_inbox" name="test_worker_reads_comments_only_for_completion" time="0.002"><failure message="assert (0 &gt; 2)&#10; +  where 0 = len([])">cycle = PosixPath('/tmp/pytest-of-runner/pytest-0/test_worker_reads_comments_onl0/cycle')
-tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_worker_reads_comments_onl0')
-monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f6daded7d80&gt;
+nagoyaction/tests/test_inbox.py:462: AssertionError</failure></testcase><testcase classname="nagoyaction.tests.test_inbox" name="test_worker_reads_comments_only_for_completion" time="0.002"><failure message="assert (0 &gt; 2)&#10; +  where 0 = len([])">cycle = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_worker_reads_comments_onl0/cycle')
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_worker_reads_comments_onl0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
 
     def test_worker_reads_comments_only_for_completion(cycle, tmp_path, monkeypatch):
         import inbox
@@ -247,9 +247,9 @@ monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f6daded7d80&gt;
 E       assert (0 &gt; 2)
 E        +  where 0 = len([])
 
-nagoyaction/tests/test_inbox.py:485: AssertionError</failure></testcase><testcase classname="nagoyaction.tests.test_inbox" name="test_finished_stop_does_not_create_stop_record" time="0.002"><failure message="AssertionError: assert 'すでに終了' in '判定不能 / 入力を確認してください: その探索依頼はありません\n\n対象サイクル: `` / 結果SHA: `` / 対象コード: `sha` / 元コメント: 532'">cycle = PosixPath('/tmp/pytest-of-runner/pytest-0/test_finished_stop_does_not_cr0/cycle')
-tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_finished_stop_does_not_cr0')
-monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f6dade751d0&gt;
+nagoyaction/tests/test_inbox.py:485: AssertionError</failure></testcase><testcase classname="nagoyaction.tests.test_inbox" name="test_finished_stop_does_not_create_stop_record" time="0.002"><failure message="AssertionError: assert 'すでに終了' in '判定不能 / 入力を確認してください: その探索依頼はありません\n\n対象サイクル: `` / 結果SHA: `` / 対象コード: `sha` / 元コメント: 532'">cycle = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_finished_stop_does_not_cr0/cycle')
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_finished_stop_does_not_cr0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
 
     def test_finished_stop_does_not_create_stop_record(cycle, tmp_path, monkeypatch):
         import inbox
@@ -264,9 +264,9 @@ monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f6dade751d0&gt;
 &gt;       assert 'すでに終了' in json.loads((state.path/'receipts/532.json').read_text())['reply_body']
 E       AssertionError: assert 'すでに終了' in '判定不能 / 入力を確認してください: その探索依頼はありません\n\n対象サイクル: `` / 結果SHA: `` / 対象コード: `sha` / 元コメント: 532'
 
-nagoyaction/tests/test_inbox.py:499: AssertionError</failure></testcase><testcase classname="nagoyaction.tests.test_inbox" name="test_html_observation_failure_keeps_previous_and_worker_continues" time="0.001"><failure message="AttributeError: &lt;module 'inbox' from '&lt;runner-work&gt;/nagoyaction/inbox/inbox.py'&gt; has no attribute 'observe_report'">cycle = PosixPath('/tmp/pytest-of-runner/pytest-0/test_html_observation_failure_0/cycle')
-tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_html_observation_failure_0')
-monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f6dade74410&gt;
+nagoyaction/tests/test_inbox.py:499: AssertionError</failure></testcase><testcase classname="nagoyaction.tests.test_inbox" name="test_html_observation_failure_keeps_previous_and_worker_continues" time="0.001"><failure message="AttributeError: &lt;module 'inbox' from '&lt;runner-work&gt;/nagoyaction/inbox/inbox.py'&gt; has no attribute 'observe_report'">cycle = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_html_observation_failure_0/cycle')
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_html_observation_failure_0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
 
     def test_html_observation_failure_keeps_previous_and_worker_continues(cycle, tmp_path, monkeypatch):
         import inbox
@@ -276,8 +276,8 @@ monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f6dade74410&gt;
 &gt;       monkeypatch.setattr(inbox, 'observe_report', bad)
 E       AttributeError: &lt;module 'inbox' from '&lt;runner-work&gt;/nagoyaction/inbox/inbox.py'&gt; has no attribute 'observe_report'
 
-nagoyaction/tests/test_inbox.py:517: AttributeError</failure></testcase><testcase classname="nagoyaction.tests.test_inbox" name="test_inbox_configuration_does_not_enable_automatic_research[]" time="0.002"><failure message="SystemExit: 2">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f6dae0dba40&gt;
-tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_inbox_configuration_does_0')
+nagoyaction/tests/test_inbox.py:517: AttributeError</failure></testcase><testcase classname="nagoyaction.tests.test_inbox" name="test_inbox_configuration_does_not_enable_automatic_research[]" time="0.002"><failure message="SystemExit: 2">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_inbox_configuration_does_0')
 enabled = ''
 
     @pytest.mark.parametrize('enabled', ['', '0', '1'])
@@ -293,7 +293,7 @@ nagoyaction/tests/test_inbox.py:534:
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 nagoyaction/inbox/inbox.py:490: in main
     ap.error("AOI_RESEARCH_CYCLE / AOI_RESULTS_REF が必要")
-/opt/hostedtoolcache/Python/3.15.0-rc.3/x64/lib/python3.15/argparse.py:2958: in error
+&lt;toolcache&gt;/Python/3.15.0-rc.3/x64/lib/python3.15/argparse.py:2958: in error
     self.exit(2, fmt % args)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
@@ -307,8 +307,8 @@ message = 'pytest: error: AOI_RESEARCH_CYCLE / AOI_RESULTS_REF が必要\n'
 &gt;       _sys.exit(status)
 E       SystemExit: 2
 
-/opt/hostedtoolcache/Python/3.15.0-rc.3/x64/lib/python3.15/argparse.py:2940: SystemExit</failure></testcase><testcase classname="nagoyaction.tests.test_inbox" name="test_inbox_configuration_does_not_enable_automatic_research[0]" time="0.002"><failure message="SystemExit: 2">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f6dac1c8150&gt;
-tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_inbox_configuration_does_1')
+&lt;toolcache&gt;/Python/3.15.0-rc.3/x64/lib/python3.15/argparse.py:2940: SystemExit</failure></testcase><testcase classname="nagoyaction.tests.test_inbox" name="test_inbox_configuration_does_not_enable_automatic_research[0]" time="0.002"><failure message="SystemExit: 2">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_inbox_configuration_does_1')
 enabled = '0'
 
     @pytest.mark.parametrize('enabled', ['', '0', '1'])
@@ -324,7 +324,7 @@ nagoyaction/tests/test_inbox.py:534:
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 nagoyaction/inbox/inbox.py:490: in main
     ap.error("AOI_RESEARCH_CYCLE / AOI_RESULTS_REF が必要")
-/opt/hostedtoolcache/Python/3.15.0-rc.3/x64/lib/python3.15/argparse.py:2958: in error
+&lt;toolcache&gt;/Python/3.15.0-rc.3/x64/lib/python3.15/argparse.py:2958: in error
     self.exit(2, fmt % args)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
@@ -338,8 +338,8 @@ message = 'pytest: error: AOI_RESEARCH_CYCLE / AOI_RESULTS_REF が必要\n'
 &gt;       _sys.exit(status)
 E       SystemExit: 2
 
-/opt/hostedtoolcache/Python/3.15.0-rc.3/x64/lib/python3.15/argparse.py:2940: SystemExit</failure></testcase><testcase classname="nagoyaction.tests.test_inbox" name="test_inbox_configuration_does_not_enable_automatic_research[1]" time="0.002"><failure message="SystemExit: 2">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f6d7ef54050&gt;
-tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_inbox_configuration_does_2')
+&lt;toolcache&gt;/Python/3.15.0-rc.3/x64/lib/python3.15/argparse.py:2940: SystemExit</failure></testcase><testcase classname="nagoyaction.tests.test_inbox" name="test_inbox_configuration_does_not_enable_automatic_research[1]" time="0.002"><failure message="SystemExit: 2">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_inbox_configuration_does_2')
 enabled = '1'
 
     @pytest.mark.parametrize('enabled', ['', '0', '1'])
@@ -355,7 +355,7 @@ nagoyaction/tests/test_inbox.py:534:
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 nagoyaction/inbox/inbox.py:490: in main
     ap.error("AOI_RESEARCH_CYCLE / AOI_RESULTS_REF が必要")
-/opt/hostedtoolcache/Python/3.15.0-rc.3/x64/lib/python3.15/argparse.py:2958: in error
+&lt;toolcache&gt;/Python/3.15.0-rc.3/x64/lib/python3.15/argparse.py:2958: in error
     self.exit(2, fmt % args)
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
@@ -369,9 +369,9 @@ message = 'pytest: error: AOI_RESEARCH_CYCLE / AOI_RESULTS_REF が必要\n'
 &gt;       _sys.exit(status)
 E       SystemExit: 2
 
-/opt/hostedtoolcache/Python/3.15.0-rc.3/x64/lib/python3.15/argparse.py:2940: SystemExit</failure></testcase><testcase classname="nagoyaction.tests.test_inbox" name="test_completion_bundles_use_run_id_without_run_api" time="0.002"><failure message="AssertionError: assert [] == ['/issues/1/comments']&#10;  &#10;  Right contains one more item: '/issues/1/comments'&#10;  &#10;  Full diff:&#10;  + []&#10;  - [&#10;  -     '/issues/1/comments',&#10;  - ]">cycle = PosixPath('/tmp/pytest-of-runner/pytest-0/test_completion_bundles_use_ru0/cycle')
-tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_completion_bundles_use_ru0')
-monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f6dacda9780&gt;
+&lt;toolcache&gt;/Python/3.15.0-rc.3/x64/lib/python3.15/argparse.py:2940: SystemExit</failure></testcase><testcase classname="nagoyaction.tests.test_inbox" name="test_completion_bundles_use_run_id_without_run_api" time="0.002"><failure message="AssertionError: assert [] == ['/issues/1/comments']&#10;  &#10;  Right contains one more item: '/issues/1/comments'&#10;  &#10;  Full diff:&#10;  + []&#10;  - [&#10;  -     '/issues/1/comments',&#10;  - ]">cycle = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_completion_bundles_use_ru0/cycle')
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_completion_bundles_use_ru0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
 
     def test_completion_bundles_use_run_id_without_run_api(cycle, tmp_path, monkeypatch):
         import inbox
@@ -398,9 +398,9 @@ E         - [
 E         -     '/issues/1/comments',
 E         - ]
 
-nagoyaction/tests/test_inbox.py:552: AssertionError</failure></testcase><testcase classname="nagoyaction.tests.test_inbox" name="test_total_pending_limit_still_applies_to_trusted_users" time="0.004"><failure message="AssertionError: assert 0 == 20&#10; +  where 0 = len([])&#10; +    where [] = list(&lt;map object at 0x7f6db9244640&gt;)&#10; +      where &lt;map object at 0x7f6db9244640&gt; = glob('*.json')&#10; +        where glob = (PosixPath('/tmp/pytest-of-runner/pytest-0/test_total_pending_limit_still0/state') / 'requests').glob&#10; +          where PosixPath('/tmp/pytest-of-runner/pytest-0/test_total_pending_limit_still0/state') = &lt;test_inbox.DiskState object at 0x7f6dadef8050&gt;.path">cycle = PosixPath('/tmp/pytest-of-runner/pytest-0/test_total_pending_limit_still0/cycle')
-tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_total_pending_limit_still0')
-monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f6dae1ca040&gt;
+nagoyaction/tests/test_inbox.py:552: AssertionError</failure></testcase><testcase classname="nagoyaction.tests.test_inbox" name="test_total_pending_limit_still_applies_to_trusted_users" time="0.004"><failure message="AssertionError: assert 0 == 20&#10; +  where 0 = len([])&#10; +    where [] = list(&lt;map object at 0x&lt;addr&gt;&gt;)&#10; +      where &lt;map object at 0x&lt;addr&gt;&gt; = glob('*.json')&#10; +        where glob = (PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_total_pending_limit_still0/state') / 'requests').glob&#10; +          where PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_total_pending_limit_still0/state') = &lt;test_inbox.DiskState object at 0x&lt;addr&gt;&gt;.path">cycle = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_total_pending_limit_still0/cycle')
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_total_pending_limit_still0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
 
     def test_total_pending_limit_still_applies_to_trusted_users(cycle, tmp_path, monkeypatch):
         import inbox
@@ -412,10 +412,10 @@ monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f6dae1ca040&gt;
 &gt;       assert len(list((state.path/'requests').glob('*.json'))) == 20
 E       AssertionError: assert 0 == 20
 E        +  where 0 = len([])
-E        +    where [] = list(&lt;map object at 0x7f6db9244640&gt;)
-E        +      where &lt;map object at 0x7f6db9244640&gt; = glob('*.json')
-E        +        where glob = (PosixPath('/tmp/pytest-of-runner/pytest-0/test_total_pending_limit_still0/state') / 'requests').glob
-E        +          where PosixPath('/tmp/pytest-of-runner/pytest-0/test_total_pending_limit_still0/state') = &lt;test_inbox.DiskState object at 0x7f6dadef8050&gt;.path
+E        +    where [] = list(&lt;map object at 0x&lt;addr&gt;&gt;)
+E        +      where &lt;map object at 0x&lt;addr&gt;&gt; = glob('*.json')
+E        +        where glob = (PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_total_pending_limit_still0/state') / 'requests').glob
+E        +          where PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_total_pending_limit_still0/state') = &lt;test_inbox.DiskState object at 0x&lt;addr&gt;&gt;.path
 
 nagoyaction/tests/test_inbox.py:604: AssertionError</failure></testcase><testcase classname="nagoyaction.tests.test_inbox" name="test_registration_status_is_conservative_and_rendered" time="0.000"><failure message="IndexError: list index out of range">def test_registration_status_is_conservative_and_rendered():
         from ask import registration_status, render

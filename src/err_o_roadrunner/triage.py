@@ -462,7 +462,7 @@ PYTEST_E_EXC_LINE_RE = re.compile(
 PYTEST_E_ASSERT_LINE_RE = re.compile(r"^\s*E\s+assert\b")
 JUNIT_DIFF_LINE_RE = re.compile(r"^\s*[+-]\s+")
 DART_ERROR_LINE_RE = re.compile(
-    r"^(?P<line>\S+\.dart:\d+:\d+:\s+Error:\s*.+)$"
+    r"(?P<line>\S+\.dart:\d+:\d+:\s+Error:\s*.+)$"
 )
 DART_NOISE_LINE_RE = re.compile(
     r"^-\s+'Object'\s+is\s+from\s+'dart:core'\."

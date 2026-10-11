@@ -128,6 +128,88 @@ def test_mutation_dropping_dart_core_filter_pollutes_diff_hint() -> None:
 
 
 @pytest.mark.gap
+def test_mutation_unanchored_dart_regex_false_positive_on_assertion(tmp_path: Path) -> None:
+    import re
+
+    xml = """<?xml version="1.0" encoding="utf-8"?>
+<testsuite name="pytest" tests="1" failures="1">
+  <testcase classname="tests.demo" name="test_x">
+    <failure message="assert 0">E   AssertionError: boom</failure>
+  </testcase>
+</testsuite>"""
+    path = tmp_path / "assertion.xml"
+    path.write_text(xml, encoding="utf-8")
+    loose = re.compile(r"(?P<line>.*Error:\s*.+)$")
+    with mock.patch.object(TRIAGE_MOD, "DART_ERROR_LINE_RE", loose):
+        report = triage(
+            exit_code=1,
+            junit_paths=[str(path)],
+            stderr_text=None,
+            log_text=None,
+            actions_log_text=None,
+            project_root=EMPTY,
+        )
+    assert any(ln.startswith("FOUND: junit dart error") for ln in report.lines())
+
+
+@pytest.mark.gap
+def test_testcase_collection_failure_message_is_found(tmp_path: Path) -> None:
+    xml = """<?xml version="1.0" encoding="utf-8"?>
+<testsuite name="pytest" tests="0" errors="1">
+  <testcase classname="" name="tests.conftest" time="0">
+    <error message="collection failure">could not load conftest</error>
+  </testcase>
+</testsuite>"""
+    path = tmp_path / "tc_collection.xml"
+    path.write_text(xml, encoding="utf-8")
+    report = triage(
+        exit_code=1,
+        junit_paths=[str(path)],
+        stderr_text=None,
+        log_text=None,
+        actions_log_text=None,
+        project_root=EMPTY,
+    )
+    assert any(ln.startswith("FOUND: junit collection errors (") for ln in report.lines())
+
+
+@pytest.mark.gap
+def test_mutation_dropping_failure_blob_dedup_duplicates_boom(tmp_path: Path) -> None:
+    xml = """<?xml version="1.0" encoding="utf-8"?>
+<testsuite name="pytest" tests="1" failures="1">
+  <testcase classname="tests.demo" name="test_x">
+    <failure message="boom">boom</failure>
+  </testcase>
+</testsuite>"""
+    path = tmp_path / "dedup.xml"
+    path.write_text(xml, encoding="utf-8")
+
+    def naive_blob(testcase, elem):  # noqa: ANN001
+        parts = []
+        msg = (elem.attrib.get("message") or "").strip()
+        body = (elem.text or "").strip()
+        if msg:
+            parts.append(msg)
+        if body:
+            parts.append(body)
+        return "\n".join(parts)
+
+    with mock.patch.object(TRIAGE_MOD, "_junit_failure_blob", naive_blob):
+        report = triage(
+            exit_code=1,
+            junit_paths=[str(path)],
+            stderr_text=None,
+            log_text=None,
+            actions_log_text=None,
+            project_root=EMPTY,
+        )
+    line = next(
+        ln for ln in report.lines() if ln.startswith("FOUND: junit failure (first)")
+    )
+    assert line.count("boom") >= 2
+
+
+@pytest.mark.gap
 def test_actions_log_preprocess_strips_cr_from_crlf_bytes() -> None:
     raw = (FIX / "crlf_bom.log").read_bytes()
     assert b"\r" in raw

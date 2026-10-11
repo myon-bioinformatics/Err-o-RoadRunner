@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<testsuites><testsuite name="pytest" errors="0" failures="1" skipped="9" tests="157" time="3.754" timestamp="2026-10-10T01:29:54.960346+00:00" hostname="runnervmmprz5"><testcase classname="tests.test_mermaid_svg" name="test_pipeline_opt_in_uses_svg_and_preserves_original" time="0.000"><failure message="TypeError: test_pipeline_opt_in_uses_svg_and_preserves_original.&lt;locals&gt;.fake_render() got an unexpected keyword argument 'foreground'">tests/test_mermaid_svg.py:45: in test_pipeline_opt_in_uses_svg_and_preserves_original
+<testsuites><testsuite name="pytest" errors="0" failures="1" skipped="9" tests="157" time="3.754" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_mermaid_svg" name="test_pipeline_opt_in_uses_svg_and_preserves_original" time="0.000"><failure message="TypeError: test_pipeline_opt_in_uses_svg_and_preserves_original.&lt;locals&gt;.fake_render() got an unexpected keyword argument 'foreground'">tests/test_mermaid_svg.py:45: in test_pipeline_opt_in_uses_svg_and_preserves_original
     result = pptx_pipeline.run(text=source, output=tmp_path / "out.pptx", mmdc="mmdc")
              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 pptx_pipeline.py:26: in run

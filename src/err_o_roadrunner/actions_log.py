@@ -75,8 +75,8 @@ def _parse_gh_run_view_raw_line(line: str) -> _ParsedLine | None:
 
 
 def preprocess_actions_log(text: str) -> tuple[list[_ParsedLine], bool]:
+    # strip_terminal_controls removes \\r (and other C0 controls) before line split.
     text = strip_bom(strip_terminal_controls(text))
-    # splitlines() drops trailing \\r; split on \\n so CRLF lines keep \\r for rstrip in normalize.
     raw_lines = text.split("\n")
     if raw_lines and not text.endswith("\n"):
         pass
@@ -85,7 +85,6 @@ def preprocess_actions_log(text: str) -> tuple[list[_ParsedLine], bool]:
     parsed: list[_ParsedLine] = []
     gh_hits = 0
     for raw in raw_lines:
-        raw = raw.rstrip("\r")
         gh = _parse_gh_run_view_raw_line(raw)
         if gh is not None:
             gh_hits += 1

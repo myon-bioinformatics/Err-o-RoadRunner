@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<testsuites><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="93" time="12.844" timestamp="2026-10-11T13:54:44.808336+00:00" hostname="runnervmmprz5"><testcase classname="tests.test_triage" name="test_success_import_and_version" time="0.001"><failure message="AssertionError: assert '0.2.0' == '0.1.0'&#10;  &#10;  - 0.1.0&#10;  ?   ^&#10;  + 0.2.0&#10;  ?   ^">@pytest.mark.success
+<testsuites><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="93" time="12.844" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_triage" name="test_success_import_and_version" time="0.001"><failure message="AssertionError: assert '0.2.0' == '0.1.0'&#10;  &#10;  - 0.1.0&#10;  ?   ^&#10;  + 0.2.0&#10;  ?   ^">@pytest.mark.success
     def test_success_import_and_version() -&gt; None:
         import err_o_roadrunner as pkg
     
