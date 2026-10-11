@@ -1,0 +1,23 @@
+FOUND: exit code: 1
+FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37583858072_junit-python-3.13_71.xml): 2
+FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37583858072_junit-python-3.13_71.xml): AssertionError: assert 6 == 4
+ +  where 6 = len({'scripts/git_inspector.py': {'repository': 'myon-bioinformatics/myon-bioinformatics', 'ref': 'refs/heads/main', 'comm...probe', 'ref': 'refs/heads/main', 'commit': '642999cea4185a68bffa7f7ccc46bd78dde03e5a', 'source': 'LICENSE', ...}, ...})
+ +  and   
+FOUND: junit failure (last) (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37583858072_junit-python-3.13_71.xml): FileNotFoundError: [Errno 2] No such file or directory: '/tmp/pytest-of-runner/pytest-0/test_updated_lock_projects_exa0/scripts/gh_identity.py'
+FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37583858072_junit-python-3.13_71.xml): tests.python.test_vendor_automation
+FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37583858072_junit-python-3.13_71.xml): AssertionError
+FOUND: python version: 3.12.3 (cpython)
+FOUND: node version: v22.14.0
+FOUND: gh version: gh version 2.102.0 (2026-09-30)
+FOUND: environment variable count: 39
+FOUND: environment variable names: AGENT_TRANSCRIPTS, CARGO_HOME, CURSOR_AGENT, CURSOR_AGENT_SOCKET, CURSOR_CONVERSATION_ID, CURSOR_REQUEST_ID, CURSOR_RIPGREP_PATH, CURSOR_SPAWN_CWD_HOP, CURSOR_WORKLOAD_CGROUP, DISPLAY, EXEC_DAEMON_STARTUP_TRACEPARENT, FORCE_COLOR, GH_TELEMETRY, GIT_DISCOVERY_ACROSS_FILESYSTEM, GIT_LFS_SKIP_SMUDGE, HOME, LANG, LC_ALL, NO_COLOR, NVM_BIN, NVM_CD_FLAGS, NVM_DIR, NVM_INC, OLDPWD, PATH, PS1, PWD, PYTHONPATH, RUSTUP_HOME, RUST_VERSION, SHELL, SHLVL, TERM, USER, VNC_DPI, VNC_RESOLUTION, _, _ZO_DOCTOR, __CURSOR_SANDBOX_ENV_RESTORE
+NOT FOUND: junit errors (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37583858072_junit-python-3.13_71.xml)
+NOT FOUND: junit skipped (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37583858072_junit-python-3.13_71.xml)
+NOT FOUND: junit system-err (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37583858072_junit-python-3.13_71.xml)
+NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37583858072_junit-python-3.13_71.xml)
+NOT FOUND: lock files in project root
+HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37583858072_junit-python-3.13_71.xml): pytest/python
+HINT: junit assertion diff (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37583858072_junit-python-3.13_71.xml):  +  where 6 = len({'scripts/git_inspector.py': {'repository': 'myon-bioinformatics/myon-bioinformatics', 'ref': 'refs/heads/main', 'comm...probe', 'ref': 'refs/heads/main', 'commit': '642999cea4185a68bffa7f7ccc46bd78dde03e5a', 'source': 'LICENSE', ...}, ...})  +  and   4 = len({('myon-bioinformatics/myon-bioinformatics', 'LICENSE', 'scripts/myon-bioinformatics-LICENSE'), ('myon-bioinformatics/...L
+HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37583858072_junit-python-3.13_71.xml): AssertionError: assert 6 == 4
+ +  where 6 = len({'scripts/git_inspector.py': {'repository': 'myon-bioinformatics/myon-bioinformatics', 'ref': 'refs/heads/main', 'comm...probe', 'ref': 'refs/heads/main', 'commit': '642999cea4185a68bffa7f7ccc46bd78dde03e5a', 'source': 'LICENSE', ...}, ...})
+ +  and   

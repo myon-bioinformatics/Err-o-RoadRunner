@@ -8,8 +8,16 @@ import sys
 from pathlib import Path
 
 from err_o_roadrunner.triage import triage
+from tests.report_assert import assert_report_has_exact_line
 
 ROOT = Path(__file__).resolve().parents[1]
+
+__all__ = [
+    "assert_report_has_exact_line",
+    "normalize_report",
+    "triage_actions_log",
+    "triage_actions_log_cli",
+]
 
 
 def normalize_report(text: str) -> str:
@@ -70,10 +78,3 @@ def triage_actions_log_cli(log_path: Path) -> str:
     return proc.stdout
 
 
-def assert_report_has_exact_line(lines: list[str], prefix: str) -> str:
-    matches = [ln for ln in lines if ln.startswith(prefix)]
-    assert len(matches) == 1, f"expected exactly one line starting with {prefix!r}, got {matches!r}"
-    assert not any(
-        ln.startswith("NOT FOUND:") and prefix.removeprefix("FOUND: ") in ln for ln in lines
-    )
-    return matches[0]

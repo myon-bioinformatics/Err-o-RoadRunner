@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites><testsuite name="pytest" errors="0" failures="1" skipped="9" tests="173" time="5.614" timestamp="2026-10-10T02:11:55.117966+00:00" hostname="runnervmmprz5"><testcase classname="tests.test_pptx_xml_batch" name="test_reordered_slide_uses_display_order_not_xml_suffix" time="0.030"><failure message="assert (10, 20, 30) == (171, 205, 239)&#10;  &#10;  At index 0 diff: 10 != 171&#10;  &#10;  Full diff:&#10;    (&#10;  -     171,&#10;  ?      ^^&#10;  +     10,&#10;  ?      ^&#10;  -     205,&#10;  ?       -&#10;  +     20,&#10;  -     239,&#10;  ?     - ^&#10;  +     30,&#10;  ?      ^&#10;    )">tests/test_pptx_xml_batch.py:62: in test_reordered_slide_uses_display_order_not_xml_suffix
+    assert rgb(output, 0) == RGBColor(171, 205, 239)
+E   assert (10, 20, 30) == (171, 205, 239)
+E     
+E     At index 0 diff: 10 != 171
+E     
+E     Full diff:
+E       (
+E     -     171,
+E     ?      ^^
+E     +     10,
+E     ?      ^
+E     -     205,
+E     ?       -
+E     +     20,
+E     -     239,
+E     ?     - ^
+E     +     30,
+E     ?      ^
+E       )</failure></testcase></testsuite></testsuites>

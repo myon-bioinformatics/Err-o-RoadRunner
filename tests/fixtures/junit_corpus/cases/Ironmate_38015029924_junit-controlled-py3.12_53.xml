@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites><testsuite name="pytest" errors="1" failures="2" skipped="1" tests="5" time="0.027" timestamp="2026-10-10T01:55:54.521916+00:00" hostname="runnervmmprz5"><testcase classname="test_controlled" name="test_wrong_expectation[SECRET_PARAM_ONE]" time="0.001"><failure message="AssertionError: SECRET_MESSAGE&#10;assert 'actual' == 'SECRET_PARAM_ONE'&#10;  &#10;  - SECRET_PARAM_ONE&#10;  + actual">expected = 'SECRET_PARAM_ONE'
+
+    @pytest.mark.parametrize("expected", ["SECRET_PARAM_ONE", "SECRET_PARAM_TWO"])
+    def test_wrong_expectation(expected):
+        print("SECRET_STDOUT")
+        print("SECRET_STDERR", file=sys.stderr)
+&gt;       assert "actual" == expected, "SECRET_MESSAGE"
+E       AssertionError: SECRET_MESSAGE
+E       assert 'actual' == 'SECRET_PARAM_ONE'
+E         
+E         - SECRET_PARAM_ONE
+E         + actual
+
+test_controlled.py:9: AssertionError</failure><system-out>--------------------------------- Captured Log ---------------------------------
+
+--------------------------------- Captured Out ---------------------------------
+SECRET_STDOUT
+
+</system-out><system-err>--------------------------------- Captured Err ---------------------------------
+SECRET_STDERR
+
+</system-err></testcase><testcase classname="test_controlled" name="test_wrong_expectation[SECRET_PARAM_TWO]" time="0.001"><failure message="AssertionError: SECRET_MESSAGE&#10;assert 'actual' == 'SECRET_PARAM_TWO'&#10;  &#10;  - SECRET_PARAM_TWO&#10;  + actual">expected = 'SECRET_PARAM_TWO'
+
+    @pytest.mark.parametrize("expected", ["SECRET_PARAM_ONE", "SECRET_PARAM_TWO"])
+    def test_wrong_expectation(expected):
+        print("SECRET_STDOUT")
+        print("SECRET_STDERR", file=sys.stderr)
+&gt;       assert "actual" == expected, "SECRET_MESSAGE"
+E       AssertionError: SECRET_MESSAGE
+E       assert 'actual' == 'SECRET_PARAM_TWO'
+E         
+E         - SECRET_PARAM_TWO
+E         + actual
+
+test_controlled.py:9: AssertionError</failure><system-out>--------------------------------- Captured Log ---------------------------------
+
+--------------------------------- Captured Out ---------------------------------
+SECRET_STDOUT
+
+</system-out><system-err>--------------------------------- Captured Err ---------------------------------
+SECRET_STDERR
+
+</system-err></testcase><testcase classname="test_controlled" name="test_setup" time="0.000"><error message="failed on setup with &quot;AssertionError: assert 'actual_setup' == 'SECRET_SETUP'&#10;  &#10;  - SECRET_SETUP&#10;  + actual_setup&quot;">@pytest.fixture
+    def wrong_setup():
+&gt;       assert "actual_setup" == "SECRET_SETUP"
+E       AssertionError: assert 'actual_setup' == 'SECRET_SETUP'
+E         
+E         - SECRET_SETUP
+E         + actual_setup
+
+test_controlled.py:13: AssertionError</error><system-out>--------------------------------- Captured Log ---------------------------------
+
+--------------------------------- Captured Out ---------------------------------
+
+</system-out><system-err>--------------------------------- Captured Err ---------------------------------
+
+</system-err></testcase></testsuite></testsuites>

@@ -456,14 +456,88 @@ def _bounded_xml_iter(root: ET.Element) -> Iterator[ET.Element]:
         yield elem
 
 
-def _junit_snippet(elem: ET.Element) -> str:
+PYTEST_E_EXC_LINE_RE = re.compile(
+    r"^\s*E\s+(?P<exc>[A-Za-z_][\w.]*(?:Error|Exception|Failed|Timeout))(?:\s*:|$)"
+)
+PYTEST_E_ASSERT_LINE_RE = re.compile(r"^\s*E\s+assert\b")
+JUNIT_DIFF_LINE_RE = re.compile(r"^\s*[+-]\s+")
+
+
+def _junit_child_text(parent: ET.Element, local_name: str) -> str:
+    for child in parent:
+        if child.tag.split("}")[-1] == local_name:
+            return sanitize_report_text((child.text or "").strip())
+    return ""
+
+
+def _junit_case_label(testcase: ET.Element) -> str:
+    classname = (testcase.attrib.get("classname") or "").strip()
+    name = (testcase.attrib.get("name") or "").strip()
+    if classname and name:
+        return f"{classname}::{name}"
+    return name or classname or "testcase"
+
+
+def _junit_failure_blob(testcase: ET.Element, elem: ET.Element) -> str:
+    parts: list[str] = []
     msg = sanitize_report_text((elem.attrib.get("message") or "").strip())
     body = sanitize_report_text((elem.text or "").strip())
+    if msg:
+        parts.append(msg)
+    if body:
+        parts.append(body)
+    for extra in ("system-out", "system-err"):
+        chunk = _junit_child_text(testcase, extra)
+        if chunk:
+            parts.append(chunk)
+    return "\n".join(parts)
+
+
+def _junit_snippet(elem: ET.Element, testcase: ET.Element | None = None) -> str:
+    msg = sanitize_report_text((elem.attrib.get("message") or "").strip())
+    body = sanitize_report_text((elem.text or "").strip())
+    if testcase is not None:
+        body = _junit_failure_blob(testcase, elem)
     if msg:
         return msg[:300]
     if body:
         return body.splitlines()[0][:300]
     return "failure"
+
+
+def _junit_pytest_exception_type(blob: str) -> str:
+    for line in blob.splitlines():
+        m = PYTEST_E_EXC_LINE_RE.match(line)
+        if m:
+            name = m.group("exc")
+            if name not in PYTHON_BUILTIN_EXCEPTIONS:
+                return name
+    return ""
+
+
+def _junit_pytest_assert_hint(blob: str) -> str:
+    for line in blob.splitlines():
+        if PYTEST_E_ASSERT_LINE_RE.match(line):
+            return line.strip()[:300]
+    return ""
+
+
+def _junit_diff_hint(blob: str) -> str:
+    lines = [ln for ln in blob.splitlines() if JUNIT_DIFF_LINE_RE.match(ln)]
+    if not lines:
+        return ""
+    return " ".join(lines[:6])[:400]
+
+
+def _junit_framework_hint(classname: str) -> str:
+    lowered = classname.lower()
+    if "playwright" in lowered or classname.startswith("e2e."):
+        return "playwright"
+    if "flutter" in lowered or "dart" in lowered:
+        return "flutter/dart"
+    if classname.startswith("tests.") or "." in classname:
+        return "pytest/python"
+    return ""
 
 
 def parse_junit_xml(text: str, source: str, report: Report) -> None:
@@ -476,22 +550,42 @@ def parse_junit_xml(text: str, source: str, report: Report) -> None:
     failures: list[str] = []
     errors: list[str] = []
     skipped: list[str] = []
+    failure_blobs: list[str] = []
+    first_classname = ""
+    collection_errors: list[str] = []
     try:
         for elem in _bounded_xml_iter(root):
             tag = elem.tag.split("}")[-1]
-            if tag == "failure":
-                failures.append(_junit_snippet(elem))
-            elif tag == "error":
-                errors.append(_junit_snippet(elem))
-            elif tag == "skipped":
-                msg = sanitize_report_text((elem.attrib.get("message") or "").strip())
-                body = sanitize_report_text((elem.text or "").strip())
-                if msg:
-                    skipped.append(msg[:300])
-                elif body:
-                    skipped.append(body.splitlines()[0][:300])
-                else:
-                    skipped.append("skipped")
+            if tag == "testcase":
+                testcase = elem
+                label = _junit_case_label(testcase)
+                for child in testcase:
+                    child_tag = child.tag.split("}")[-1]
+                    if child_tag == "failure":
+                        if not first_classname:
+                            first_classname = (testcase.attrib.get("classname") or "").strip()
+                        blob = _junit_failure_blob(testcase, child)
+                        failure_blobs.append(blob)
+                        failures.append(_junit_snippet(child, testcase))
+                    elif child_tag == "error":
+                        if not first_classname:
+                            first_classname = (testcase.attrib.get("classname") or "").strip()
+                        blob = _junit_failure_blob(testcase, child)
+                        failure_blobs.append(blob)
+                        errors.append(_junit_snippet(child, testcase))
+                        if "collection error" in blob.lower() or "ImportError while loading" in blob:
+                            collection_errors.append(label)
+                    elif child_tag == "skipped":
+                        msg = sanitize_report_text((child.attrib.get("message") or "").strip())
+                        body = sanitize_report_text((child.text or "").strip())
+                        if msg:
+                            skipped.append(msg[:300])
+                        elif body:
+                            skipped.append(body.splitlines()[0][:300])
+                        else:
+                            skipped.append("skipped")
+            elif tag == "error" and elem.attrib.get("message"):
+                collection_errors.append(sanitize_report_text(elem.attrib["message"])[:300])
     except ValueError:
         report.add_found(f"junit xml truncated (tag limit) ({source})")
 
@@ -505,6 +599,8 @@ def parse_junit_xml(text: str, source: str, report: Report) -> None:
 
     if errors:
         report.add_found(f"junit errors ({source}): {len(errors)}")
+        if errors:
+            report.add_found(f"junit error (first) ({source}): {errors[0]}")
     else:
         report.add_not_found(f"junit errors ({source})")
 
@@ -513,6 +609,45 @@ def parse_junit_xml(text: str, source: str, report: Report) -> None:
         report.add_found(f"junit skipped (first) ({source}): {skipped[0]}")
     else:
         report.add_not_found(f"junit skipped ({source})")
+
+    primary_blob = failure_blobs[0] if failure_blobs else ""
+    if first_classname:
+        report.add_found(f"junit testcase classname (first) ({source}): {first_classname[:200]}")
+        fw = _junit_framework_hint(first_classname)
+        if fw:
+            report.add_hint(f"junit framework guess ({source}): {fw}")
+
+    if primary_blob:
+        exc_type = _junit_pytest_exception_type(primary_blob)
+        if exc_type:
+            report.add_found(f"junit pytest exception type ({source}): {exc_type}")
+        else:
+            report.add_not_found(f"junit pytest exception type ({source})")
+        assert_hint = _junit_pytest_assert_hint(primary_blob)
+        if assert_hint:
+            report.add_hint(f"junit pytest assert line ({source}): {assert_hint}")
+        diff_hint = _junit_diff_hint(primary_blob)
+        if diff_hint:
+            report.add_hint(f"junit assertion diff ({source}): {diff_hint}")
+        if "Timeout" in primary_blob or "timed out" in primary_blob.lower():
+            report.add_hint(f"junit timeout signal ({source}): possible timeout in failure text")
+        syserr = ""
+        for testcase in root.iter():
+            if testcase.tag.split("}")[-1] != "testcase":
+                continue
+            syserr = _junit_child_text(testcase, "system-err")
+            if syserr:
+                break
+        if syserr:
+            report.add_found(f"junit system-err (first line) ({source}): {syserr.splitlines()[0][:300]}")
+        else:
+            report.add_not_found(f"junit system-err ({source})")
+
+    if collection_errors:
+        report.add_found(f"junit collection errors ({source}): {len(collection_errors)}")
+        report.add_found(f"junit collection error (first) ({source}): {collection_errors[0][:300]}")
+    else:
+        report.add_not_found(f"junit collection errors ({source})")
 
     if failures or errors:
         sample = failures[0] if failures else errors[0]

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="69" time="9.844" timestamp="2026-10-11T13:45:33.129580+00:00" hostname="runnervmmprz5"><testcase classname="tests.test_readme_golden" name="test_readme_golden_example[python_import_error]" time="0.124"><failure message="AssertionError: assert 'FOUND: exit ..._init__.py)\n' == 'FOUND: exit ..._init__.py)\n'&#10;  &#10;  Skipping 217 identical leading characters in diff, use -v to show&#10;  -  (first): &lt;repo&gt;/tests/fixtures/readme/inputs/_import_err_helper.py:1 in &lt;module&gt;&#10;  ?           ^  ---&#10;  +  (first): /workspace/tests/fixtures/readme/inputs/_import_err_helper.py:1 in &lt;module&gt;&#10;  ?           ^^^ +++++&#10;  - FOUND: python traceback frame (last): &lt;repo&gt;/tests/fixtures/readme/inputs/_import_err_helper.py:1 in &lt;module&gt;&#10;  ?                                       ^  ---&#10;  + FOUND: python traceback frame (last): /workspace/tests/fixtures/readme/inputs/_import_err_helper.py:1 in &lt;module&gt;&#10;  ?                                       ^^^ +++++&#10;    FOUND: python traceback frame count: 1&#10;    FOUND: python version: &lt;runtime&gt;&#10;    FOUND: node version: &lt;runtime&gt;&#10;    FOUND: gh version: &lt;runtime&gt;&#10;    FOUND: environment variable count: &lt;runtime&gt;&#10;    FOUND: environment variable names: &lt;runtime&gt;&#10;    NOT FOUND: lock files in project root&#10;    HINT: web search keywords: ImportError cannot import name 'ThisNameDoesNotExist' from 'json' (/usr/lib/python3.12/json/__init__.py)">entry = {'id': 'python_import_error', 'title': 'Python ImportError', 'command': 'python -m err_o_roadrunner --exit-code 1 --st...roject-root tests/fixtures/readme/empty_root', 'input': 'tests/fixtures/readme/inputs/python_import_error.stderr', ...}
+
+    @pytest.mark.parametrize("entry", json.loads(MANIFEST.read_text(encoding="utf-8")), ids=lambda e: e["id"])
+    def test_readme_golden_example(entry: dict) -&gt; None:
+        if entry["id"].startswith("node_"):
+            if subprocess.run(["which", "node"], capture_output=True).returncode != 0:
+                pytest.skip("node not available")
+        golden_path = ROOT / entry["golden"]
+        expected = normalize_report(golden_path.read_text(encoding="utf-8"))
+        actual = normalize_report(run_example(entry))
+&gt;       assert actual == expected
+E       AssertionError: assert 'FOUND: exit ..._init__.py)\n' == 'FOUND: exit ..._init__.py)\n'
+E         
+E         Skipping 217 identical leading characters in diff, use -v to show
+E         -  (first): &lt;repo&gt;/tests/fixtures/readme/inputs/_import_err_helper.py:1 in &lt;module&gt;
+E         ?           ^  ---
+E         +  (first): /workspace/tests/fixtures/readme/inputs/_import_err_helper.py:1 in &lt;module&gt;
+E         ?           ^^^ +++++
+E         - FOUND: python traceback frame (last): &lt;repo&gt;/tests/fixtures/readme/inputs/_import_err_helper.py:1 in &lt;module&gt;
+E         ?                                       ^  ---
+E         + FOUND: python traceback frame (last): /workspace/tests/fixtures/readme/inputs/_import_err_helper.py:1 in &lt;module&gt;
+E         ?                                       ^^^ +++++
+E           FOUND: python traceback frame count: 1
+E           FOUND: python version: &lt;runtime&gt;
+E           FOUND: node version: &lt;runtime&gt;
+E           FOUND: gh version: &lt;runtime&gt;
+E           FOUND: environment variable count: &lt;runtime&gt;
+E           FOUND: environment variable names: &lt;runtime&gt;
+E           NOT FOUND: lock files in project root
+E           HINT: web search keywords: ImportError cannot import name 'ThisNameDoesNotExist' from 'json' (/usr/lib/python3.12/json/__init__.py)
+
+tests/test_readme_golden.py:86: AssertionError</failure></testcase><testcase classname="tests.test_readme_golden" name="test_readme_golden_example[python_chained]" time="0.135"><failure message="AssertionError: assert 'FOUND: exit ...le handling\n' == 'FOUND: exit ...le handling\n'&#10;  &#10;  Skipping 219 identical leading characters in diff, use -v to show&#10;  - primary): &lt;repo&gt;/tests/fixtures/readme/inputs/chained.py:2 in &lt;module&gt;&#10;  ?           ^  ---&#10;  + primary): /workspace/tests/fixtures/readme/inputs/chained.py:2 in &lt;module&gt;&#10;  ?           ^^^ +++++&#10;  - FOUND: python traceback frame (last) (primary): &lt;repo&gt;/tests/fixtures/readme/inputs/chained.py:2 in &lt;module&gt;&#10;  ?                                                 ^  ---&#10;  + FOUND: python traceback frame (last) (primary): /workspace/tests/fixtures/readme/inputs/chained.py:2 in &lt;module&gt;&#10;  ?                                                 ^^^ +++++&#10;    FOUND: python traceback frame count (primary): 1&#10;    FOUND: python exception type (chained-1): ValueError&#10;    FOUND: python exception message (chained-1): while handling&#10;  - FOUND: python traceback frame (first) (chained-1): &lt;repo&gt;/tests/fixtures/readme/inputs/chained.py:4 in &lt;module&gt;&#10;  ?                                                    ^  ---&#10;  + FOUND: python traceback frame (first) (chained-1): /workspace/tests/fixtures/readme/inputs/chained.py:4 in &lt;module&gt;&#10;  ?                                                    ^^^ +++++&#10;  - FOUND: python traceback frame (last) (chained-1): &lt;repo&gt;/tests/fixtures/readme/inputs/chained.py:4 in &lt;module&gt;&#10;  ?                                                   ^  ---&#10;  + FOUND: python traceback frame (last) (chained-1): /workspace/tests/fixtures/readme/inputs/chained.py:4 in &lt;module&gt;&#10;  ?                                                   ^^^ +++++&#10;    FOUND: python traceback frame count (chained-1): 1&#10;    FOUND: python version: &lt;runtime&gt;&#10;    FOUND: node version: &lt;runtime&gt;&#10;    FOUND: gh version: &lt;runtime&gt;&#10;    FOUND: environment variable count: &lt;runtime&gt;&#10;    FOUND: environment variable names: &lt;runtime&gt;&#10;    NOT FOUND: lock files in project root&#10;    HINT: web search keywords: ValueError while handling">entry = {'id': 'python_chained', 'title': 'Python chained exceptions', 'command': 'python -m err_o_roadrunner --exit-code 1 --...r --project-root tests/fixtures/readme/empty_root', 'input': 'tests/fixtures/readme/inputs/python_chained.stderr', ...}
+
+    @pytest.mark.parametrize("entry", json.loads(MANIFEST.read_text(encoding="utf-8")), ids=lambda e: e["id"])
+    def test_readme_golden_example(entry: dict) -&gt; None:
+        if entry["id"].startswith("node_"):
+            if subprocess.run(["which", "node"], capture_output=True).returncode != 0:
+                pytest.skip("node not available")
+        golden_path = ROOT / entry["golden"]
+        expected = normalize_report(golden_path.read_text(encoding="utf-8"))
+        actual = normalize_report(run_example(entry))
+&gt;       assert actual == expected
+E       AssertionError: assert 'FOUND: exit ...le handling\n' == 'FOUND: exit ...le handling\n'
+E         
+E         Skipping 219 identical leading characters in diff, use -v to show
+E         - primary): &lt;repo&gt;/tests/fixtures/readme/inputs/chained.py:2 in &lt;module&gt;
+E         ?           ^  ---
+E         + primary): /workspace/tests/fixtures/readme/inputs/chained.py:2 in &lt;module&gt;
+E         ?           ^^^ +++++
+E         - FOUND: python traceback frame (last) (primary): &lt;repo&gt;/tests/fixtures/readme/inputs/chained.py:2 in &lt;module&gt;
+E         ?                                                 ^  ---
+E         + FOUND: python traceback frame (last) (primary): /workspace/tests/fixtures/readme/inputs/chained.py:2 in &lt;module&gt;
+E         ?                                                 ^^^ +++++
+E           FOUND: python traceback frame count (primary): 1
+E           FOUND: python exception type (chained-1): ValueError
+E           FOUND: python exception message (chained-1): while handling
+E         - FOUND: python traceback frame (first) (chained-1): &lt;repo&gt;/tests/fixtures/readme/inputs/chained.py:4 in &lt;module&gt;
+E         ?                                                    ^  ---
+E         + FOUND: python traceback frame (first) (chained-1): /workspace/tests/fixtures/readme/inputs/chained.py:4 in &lt;module&gt;
+E         ?                                                    ^^^ +++++
+E         - FOUND: python traceback frame (last) (chained-1): &lt;repo&gt;/tests/fixtures/readme/inputs/chained.py:4 in &lt;module&gt;
+E         ?                                                   ^  ---
+E         + FOUND: python traceback frame (last) (chained-1): /workspace/tests/fixtures/readme/inputs/chained.py:4 in &lt;module&gt;
+E         ?                                                   ^^^ +++++
+E           FOUND: python traceback frame count (chained-1): 1
+E           FOUND: python version: &lt;runtime&gt;
+E           FOUND: node version: &lt;runtime&gt;
+E           FOUND: gh version: &lt;runtime&gt;
+E           FOUND: environment variable count: &lt;runtime&gt;
+E           FOUND: environment variable names: &lt;runtime&gt;
+E           NOT FOUND: lock files in project root
+E           HINT: web search keywords: ValueError while handling
+
+tests/test_readme_golden.py:86: AssertionError</failure></testcase></testsuite></testsuites>

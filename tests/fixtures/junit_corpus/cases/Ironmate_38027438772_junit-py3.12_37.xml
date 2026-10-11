@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites><testsuite name="pytest" errors="0" failures="3" skipped="9" tests="180" time="7.573" timestamp="2026-10-10T05:26:19.431273+00:00" hostname="runnervmmprz5"><testcase classname="tests.test_marp_input_modes" name="test_input_modes_share_converter[file]" time="0.002"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '/tmp/pytest-of-runner/pytest-0/test_input_modes_share_convert0/out.pptx'">tests/test_marp_input_modes.py:28: in test_input_modes_share_converter
+    pptx_pipeline.main(args)
+pptx_pipeline.py:102: in main
+    result = run(source=None if inline is not None else args.source, text=inline,
+pptx_pipeline.py:81: in run
+    report = inspect(output)
+             ^^^^^^^^^^^^^^^
+pptx_inspect.py:16: in inspect
+    presentation = Presentation(path)
+                   ^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/api.py:31: in Presentation
+    presentation_part = Package.open(pptx).main_document_part
+                        ^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/opc/package.py:82: in open
+    return cls(pkg_file)._load()
+           ^^^^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/opc/package.py:160: in _load
+    pkg_xml_rels, parts = _PackageLoader.load(self._pkg_file, cast("Package", self))
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/opc/package.py:190: in load
+    return cls(pkg_file, package)._load()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/opc/package.py:194: in _load
+    parts, xml_rels = self._parts, self._xml_rels
+                      ^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/util.py:191: in __get__
+    value = self._fget(obj)
+            ^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/opc/package.py:222: in _parts
+    content_types = self._content_types
+                    ^^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/util.py:191: in __get__
+    value = self._fget(obj)
+            ^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/opc/package.py:207: in _content_types
+    return _ContentTypeMap.from_xml(self._package_reader[CONTENT_TYPES_URI])
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/opc/serialized.py:38: in __getitem__
+    return self._blob_reader[pack_uri]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/opc/serialized.py:187: in __getitem__
+    if pack_uri not in self._blobs:
+                       ^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/util.py:191: in __get__
+    value = self._fget(obj)
+            ^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/opc/serialized.py:194: in _blobs
+    with zipfile.ZipFile(self._pkg_file, "r") as z:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/zipfile/__init__.py:1378: in __init__
+    self.fp = io.open(file, filemode)
+              ^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/tmp/pytest-of-runner/pytest-0/test_input_modes_share_convert0/out.pptx'</failure></testcase><testcase classname="tests.test_marp_input_modes" name="test_input_modes_share_converter[text]" time="0.002"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '/tmp/pytest-of-runner/pytest-0/test_input_modes_share_convert1/out.pptx'">tests/test_marp_input_modes.py:28: in test_input_modes_share_converter
+    pptx_pipeline.main(args)
+pptx_pipeline.py:102: in main
+    result = run(source=None if inline is not None else args.source, text=inline,
+pptx_pipeline.py:81: in run
+    report = inspect(output)
+             ^^^^^^^^^^^^^^^
+pptx_inspect.py:16: in inspect
+    presentation = Presentation(path)
+                   ^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/api.py:31: in Presentation
+    presentation_part = Package.open(pptx).main_document_part
+                        ^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/opc/package.py:82: in open
+    return cls(pkg_file)._load()
+           ^^^^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/opc/package.py:160: in _load
+    pkg_xml_rels, parts = _PackageLoader.load(self._pkg_file, cast("Package", self))
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/opc/package.py:190: in load
+    return cls(pkg_file, package)._load()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/opc/package.py:194: in _load
+    parts, xml_rels = self._parts, self._xml_rels
+                      ^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/util.py:191: in __get__
+    value = self._fget(obj)
+            ^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/opc/package.py:222: in _parts
+    content_types = self._content_types
+                    ^^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/util.py:191: in __get__
+    value = self._fget(obj)
+            ^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/opc/package.py:207: in _content_types
+    return _ContentTypeMap.from_xml(self._package_reader[CONTENT_TYPES_URI])
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/opc/serialized.py:38: in __getitem__
+    return self._blob_reader[pack_uri]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/opc/serialized.py:187: in __getitem__
+    if pack_uri not in self._blobs:
+                       ^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/util.py:191: in __get__
+    value = self._fget(obj)
+            ^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/opc/serialized.py:194: in _blobs
+    with zipfile.ZipFile(self._pkg_file, "r") as z:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/zipfile/__init__.py:1378: in __init__
+    self.fp = io.open(file, filemode)
+              ^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/tmp/pytest-of-runner/pytest-0/test_input_modes_share_convert1/out.pptx'</failure></testcase><testcase classname="tests.test_marp_input_modes" name="test_input_modes_share_converter[stdin]" time="0.002"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '/tmp/pytest-of-runner/pytest-0/test_input_modes_share_convert2/out.pptx'">tests/test_marp_input_modes.py:28: in test_input_modes_share_converter
+    pptx_pipeline.main(args)
+pptx_pipeline.py:102: in main
+    result = run(source=None if inline is not None else args.source, text=inline,
+pptx_pipeline.py:81: in run
+    report = inspect(output)
+             ^^^^^^^^^^^^^^^
+pptx_inspect.py:16: in inspect
+    presentation = Presentation(path)
+                   ^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/api.py:31: in Presentation
+    presentation_part = Package.open(pptx).main_document_part
+                        ^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/opc/package.py:82: in open
+    return cls(pkg_file)._load()
+           ^^^^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/opc/package.py:160: in _load
+    pkg_xml_rels, parts = _PackageLoader.load(self._pkg_file, cast("Package", self))
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/opc/package.py:190: in load
+    return cls(pkg_file, package)._load()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/opc/package.py:194: in _load
+    parts, xml_rels = self._parts, self._xml_rels
+                      ^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/util.py:191: in __get__
+    value = self._fget(obj)
+            ^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/opc/package.py:222: in _parts
+    content_types = self._content_types
+                    ^^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/util.py:191: in __get__
+    value = self._fget(obj)
+            ^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/opc/package.py:207: in _content_types
+    return _ContentTypeMap.from_xml(self._package_reader[CONTENT_TYPES_URI])
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/opc/serialized.py:38: in __getitem__
+    return self._blob_reader[pack_uri]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/opc/serialized.py:187: in __getitem__
+    if pack_uri not in self._blobs:
+                       ^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/util.py:191: in __get__
+    value = self._fget(obj)
+            ^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/site-packages/pptx/opc/serialized.py:194: in _blobs
+    with zipfile.ZipFile(self._pkg_file, "r") as z:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/hostedtoolcache/Python/3.12.15/x64/lib/python3.12/zipfile/__init__.py:1378: in __init__
+    self.fp = io.open(file, filemode)
+              ^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '/tmp/pytest-of-runner/pytest-0/test_input_modes_share_convert2/out.pptx'</failure></testcase></testsuite></testsuites>
