@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import importlib
 from pathlib import Path
 from unittest import mock
 
@@ -9,6 +10,8 @@ import pytest
 
 from err_o_roadrunner import actions_log
 from err_o_roadrunner.triage import triage
+
+TRIAGE_MOD = importlib.import_module("err_o_roadrunner.triage")
 
 ROOT = Path(__file__).resolve().parents[1]
 CORPUS = ROOT / "tests" / "fixtures" / "junit_corpus"
@@ -45,8 +48,9 @@ def test_mutation_dropping_testsuite_collection_scan_misses_suite_error() -> Non
 </testsuite>"""
     path = CORPUS / "inputs" / "_suite_collection.xml"
     path.write_text(xml, encoding="utf-8")
-    with mock.patch(
-        "err_o_roadrunner.triage._junit_testsuite_collection_errors",
+    with mock.patch.object(
+        TRIAGE_MOD,
+        "_junit_testsuite_collection_errors",
         return_value=[],
     ):
         report = triage(
@@ -64,12 +68,10 @@ def test_mutation_dropping_testsuite_collection_scan_misses_suite_error() -> Non
 def test_mutation_dropping_dart_core_filter_pollutes_diff_hint() -> None:
     import re
 
-    from err_o_roadrunner.triage import _junit_diff_hint
-
     blob = "- 'Object' is from 'dart:core'.\n"
-    assert "dart:core" not in _junit_diff_hint(blob)
-    with mock.patch("err_o_roadrunner.triage.DART_NOISE_LINE_RE", re.compile("$^")):
-        hint = _junit_diff_hint(blob)
+    assert "dart:core" not in TRIAGE_MOD._junit_diff_hint(blob)
+    with mock.patch.object(TRIAGE_MOD, "DART_NOISE_LINE_RE", re.compile("$^")):
+        hint = TRIAGE_MOD._junit_diff_hint(blob)
     assert "dart:core" in hint
 
 
