@@ -51,8 +51,12 @@ def _strip_log_timestamp_prefix(line: str) -> str:
     return GH_LOG_TS_PREFIX.sub("", line, count=1)
 
 
+def _strip_cr_from_log_line(raw: str) -> str:
+    return raw.rstrip("\r")
+
+
 def normalize_actions_log_line(line: str) -> str:
-    line = line.rstrip("\r")
+    line = _strip_cr_from_log_line(line)
     line = _strip_log_timestamp_prefix(line)
     return strip_terminal_controls(line)
 
@@ -87,7 +91,7 @@ def preprocess_actions_log(text: str) -> tuple[list[_ParsedLine], bool]:
     parsed: list[_ParsedLine] = []
     gh_hits = 0
     for raw in raw_lines:
-        raw = raw.rstrip("\r")
+        raw = _strip_cr_from_log_line(raw)
         gh = _parse_gh_run_view_raw_line(raw)
         if gh is not None:
             gh_hits += 1

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuite name="pytest" tests="1" failures="1">
+  <testcase classname="tests.demo" name="test_x">
+    <failure message="assert 0">E   AssertionError: boom</failure>
+  </testcase>
+</testsuite>

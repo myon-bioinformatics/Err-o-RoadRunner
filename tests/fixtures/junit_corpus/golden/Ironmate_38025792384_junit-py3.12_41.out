@@ -1,9 +1,8 @@
 FOUND: exit code: 1
 FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38025792384_junit-py3.12_41.xml): 1
-FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38025792384_junit-py3.12_41.xml): AssertionError: assert 'myon-bioinformatics/cli_args' not in {'myon-bioinformatics/GitHub_api_Template', 'myon-bioinformatics/HelpYouBuildServer', 'myon-bioinformatics/LINENotifyA...n-bioinformatics/Qiita_API_Template', 'myon-bioinformatics/ascii_artist', 'myon-bioinformatics/audio_any2any_gui', ...}\nAssertionError: assert 'myon-bioinformatics/cli_args' not in {'myon-bioinformatics/GitHub_api_Tem
+FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38025792384_junit-py3.12_41.xml): AssertionError: assert 'myon-bioinformatics/cli_args' not in {'myon-bioinformatics/GitHub_api_Template', 'myon-bioinformatics/HelpYouBuildServer', 'myon-bioinformatics/LINENotifyA...n-bioinformatics/Qiita_API_Template', 'myon-bioinformatics/ascii_artist', 'myon-bioinformatics/audio_any2any_gui', ...}\ntests/test_vendor_catalog_snapshot.py:24: in test_catalog_does_not_claim_locked_installation\n   
 FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38025792384_junit-py3.12_41.xml): tests.test_vendor_catalog_snapshot
 FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38025792384_junit-py3.12_41.xml): AssertionError
-FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38025792384_junit-py3.12_41.xml): Error: assert 'myon-bioinformatics/cli_args' not in {'myon-bioinformatics/GitHub_api_Template', 'myon-bioinformatics/HelpYouBuildServer', 'myon-bioinformatics/LINENotifyA...n-bioinformatics/Qiita_API_Template', 'myon-bioinformatics/ascii_artist', 'myon-bioinformatics/audio_any2any_gui', ...}
 FOUND: python version: 3.12.3 (cpython)
 FOUND: node version: v22.14.0
 FOUND: gh version: gh version 2.102.0 (2026-09-30)
@@ -11,8 +10,9 @@ FOUND: environment variable count: 39
 FOUND: environment variable names: AGENT_TRANSCRIPTS, CARGO_HOME, CURSOR_AGENT, CURSOR_AGENT_SOCKET, CURSOR_CONVERSATION_ID, CURSOR_REQUEST_ID, CURSOR_RIPGREP_PATH, CURSOR_SPAWN_CWD_HOP, CURSOR_WORKLOAD_CGROUP, DISPLAY, EXEC_DAEMON_STARTUP_TRACEPARENT, FORCE_COLOR, GH_TELEMETRY, GIT_DISCOVERY_ACROSS_FILESYSTEM, GIT_LFS_SKIP_SMUDGE, HOME, LANG, LC_ALL, NO_COLOR, NVM_BIN, NVM_CD_FLAGS, NVM_DIR, NVM_INC, OLDPWD, PATH, PS1, PWD, PYTHONPATH, RUSTUP_HOME, RUST_VERSION, SHELL, SHLVL, TERM, USER, VNC_DPI, VNC_RESOLUTION, _, _ZO_DOCTOR, __CURSOR_SANDBOX_ENV_RESTORE
 NOT FOUND: junit errors (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38025792384_junit-py3.12_41.xml)
 NOT FOUND: junit skipped (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38025792384_junit-py3.12_41.xml)
+NOT FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38025792384_junit-py3.12_41.xml)
 NOT FOUND: junit system-err (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38025792384_junit-py3.12_41.xml)
 NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38025792384_junit-py3.12_41.xml)
 NOT FOUND: lock files in project root
 HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38025792384_junit-py3.12_41.xml): pytest/python
-HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38025792384_junit-py3.12_41.xml): AssertionError: assert 'myon-bioinformatics/cli_args' not in {'myon-bioinformatics/GitHub_api_Template', 'myon-bioinformatics/HelpYouBuildServer', 'myon-bioinformatics/LINENotifyA...n-bioinformatics/Qiita_API_Template', 'myon-bioinformatics/ascii_artist', 'myon-bioinformatics/audio_any2any_gui', ...}\nAssertionError: assert 'myon-bioinformatics/cli_args' not in {'myon-bioinformatics/GitHub_api_Tem
+HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38025792384_junit-py3.12_41.xml): AssertionError: assert 'myon-bioinformatics/cli_args' not in {'myon-bioinformatics/GitHub_api_Template', 'myon-bioinformatics/HelpYouBuildServer', 'myon-bioinformatics/LINENotifyA...n-bioinformatics/Qiita_API_Template', 'myon-bioinformatics/ascii_artist', 'myon-bioinformatics/audio_any2any_gui', ...}\ntests/test_vendor_catalog_snapshot.py:24: in test_catalog_does_not_claim_locked_installation\n   

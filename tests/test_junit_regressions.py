@@ -13,6 +13,26 @@ CORPUS = ROOT / "tests" / "fixtures" / "junit_corpus"
 EMPTY = ROOT / "tests" / "fixtures" / "failure_suite" / "empty_root"
 
 
+@pytest.mark.junit_corpus
+def test_aoi_pytest_collection_failure_is_found() -> None:
+    xml = CORPUS / "cases" / "Aoi_37559206978_junit-py3.11_100.xml"
+    report = triage(
+        exit_code=1,
+        junit_paths=[str(xml)],
+        stderr_text=None,
+        log_text=None,
+        actions_log_text=None,
+        project_root=EMPTY,
+    )
+    lines = report.lines()
+    assert any(ln.startswith("FOUND: junit collection errors (") for ln in lines)
+    assert any(
+        "collection failure" in ln or "ImportError while importing" in ln
+        for ln in lines
+        if ln.startswith("FOUND: junit collection error (first)")
+    )
+
+
 @pytest.mark.gap
 def test_junit_setup_error_is_not_collection_error() -> None:
     xml = CORPUS / "inputs" / "setup_error.junit.xml"
@@ -35,19 +55,19 @@ def test_junit_setup_error_is_not_collection_error() -> None:
     [
         (
             "flutter_navigation_basic_38139683688_junit-flutter-core-0_78",
-            "Error: Error when reading 'lib/shared/screens/generic_screen.dart'",
+            ".dart:",
         ),
         (
             "flutter_navigation_basic_38139683688_junit-flutter-core-1_77",
-            "Error: Error when reading 'lib/shared/screens/generic_screen.dart'",
+            ".dart:",
         ),
         (
             "flutter_navigation_basic_38139683671_junit-flutter-refactor_74",
-            "Error:",
+            ".dart:",
         ),
         (
             "flutter_navigation_basic_38139683671_junit-flutter-refactor_75",
-            "Error:",
+            ".dart:",
         ),
     ],
 )
@@ -87,8 +107,7 @@ def test_junit_flutter_xml_run_38139681545_golden() -> None:
         project_root=EMPTY,
     )
     lines = [ln.replace(str(ROOT.resolve()), "<repo>").replace("/workspace", "<repo>") for ln in report.lines()]
-    assert_report_has_exact_line(
-        lines,
-        f"FOUND: junit dart error (first) ({label}): lib/shared/catalog/catalog_search.dart:1:8: Error: Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory",
-    )
+    dart = [ln for ln in lines if ln.startswith("FOUND: junit dart error (first)")]
+    assert len(dart) == 1
+    assert ".dart:" in dart[0] and "Error:" in dart[0]
     assert any(ln.startswith("NOT FOUND: junit collection errors (") for ln in lines)

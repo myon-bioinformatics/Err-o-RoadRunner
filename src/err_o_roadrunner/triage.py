@@ -462,7 +462,7 @@ PYTEST_E_EXC_LINE_RE = re.compile(
 PYTEST_E_ASSERT_LINE_RE = re.compile(r"^\s*E\s+assert\b")
 JUNIT_DIFF_LINE_RE = re.compile(r"^\s*[+-]\s+")
 DART_ERROR_LINE_RE = re.compile(
-    r"(?P<line>(?:\S+\.dart:\d+:\d+:\s*)?Error:\s*.+)$"
+    r"^(?P<line>\S+\.dart:\d+:\d+:\s+Error:\s*.+)$"
 )
 DART_NOISE_LINE_RE = re.compile(
     r"^-\s+'Object'\s+is\s+from\s+'dart:core'\."
@@ -505,10 +505,13 @@ def _junit_flatten_for_report(text: str, limit: int = 400) -> str:
 
 
 def _junit_snippet(elem: ET.Element, testcase: ET.Element | None = None) -> str:
+    if testcase is not None:
+        blob = _junit_failure_blob(testcase, elem)
+        if blob.strip():
+            return _junit_flatten_for_report(blob)
+        return "failure"
     msg = sanitize_report_text((elem.attrib.get("message") or "").strip())
     body = sanitize_report_text((elem.text or "").strip())
-    if testcase is not None:
-        body = _junit_failure_blob(testcase, elem)
     if msg and body and body not in msg:
         return _junit_flatten_for_report(f"{msg}\n{body}")
     if msg:
@@ -516,6 +519,14 @@ def _junit_snippet(elem: ET.Element, testcase: ET.Element | None = None) -> str:
     if body:
         return _junit_flatten_for_report(body)
     return "failure"
+
+
+def _junit_is_pytest_collection_failure(error_elem: ET.Element, blob: str) -> bool:
+    msg = (error_elem.attrib.get("message") or "").strip().lower()
+    if msg == "collection failure":
+        return True
+    low = blob.lower()
+    return "importerror while importing" in low or "collection error" in low
 
 
 def _junit_pytest_exception_type(blob: str) -> str:
@@ -553,7 +564,7 @@ def _junit_dart_error_line(blob: str) -> str:
             continue
         if stripped.startswith("Try correcting") or stripped.startswith("^"):
             continue
-        m = DART_ERROR_LINE_RE.search(stripped)
+        m = DART_ERROR_LINE_RE.match(stripped)
         if m:
             return m.group("line")[:400]
     return ""
@@ -626,8 +637,14 @@ def parse_junit_xml(text: str, source: str, report: Report) -> None:
                         blob = _junit_failure_blob(testcase, child)
                         failure_blobs.append(blob)
                         errors.append(_junit_snippet(child, testcase))
-                        if "collection error" in blob.lower() or "ImportError while loading" in blob:
-                            collection_errors.append(label)
+                        if _junit_is_pytest_collection_failure(child, blob):
+                            msg = (child.attrib.get("message") or "").strip()
+                            if msg:
+                                collection_errors.append(
+                                    _junit_flatten_for_report(f"{msg}\n{blob[:200]}")
+                                )
+                            else:
+                                collection_errors.append(label)
                     elif child_tag == "skipped":
                         msg = sanitize_report_text((child.attrib.get("message") or "").strip())
                         body = sanitize_report_text((child.text or "").strip())

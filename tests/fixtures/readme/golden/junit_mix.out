@@ -2,7 +2,7 @@ FOUND: exit code: 1
 FOUND: junit failures (<repo>/tests/fixtures/readme/inputs/junit_mix.xml): 1
 FOUND: junit failure (first) (<repo>/tests/fixtures/readme/inputs/junit_mix.xml): assert 1 == 0
 FOUND: junit errors (<repo>/tests/fixtures/readme/inputs/junit_mix.xml): 1
-FOUND: junit error (first) (<repo>/tests/fixtures/readme/inputs/junit_mix.xml): boom\nboom\nboom
+FOUND: junit error (first) (<repo>/tests/fixtures/readme/inputs/junit_mix.xml): boom\nboom
 FOUND: junit skipped (<repo>/tests/fixtures/readme/inputs/junit_mix.xml): 1
 FOUND: junit skipped (first) (<repo>/tests/fixtures/readme/inputs/junit_mix.xml): not today
 FOUND: junit testcase classname (first) (<repo>/tests/fixtures/readme/inputs/junit_mix.xml): demo
