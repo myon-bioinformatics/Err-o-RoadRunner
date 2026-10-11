@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+import io
+import os
 import subprocess
 import sys
+import textwrap
 from pathlib import Path
 
 import pytest
@@ -13,7 +16,11 @@ from err_o_roadrunner.triage import (
     EXIT_USAGE,
     MAX_FRAMES,
     MAX_READ_BYTES,
+    Report,
+    _split_python_trace_blocks,
     main,
+    read_stream_arg,
+    strip_terminal_controls,
     triage,
 )
 
@@ -329,18 +336,21 @@ def test_regression_junit_skipped_reported() -> None:
 
 @pytest.mark.failure
 def test_regression_identifier_lines_are_hints_not_exception_type() -> None:
-    text = """\
-Traceback (most recent call last):
-  File "a.py", line 2, in main
-    pass
-not_a_real_exception
-ValueError: final error
-"""
+    text = textwrap.dedent(
+        """\
+        Traceback (most recent call last):
+          File "a.py", line 2, in main
+            pass
+        not_a_real_exception
+        ValueError: final error
+        """
+    ).lstrip("\n")
     report = triage(exit_code=1, stderr_text=text, log_text=None, junit_paths=[], project_root=ROOT)
     joined = "\n".join(report.lines())
     assert "FOUND: python exception type: ValueError" in joined
     assert "FOUND: python exception type: not_a_real_exception" not in joined
     assert "HINT: uncertain traceback line: not_a_real_exception" in joined
+    assert "HINT: trailing colon line: ValueError: final error" not in joined
 
 
 @pytest.mark.failure
@@ -432,3 +442,116 @@ def test_regression_osc_stripped_from_stderr_traceback() -> None:
     joined = "\n".join(report.lines())
     assert "\x1b]" not in joined
     assert "FOUND: python exception type: RuntimeError" in joined
+
+
+def _assert_no_control_chars(text: str) -> None:
+    for ch in text:
+        code = ord(ch)
+        if ch in "\t\n":
+            continue
+        assert code >= 32 and code != 0x7F and not (0x80 <= code <= 0x9F)
+    assert "\x1b" not in text
+
+
+@pytest.mark.failure
+def test_regression_log_colon_line_does_not_replace_exception_type() -> None:
+    text = """\
+Traceback (most recent call last):
+  File "a.py", line 1, in main
+    raise ValueError("real")
+ValueError: real
+INFO: retrying in 5s
+"""
+    report = triage(exit_code=1, stderr_text=text, log_text=None, junit_paths=[], project_root=ROOT)
+    joined = "\n".join(report.lines())
+    assert "FOUND: python exception type: ValueError" in joined
+    assert "FOUND: python exception type: INFO" not in joined
+    assert "HINT: trailing colon line: INFO: retrying in 5s" in joined
+
+
+@pytest.mark.adversarial
+def test_regression_c1_osc_dcs_st_and_unterminated_osc_stripped() -> None:
+    raw = (
+        "boom\u009d8;;https://evil\u009c"
+        "\u0090payload\u009c"
+        "\x9b31m"
+        "\x1b]8;;https://x"
+        "\x1bc"
+        "tail"
+    )
+    cleaned = strip_terminal_controls(raw)
+    assert cleaned == "boomtail"
+    report = Report()
+    report.add_found(cleaned)
+    _assert_no_control_chars("\n".join(report.lines()))
+
+
+@pytest.mark.adversarial
+def test_regression_fifo_not_treated_as_regular_file(tmp_path: Path) -> None:
+    fifo = tmp_path / "pipe.fifo"
+    fifo_path = os.fsencode(fifo)
+    os.mkfifo(fifo_path)
+    proc = run_cli("--exit-code", "1", "--log", str(fifo))
+    assert proc.returncode == EXIT_OK
+    assert "not a regular file" in proc.stdout
+
+
+@pytest.mark.adversarial
+def test_regression_stdin_read_cap_and_nul(monkeypatch: pytest.MonkeyPatch) -> None:
+    payload = b"\x00" + (b"x" * (MAX_READ_BYTES + 10))
+    monkeypatch.setattr(sys, "stdin", type("Stdin", (), {"buffer": io.BytesIO(payload)})())
+    report = Report()
+    read_stream_arg("-", report, "stderr")
+    joined = "\n".join(report.lines())
+    assert f"input truncated (size > {MAX_READ_BYTES}): stderr stdin" in joined
+    assert "binary or nul bytes present in: stderr stdin" in joined
+
+
+@pytest.mark.failure
+def test_regression_chain_marker_splits_trace_blocks() -> None:
+    text = """\
+Traceback (most recent call last):
+  File "a.py", line 1, in first
+ValueError: one
+The above exception was the direct cause of the following exception:
+Traceback (most recent call last):
+  File "b.py", line 2, in second
+TypeError: two
+"""
+    blocks = _split_python_trace_blocks(text)
+    assert len(blocks) == 2
+    report = triage(exit_code=1, stderr_text=text, log_text=None, junit_paths=[], project_root=ROOT)
+    joined = "\n".join(report.lines())
+    assert "python exception type (primary): ValueError" in joined
+    assert "python exception type (chained-1): TypeError" in joined
+
+
+@pytest.mark.failure
+def test_regression_syntax_error_branch_without_traceback_header() -> None:
+    text = "SyntaxError: unexpected EOF while parsing\n"
+    report = triage(exit_code=1, stderr_text=text, log_text=None, junit_paths=[], project_root=ROOT)
+    joined = "\n".join(report.lines())
+    assert "FOUND: python exception type: SyntaxError" in joined
+    assert "NOT FOUND: recognized failure pattern" not in joined
+
+
+@pytest.mark.failure
+def test_regression_node_bracket_rejection_module_not_found_and_brace_frame() -> None:
+    text = """\
+[UnhandledPromiseRejection: missing export]
+    at ModuleJob.run (node:internal/modules/esm/module_job:222:25) {
+code: 'MODULE_NOT_FOUND'
+"""
+    report = triage(exit_code=1, stderr_text=None, log_text=text, junit_paths=[], project_root=ROOT)
+    joined = "\n".join(report.lines())
+    assert "[UnhandledPromiseRejection:" in joined
+    assert "FOUND: node error code: MODULE_NOT_FOUND" in joined
+    assert "node:internal/modules/esm/module_job:222" in joined
+
+
+@pytest.mark.adversarial
+def test_regression_dcs_c1_csi_removed_from_report_output() -> None:
+    text = "\x1bP1;2;3\x1b\\\x9b0mTraceback (most recent call last):\n  File \"a.py\", line 1, in f\nValueError: x\n"
+    report = triage(exit_code=1, stderr_text=text, log_text=None, junit_paths=[], project_root=ROOT)
+    _assert_no_control_chars("\n".join(report.lines()))
+    assert "FOUND: python exception type: ValueError" in "\n".join(report.lines())

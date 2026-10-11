@@ -23,25 +23,34 @@ MAX_XML_TAGS = 100_000
 MAX_FRAMES = 2_000
 MAX_ENV_NAMES_LISTED = 40
 
-# Terminal control sequences (CSI, OSC incl. OSC 8, DCS, C1 CSI) and other C0 controls.
-_CSI_SEQUENCE = r"\[[\x30-\x3f]*[\x20-\x2f]*[\x40-\x7e]"
-CONTROL_PATTERNS = (
-    re.compile(r"\x1b\][^\x07\x1b]*(?:\x07|\x1b\\)"),
-    re.compile(r"\x1bP[^\x1b]*\x1b\\"),
-    re.compile(r"\x1b" + _CSI_SEQUENCE),
-    re.compile(r"\x9b" + _CSI_SEQUENCE),
-    re.compile(r"[\x00-\x08\x0b-\x0c\x0e-\x1a\x1c-\x1f\x7f]"),
+# Terminal sequences stripped before removing remaining C0/C1 controls.
+_CSI_BODY = r"[\x30-\x3f]*[\x20-\x2f]*[\x40-\x7e]"
+TERMINAL_SEQUENCE_PATTERNS = (
+    re.compile(r"\x1b\][^\x07\x1b\n]*(?:\x07|\x1b\\)?"),
+    re.compile(r"\x1bP[^\x1b\n]*(?:\x1b\\)?"),
+    re.compile(r"\x1b\[" + _CSI_BODY),
+    re.compile(r"\x9b" + _CSI_BODY),
+    re.compile(r"\u009d[^\u009c\n]*\u009c?"),
+    re.compile(r"\u0090[^\u009c\n]*\u009c?"),
+    re.compile(r"\x1bc"),
+)
+PYTHON_BUILTIN_EXCEPTIONS = frozenset(
+    {
+        "BaseException",
+        "Exception",
+        "GeneratorExit",
+        "KeyboardInterrupt",
+        "SystemExit",
+        "StopIteration",
+        "StopAsyncIteration",
+    }
 )
 
 PYTHON_FRAME_RE = re.compile(
     r'^  File "(?P<file>[^"]+)", line (?P<line>\d+)(?:, in (?P<func>.*))?$'
 )
-PYTHON_EXCEPTION_FOUND_RE = re.compile(
-    r"^(?P<exc>[A-Za-z_][\w.]*(?:Error|Exception|Warning|Interrupt|Exit|StopIteration|"
-    r"KeyboardInterrupt|SystemExit))(?::\s*(?P<msg>.*))?$"
-)
-PYTHON_EXCEPTION_COLON_RE = re.compile(
-    r"^(?P<exc>[A-Za-z_][\w.]*):\s*(?P<msg>.*)$"
+PYTHON_EXCEPTION_SUMMARY_RE = re.compile(
+    r"^(?P<exc>[A-Za-z_][\w.]*)(?::\s*(?P<msg>.*))?$"
 )
 PYTHON_CHAIN_MARKERS = (
     "During handling of the above exception, another exception occurred:",
@@ -54,9 +63,16 @@ NODE_ERROR_HEADLINE_RE = re.compile(
     r"^(?P<head>(?:[A-Za-z_][\w]*Error|Error|UnhandledPromiseRejectionWarning|Unhandled\s+rejection(?:\s+\([^)]+\))?))\s*:\s*(?P<rest>.*)$",
     re.IGNORECASE,
 )
-NODE_ERR_CODE_RE = re.compile(r"\bcode:\s*['\"]?(ERR_[A-Z0-9_]+)['\"]?", re.IGNORECASE)
+NODE_BRACKET_REJECTION_RE = re.compile(
+    r"^\[UnhandledPromiseRejection:\s*(?P<rest>.*)\]\s*$",
+    re.IGNORECASE,
+)
+NODE_ERR_CODE_RE = re.compile(
+    r"\bcode:\s*['\"]?(ERR_[A-Z0-9_]+|MODULE_NOT_FOUND)['\"]?",
+    re.IGNORECASE,
+)
 NODE_AT_FRAME_RE = re.compile(
-    r"^\s*at (?:async )?(?:(?P<func>[^()]+?) \()?(?P<loc>.+):(?P<line>\d+):(?P<col>\d+)\)?\s*$"
+    r"^\s*at (?:async )?(?:(?P<func>[^()]+?) \()?(?P<loc>.+):(?P<line>\d+):(?P<col>\d+)\)?(?: \{)?\s*$"
 )
 
 LOCK_FILES = (
@@ -109,9 +125,39 @@ def sanitize_report_text(text: str) -> str:
 
 def strip_terminal_controls(text: str) -> str:
     out = text
-    for pattern in CONTROL_PATTERNS:
+    for pattern in TERMINAL_SEQUENCE_PATTERNS:
         out = pattern.sub("", out)
-    return out
+    cleaned: list[str] = []
+    for ch in out:
+        code = ord(ch)
+        if ch in "\t\n":
+            cleaned.append(ch)
+        elif code < 32 or code == 0x7F or 0x80 <= code <= 0x9F:
+            continue
+        else:
+            cleaned.append(ch)
+    return "".join(cleaned)
+
+
+def is_python_exception_type_name(name: str) -> bool:
+    if name in PYTHON_BUILTIN_EXCEPTIONS:
+        return True
+    return bool(
+        re.fullmatch(
+            r"[A-Za-z_][\w.]*(?:Error|Exception|Warning|Interrupt|Exit)",
+            name,
+        )
+    )
+
+
+def parse_exception_summary_line(line: str) -> tuple[str, str] | None:
+    match = PYTHON_EXCEPTION_SUMMARY_RE.match(line.strip())
+    if not match:
+        return None
+    exc = match.group("exc")
+    if not is_python_exception_type_name(exc):
+        return None
+    return exc, (match.group("msg") or "").strip()
 
 
 def strip_ansi(text: str) -> str:
@@ -142,10 +188,23 @@ def safe_read_text(path: Path, report: Report) -> str | None:
         size = st.st_size
         if size > MAX_READ_BYTES:
             report.add_found(f"input truncated (size {size} > {MAX_READ_BYTES}): {path}")
-        flags = os.O_RDONLY
+        flags = os.O_RDONLY | os.O_NONBLOCK
         if hasattr(os, "O_NOFOLLOW"):
             flags |= os.O_NOFOLLOW
         fd = os.open(raw, flags)
+        try:
+            fst = os.fstat(fd)
+        except OSError:
+            os.close(fd)
+            raise
+        if fst.st_dev != st.st_dev or fst.st_ino != st.st_ino:
+            os.close(fd)
+            report.add_not_found(f"file identity changed after open: {path}")
+            return None
+        if not stat.S_ISREG(fst.st_mode):
+            os.close(fd)
+            report.add_not_found(f"not a regular file after open: {path}")
+            return None
         try:
             with os.fdopen(fd, "rb") as fh:
                 data = fh.read(MAX_READ_BYTES)
@@ -166,10 +225,13 @@ def read_stream_arg(value: str | None, report: Report, label: str) -> str | None
         return None
     if value == "-":
         try:
-            data = sys.stdin.buffer.read(MAX_READ_BYTES)
+            data = sys.stdin.buffer.read(MAX_READ_BYTES + 1)
         except OSError as exc:
             report.add_not_found(f"{label} stdin ({type(exc).__name__})")
             return None
+        if len(data) > MAX_READ_BYTES:
+            report.add_found(f"input truncated (size > {MAX_READ_BYTES}): {label} stdin")
+            data = data[:MAX_READ_BYTES]
         text = data.decode("utf-8", errors="replace")
         if b"\x00" in data:
             report.add_found(f"binary or nul bytes present in: {label} stdin")
@@ -219,8 +281,8 @@ def _parse_one_python_block(tb: list[str], report: Report, label: str) -> tuple[
     frames: list[StackFrame] = []
     exc_type = ""
     exc_msg = ""
-    uncertain_lines: list[str] = []
     frame_cap_reported = False
+    tail_lines: list[str] = []
     start = 1 if tb and tb[0].startswith("Traceback") else 0
     for line in tb[start:]:
         m = PYTHON_FRAME_RE.match(line)
@@ -237,21 +299,22 @@ def _parse_one_python_block(tb: list[str], report: Report, label: str) -> tuple[
                 report.add_found(_report_key(label, f"python traceback frame cap reached ({MAX_FRAMES})"))
                 frame_cap_reported = True
             continue
+        if re.match(r"^    \S", line):
+            continue
         stripped = line.strip()
         if not stripped or stripped.startswith("^"):
             continue
-        m_colon = PYTHON_EXCEPTION_COLON_RE.match(stripped)
-        if m_colon:
-            exc_type = m_colon.group("exc")
-            exc_msg = (m_colon.group("msg") or "").strip()
+        tail_lines.append(stripped)
+
+    for stripped in tail_lines:
+        parsed = parse_exception_summary_line(stripped)
+        if parsed:
+            exc_type, exc_msg = parsed
             continue
-        m_found = PYTHON_EXCEPTION_FOUND_RE.match(stripped)
-        if m_found and not exc_type:
-            exc_type = m_found.group("exc")
-            exc_msg = (m_found.group("msg") or "").strip()
-            continue
-        if re.match(r"^[A-Za-z_][\w.]*$", stripped):
-            uncertain_lines.append(stripped)
+        if re.match(r"^[A-Za-z_][\w.]*:", stripped):
+            report.add_hint(f"{_report_key(label, 'trailing colon line')}: {stripped}")
+        elif re.match(r"^[A-Za-z_][\w.]*$", stripped):
+            report.add_hint(f"{_report_key(label, 'uncertain traceback line')}: {stripped}")
 
     if exc_type:
         report.add_found(f"{_report_key(label, 'python exception type')}: {exc_type}")
@@ -268,9 +331,6 @@ def _parse_one_python_block(tb: list[str], report: Report, label: str) -> tuple[
         report.add_found(f"{_report_key(label, 'python traceback frame count')}: {len(frames)}")
     else:
         report.add_not_found(_report_key(label, "python stack frames"))
-
-    for junk in uncertain_lines:
-        report.add_hint(f"{_report_key(label, 'uncertain traceback line')}: {junk}")
 
     return exc_type, exc_msg
 
@@ -337,6 +397,9 @@ def parse_node_stack(text: str, report: Report) -> None:
                 error_lines.append(f"{headline}: {rest}")
             else:
                 error_lines.append(f"{headline}:")
+        m_bracket = NODE_BRACKET_REJECTION_RE.match(stripped)
+        if m_bracket:
+            error_lines.append(f"[UnhandledPromiseRejection: {m_bracket.group('rest')}]")
         m_code = NODE_ERR_CODE_RE.search(stripped)
         if m_code:
             err_codes.append(m_code.group(1))
@@ -448,6 +511,8 @@ def _looks_like_node_failure(text: str) -> bool:
         if NODE_ERROR_HEADLINE_RE.match(stripped):
             return True
     if NODE_ERR_CODE_RE.search(text):
+        return True
+    if NODE_BRACKET_REJECTION_RE.search(text):
         return True
     return bool(re.search(r"\n\s*at .+:\d+:\d+", text))
 
