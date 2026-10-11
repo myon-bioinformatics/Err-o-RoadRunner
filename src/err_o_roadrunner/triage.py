@@ -26,12 +26,15 @@ MAX_ENV_NAMES_LISTED = 40
 # Terminal sequences stripped before removing remaining C0/C1 controls.
 _CSI_BODY = r"[\x30-\x3f]*[\x20-\x2f]*[\x40-\x7e]"
 TERMINAL_SEQUENCE_PATTERNS = (
-    re.compile(r"\x1b\][^\x07\x1b\n]*(?:\x07|\x1b\\)?"),
-    re.compile(r"\x1bP[^\x1b\n]*(?:\x1b\\)?"),
+    re.compile(r"\x1b\][^\x07\x1b\n\u009c]*(?:\x07|\x1b\\|\u009c)?"),
+    re.compile(r"\x1bP[^\x1b\n\u009c]*(?:\x1b\\|\u009c)?"),
     re.compile(r"\x1b\[" + _CSI_BODY),
     re.compile(r"\x9b" + _CSI_BODY),
     re.compile(r"\u009d[^\u009c\n]*\u009c?"),
     re.compile(r"\u0090[^\u009c\n]*\u009c?"),
+    re.compile(r"\x1b_[^\n\u009c]*(?:\x1b\\|\u009c)?"),
+    re.compile(r"\x1b\^[^\n\u009c]*(?:\x1b\\|\u009c)?"),
+    re.compile(r"\x1bX[^\n\u009c]*(?:\x1b\\|\u009c)?"),
     re.compile(r"\x1bc"),
 )
 PYTHON_BUILTIN_EXCEPTIONS = frozenset(
@@ -309,7 +312,14 @@ def _parse_one_python_block(tb: list[str], report: Report, label: str) -> tuple[
     for stripped in tail_lines:
         parsed = parse_exception_summary_line(stripped)
         if parsed:
-            exc_type, exc_msg = parsed
+            name, msg = parsed
+            if name.endswith("Warning"):
+                report.add_hint(f"{_report_key(label, 'warning line after traceback')}: {stripped}")
+                continue
+            if not exc_type:
+                exc_type, exc_msg = name, msg
+            else:
+                report.add_hint(f"{_report_key(label, 'additional exception line')}: {stripped}")
             continue
         if re.match(r"^[A-Za-z_][\w.]*:", stripped):
             report.add_hint(f"{_report_key(label, 'trailing colon line')}: {stripped}")
@@ -594,6 +604,7 @@ def triage(
     exit_code: int | None,
     stderr_text: str | None,
     log_text: str | None,
+    actions_log_text: str | None = None,
     junit_paths: Sequence[str],
     project_root: Path | None,
 ) -> Report:
@@ -612,11 +623,11 @@ def triage(
     if log_text is not None:
         texts.append(("log", log_text))
 
-    if not texts and not junit_paths:
+    if not texts and not junit_paths and actions_log_text is None:
         if exit_code == 0:
             report.add_not_found("failure evidence (none supplied)")
         else:
-            report.add_not_found("failure evidence (no stderr, log, or junit)")
+            report.add_not_found("failure evidence (no stderr, log, junit, or actions log)")
 
     for label, text in texts:
         text = strip_terminal_controls(text)
@@ -624,6 +635,14 @@ def triage(
             report.add_not_found(f"{label} text (empty)")
             continue
         detect_and_parse_log(text, report)
+
+    if actions_log_text is not None:
+        from err_o_roadrunner.actions_log import parse_actions_log
+
+        if not actions_log_text.strip():
+            report.add_not_found("actions log text (empty)")
+        else:
+            parse_actions_log(actions_log_text, "actions-log", report)
 
     for raw_path in junit_paths:
         path = Path(raw_path)
@@ -658,6 +677,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="Log file path (same safety rules as --stderr).",
     )
     parser.add_argument(
+        "--actions-log",
+        metavar="PATH",
+        help="Downloaded GitHub Actions job log (same safety rules as --stderr).",
+    )
+    parser.add_argument(
         "--junit",
         action="append",
         default=[],
@@ -686,6 +710,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     report = Report()
     stderr_text = read_stream_arg(args.stderr, report, "stderr")
     log_text = read_stream_arg(args.log, report, "log")
+    actions_log_text = read_stream_arg(args.actions_log, report, "actions-log")
 
     root: Path | None
     try:
@@ -701,6 +726,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         exit_code=args.exit_code,
         stderr_text=stderr_text,
         log_text=log_text,
+        actions_log_text=actions_log_text,
         junit_paths=args.junit,
         project_root=root,
     )

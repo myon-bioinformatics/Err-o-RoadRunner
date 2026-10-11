@@ -2,7 +2,7 @@
 
 from err_o_roadrunner.triage import EXIT_OK, EXIT_USAGE, Report, main, triage
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 __all__ = [
     "__version__",

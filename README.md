@@ -31,7 +31,7 @@ Researching the cause of a Python, Node or GitHub Actions CI failure currently t
 
 ## Status
 
-**First slice (in progress):** read-only triage CLI for Python tracebacks, basic Node stacks, and JUnit XML. GitHub Actions log parsing is not implemented yet.
+**Current slice:** read-only triage for Python tracebacks, Node stacks, JUnit XML, and downloaded GitHub Actions job logs (`--actions-log`).
 
 ## CLI usage
 
@@ -52,6 +52,7 @@ python -m err_o_roadrunner --exit-code 1 --log failure.log --project-root .
 | `--exit-code N` | Exit code from the failed command |
 | `--stderr PATH` | Stderr capture file (`-` for stdin) |
 | `--log PATH` | Log file (same safety rules as stderr) |
+| `--actions-log PATH` | Downloaded GitHub Actions job log (`gh run view --log`) |
 | `--junit PATH` | JUnit XML file (repeatable) |
 | `--project-root DIR` | Directory checked for lock files (default: `.`) |
 

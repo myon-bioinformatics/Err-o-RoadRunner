@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/workspace/tests/fixtures/failure_suite/inputs/_imp.py", line 1, in <module>
+    from json import NoSuchName
+ImportError: cannot import name 'NoSuchName' from 'json' (/usr/lib/python3.12/json/__init__.py)
