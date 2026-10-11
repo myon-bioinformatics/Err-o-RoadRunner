@@ -4,11 +4,14 @@ build-backend = "hatchling.build"
 
 [project]
 name = "err-o-roadrunner"
-version = "0.0.0"
-description = "Error-triggered triage tool (repository skeleton)"
+version = "0.1.0"
+description = "Error-triggered triage tool (read-only failure report)"
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
+
+[project.scripts]
+err-o-roadrunner = "err_o_roadrunner.triage:main"
 
 [project.optional-dependencies]
 test = ["pytest>=8,<10"]
@@ -18,3 +21,10 @@ packages = ["src/err_o_roadrunner"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+python_files = ["test_*.py"]
+norecursedirs = [".git", ".venv", "vendor", "tests/fixtures/readme/inputs"]
+markers = [
+    "success: triage with no or minimal failure evidence",
+    "failure: triage with real tracebacks, junit, or node errors",
+    "adversarial: malformed, huge, or hostile inputs must not crash triage",
+]

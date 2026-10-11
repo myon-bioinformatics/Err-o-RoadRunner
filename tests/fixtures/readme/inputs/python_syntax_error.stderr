@@ -1,0 +1,4 @@
+  File "/workspace/tests/fixtures/readme/inputs/bad_syntax.py", line 1
+    print('unclosed
+          ^
+SyntaxError: unterminated string literal (detected at line 1)

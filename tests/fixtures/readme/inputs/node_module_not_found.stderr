@@ -1,0 +1,13 @@
+Error [ERR_MODULE_NOT_FOUND]: Cannot find package 'missing-xyz-module-123' imported from /workspace/[eval]
+    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:268:9)
+    at packageResolve (node:internal/modules/esm/resolve:768:81)
+    at moduleResolve (node:internal/modules/esm/resolve:854:18)
+    at defaultResolve (node:internal/modules/esm/resolve:984:11)
+    at ModuleLoader.defaultResolve (node:internal/modules/esm/loader:685:12)
+    at #cachedDefaultResolve (node:internal/modules/esm/loader:634:25)
+    at ModuleLoader.resolve (node:internal/modules/esm/loader:617:38)
+    at ModuleLoader.getModuleJobForImport (node:internal/modules/esm/loader:273:38)
+    at onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:577:36)
+    at TracingChannel.tracePromise (node:diagnostics_channel:344:14) {
+  code: 'ERR_MODULE_NOT_FOUND'
+}

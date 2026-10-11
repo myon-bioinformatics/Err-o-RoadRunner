@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="mix" tests="3" failures="1" errors="1" skipped="1">
+  <testcase classname="demo" name="fail_one">
+    <failure message="assert 1 == 0" type="AssertionError"/>
+  </testcase>
+  <testcase classname="demo" name="err_one">
+    <error message="boom" type="RuntimeError">boom</error>
+  </testcase>
+  <testcase classname="demo" name="skip_one">
+    <skipped message="not today"/>
+  </testcase>
+</testsuite>
