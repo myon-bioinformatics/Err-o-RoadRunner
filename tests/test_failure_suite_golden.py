@@ -31,6 +31,9 @@ def normalize(text: str) -> str:
             lines.append("FOUND: environment variable count: <runtime>")
         elif line.startswith("FOUND: environment variable names:"):
             lines.append("FOUND: environment variable names: <runtime>")
+        elif "node stack frame" in line or line.startswith("FOUND: node error"):
+            line = re.sub(r"node:internal/[^:\s]+:\d+", "<node-internal>", line)
+            lines.append(line)
         else:
             lines.append(line)
     return "\n".join(lines) + "\n"

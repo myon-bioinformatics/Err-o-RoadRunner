@@ -138,3 +138,19 @@ def test_osc_terminated_by_c1_st_stripped() -> None:
 def test_apc_pm_sos_sequences_stripped() -> None:
     raw = "a\x1b_Payload\x9cb\x1b^PM\x9cc\x1bXSOS\x9cd"
     assert strip_terminal_controls(raw) == "abcd"
+
+
+@pytest.mark.gap
+def test_actions_log_preprocess_strips_bom_and_controls() -> None:
+    from err_o_roadrunner.actions_log import preprocess_actions_log
+
+    raw = "\ufeff2026-10-11T13:00:00.0000000Z \x1b[31merror\x1b[0m\n"
+    records, _ = preprocess_actions_log(raw)
+    assert [rec.text for rec in records] == ["error"]
+
+
+@pytest.mark.gap
+def test_actions_log_line_crlf_rstrip_required() -> None:
+    from err_o_roadrunner.actions_log import normalize_actions_log_line
+
+    assert normalize_actions_log_line("payload\r") == "payload"

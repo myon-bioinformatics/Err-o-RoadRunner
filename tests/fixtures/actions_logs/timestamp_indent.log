@@ -1,0 +1,4 @@
+2026-10-11T13:00:00.1234567Z ##[group]Run pytest -q
+2026-10-11T13:00:00.2000000Z ##[endgroup]
+2026-10-11T13:00:01.1234567Z     leading spaces preserved
+2026-10-11T13:00:02.0000000Z ##[error]Process completed with exit code 1.

@@ -1,0 +1,27 @@
+[
+  {
+    "id": "browser_test_kit",
+    "log": "browser-test-kit_114082816243.log",
+    "golden": "browser-test-kit_114082816243.out"
+  },
+  {
+    "id": "gh_identity",
+    "log": "gh_identity_114465527181.log",
+    "golden": "gh_identity_114465527181.out"
+  },
+  {
+    "id": "flutter_npm_install",
+    "log": "flutter_navigation_basic_114481586746.log",
+    "golden": "flutter_navigation_basic_114481586746.out"
+  },
+  {
+    "id": "flutter_pub_get",
+    "log": "flutter_navigation_basic_114470798370.log",
+    "golden": "flutter_navigation_basic_114470798370.out"
+  },
+  {
+    "id": "gh_identity_gh_run_view",
+    "log": "gh_identity_114465527181_gh_run_view.log",
+    "golden": "gh_identity_114465527181_gh_run_view.out"
+  }
+]

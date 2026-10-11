@@ -77,6 +77,13 @@ NODE_ERR_CODE_RE = re.compile(
 NODE_AT_FRAME_RE = re.compile(
     r"^\s*at (?:async )?(?:(?P<func>[^()]+?) \()?(?P<loc>.+):(?P<line>\d+):(?P<col>\d+)\)?(?: \{)?\s*$"
 )
+NODE_AT_LOOSE_RE = re.compile(
+    r"^\s*at (?:async )?(?P<loc>.+):(?P<line>\d+)\s*$"
+)
+NODE_SYNTAX_PATH_RE = re.compile(
+    r"\.(?:ts|tsx|js|mjs|cjs|jsx)(?:\b|:)",
+    re.IGNORECASE,
+)
 
 LOCK_FILES = (
     "poetry.lock",
@@ -387,10 +394,13 @@ def parse_syntax_error(text: str, report: Report) -> None:
 
 def _parse_node_at_line(line: str) -> StackFrame | None:
     m = NODE_AT_FRAME_RE.match(line)
-    if not m:
-        return None
-    func = (m.group("func") or "").strip()
-    return StackFrame(file=m.group("loc"), line=int(m.group("line")), func=func)
+    if m:
+        func = (m.group("func") or "").strip()
+        return StackFrame(file=m.group("loc"), line=int(m.group("line")), func=func)
+    m = NODE_AT_LOOSE_RE.match(line)
+    if m:
+        return StackFrame(file=m.group("loc"), line=int(m.group("line")), func="")
+    return None
 
 
 def parse_node_stack(text: str, report: Report) -> None:
@@ -513,9 +523,21 @@ def _has_syntax_error_line(text: str) -> bool:
     return any(SYNTAX_ERROR_LINE_RE.match(line.strip()) for line in text.splitlines())
 
 
+def _is_node_syntax_error_line(stripped: str) -> bool:
+    m = SYNTAX_ERROR_LINE_RE.match(stripped)
+    if not m:
+        return False
+    msg = (m.group("msg") or "").strip()
+    return bool(NODE_SYNTAX_PATH_RE.search(msg) or msg.startswith("/"))
+
+
 def _looks_like_node_failure(text: str) -> bool:
     for line in text.splitlines():
         stripped = line.strip()
+        if _is_node_syntax_error_line(stripped):
+            return True
+        if NODE_AT_LOOSE_RE.match(line) or NODE_AT_FRAME_RE.match(line):
+            return True
         if SYNTAX_ERROR_LINE_RE.match(stripped):
             continue
         if NODE_ERROR_HEADLINE_RE.match(stripped):
@@ -533,10 +555,10 @@ def detect_and_parse_log(text: str, report: Report) -> None:
         return
     if "Traceback (most recent call last):" in text or any(m in text for m in PYTHON_CHAIN_MARKERS):
         parse_python_traceback(text, report)
-    elif _has_syntax_error_line(text):
-        parse_syntax_error(text, report)
     elif _looks_like_node_failure(text):
         parse_node_stack(text, report)
+    elif _has_syntax_error_line(text):
+        parse_syntax_error(text, report)
     else:
         report.add_not_found("recognized failure pattern in log/stderr")
 

@@ -1,0 +1,19 @@
+FOUND: exit code: 1
+FOUND: actions log lines (actions-log): 763
+FOUND: actions log run steps (actions-log): 11
+FOUND: actions log last run step (actions-log): actions/upload-artifact@v7
+FOUND: actions log failing step (actions-log): flutter pub get
+FOUND: actions log process exit code (actions-log): 1
+FOUND: actions log error marker (first) (actions-log): Process completed with exit code 1.
+FOUND: node error line: Error: Error when reading 'lib/shared/screens/generic_screen.dart': Error reading 'lib/shared/screens/generic_screen.dart'  (No such file or directory)
+FOUND: python version: <runtime>
+FOUND: node version: <runtime>
+FOUND: gh version: <runtime>
+FOUND: environment variable count: <runtime>
+FOUND: environment variable names: <runtime>
+NOT FOUND: actions log ::error:: commands (actions-log)
+NOT FOUND: actions log pytest failed lines (actions-log)
+NOT FOUND: node stack frames
+NOT FOUND: lock files in project root
+HINT: web search keywords: Error: Error when reading 'lib/shared/screens/generic_screen.dart': Error reading 'lib/shared/screens/generic_screen.dart'  (No such file or directory)
+HINT: actions log search keywords (actions-log): Process completed with exit code 1.
