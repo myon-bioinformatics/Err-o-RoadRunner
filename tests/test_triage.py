@@ -80,7 +80,7 @@ def test_success_junit_without_failures() -> None:
 def test_success_import_and_version() -> None:
     import err_o_roadrunner as pkg
 
-    assert pkg.__version__ == "0.1.0"
+    assert pkg.__version__ == "0.2.0"
     assert pkg.EXIT_OK == 0
 
 
