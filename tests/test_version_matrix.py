@@ -187,10 +187,14 @@ def test_toml_backends_agree_on_matrix_fixtures(pyproject_state: str) -> None:
         assert via_tomllib == primary
     else:
         assert via_tomllib is None
-        assert primary is None
 
     if tomli_parses():
         assert via_tomli == primary
+    else:
+        assert via_tomli is None
+
+    if not tomllib_parses() and not tomli_parses():
+        assert primary is None
 
     if tomllib_parses() and tomli_parses():
         assert via_tomllib == via_tomli
