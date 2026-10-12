@@ -120,6 +120,13 @@ def test_find_corpus_leaks_detects_asia_access_key() -> None:
     assert "aws_access_key_id" in find_corpus_leaks(f"key={_FAKE_ASIA}")
 
 
+def test_aws_secret_access_key_longer_than_forty_chars_fail_closed() -> None:
+    long_secret = "aws_secret_access_key=" + ("G" * 41)
+    assert "aws_secret_access_key" in find_corpus_leaks(long_secret)
+    redacted = redact_text(long_secret)
+    assert "G" * 41 not in redacted
+
+
 def test_github_oauth_prefixes_redacted() -> None:
     for token in (_FAKE_OAUTH, _FAKE_GHO, "ghu_" + "J" * 36, "ghr_" + "K" * 36):
         out = redact_text(token)

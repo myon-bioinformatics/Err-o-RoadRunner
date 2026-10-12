@@ -1,10 +1,10 @@
 FOUND: exit code: 1
-FOUND: python chained traceback blocks: 2
-FOUND: python exception type (primary): ZeroDivisionError
-FOUND: python exception message (primary): division by zero
-FOUND: python traceback frame (first) (primary): <repo>/tests/fixtures/readme/inputs/chained.py:2 in <module>
-FOUND: python traceback frame (last) (primary): <repo>/tests/fixtures/readme/inputs/chained.py:2 in <module>
-FOUND: python traceback frame count (primary): 1
+FOUND: python chained traceback blocks: 1
+FOUND: python exception type: ZeroDivisionError
+FOUND: python exception message: division by zero
+FOUND: python traceback frame (first): <repo>/tests/fixtures/readme/inputs/chained.py:2 in <module>
+FOUND: python traceback frame (last): <repo>/tests/fixtures/readme/inputs/chained.py:2 in <module>
+FOUND: python traceback frame count: 1
 FOUND: python exception type (chained-1): ValueError
 FOUND: python exception message (chained-1): while handling
 FOUND: python traceback frame (first) (chained-1): <repo>/tests/fixtures/readme/inputs/chained.py:4 in <module>

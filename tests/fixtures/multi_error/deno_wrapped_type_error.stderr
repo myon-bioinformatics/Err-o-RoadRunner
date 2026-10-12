@@ -1,0 +1,2 @@
+error: Uncaught (in promise) TypeError: Cannot read properties of undefined
+    at file:///app/main.ts:2:3

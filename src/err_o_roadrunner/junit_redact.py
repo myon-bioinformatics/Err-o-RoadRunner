@@ -56,7 +56,7 @@ CREDENTIAL_PATTERN_SPECS: tuple[CredentialPatternSpec, ...] = (
     ),
     CredentialPatternSpec(
         "aws_secret_access_key",
-        r"(?i)aws_secret_access_key\s*[=:]\s*['\"]?[A-Za-z0-9/+=]{40}\b",
+        r"(?i)aws_secret_access_key\s*[=:]\s*['\"]?[A-Za-z0-9/+=]{40,}",
         "aws_secret_access_key=<redacted>",
     ),
     CredentialPatternSpec(

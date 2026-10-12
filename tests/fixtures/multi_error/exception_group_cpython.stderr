@@ -1,0 +1,8 @@
+  + Exception Group Traceback (most recent call last):
+  |   File "<string>", line 1, in <module>
+  | ExceptionGroup: g (2 sub-exceptions)
+  +-+---------------- 1 ----------------
+    | ValueError: one
+    +---------------- 2 ----------------
+    | TypeError: two
+    +------------------------------------

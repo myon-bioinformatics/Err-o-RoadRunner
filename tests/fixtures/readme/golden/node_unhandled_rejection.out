@@ -1,8 +1,10 @@
 FOUND: exit code: 1
+FOUND: node error lines: 1
 FOUND: node error line: Error: reject me
 FOUND: node stack frame (first): [eval]:1
 FOUND: node stack frame (last): node:internal/main/eval_string:74
 FOUND: node stack frame count: 8
+FOUND: node error 1 stack frame (first): [eval]:1
 FOUND: python version: 3.12.3 (cpython)
 FOUND: node version: v22.14.0
 FOUND: gh version: gh version 2.102.0 (2026-09-30)

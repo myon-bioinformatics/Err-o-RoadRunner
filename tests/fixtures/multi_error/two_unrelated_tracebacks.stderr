@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "a.py", line 1, in first
+    raise ValueError("one")
+ValueError: one
+
+Traceback (most recent call last):
+  File "b.py", line 2, in second
+    raise TypeError("two")
+TypeError: two

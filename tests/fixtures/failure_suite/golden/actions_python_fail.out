@@ -2,8 +2,12 @@ FOUND: exit code: 1
 FOUND: actions log lines (actions-log): 8
 FOUND: actions log run steps (actions-log): 1
 FOUND: actions log last run step (actions-log): pytest -q
+FOUND: actions log failing steps (actions-log): 1
+FOUND: actions log failing step 1/1 (actions-log): pytest -q
 FOUND: actions log failing step (actions-log): pytest -q
 FOUND: actions log process exit code (actions-log): 1
+FOUND: actions log ##[error] markers (actions-log): 1
+FOUND: actions log ##[error] markers 1/1 (actions-log): Process completed with exit code 1.
 FOUND: actions log error marker (first) (actions-log): Process completed with exit code 1.
 FOUND: python exception type: AssertionError
 FOUND: python exception message: assert 1 == 2

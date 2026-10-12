@@ -1,0 +1,4 @@
+AssertionError [ERR_ASSERTION]: Values are not strictly equal:
+    1 !== 2
+
+    at Object.<anonymous> (test.js:4:8)

@@ -2,10 +2,16 @@ FOUND: exit code: 1
 FOUND: actions log lines (actions-log): 4
 FOUND: actions log run steps (actions-log): 1
 FOUND: actions log last run step (actions-log): build
+FOUND: actions log failing steps (actions-log): 1
+FOUND: actions log failing step 1/1 (actions-log): build
 FOUND: actions log failing step (actions-log): build
 FOUND: actions log process exit code (actions-log): 2
-FOUND: actions log error marker (first) (actions-log): Process completed with exit code 2.
+FOUND: actions log ##[error] markers (actions-log): 1
+FOUND: actions log ##[error] markers 1/1 (actions-log): Process completed with exit code 2.
+FOUND: actions log ::error:: commands (actions-log): 1
+FOUND: actions log workflow error 1/1 (actions-log): compile failed
 FOUND: actions log workflow error (first) (actions-log): compile failed
+FOUND: actions log error marker (first) (actions-log): Process completed with exit code 2.
 FOUND: python version: 3.12.3 (cpython)
 FOUND: node version: v22.14.0
 FOUND: gh version: gh version 2.102.0 (2026-09-30)

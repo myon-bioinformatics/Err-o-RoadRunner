@@ -370,8 +370,8 @@ TypeError: two
 """
     report = triage(exit_code=1, stderr_text=text, log_text=None, junit_paths=[], project_root=ROOT)
     joined = "\n".join(report.lines())
-    assert "FOUND: python chained traceback blocks: 2" in joined
-    assert "python exception type (primary): ValueError" in joined
+    assert "FOUND: python chained traceback blocks: 1" in joined
+    assert "FOUND: python exception type: ValueError" in joined
     assert "python exception type (chained-1): TypeError" in joined
 
 
@@ -518,11 +518,11 @@ Traceback (most recent call last):
   File "b.py", line 2, in second
 TypeError: two
 """
-    blocks = _split_python_trace_blocks(text)
+    blocks, _unrelated = _split_python_trace_blocks(text)
     assert len(blocks) == 2
     report = triage(exit_code=1, stderr_text=text, log_text=None, junit_paths=[], project_root=ROOT)
     joined = "\n".join(report.lines())
-    assert "python exception type (primary): ValueError" in joined
+    assert "FOUND: python exception type: ValueError" in joined
     assert "python exception type (chained-1): TypeError" in joined
 
 

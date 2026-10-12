@@ -1,6 +1,7 @@
 FOUND: exit code: 1
 FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38145026769_junit-py3.11_27.xml): 1
 FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38145026769_junit-py3.11_27.xml): AssertionError: assert '0.2.0' == '0.1.0'\n  \n  - 0.1.0\n  ?   ^\n  + 0.2.0\n  ?   ^\n@pytest.mark.success\n    def test_success_import_and_version() -> None:\n        import err_o_roadrunner as pkg\n    \n>       assert pkg.__version__ == "0.1.0"\nE       AssertionError: assert '0.2.0' == '0.1.0'\nE         \nE         - 0.1.0\nE         ?   ^\nE         + 0.2.0\nE         ?   ^\n\ntests/test_tr
+FOUND: junit failure groups (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38145026769_junit-py3.11_27.xml): 1 failure in 1 group
 FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38145026769_junit-py3.11_27.xml): tests.test_triage
 FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38145026769_junit-py3.11_27.xml): AssertionError
 FOUND: python version: 3.12.3 (cpython)
