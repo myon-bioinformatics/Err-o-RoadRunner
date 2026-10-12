@@ -71,8 +71,10 @@ def main() -> int:
     original = TARGET.read_text(encoding="utf-8")
     survivors: list[str] = []
     for mutation in MUTATIONS:
+        if mutation.mutation_id == "drop_name_check_tomllib" and sys.version_info < (3, 11):
+            continue
         TARGET.write_text(apply_mutation(mutation), encoding="utf-8")
-        proc = subprocess.run(GUARD_CMD, cwd=ROOT, check=False)
+        proc = subprocess.run(GUARD_CMD, cwd=ROOT, check=False, capture_output=True)
         if proc.returncode == 0:
             survivors.append(mutation.mutation_id)
     TARGET.write_text(original, encoding="utf-8")
