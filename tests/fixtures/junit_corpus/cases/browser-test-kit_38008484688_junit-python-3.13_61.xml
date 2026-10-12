@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<testsuites><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="371" time="29.338" timestamp="2026-10-10T00:19:54.381556+00:00" hostname="runnervmmprz5"><testcase classname="tests.python.test_repo_overview" name="test_missing_git_keeps_walk_fallback" time="0.002"><failure message="AttributeError: &lt;module '_btk_git_inspector' from '&lt;runner-work&gt;/scripts/git_inspector.py'&gt; has no attribute '_spawn'">tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_missing_git_keeps_walk_fa0')
-monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f52d61f9150&gt;
+<testsuites><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="371" time="29.338" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.python.test_repo_overview" name="test_missing_git_keeps_walk_fallback" time="0.002"><failure message="AttributeError: &lt;module '_btk_git_inspector' from '&lt;runner-work&gt;/scripts/git_inspector.py'&gt; has no attribute '_spawn'">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_missing_git_keeps_walk_fa0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
 
     def test_missing_git_keeps_walk_fallback(tmp_path: Path, monkeypatch) -&gt; None:
         make_tree(tmp_path)
@@ -9,8 +9,8 @@ monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f52d61f9150&gt;
 &gt;       monkeypatch.setattr(repo_overview.git_inspector, "_spawn", missing)
 E       AttributeError: &lt;module '_btk_git_inspector' from '&lt;runner-work&gt;/scripts/git_inspector.py'&gt; has no attribute '_spawn'
 
-tests/python/test_repo_overview.py:145: AttributeError</failure></testcase><testcase classname="tests.python.test_repo_overview" name="test_churn_complete_commits_and_explicit_history_truncation[byte]" time="0.074"><failure message="AttributeError: module '_btk_git_inspector' has no attribute '_run'">tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_churn_complete_commits_an1')
-monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f52d5fd95e0&gt;
+tests/python/test_repo_overview.py:145: AttributeError</failure></testcase><testcase classname="tests.python.test_repo_overview" name="test_churn_complete_commits_and_explicit_history_truncation[byte]" time="0.074"><failure message="AttributeError: module '_btk_git_inspector' has no attribute '_run'">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_churn_complete_commits_an1')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
 limit = 'byte'
 
     @pytest.mark.parametrize('limit', ['count', 'byte'])
@@ -29,8 +29,8 @@ limit = 'byte'
                                                    '-z', '--numstat', '--format=%x00%H%x00%cs', '--'])
 E           AttributeError: module '_btk_git_inspector' has no attribute '_run'
 
-tests/python/test_repo_overview.py:349: AttributeError</failure></testcase><testcase classname="tests.python.test_repo_overview" name="test_churn_missing_git_keeps_message" time="0.001"><failure message="AttributeError: &lt;module '_btk_git_inspector' from '&lt;runner-work&gt;/scripts/git_inspector.py'&gt; has no attribute '_spawn'">tmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_churn_missing_git_keeps_m0')
-monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7f52d5fdaf30&gt;
+tests/python/test_repo_overview.py:349: AttributeError</failure></testcase><testcase classname="tests.python.test_repo_overview" name="test_churn_missing_git_keeps_message" time="0.001"><failure message="AttributeError: &lt;module '_btk_git_inspector' from '&lt;runner-work&gt;/scripts/git_inspector.py'&gt; has no attribute '_spawn'">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_churn_missing_git_keeps_m0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
 
     def test_churn_missing_git_keeps_message(tmp_path: Path, monkeypatch) -&gt; None:
         def missing(*args, **kwargs):

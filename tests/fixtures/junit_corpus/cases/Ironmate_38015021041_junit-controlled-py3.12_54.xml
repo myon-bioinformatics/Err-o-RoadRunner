@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<testsuites><testsuite name="pytest" errors="1" failures="2" skipped="1" tests="5" time="0.035" timestamp="2026-10-10T01:55:52.775260+00:00" hostname="runnervmmprz5"><testcase classname="test_controlled" name="test_wrong_expectation[SECRET_PARAM_ONE]" time="0.001"><failure message="AssertionError: SECRET_MESSAGE&#10;assert 'actual' == 'SECRET_PARAM_ONE'&#10;  &#10;  - SECRET_PARAM_ONE&#10;  + actual">expected = 'SECRET_PARAM_ONE'
+<testsuites><testsuite name="pytest" errors="1" failures="2" skipped="1" tests="5" time="0.035" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="test_controlled" name="test_wrong_expectation[SECRET_PARAM_ONE]" time="0.001"><failure message="AssertionError: SECRET_MESSAGE&#10;assert 'actual' == 'SECRET_PARAM_ONE'&#10;  &#10;  - SECRET_PARAM_ONE&#10;  + actual">expected = 'SECRET_PARAM_ONE'
 
     @pytest.mark.parametrize("expected", ["SECRET_PARAM_ONE", "SECRET_PARAM_TWO"])
     def test_wrong_expectation(expected):

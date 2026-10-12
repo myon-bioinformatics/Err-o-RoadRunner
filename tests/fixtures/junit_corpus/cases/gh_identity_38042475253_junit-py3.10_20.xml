@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<testsuites><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="605" time="11.415" timestamp="2026-10-10T09:45:01.687162+00:00" hostname="runnervmmprz5"><testcase classname="tests.test_repository_inventory" name="test_inventory_missing_metrics_sort_last[updated-at-updated_at-asc-expected4]" time="0.001"><failure message="AssertionError: assert ['five', 'mis...enty', 'zero'] == ['zero', 'fiv...y', 'missing']&#10;  &#10;  At index 0 diff: 'five' != 'zero'&#10;  &#10;  Full diff:&#10;    [&#10;  +     'five',&#10;  +     'missing',&#10;  +     'twenty',&#10;        'zero',&#10;  -     'five',&#10;  -     'twenty',&#10;  -     'missing',&#10;    ]">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7facb01620e0&gt;
+<testsuites><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="605" time="11.415" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_repository_inventory" name="test_inventory_missing_metrics_sort_last[updated-at-updated_at-asc-expected4]" time="0.001"><failure message="AssertionError: assert ['five', 'mis...enty', 'zero'] == ['zero', 'fiv...y', 'missing']&#10;  &#10;  At index 0 diff: 'five' != 'zero'&#10;  &#10;  Full diff:&#10;    [&#10;  +     'five',&#10;  +     'missing',&#10;  +     'twenty',&#10;        'zero',&#10;  -     'five',&#10;  -     'twenty',&#10;  -     'missing',&#10;    ]">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
 metric = 'updated-at', field = 'updated_at', order = 'asc'
 expected = ['zero', 'five', 'twenty', 'missing']
 
@@ -48,7 +48,7 @@ E         -     'twenty',
 E         -     'missing',
 E           ]
 
-tests/test_repository_inventory.py:85: AssertionError</failure></testcase><testcase classname="tests.test_repository_inventory" name="test_inventory_missing_metrics_sort_last[updated-at-updated_at-desc-expected5]" time="0.001"><failure message="AssertionError: assert ['five', 'mis...enty', 'zero'] == ['twenty', 'f...o', 'missing']&#10;  &#10;  At index 0 diff: 'five' != 'twenty'&#10;  &#10;  Full diff:&#10;    [&#10;  +     'five',&#10;  +     'missing',&#10;        'twenty',&#10;  -     'five',&#10;        'zero',&#10;  -     'missing',&#10;    ]">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x7facb017bc10&gt;
+tests/test_repository_inventory.py:85: AssertionError</failure></testcase><testcase classname="tests.test_repository_inventory" name="test_inventory_missing_metrics_sort_last[updated-at-updated_at-desc-expected5]" time="0.001"><failure message="AssertionError: assert ['five', 'mis...enty', 'zero'] == ['twenty', 'f...o', 'missing']&#10;  &#10;  At index 0 diff: 'five' != 'twenty'&#10;  &#10;  Full diff:&#10;    [&#10;  +     'five',&#10;  +     'missing',&#10;        'twenty',&#10;  -     'five',&#10;        'zero',&#10;  -     'missing',&#10;    ]">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
 metric = 'updated-at', field = 'updated_at', order = 'desc'
 expected = ['twenty', 'five', 'zero', 'missing']
 
