@@ -86,6 +86,18 @@ MUTATIONS: list[Mutation] = [
         "if _should_parse_node_stack(text):\n        parse_node_stack(text, report)",
         "if _should_parse_node_stack(text):\n        pass",
     ),
+    Mutation(
+        "disable_node_syntax_user_location",
+        SRC / "triage.py",
+        "    user_syntax = _node_syntax_user_location(text)\n    if user_syntax:",
+        "    user_syntax = None\n    if user_syntax:",
+    ),
+    Mutation(
+        "disable_node_rejection_headline",
+        SRC / "triage.py",
+        "[\\w]*(?:Error|Warning|Rejection)|Unhandled\\s+rejection",
+        "[\\w]*(?:Error|Warning)|Unhandled\\s+rejection",
+    ),
 ]
 
 

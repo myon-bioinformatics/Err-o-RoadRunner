@@ -63,8 +63,12 @@ SYNTAX_ERROR_LINE_RE = re.compile(
     r"^(?P<exc>SyntaxError)(?::\s*(?P<msg>.*))?$"
 )
 NODE_ERROR_HEADLINE_RE = re.compile(
-    r"^(?P<head>(?:[A-Za-z_][\w]*Error|UnhandledPromiseRejectionWarning|Unhandled\s+rejection(?:\s+\([^)]+\))?))\s*:\s*(?P<rest>.*)$",
+    r"^(?P<head>(?:[A-Za-z_][\w]*(?:Error|Warning|Rejection)|Unhandled\s+rejection(?:\s+\([^)]+\))?))"
+    r"\s*:\s*(?P<rest>.*)$",
     re.IGNORECASE,
+)
+NODE_SCRIPT_LOC_LINE_RE = re.compile(
+    r"^(?P<file>(?!node:)(?:/[^\s:]+|\[[^\]]+\]|[^\s:]+)):(?P<line>\d+)\s*$"
 )
 NODE_CORE_ERROR_RE = re.compile(
     r"^(?P<head>(?:TypeError|ReferenceError|SyntaxError|RangeError|EvalError|URIError|AggregateError))\s*:\s*(?P<rest>.*)$",
@@ -548,6 +552,35 @@ def parse_syntax_error(text: str, report: Report) -> None:
     report.add_not_found("python syntax error")
 
 
+def _node_syntax_user_location(text: str) -> StackFrame | None:
+    lines = text.splitlines()
+    for i, line in enumerate(lines):
+        stripped = line.strip()
+        m = NODE_SCRIPT_LOC_LINE_RE.match(stripped)
+        if not m:
+            continue
+        file = m.group("file")
+        line_no = int(m.group("line"))
+        for j in range(i + 1, min(i + 10, len(lines))):
+            probe = lines[j]
+            stripped_probe = probe.strip()
+            if not stripped_probe:
+                continue
+            if stripped_probe.startswith("at ") or _parse_node_at_line(probe):
+                break
+            m_core = NODE_CORE_ERROR_RE.match(stripped_probe)
+            if m_core:
+                if m_core.group("head") == "SyntaxError":
+                    return StackFrame(file=file, line=line_no, func="")
+                break
+            if SYNTAX_ERROR_LINE_RE.match(stripped_probe):
+                return StackFrame(file=file, line=line_no, func="")
+        for j in range(i + 1, min(i + 10, len(lines))):
+            if "SyntaxError:" in lines[j]:
+                return StackFrame(file=file, line=line_no, func="")
+    return None
+
+
 def _parse_node_at_line(line: str) -> StackFrame | None:
     m = NODE_AT_FRAME_RE.match(line)
     if m:
@@ -697,6 +730,10 @@ def parse_node_stack(text: str, report: Report) -> None:
 
     all_frames = [f for chunk in frames_by_error for f in chunk]
 
+    user_syntax = _node_syntax_user_location(text)
+    if user_syntax:
+        report.add_found(f"node syntax error location: {user_syntax.format()}")
+
     if error_lines:
         report.add_found(f"node error lines: {len(error_lines)}")
         report.add_found(f"node error line: {error_lines[0][:500]}")
@@ -728,8 +765,10 @@ def parse_node_stack(text: str, report: Report) -> None:
     else:
         report.add_not_found("node stack frames")
 
-    if error_lines or err_codes:
-        hint = error_lines[0] if error_lines else err_codes[0]
+    if error_lines or err_codes or user_syntax:
+        hint = error_lines[0] if error_lines else err_codes[0] if err_codes else ""
+        if user_syntax:
+            hint = f"{user_syntax.format()} {hint}".strip()
         report.add_hint(f"web search keywords: {hint[:400]}")
 
 

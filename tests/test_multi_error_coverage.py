@@ -189,6 +189,44 @@ def test_node_syntax_error_not_python_type() -> None:
 
 
 @pytest.mark.multi_error
+@pytest.mark.mutation_guard
+def test_node_user_script_syntax_location() -> None:
+    text = (MULTI / "node_user_script_syntax.stderr").read_text(encoding="utf-8")
+    report = triage(
+        exit_code=1,
+        stderr_text=None,
+        log_text=text,
+        junit_paths=[],
+        project_root=ROOT,
+    )
+    lines = _lines(report)
+    assert any(
+        ln.startswith("FOUND: node syntax error location:") and "s_syntax.js:1" in ln
+        for ln in lines
+    )
+    assert any(ln.startswith("FOUND: node error line: SyntaxError") for ln in lines)
+    _assert_standard_hint_floor(lines, location="s_syntax.js:1")
+
+
+@pytest.mark.multi_error
+@pytest.mark.mutation_guard
+def test_node_unhandled_promise_rejection_strict() -> None:
+    text = (MULTI / "node_unhandled_promise_rejection_strict.stderr").read_text(encoding="utf-8")
+    report = triage(
+        exit_code=1,
+        stderr_text=None,
+        log_text=text,
+        junit_paths=[],
+        project_root=ROOT,
+    )
+    lines = _lines(report)
+    assert not any(ln == "NOT FOUND: node error headline" for ln in lines)
+    assert any("UnhandledPromiseRejection:" in ln for ln in lines)
+    assert any(ln == "FOUND: node error code: ERR_UNHANDLED_REJECTION" for ln in lines)
+    _assert_standard_hint_floor(lines, location="UnhandledPromiseRejection")
+
+
+@pytest.mark.multi_error
 def test_node_err_assertion_headline() -> None:
     text = (MULTI / "node_err_assertion.stderr").read_text(encoding="utf-8")
     report = triage(
