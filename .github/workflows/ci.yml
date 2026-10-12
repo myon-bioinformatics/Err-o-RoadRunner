@@ -80,6 +80,8 @@ jobs:
         run: python -c "import triage, actions_log, junit_redact, project_version"
       - name: Combo mutation (zero survivors)
         run: python scripts/combo_mutation.py
+      - name: Version mutation (zero survivors)
+        run: python scripts/version_mutation.py
       - name: Tests with JUnit
         run: |
           mkdir -p reports

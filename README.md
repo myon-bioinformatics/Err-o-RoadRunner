@@ -22,7 +22,7 @@ Researching the cause of a Python, Node or GitHub Actions CI failure currently t
 ## Design principles (draft)
 
 1. **Stays idle in normal times:** it does nothing unless there is an error. It has no daemon and no resident process.
-2. **Python standard library only:** the main implementation lives in root-level modules (`triage.py`, `actions_log.py`, `junit_redact.py`).
+2. **Python standard library only:** the main implementation lives in root-level modules (`triage.py`, `actions_log.py`, `junit_redact.py`, `project_version.py`).
 3. **Node is optional:** Node stack parsing is regex-based on log text; no Node runtime is required for triage.
 4. **Read-only:** it never changes code or settings, and it never posts or sends anything.
 5. **Separates facts from guesses:** it shows `FOUND` and `NOT FOUND` explicitly, and labels inferences as `HINT`.
@@ -46,6 +46,16 @@ After installing, run:
 ```bash
 err-o-roadrunner --exit-code "$?" --stderr /path/to/stderr.txt --junit reports/junit.xml
 ```
+
+### Version string policy
+
+`--version` and `triage.__version__` resolve in this order:
+
+1. **`pyproject.toml` next to `triage.py`** when the file is readable UTF-8, parses as TOML (or the Python 3.10 line fallback), and `[project]` has `name = "err-o-roadrunner"` with a non-empty `version`.
+2. **Installed distribution metadata** for `err-o-roadrunner` (for example after `pip install`).
+3. **`unknown`** when neither source is usable.
+
+Importing `triage` never crashes on version lookup; if the version is `unknown`, `--version` prints `err-o-roadrunner unknown` (exit code 0) and all other CLI behaviour is unchanged.
 
 Or as a module:
 

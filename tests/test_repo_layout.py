@@ -4,9 +4,11 @@ from __future__ import annotations
 
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 
-ROOT_MODULES = ("triage.py", "actions_log.py", "junit_redact.py")
+ROOT_MODULES = ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py")
 
 
 def test_main_modules_at_repository_root() -> None:
@@ -18,3 +20,12 @@ def test_main_modules_at_repository_root() -> None:
 def test_no_src_package_layout() -> None:
     src = ROOT / "src"
     assert not src.exists(), "src/ must be removed after flattening modules to the repo root"
+
+
+def test_no_stray_root_module_copies_under_tests_tree() -> None:
+    allowed_names = set(ROOT_MODULES)
+    for path in (ROOT / "tests").rglob("*.py"):
+        if path.name in allowed_names:
+            pytest.fail(
+                f"stray copy of root module {path.name} under tests/: {path.relative_to(ROOT)}"
+            )
