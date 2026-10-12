@@ -1,8 +1,7 @@
 FOUND: exit code: 1
 FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38013369383_junit-py3.12_56.xml): 1
 FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38013369383_junit-py3.12_56.xml): tests/test_mermaid_svg.py:45: in test_pipeline_opt_in_uses_svg_and_preserves_original\n    result = pptx_pipeline.run(text=source, output=tmp_path / "out.pptx", mmdc="mmdc")\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\npptx_pipeline.py:26: in run\n    prepared, images = render_mermaid(raw, working, mmdc=mmdc, background=background, foreground=svg_foregro
-FOUND: junit failure groups (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38013369383_junit-py3.12_56.xml): 1 failures in 1 groups
-FOUND: junit failure group 1/1 (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38013369383_junit-py3.12_56.xml): 1× TypeError: test_pipeline_opt_in_uses_svg_and_preserves_original.<locals>.fake_render() got an unexpected keyword argument <q> — first: tests.test_mermaid_svg::test_pipeline_opt_in_uses_svg_and_preserves_original — msg: test_pipeline_opt_in_uses_svg_and_preserves_original.<locals>.fake_render() got an unexpected keyword argument <q>
+FOUND: junit failure groups (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38013369383_junit-py3.12_56.xml): 1 failure in 1 group
 FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38013369383_junit-py3.12_56.xml): tests.test_mermaid_svg
 FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38013369383_junit-py3.12_56.xml): TypeError
 FOUND: python version: 3.12.3 (cpython)

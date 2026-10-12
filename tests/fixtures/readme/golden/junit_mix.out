@@ -5,7 +5,7 @@ FOUND: junit errors (<repo>/tests/fixtures/readme/inputs/junit_mix.xml): 1
 FOUND: junit error (first) (<repo>/tests/fixtures/readme/inputs/junit_mix.xml): boom
 FOUND: junit failure groups (<repo>/tests/fixtures/readme/inputs/junit_mix.xml): 2 failures in 2 groups
 FOUND: junit failure group 1/2 (<repo>/tests/fixtures/readme/inputs/junit_mix.xml): 1× Unknown: boom — first: demo::err_one — msg: boom
-FOUND: junit failure group 2/2 (<repo>/tests/fixtures/readme/inputs/junit_mix.xml): 1× AssertionError: assert N == N — first: demo::fail_one — msg: assert N == N
+FOUND: junit failure group 2/2 (<repo>/tests/fixtures/readme/inputs/junit_mix.xml): 1× AssertionError: assert N == N — first: demo::fail_one — msg: assert 1 == 0
 FOUND: junit skipped (<repo>/tests/fixtures/readme/inputs/junit_mix.xml): 1
 FOUND: junit skipped (first) (<repo>/tests/fixtures/readme/inputs/junit_mix.xml): not today
 FOUND: junit testcase classname (first) (<repo>/tests/fixtures/readme/inputs/junit_mix.xml): demo

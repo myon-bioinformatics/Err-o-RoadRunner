@@ -498,6 +498,14 @@ def _junit_quote_fingerprint(line: str) -> str:
     return "|".join(re.sub(r"\d+", "N", piece) for piece in inner)
 
 
+def _junit_line_without_exception_prefix(line: str) -> str:
+    m = JUNIT_MSG_EXCEPTION_RE.match(line)
+    if m and line.startswith(f"{m.group(1)}:"):
+        stripped = line[m.end() :].strip()
+        return stripped or line
+    return line
+
+
 def _junit_failure_message_first_line(message: str, blob: str) -> str:
     msg = (message or "").strip()
     first_line = msg.splitlines()[0] if msg else ""
@@ -520,6 +528,12 @@ def _junit_failure_message_first_line(message: str, blob: str) -> str:
     if not stripped:
         return next((ln.strip() for ln in blob.splitlines() if ln.strip()), "")
     return stripped
+
+
+def _junit_representative_message_line(message: str, blob: str, limit: int = 300) -> str:
+    """Sanitised first-line text for group output (not normalised for type keys)."""
+    first = _junit_failure_message_first_line(message, blob).replace("\r", "")
+    return sanitize_report_text(first)[:limit]
 
 
 def _junit_exception_type_for_type_key(message: str, blob: str, first_line: str) -> str:
@@ -549,11 +563,7 @@ def _junit_failure_type_key(blob: str, message: str = "") -> str:
     """Type key: exception type + normalized first line of the failure message."""
     first_line = _junit_failure_message_first_line(message, blob)
     exc = _junit_exception_type_for_type_key(message, blob, first_line)
-    line_for_norm = first_line
-    m = JUNIT_MSG_EXCEPTION_RE.match(line_for_norm)
-    if m and line_for_norm.startswith(f"{m.group(1)}:"):
-        line_for_norm = line_for_norm[m.end() :].strip() or line_for_norm
-    norm = _junit_normalize_type_message(line_for_norm)
+    norm = _junit_normalize_type_message(_junit_line_without_exception_prefix(first_line))
     fp = _junit_quote_fingerprint(first_line)
     if fp:
         return f"{exc}|{norm}|{fp}"
@@ -591,17 +601,12 @@ def _junit_group_failures(
                 representative_message=prev.representative_message,
             )
         else:
-            first_line = _junit_failure_message_first_line(message, blob)
-            line_for_norm = first_line
-            m = JUNIT_MSG_EXCEPTION_RE.match(line_for_norm)
-            if m and line_for_norm.startswith(f"{m.group(1)}:"):
-                line_for_norm = line_for_norm[m.end() :].strip() or line_for_norm
-            rep = _junit_normalize_type_message(line_for_norm)
+            rep = _junit_representative_message_line(message, blob)
             buckets[key] = JUnitFailureGroup(
                 type_key=key,
                 count=1,
                 first_label=label,
-                representative_message=rep[:300],
+                representative_message=rep,
             )
     ranked = sorted(buckets.values(), key=lambda g: (-g.count, g.first_label))
     return ranked
@@ -619,23 +624,29 @@ def _junit_emit_failure_groups(
         return
     groups = _junit_group_failures(labels, messages, blobs)
     total = len(labels)
+    failure_noun = "failure" if total == 1 else "failures"
+    group_noun = "group" if len(groups) == 1 else "groups"
     report.add_found(
-        f"junit failure groups ({source}): {total} failures in {len(groups)} groups"
+        f"junit failure groups ({source}): {total} {failure_noun} in "
+        f"{len(groups)} {group_noun}"
     )
     shown = groups[:JUNIT_FAILURE_GROUP_CAP]
-    for idx, group in enumerate(shown, start=1):
-        display = _junit_group_display_type(group.type_key)
-        report.add_found(
-            f"junit failure group {idx}/{len(groups)} ({source}): "
-            f"{group.count}× {display} — first: {group.first_label[:200]} — "
-            f"msg: {group.representative_message[:200]}"
-        )
+    if total > 1:
+        for idx, group in enumerate(shown, start=1):
+            display = _junit_group_display_type(group.type_key)
+            report.add_found(
+                f"junit failure group {idx}/{len(groups)} ({source}): "
+                f"{group.count}× {display} — first: {group.first_label[:200]} — "
+                f"msg: {group.representative_message[:200]}"
+            )
     if len(groups) > JUNIT_FAILURE_GROUP_CAP:
         omitted_types = len(groups) - JUNIT_FAILURE_GROUP_CAP
         omitted_failures = total - sum(g.count for g in shown)
+        type_noun = "type" if omitted_types == 1 else "types"
+        omit_fail_noun = "failure" if omitted_failures == 1 else "failures"
         report.add_found(
             f"junit failure groups truncated ({source}): "
-            f"{omitted_types} types, {omitted_failures} failures omitted"
+            f"{omitted_types} {type_noun}, {omitted_failures} {omit_fail_noun} omitted"
         )
 
 
@@ -809,6 +820,8 @@ def parse_junit_xml(text: str, source: str, report: Report) -> None:
                 label = _junit_case_label(testcase)
                 for child in testcase:
                     child_tag = child.tag.split("}")[-1]
+                    # Group <failure> and non-collection <error> in one type space; collection
+                    # errors stay on the junit collection errors path (not grouped here).
                     if child_tag == "failure":
                         if not first_classname:
                             first_classname = (testcase.attrib.get("classname") or "").strip()

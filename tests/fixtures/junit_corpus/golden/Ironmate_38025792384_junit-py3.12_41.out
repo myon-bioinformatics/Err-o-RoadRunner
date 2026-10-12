@@ -1,8 +1,7 @@
 FOUND: exit code: 1
 FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38025792384_junit-py3.12_41.xml): 1
 FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38025792384_junit-py3.12_41.xml): tests/test_vendor_catalog_snapshot.py:24: in test_catalog_does_not_claim_locked_installation\n    assert "myon-bioinformatics/cli_args" not in locked\nE   AssertionError: assert 'myon-bioinformatics/cli_args' not in {'myon-bioinformatics/GitHub_api_Template', 'myon-bioinformatics/HelpYouBuildServer', 'myon-bioinformatics/LINENotifyA...n-bioinformatics/Qiita_API_Template', 'myon-bioinformatics/asci
-FOUND: junit failure groups (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38025792384_junit-py3.12_41.xml): 1 failures in 1 groups
-FOUND: junit failure group 1/1 (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38025792384_junit-py3.12_41.xml): 1× AssertionError: assert <q> not in {<q>, <q>, <q>, <q>, <q>, ...} — first: tests.test_vendor_catalog_snapshot::test_catalog_does_not_claim_locked_installation — msg: assert <q> not in {<q>, <q>, <q>, <q>, <q>, ...}
+FOUND: junit failure groups (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38025792384_junit-py3.12_41.xml): 1 failure in 1 group
 FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38025792384_junit-py3.12_41.xml): tests.test_vendor_catalog_snapshot
 FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38025792384_junit-py3.12_41.xml): AssertionError
 FOUND: python version: 3.12.3 (cpython)

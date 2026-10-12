@@ -1,8 +1,7 @@
 FOUND: exit code: 1
 FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38015820499_junit-py3.12_51.xml): 1
 FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38015820499_junit-py3.12_51.xml): AssertionError: assert ['ppt/slides/slide1.xml'] == ['ppt/slides/slide2.xml']\n  \n  At index 0 diff: 'ppt/slides/slide1.xml' != 'ppt/slides/slide2.xml'\n  \n  Full diff:\n    [\n  -     'ppt/slides/slide2.xml',\n  ?                      ^\n  +     'ppt/slides/slide1.xml',\n  ?                      ^\n    ]\ntests/test_pptx_xml_batch.py:60: in test_reordered_slide_uses_display_order_not_xml_suffix
-FOUND: junit failure groups (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38015820499_junit-py3.12_51.xml): 1 failures in 1 groups
-FOUND: junit failure group 1/1 (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38015820499_junit-py3.12_51.xml): 1× AssertionError: assert [<q>] == [<q>] — first: tests.test_pptx_xml_batch::test_reordered_slide_uses_display_order_not_xml_suffix — msg: assert [<q>] == [<q>]
+FOUND: junit failure groups (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38015820499_junit-py3.12_51.xml): 1 failure in 1 group
 FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38015820499_junit-py3.12_51.xml): tests.test_pptx_xml_batch
 FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38015820499_junit-py3.12_51.xml): AssertionError
 FOUND: python version: 3.12.3 (cpython)
