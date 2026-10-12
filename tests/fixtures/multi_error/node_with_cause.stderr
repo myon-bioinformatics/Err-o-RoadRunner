@@ -1,0 +1,4 @@
+TypeError: Cannot read properties of undefined (reading 'x')
+    at load (file:///app/index.mjs:3:5)
+[cause]: RangeError: index out of range
+    at inner (file:///app/index.mjs:1:9)

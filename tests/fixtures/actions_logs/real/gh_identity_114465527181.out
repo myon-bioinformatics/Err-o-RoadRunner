@@ -2,8 +2,14 @@ FOUND: exit code: 1
 FOUND: actions log lines (actions-log): 315
 FOUND: actions log run steps (actions-log): 8
 FOUND: actions log last run step (actions-log): actions/upload-artifact@v4
+FOUND: actions log failing steps (actions-log): 1
+FOUND: actions log failing step 1/1 (actions-log): python -m pytest -q tests --junitxml=reports/junit.xml
 FOUND: actions log failing step (actions-log): python -m pytest -q tests --junitxml=reports/junit.xml
 FOUND: actions log process exit code (actions-log): 1
+FOUND: actions log ##[error] markers (actions-log): 1
+FOUND: actions log ##[error] markers 1/1 (actions-log): Process completed with exit code 1.
+FOUND: actions log pytest failed lines (actions-log): 1
+FOUND: actions log pytest failed lines 1/1 (actions-log): FAILED tests/test_pr_status.py::test_cli_json_text_and_exclude_override - assert False
 FOUND: actions log error marker (first) (actions-log): Process completed with exit code 1.
 FOUND: actions log pytest failed (first) (actions-log): FAILED tests/test_pr_status.py::test_cli_json_text_and_exclude_override - assert False
 FOUND: python version: <runtime>
@@ -12,6 +18,6 @@ FOUND: gh version: <runtime>
 FOUND: environment variable count: <runtime>
 FOUND: environment variable names: <runtime>
 NOT FOUND: actions log ::error:: commands (actions-log)
-NOT FOUND: recognized failure pattern in log/stderr
+NOT FOUND: actions log ::error:: commands (actions-log)
 NOT FOUND: lock files in project root
 HINT: actions log search keywords (actions-log): FAILED tests/test_pr_status.py::test_cli_json_text_and_exclude_override - assert False

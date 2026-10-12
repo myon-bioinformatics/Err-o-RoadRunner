@@ -2,14 +2,20 @@ FOUND: exit code: 1
 FOUND: actions log lines (actions-log): 8
 FOUND: actions log run steps (actions-log): 1
 FOUND: actions log last run step (actions-log): pytest -q
+FOUND: actions log failing steps (actions-log): 1
+FOUND: actions log failing step 1/1 (actions-log): pytest -q
 FOUND: actions log failing step (actions-log): pytest -q
 FOUND: actions log process exit code (actions-log): 1
+FOUND: actions log ##[error] markers (actions-log): 1
+FOUND: actions log ##[error] markers 1/1 (actions-log): Process completed with exit code 1.
 FOUND: actions log error marker (first) (actions-log): Process completed with exit code 1.
 FOUND: python exception type: AssertionError
 FOUND: python exception message: assert 1 == 2
 FOUND: python traceback frame (first): /repo/tests/demo_test.py:2 in test_x
 FOUND: python traceback frame (last): /repo/tests/demo_test.py:2 in test_x
 FOUND: python traceback frame count: 1
+FOUND: node error lines: 1
+FOUND: node error line: AssertionError: assert 1 == 2
 FOUND: python version: 3.12.3 (cpython)
 FOUND: node version: v22.14.0
 FOUND: gh version: gh version 2.102.0 (2026-09-30)
@@ -17,6 +23,10 @@ FOUND: environment variable count: 38
 FOUND: environment variable names: AGENT_TRANSCRIPTS, CARGO_HOME, CURSOR_AGENT, CURSOR_AGENT_SOCKET, CURSOR_CONVERSATION_ID, CURSOR_REQUEST_ID, CURSOR_RIPGREP_PATH, CURSOR_SPAWN_CWD_HOP, CURSOR_WORKLOAD_CGROUP, DISPLAY, EXEC_DAEMON_STARTUP_TRACEPARENT, FORCE_COLOR, GH_TELEMETRY, GIT_DISCOVERY_ACROSS_FILESYSTEM, GIT_LFS_SKIP_SMUDGE, HOME, LANG, LC_ALL, NO_COLOR, NVM_BIN, NVM_CD_FLAGS, NVM_DIR, NVM_INC, OLDPWD, PATH, PS1, PWD, RUSTUP_HOME, RUST_VERSION, SHELL, SHLVL, TERM, USER, VNC_DPI, VNC_RESOLUTION, _, _ZO_DOCTOR, __CURSOR_SANDBOX_ENV_RESTORE
 NOT FOUND: actions log ::error:: commands (actions-log)
 NOT FOUND: actions log pytest failed lines (actions-log)
+NOT FOUND: actions log ::error:: commands (actions-log)
+NOT FOUND: actions log pytest failed lines (actions-log)
+NOT FOUND: node stack frames
 NOT FOUND: lock files in project root
 HINT: web search keywords: AssertionError assert 1 == 2
+HINT: web search keywords: AssertionError: assert 1 == 2
 HINT: actions log search keywords (actions-log): Process completed with exit code 1.

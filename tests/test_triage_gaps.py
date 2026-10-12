@@ -102,7 +102,7 @@ def test_chain_marker_splits_blocks() -> None:
         "During handling of the above exception, another exception occurred:\n"
         "Traceback (most recent call last):\n  File \"b.py\", line 2\nTypeError: two\n"
     )
-    blocks = _split_python_trace_blocks(text)
+    blocks, _unrelated = _split_python_trace_blocks(text)
     assert len(blocks) == 2
 
 

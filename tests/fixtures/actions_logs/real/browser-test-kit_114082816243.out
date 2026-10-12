@@ -2,8 +2,18 @@ FOUND: exit code: 1
 FOUND: actions log lines (actions-log): 1941
 FOUND: actions log run steps (actions-log): 16
 FOUND: actions log last run step (actions-log): actions/upload-artifact@v7
+FOUND: actions log failing steps (actions-log): 2
+FOUND: actions log failing step 1/2 (actions-log): python -m pytest tests/python -q --junitxml=test-results/junit/python-3.13.xml
+FOUND: actions log failing step 2/2 (actions-log): python scripts/evidence_board.py test-results/btk-events.jsonl --step-summary
 FOUND: actions log failing step (actions-log): python -m pytest tests/python -q --junitxml=test-results/junit/python-3.13.xml
 FOUND: actions log process exit code (actions-log): 1
+FOUND: actions log ##[error] markers (actions-log): 2
+FOUND: actions log ##[error] markers 1/2 (actions-log): Process completed with exit code 1.
+FOUND: actions log ##[error] markers 2/2 (actions-log): Process completed with exit code 2.
+FOUND: actions log pytest failed lines (actions-log): 3
+FOUND: actions log pytest failed lines 1/3 (actions-log): FAILED tests/python/test_repo_overview.py::test_missing_git_keeps_walk_fallback - AttributeError: <module '_btk_git_inspector' from '/home/runner/work/browser-test-kit/browser-test-kit/scripts/git_inspector.py'> has no attribute '_spawn'
+FOUND: actions log pytest failed lines 2/3 (actions-log): FAILED tests/python/test_repo_overview.py::test_churn_complete_commits_and_explicit_history_truncation[byte] - AttributeError: module '_btk_git_inspector' has no attribute '_run'
+FOUND: actions log pytest failed lines 3/3 (actions-log): FAILED tests/python/test_repo_overview.py::test_churn_missing_git_keeps_message - AttributeError: <module '_btk_git_inspector' from '/home/runner/work/browser-test-kit/browser-test-kit/scripts/git_inspector.py'> has no attribute '_spawn'
 FOUND: actions log error marker (first) (actions-log): Process completed with exit code 1.
 FOUND: actions log pytest failed (first) (actions-log): FAILED tests/python/test_repo_overview.py::test_missing_git_keeps_walk_fallback - AttributeError: <module '_btk_git_inspector' from '/home/runner/work/browser-test-kit/browser-test-kit/scripts/git_inspector.py'> has no attribute '_spawn'
 FOUND: actions log pytest failed (last) (actions-log): FAILED tests/python/test_repo_overview.py::test_churn_missing_git_keeps_message - AttributeError: <module '_btk_git_inspector' from '/home/runner/work/browser-test-kit/browser-test-kit/scripts/git_inspector.py'> has no attribute '_spawn'
@@ -13,6 +23,8 @@ FOUND: gh version: <runtime>
 FOUND: environment variable count: <runtime>
 FOUND: environment variable names: <runtime>
 NOT FOUND: actions log ::error:: commands (actions-log)
+NOT FOUND: actions log ::error:: commands (actions-log)
 NOT FOUND: recognized failure pattern in log/stderr
 NOT FOUND: lock files in project root
+HINT: compiler error line (not node): error: test-results/btk-events.jsonl: no such file
 HINT: actions log search keywords (actions-log): FAILED tests/python/test_repo_overview.py::test_missing_git_keeps_walk_fallback - AttributeError: <module '_btk_git_inspector' from '/home/runner/work/browser-test-kit/browser-test-kit/scripts/git_inspector.py'> has no attribute '_spawn'

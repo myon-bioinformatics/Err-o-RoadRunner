@@ -2,13 +2,25 @@ FOUND: exit code: 1
 FOUND: actions log lines (actions-log): 1480
 FOUND: actions log run steps (actions-log): 5
 FOUND: actions log last run step (actions-log): actions/upload-artifact@v7
+FOUND: actions log failing steps (actions-log): 3
+FOUND: actions log failing step 1/3 (actions-log): npm install
+FOUND: actions log failing step 2/3 (actions-log): actions/upload-artifact@v7
+FOUND: actions log failing step 3/3 (actions-log): actions/upload-artifact@v7
 FOUND: actions log failing step (actions-log): npm install
 FOUND: actions log process exit code (actions-log): 1
+FOUND: actions log ##[error] markers (actions-log): 3
+FOUND: actions log ##[error] markers 1/3 (actions-log): Process completed with exit code 1.
+FOUND: actions log ##[error] markers 2/3 (actions-log): No files were found with the provided path: build/test-results/playwright-adapter.xml. No artifacts will be uploaded.
+FOUND: actions log ##[error] markers 3/3 (actions-log): No files were found with the provided path: build/test-results/playwright-adapter-attempts.json. No artifacts will be uploaded.
 FOUND: actions log error marker (first) (actions-log): Process completed with exit code 1.
+FOUND: python exception type (step:npm install): SyntaxError
+FOUND: python exception message (step:npm install): /home/runner/work/flutter_navigation_basic/flutter_navigation_basic/e2e/tests/screen_navigation.spec.ts: Invalid regular expression flag. (154:40)
+FOUND: node error lines: 1
 FOUND: node error line: SyntaxError: /home/runner/work/flutter_navigation_basic/flutter_navigation_basic/e2e/tests/screen_navigation.spec.ts: Invalid regular expression flag. (154:40)
 FOUND: node stack frame (first): screen_navigation.spec.ts:154
 FOUND: node stack frame (last): screen_navigation.spec.ts:154
 FOUND: node stack frame count: 1
+FOUND: node error 1 stack frame (first): screen_navigation.spec.ts:154
 FOUND: python version: <runtime>
 FOUND: node version: <runtime>
 FOUND: gh version: <runtime>
@@ -16,6 +28,10 @@ FOUND: environment variable count: <runtime>
 FOUND: environment variable names: <runtime>
 NOT FOUND: actions log ::error:: commands (actions-log)
 NOT FOUND: actions log pytest failed lines (actions-log)
+NOT FOUND: actions log ::error:: commands (actions-log)
+NOT FOUND: actions log pytest failed lines (actions-log)
+NOT FOUND: python stack frames (step:npm install)
 NOT FOUND: lock files in project root
+HINT: web search keywords: SyntaxError /home/runner/work/flutter_navigation_basic/flutter_navigation_basic/e2e/tests/screen_navigation.spec.ts: Invalid regular expression flag. (154:40)
 HINT: web search keywords: SyntaxError: /home/runner/work/flutter_navigation_basic/flutter_navigation_basic/e2e/tests/screen_navigation.spec.ts: Invalid regular expression flag. (154:40)
 HINT: actions log search keywords (actions-log): Process completed with exit code 1.
