@@ -1,6 +1,8 @@
 FOUND: exit code: 1
 FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37579788223_junit-py3.15_81.xml): 1
 FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37579788223_junit-py3.15_81.xml): AssertionError: docs/ の直下にあるのに、マスターファイルの一覧（docs/README.md）にない\nassert {'registratio...ata-audit.md'} == set()\n  \n  Extra items in the left set:\n  'registration-metadata-audit.md'\n  \n  Full diff:\n  - set()\n  + {\n  +     'registration-metadata-audit.md',\n  + }\ndef test_every_file_directly_under_docs_is_listed_as_a_master_file():\n        listed = set(re.findall(r"^\| \[([^\]]+\.md)\]\(\1\)
+FOUND: junit failure groups (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37579788223_junit-py3.15_81.xml): 1 failures in 1 groups
+FOUND: junit failure group 1/1 (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37579788223_junit-py3.15_81.xml): 1× AssertionError: docs/ の直下にあるのに、マスターファイルの一覧（docs/README.md）にない — first: nagoyaction.tests.test_docs_masters::test_every_file_directly_under_docs_is_listed_as_a_master_file — msg: docs/ の直下にあるのに、マスターファイルの一覧（docs/README.md）にない
 FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37579788223_junit-py3.15_81.xml): nagoyaction.tests.test_docs_masters
 FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/Aoi_37579788223_junit-py3.15_81.xml): AssertionError
 FOUND: python version: 3.12.3 (cpython)

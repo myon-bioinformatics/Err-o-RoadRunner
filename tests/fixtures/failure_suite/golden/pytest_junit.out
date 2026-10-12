@@ -1,6 +1,8 @@
 FOUND: exit code: 1
 FOUND: junit failures (<repo>/tests/fixtures/failure_suite/inputs/suite.junit.xml): 1
 FOUND: junit failure (first) (<repo>/tests/fixtures/failure_suite/inputs/suite.junit.xml): def test_fail():\n>       assert 0\nE       assert 0\n\nsuite_fail.py:2: AssertionError
+FOUND: junit failure groups (<repo>/tests/fixtures/failure_suite/inputs/suite.junit.xml): 1 failures in 1 groups
+FOUND: junit failure group 1/1 (<repo>/tests/fixtures/failure_suite/inputs/suite.junit.xml): 1× AssertionError: assert N — first: tests.fixtures.failure_suite.inputs.suite_fail::test_fail — msg: assert N
 FOUND: junit testcase classname (first) (<repo>/tests/fixtures/failure_suite/inputs/suite.junit.xml): tests.fixtures.failure_suite.inputs.suite_fail
 FOUND: python version: 3.12.3 (cpython)
 FOUND: node version: v22.14.0

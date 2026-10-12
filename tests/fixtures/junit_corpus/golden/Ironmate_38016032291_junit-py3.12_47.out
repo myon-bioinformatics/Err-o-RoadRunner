@@ -1,6 +1,8 @@
 FOUND: exit code: 1
 FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38016032291_junit-py3.12_47.xml): 1
 FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38016032291_junit-py3.12_47.xml): assert (10, 20, 30) == (171, 205, 239)\n  \n  At index 0 diff: 10 != 171\n  \n  Full diff:\n    (\n  -     171,\n  ?      ^^\n  +     10,\n  ?      ^\n  -     205,\n  ?       -\n  +     20,\n  -     239,\n  ?     - ^\n  +     30,\n  ?      ^\n    )\ntests/test_pptx_xml_batch.py:62: in test_reordered_slide_uses_display_order_not_xml_suffix\n    assert rgb(output, 0) == RGBColor(171, 205, 239)\nE   
+FOUND: junit failure groups (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38016032291_junit-py3.12_47.xml): 1 failures in 1 groups
+FOUND: junit failure group 1/1 (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38016032291_junit-py3.12_47.xml): 1× AssertionError: assert (N, N, N) == (N, N, N) — first: tests.test_pptx_xml_batch::test_reordered_slide_uses_display_order_not_xml_suffix — msg: assert (N, N, N) == (N, N, N)
 FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38016032291_junit-py3.12_47.xml): tests.test_pptx_xml_batch
 FOUND: python version: 3.12.3 (cpython)
 FOUND: node version: v22.14.0

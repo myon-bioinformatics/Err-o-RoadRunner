@@ -467,6 +467,176 @@ DART_ERROR_LINE_RE = re.compile(
 DART_NOISE_LINE_RE = re.compile(
     r"^-\s+'Object'\s+is\s+from\s+'dart:core'\."
 )
+JUNIT_MSG_EXCEPTION_RE = re.compile(
+    r"^([A-Za-z_][\w.]*(?:Error|Exception|Failed|Timeout|Exit))(?:\s*:\s*|$)"
+)
+JUNIT_BARE_EXCEPTION_NAME_RE = re.compile(r"^[A-Za-z_][\w.]+$")
+JUNIT_FAILURE_GROUP_CAP = 10
+
+
+@dataclass(frozen=True)
+class JUnitFailureGroup:
+    type_key: str
+    count: int
+    first_label: str
+    representative_message: str
+
+
+def _junit_normalize_type_message(line: str) -> str:
+    line = line.strip().replace("\r", "")
+    line = re.sub(r"'[^']*'|\"[^\"]*\"", "<q>", line)
+    line = re.sub(r"\d+", "N", line)
+    return line
+
+
+def _junit_quote_fingerprint(line: str) -> str:
+    """Stable discriminator for quoted literals before they collapse to <q>."""
+    parts = re.findall(r"'([^']*)'|\"([^\"]*)\"", line)
+    if not parts:
+        return ""
+    inner = [p[0] if p[0] else p[1] for p in parts]
+    return "|".join(re.sub(r"\d+", "N", piece) for piece in inner)
+
+
+def _junit_failure_message_first_line(message: str, blob: str) -> str:
+    msg = (message or "").strip()
+    first_line = msg.splitlines()[0] if msg else ""
+    stripped = first_line.strip()
+    if not stripped or stripped == "Flutter test error":
+        for line in blob.splitlines():
+            if "Error when reading" not in line:
+                continue
+            marker = ": Error: "
+            idx = line.find(marker)
+            if idx != -1:
+                candidate = line[idx + len(marker) :].strip()
+                if candidate.startswith("Error when reading"):
+                    return candidate
+        dart = _junit_dart_error_line(blob)
+        if dart:
+            idx = dart.find(": Error: ")
+            if idx != -1:
+                return dart[idx + len(": Error: ") :].strip()
+    if not stripped:
+        return next((ln.strip() for ln in blob.splitlines() if ln.strip()), "")
+    return stripped
+
+
+def _junit_exception_type_for_type_key(message: str, blob: str, first_line: str) -> str:
+    for line in blob.splitlines():
+        m = PYTEST_E_EXC_LINE_RE.match(line)
+        if m:
+            return m.group("exc")
+    if first_line.startswith("assert "):
+        return "AssertionError"
+    if first_line.startswith("Error when"):
+        return "Error"
+    msg = (message or "").strip()
+    if msg:
+        head = msg.splitlines()[0]
+        m = JUNIT_MSG_EXCEPTION_RE.match(head)
+        if m:
+            return m.group(1)
+        if JUNIT_BARE_EXCEPTION_NAME_RE.match(head.strip()) and head.strip()[0].isupper():
+            return head.strip()
+    m = JUNIT_MSG_EXCEPTION_RE.match(first_line)
+    if m:
+        return m.group(1)
+    return "Unknown"
+
+
+def _junit_failure_type_key(blob: str, message: str = "") -> str:
+    """Type key: exception type + normalized first line of the failure message."""
+    first_line = _junit_failure_message_first_line(message, blob)
+    exc = _junit_exception_type_for_type_key(message, blob, first_line)
+    line_for_norm = first_line
+    m = JUNIT_MSG_EXCEPTION_RE.match(line_for_norm)
+    if m and line_for_norm.startswith(f"{m.group(1)}:"):
+        line_for_norm = line_for_norm[m.end() :].strip() or line_for_norm
+    norm = _junit_normalize_type_message(line_for_norm)
+    fp = _junit_quote_fingerprint(first_line)
+    if fp:
+        return f"{exc}|{norm}|{fp}"
+    return f"{exc}|{norm}"
+
+
+def _junit_group_display_type(type_key: str) -> str:
+    parts = type_key.split("|")
+    exc, norm = parts[0], parts[1]
+    if exc == "Error" and norm.startswith("Error when"):
+        return norm
+    if norm.startswith(f"{exc}:"):
+        return norm
+    if norm == exc:
+        return exc
+    return f"{exc}: {norm}" if norm else exc
+
+
+def _junit_group_failures(
+    labels: Sequence[str],
+    messages: Sequence[str],
+    blobs: Sequence[str],
+) -> list[JUnitFailureGroup]:
+    from collections import OrderedDict
+
+    buckets: OrderedDict[str, JUnitFailureGroup] = OrderedDict()
+    for label, message, blob in zip(labels, messages, blobs, strict=True):
+        key = _junit_failure_type_key(blob, message)
+        if key in buckets:
+            prev = buckets[key]
+            buckets[key] = JUnitFailureGroup(
+                type_key=key,
+                count=prev.count + 1,
+                first_label=prev.first_label,
+                representative_message=prev.representative_message,
+            )
+        else:
+            first_line = _junit_failure_message_first_line(message, blob)
+            line_for_norm = first_line
+            m = JUNIT_MSG_EXCEPTION_RE.match(line_for_norm)
+            if m and line_for_norm.startswith(f"{m.group(1)}:"):
+                line_for_norm = line_for_norm[m.end() :].strip() or line_for_norm
+            rep = _junit_normalize_type_message(line_for_norm)
+            buckets[key] = JUnitFailureGroup(
+                type_key=key,
+                count=1,
+                first_label=label,
+                representative_message=rep[:300],
+            )
+    ranked = sorted(buckets.values(), key=lambda g: (-g.count, g.first_label))
+    return ranked
+
+
+def _junit_emit_failure_groups(
+    report: Report,
+    source: str,
+    labels: Sequence[str],
+    messages: Sequence[str],
+    blobs: Sequence[str],
+) -> None:
+    if not labels:
+        report.add_not_found(f"junit failure groups ({source})")
+        return
+    groups = _junit_group_failures(labels, messages, blobs)
+    total = len(labels)
+    report.add_found(
+        f"junit failure groups ({source}): {total} failures in {len(groups)} groups"
+    )
+    shown = groups[:JUNIT_FAILURE_GROUP_CAP]
+    for idx, group in enumerate(shown, start=1):
+        display = _junit_group_display_type(group.type_key)
+        report.add_found(
+            f"junit failure group {idx}/{len(groups)} ({source}): "
+            f"{group.count}× {display} — first: {group.first_label[:200]} — "
+            f"msg: {group.representative_message[:200]}"
+        )
+    if len(groups) > JUNIT_FAILURE_GROUP_CAP:
+        omitted_types = len(groups) - JUNIT_FAILURE_GROUP_CAP
+        omitted_failures = total - sum(g.count for g in shown)
+        report.add_found(
+            f"junit failure groups truncated ({source}): "
+            f"{omitted_types} types, {omitted_failures} failures omitted"
+        )
 
 
 def _junit_child_text(parent: ET.Element, local_name: str) -> str:
@@ -625,6 +795,9 @@ def parse_junit_xml(text: str, source: str, report: Report) -> None:
     errors: list[str] = []
     skipped: list[str] = []
     failure_blobs: list[str] = []
+    failing_labels: list[str] = []
+    failing_messages: list[str] = []
+    failing_group_blobs: list[str] = []
     failing_testcases: list[ET.Element] = []
     first_classname = ""
     collection_errors: list[str] = []
@@ -643,6 +816,12 @@ def parse_junit_xml(text: str, source: str, report: Report) -> None:
                         blob = _junit_failure_blob(testcase, child)
                         failure_blobs.append(blob)
                         failures.append(_junit_snippet(child, testcase))
+                        msg_attr = sanitize_report_text(
+                            (child.attrib.get("message") or "").strip()
+                        )
+                        failing_labels.append(label)
+                        failing_messages.append(msg_attr)
+                        failing_group_blobs.append(blob)
                     elif child_tag == "error":
                         if not first_classname:
                             first_classname = (testcase.attrib.get("classname") or "").strip()
@@ -650,6 +829,13 @@ def parse_junit_xml(text: str, source: str, report: Report) -> None:
                         blob = _junit_failure_blob(testcase, child)
                         failure_blobs.append(blob)
                         errors.append(_junit_snippet(child, testcase))
+                        if not _junit_is_pytest_collection_failure(child, blob):
+                            msg_attr = sanitize_report_text(
+                                (child.attrib.get("message") or "").strip()
+                            )
+                            failing_labels.append(label)
+                            failing_messages.append(msg_attr)
+                            failing_group_blobs.append(blob)
                         if _junit_is_pytest_collection_failure(child, blob):
                             msg = (child.attrib.get("message") or "").strip()
                             if msg:
@@ -685,6 +871,14 @@ def parse_junit_xml(text: str, source: str, report: Report) -> None:
             report.add_found(f"junit error (first) ({source}): {errors[0]}")
     else:
         report.add_not_found(f"junit errors ({source})")
+
+    _junit_emit_failure_groups(
+        report,
+        source,
+        failing_labels,
+        failing_messages,
+        failing_group_blobs,
+    )
 
     if skipped:
         report.add_found(f"junit skipped ({source}): {len(skipped)}")
