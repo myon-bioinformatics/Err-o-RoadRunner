@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-__version__ = "0.3.0"
-
 import argparse
 import os
 import re
@@ -15,6 +13,39 @@ import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterator, Sequence
+
+_PYPROJECT_VERSION_RE = re.compile(r'^version\s*=\s*"([^"]+)"\s*$')
+
+
+def _read_pyproject_version() -> str:
+    path = Path(__file__).resolve().parent / "pyproject.toml"
+    in_project = False
+    for line in path.read_text(encoding="utf-8").splitlines():
+        stripped = line.strip()
+        if stripped == "[project]":
+            in_project = True
+            continue
+        if in_project:
+            if stripped.startswith("[") and stripped.endswith("]"):
+                break
+            match = _PYPROJECT_VERSION_RE.match(stripped)
+            if match:
+                return match.group(1)
+    raise RuntimeError("version not found in pyproject.toml [project]")
+
+
+def _resolve_version() -> str:
+    try:
+        from importlib.metadata import PackageNotFoundError, version
+
+        return version("err-o-roadrunner")
+    except PackageNotFoundError:
+        return _read_pyproject_version()
+    except Exception:
+        return _read_pyproject_version()
+
+
+__version__ = _resolve_version()
 
 # Stable exit codes (documented in README).
 EXIT_OK = 0
@@ -1559,6 +1590,11 @@ def build_parser() -> argparse.ArgumentParser:
         metavar="DIR",
         default=".",
         help="Directory for lock-file detection (default: current directory).",
+    )
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"%(prog)s {__version__}",
     )
     return parser
 

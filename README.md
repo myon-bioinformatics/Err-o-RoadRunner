@@ -35,7 +35,13 @@ Researching the cause of a Python, Node or GitHub Actions CI failure currently t
 
 ## CLI usage
 
-After installing the package (`pip install -e .`), run:
+Install the distribution as **`err-o-roadrunner`** (PyPI-style name; matches the `err-o-roadrunner` console script):
+
+```bash
+pip install -e .
+```
+
+After installing, run:
 
 ```bash
 err-o-roadrunner --exit-code "$?" --stderr /path/to/stderr.txt --junit reports/junit.xml
