@@ -1,0 +1,6 @@
+Traceback (most recent call last):
+  File "runner.py", line 2, in <module>
+    raise RuntimeError("python side")
+RuntimeError: python side
+TypeError: js side broke
+    at Object.<anonymous> (server.js:7:11)

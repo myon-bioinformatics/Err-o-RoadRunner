@@ -1,0 +1,7 @@
+matrix-a	Run suite	2026-10-11T15:30:00.0000000Z FAILED tests/test_a.py::test_one - assert 1 == 2
+matrix-a	Run suite	2026-10-11T15:30:01.0000000Z ##[error]Process completed with exit code 1.
+matrix-b	Run suite	2026-10-11T15:30:00.0000000Z TypeError: bad arg
+matrix-b	Run suite	2026-10-11T15:30:00.1000000Z     at run (index.js:9:3)
+matrix-b	Run suite	2026-10-11T15:30:01.0000000Z ##[error]Process completed with exit code 1.
+matrix-c	Run suite	2026-10-11T15:30:00.0000000Z all ok
+matrix-c	Run suite	2026-10-11T15:30:01.0000000Z ##[endgroup]

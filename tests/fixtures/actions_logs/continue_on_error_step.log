@@ -1,0 +1,9 @@
+2026-10-11T15:20:00.0000000Z ##[group]Run optional scan
+2026-10-11T15:20:00.1000000Z continue-on-error: true
+2026-10-11T15:20:01.0000000Z ##[endgroup]
+2026-10-11T15:20:01.1000000Z scan failed
+2026-10-11T15:20:02.0000000Z ##[error]Process completed with exit code 1.
+2026-10-11T15:20:03.0000000Z ##[group]Run required tests
+2026-10-11T15:20:04.0000000Z ##[endgroup]
+2026-10-11T15:20:04.1000000Z FAILED tests/test_core.py::test_required - assert False
+2026-10-11T15:20:05.0000000Z ##[error]Process completed with exit code 1.

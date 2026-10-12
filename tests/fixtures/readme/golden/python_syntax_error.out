@@ -1,6 +1,9 @@
 FOUND: exit code: 1
 FOUND: python exception type: SyntaxError
 FOUND: python exception message: unterminated string literal (detected at line 1)
+FOUND: python traceback frame (first): <repo>/tests/fixtures/readme/inputs/bad_syntax.py:1
+FOUND: python traceback frame (last): <repo>/tests/fixtures/readme/inputs/bad_syntax.py:1
+FOUND: python traceback frame count: 1
 FOUND: python version: 3.12.3 (cpython)
 FOUND: node version: v22.14.0
 FOUND: gh version: gh version 2.102.0 (2026-09-30)

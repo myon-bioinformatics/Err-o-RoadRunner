@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "err-o-roadrunner"
-version = "0.3.0"
+version = "0.4.0"
 description = "Error-triggered triage tool (read-only failure report)"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -31,4 +31,6 @@ markers = [
     "actions: GitHub Actions log parsing",
     "failure_suite: deliberate failure golden suite",
     "junit_corpus: real failed-run JUnit XML golden suite",
+    "multi_error: multi-error coverage and standard-error HINT floor",
+    "mutation_guard: mutations targeted by scripts/combo_mutation.py",
 ]
