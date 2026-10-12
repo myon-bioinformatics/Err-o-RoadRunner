@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pytest
 
-from err_o_roadrunner.triage import (
+from triage import (
     EXIT_OK,
     EXIT_USAGE,
     MAX_FRAMES,
@@ -30,7 +30,7 @@ FIXTURES = Path(__file__).resolve().parent / "fixtures"
 
 def run_cli(*args: str) -> subprocess.CompletedProcess[str]:
     return subprocess.run(
-        [sys.executable, "-m", "err_o_roadrunner", *args],
+        [sys.executable, "-m", "triage", *args],
         cwd=ROOT,
         capture_output=True,
         text=True,
@@ -78,7 +78,7 @@ def test_success_junit_without_failures() -> None:
 
 @pytest.mark.success
 def test_success_import_and_version() -> None:
-    import err_o_roadrunner as pkg
+    import triage as pkg
 
     assert pkg.__version__ == "0.3.0"
     assert pkg.EXIT_OK == 0

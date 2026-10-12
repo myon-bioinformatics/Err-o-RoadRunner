@@ -22,7 +22,7 @@ Researching the cause of a Python, Node or GitHub Actions CI failure currently t
 ## Design principles (draft)
 
 1. **Stays idle in normal times:** it does nothing unless there is an error. It has no daemon and no resident process.
-2. **Python standard library only:** the main implementation is a single module (`triage.py`) plus a thin `__main__` entry.
+2. **Python standard library only:** the main implementation lives in root-level modules (`triage.py`, `actions_log.py`, `junit_redact.py`).
 3. **Node is optional:** Node stack parsing is regex-based on log text; no Node runtime is required for triage.
 4. **Read-only:** it never changes code or settings, and it never posts or sends anything.
 5. **Separates facts from guesses:** it shows `FOUND` and `NOT FOUND` explicitly, and labels inferences as `HINT`.
@@ -44,7 +44,7 @@ err-o-roadrunner --exit-code "$?" --stderr /path/to/stderr.txt --junit reports/j
 Or as a module:
 
 ```bash
-python -m err_o_roadrunner --exit-code 1 --log failure.log --project-root .
+python3 triage.py --exit-code 1 --log failure.log --project-root .
 ```
 
 | Flag | Purpose |
@@ -76,7 +76,7 @@ These samples were captured by running the real CLI on real failures (see `tests
 **Command**
 
 ```bash
-python3 -m err_o_roadrunner --exit-code 1 --stderr tests/fixtures/readme/inputs/python_module_not_found.stderr --project-root tests/fixtures/readme/empty_root
+python3 triage.py --exit-code 1 --stderr tests/fixtures/readme/inputs/python_module_not_found.stderr --project-root tests/fixtures/readme/empty_root
 ```
 
 **Input (trimmed)**
@@ -112,7 +112,7 @@ HINT: web search keywords: ModuleNotFoundError No module named 'totally_missing_
 **Command**
 
 ```bash
-python3 -m err_o_roadrunner --exit-code 1 --stderr tests/fixtures/readme/inputs/python_import_error.stderr --project-root tests/fixtures/readme/empty_root
+python3 triage.py --exit-code 1 --stderr tests/fixtures/readme/inputs/python_import_error.stderr --project-root tests/fixtures/readme/empty_root
 ```
 
 **Input (trimmed)**
@@ -149,7 +149,7 @@ HINT: web search keywords: ImportError cannot import name 'ThisNameDoesNotExist'
 **Command**
 
 ```bash
-python3 -m err_o_roadrunner --exit-code 1 --stderr tests/fixtures/readme/inputs/python_chained.stderr --project-root tests/fixtures/readme/empty_root
+python3 triage.py --exit-code 1 --stderr tests/fixtures/readme/inputs/python_chained.stderr --project-root tests/fixtures/readme/empty_root
 ```
 
 **Input (trimmed)**
@@ -197,7 +197,7 @@ HINT: web search keywords: ValueError while handling
 **Command**
 
 ```bash
-python3 -m err_o_roadrunner --exit-code 1 --stderr tests/fixtures/readme/inputs/python_syntax_error.stderr --project-root tests/fixtures/readme/empty_root
+python3 triage.py --exit-code 1 --stderr tests/fixtures/readme/inputs/python_syntax_error.stderr --project-root tests/fixtures/readme/empty_root
 ```
 
 **Input (trimmed)**
@@ -231,7 +231,7 @@ HINT: web search keywords: SyntaxError unterminated string literal (detected at 
 **Command**
 
 ```bash
-python3 -m err_o_roadrunner --exit-code 1 --log tests/fixtures/readme/inputs/python_with_info_trailing.log --project-root tests/fixtures/readme/empty_root
+python3 triage.py --exit-code 1 --log tests/fixtures/readme/inputs/python_with_info_trailing.log --project-root tests/fixtures/readme/empty_root
 ```
 
 **Input (trimmed)**
@@ -269,7 +269,7 @@ HINT: web search keywords: KeyError 'missing'
 **Command**
 
 ```bash
-python3 -m err_o_roadrunner --exit-code 1 --junit tests/fixtures/readme/inputs/pytest_assertion.junit.xml --project-root tests/fixtures/readme/empty_root
+python3 triage.py --exit-code 1 --junit tests/fixtures/readme/inputs/pytest_assertion.junit.xml --project-root tests/fixtures/readme/empty_root
 ```
 
 **Input (trimmed)**
@@ -300,7 +300,7 @@ NOT FOUND: lock files in project root
 **Command**
 
 ```bash
-python3 -m err_o_roadrunner --exit-code 1 --stderr tests/fixtures/readme/inputs/hostile_osc.stderr --project-root tests/fixtures/readme/empty_root
+python3 triage.py --exit-code 1 --stderr tests/fixtures/readme/inputs/hostile_osc.stderr --project-root tests/fixtures/readme/empty_root
 ```
 
 **Input (trimmed)**
@@ -336,7 +336,7 @@ HINT: web search keywords: RuntimeError hostile demo
 **Command**
 
 ```bash
-python3 -m err_o_roadrunner --exit-code 1 --log tests/fixtures/readme/inputs/node_module_not_found.stderr --project-root tests/fixtures/readme/empty_root
+python3 triage.py --exit-code 1 --log tests/fixtures/readme/inputs/node_module_not_found.stderr --project-root tests/fixtures/readme/empty_root
 ```
 
 **Input (trimmed)**

@@ -9,7 +9,7 @@ from unittest import mock
 
 import pytest
 
-TRIAGE_MOD = importlib.import_module("err_o_roadrunner.triage")
+TRIAGE_MOD = importlib.import_module("triage")
 
 ROOT = Path(__file__).resolve().parents[1]
 CORPUS = ROOT / "tests" / "fixtures" / "junit_corpus" / "cases"
@@ -62,7 +62,7 @@ def test_flutter_corpus_twelve_failures_one_type() -> None:
 
 
 def test_flutter_cli_group_msg_shows_missing_file_path() -> None:
-    from err_o_roadrunner.triage import Report, parse_junit_xml
+    from triage import Report, parse_junit_xml
 
     report = Report()
     parse_junit_xml(FLUTTER.read_text(encoding="utf-8"), "flutter.xml", report)
@@ -74,7 +74,7 @@ def test_flutter_cli_group_msg_shows_missing_file_path() -> None:
 
 
 def test_aoi_module_not_found_groups_show_distinct_module_names() -> None:
-    from err_o_roadrunner.triage import Report, parse_junit_xml
+    from triage import Report, parse_junit_xml
 
     report = Report()
     parse_junit_xml(AOI.read_text(encoding="utf-8"), "aoi.xml", report)
@@ -116,7 +116,7 @@ def test_mutation_disabling_failure_type_key_collapses_aoi_groups() -> None:
 
 
 def test_truncation_omitted_failure_count_not_swapped_with_type_count() -> None:
-    from err_o_roadrunner.triage import Report
+    from triage import Report
 
     labels = ["t::a1", "t::a2", "t::a3", "t::b1", "t::b2"]
     messages = [
@@ -166,7 +166,7 @@ def test_mutation_using_normalized_text_for_representative_message() -> None:
 
 @pytest.mark.gap
 def test_mutation_skipping_emit_removes_group_found_lines(tmp_path: Path) -> None:
-    from err_o_roadrunner.triage import Report, parse_junit_xml
+    from triage import Report, parse_junit_xml
 
     report = Report()
     text = AOI.read_text(encoding="utf-8")

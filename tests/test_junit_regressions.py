@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from err_o_roadrunner.triage import triage
+from triage import triage
 
 ROOT = Path(__file__).resolve().parents[1]
 CORPUS = ROOT / "tests" / "fixtures" / "junit_corpus"

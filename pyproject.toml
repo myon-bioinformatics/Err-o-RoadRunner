@@ -11,16 +11,20 @@ requires-python = ">=3.10"
 license = { text = "MIT" }
 
 [project.scripts]
-err-o-roadrunner = "err_o_roadrunner.triage:main"
+err-o-roadrunner = "triage:main"
 
 [project.optional-dependencies]
 test = ["pytest>=8,<10"]
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/err_o_roadrunner"]
+only-include = ["triage.py", "actions_log.py", "junit_redact.py"]
+
+[tool.hatch.build.targets.sdist]
+only-include = ["triage.py", "actions_log.py", "junit_redact.py"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]
 python_files = ["test_*.py"]
 norecursedirs = [".git", ".venv", "vendor", "tests/fixtures/readme/inputs"]
 markers = [

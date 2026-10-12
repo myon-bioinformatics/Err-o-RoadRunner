@@ -10,10 +10,10 @@ from unittest import mock
 
 import pytest
 
-from err_o_roadrunner import actions_log
-from err_o_roadrunner.triage import triage
+import actions_log
+from triage import triage
 
-TRIAGE_MOD = importlib.import_module("err_o_roadrunner.triage")
+TRIAGE_MOD = importlib.import_module("triage")
 
 ROOT = Path(__file__).resolve().parents[1]
 EMPTY = ROOT / "tests" / "fixtures" / "failure_suite" / "empty_root"
@@ -25,7 +25,7 @@ def run_cli(xml_path: Path) -> str:
         [
             sys.executable,
             "-m",
-            "err_o_roadrunner",
+            "triage",
             "--exit-code",
             "1",
             "--project-root",

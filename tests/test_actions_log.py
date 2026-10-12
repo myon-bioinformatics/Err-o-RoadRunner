@@ -8,8 +8,8 @@ from pathlib import Path
 
 import pytest
 
-from err_o_roadrunner.actions_log import normalize_actions_log_line, preprocess_actions_log
-from err_o_roadrunner.triage import MAX_READ_BYTES, triage
+from actions_log import normalize_actions_log_line, preprocess_actions_log
+from triage import MAX_READ_BYTES, triage
 from tests.actions_log_golden_util import normalize_report, triage_actions_log, triage_actions_log_cli
 from tests.report_assert import assert_report_has_exact_line
 
@@ -105,7 +105,7 @@ def test_actions_log_cli_read_cap() -> None:
             [
                 sys.executable,
                 "-m",
-                "err_o_roadrunner",
+                "triage",
                 "--exit-code",
                 "1",
                 "--actions-log",

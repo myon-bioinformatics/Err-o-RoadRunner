@@ -8,7 +8,7 @@ from unittest import mock
 
 import pytest
 
-from err_o_roadrunner.junit_redact import (
+from junit_redact import (
     CREDENTIAL_PATTERN_SPECS,
     find_corpus_leaks,
     fixture_leak_patterns_excluding_credential,
@@ -17,7 +17,7 @@ from err_o_roadrunner.junit_redact import (
     secret_patterns_excluding_credential,
 )
 
-JR = importlib.import_module("err_o_roadrunner.junit_redact")
+JR = importlib.import_module("junit_redact")
 
 _FAKE_OAUTH = "ghp_" + "A" * 36
 _FAKE_GHO = "gho_" + "B" * 36

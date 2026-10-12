@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from err_o_roadrunner.junit_redact import find_corpus_leaks
+from junit_redact import find_corpus_leaks
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = ROOT / "tests" / "fixtures"

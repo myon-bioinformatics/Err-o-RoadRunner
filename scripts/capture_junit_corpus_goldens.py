@@ -30,7 +30,7 @@ def main() -> None:
         cmd = [
             sys.executable,
             "-m",
-            "err_o_roadrunner",
+            "triage",
             "--exit-code",
             "1",
             "--project-root",

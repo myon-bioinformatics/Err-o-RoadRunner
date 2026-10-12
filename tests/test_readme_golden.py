@@ -44,7 +44,7 @@ def run_example(entry: dict) -> str:
     cmd = [
         sys.executable,
         "-m",
-        "err_o_roadrunner",
+        "triage",
         "--exit-code",
         "1",
         "--project-root",

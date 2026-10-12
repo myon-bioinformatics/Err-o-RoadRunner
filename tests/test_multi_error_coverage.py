@@ -9,8 +9,8 @@ from pathlib import Path
 
 import pytest
 
-from err_o_roadrunner import actions_log
-from err_o_roadrunner.triage import triage
+import actions_log
+from triage import triage
 
 ROOT = Path(__file__).resolve().parents[1]
 FIX = ROOT / "tests" / "fixtures" / "actions_logs"

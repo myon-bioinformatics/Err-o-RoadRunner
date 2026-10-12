@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+__version__ = "0.3.0"
+
 import argparse
 import os
 import re
@@ -1501,7 +1503,7 @@ def triage(
         detect_and_parse_log(text, report)
 
     if actions_log_text is not None:
-        from err_o_roadrunner.actions_log import parse_actions_log
+        from actions_log import parse_actions_log
 
         if not actions_log_text.strip():
             report.add_not_found("actions log text (empty)")

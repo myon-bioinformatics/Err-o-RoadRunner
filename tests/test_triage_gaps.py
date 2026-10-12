@@ -10,7 +10,7 @@ from unittest import mock
 
 import pytest
 
-from err_o_roadrunner.triage import (
+from triage import (
     MAX_READ_BYTES,
     Report,
     _split_python_trace_blocks,
@@ -30,7 +30,7 @@ def test_safe_read_enforces_max_bytes_via_cli(tmp_path: Path) -> None:
     import subprocess
 
     proc = subprocess.run(
-        [sys.executable, "-m", "err_o_roadrunner", "--exit-code", "1", "--log", str(path)],
+        [sys.executable, "-m", "triage", "--exit-code", "1", "--log", str(path)],
         cwd=ROOT,
         capture_output=True,
         text=True,
@@ -143,7 +143,7 @@ def test_apc_pm_sos_sequences_stripped() -> None:
 
 @pytest.mark.gap
 def test_actions_log_preprocess_strips_bom_and_controls() -> None:
-    from err_o_roadrunner.actions_log import preprocess_actions_log
+    from actions_log import preprocess_actions_log
 
     raw = "\ufeff2026-10-11T13:00:00.0000000Z \x1b[31merror\x1b[0m\n"
     records, _ = preprocess_actions_log(raw)
@@ -152,7 +152,7 @@ def test_actions_log_preprocess_strips_bom_and_controls() -> None:
 
 @pytest.mark.gap
 def test_actions_log_line_crlf_rstrip_required() -> None:
-    from err_o_roadrunner.actions_log import normalize_actions_log_line
+    from actions_log import normalize_actions_log_line
 
     assert normalize_actions_log_line("payload\r") == "payload"
 
