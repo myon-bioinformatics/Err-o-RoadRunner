@@ -14,31 +14,29 @@ FIXTURES = ROOT / "tests" / "fixtures"
 # Full GitHub Actions job captures; runner paths are intentional test inputs.
 LOG_SCAN_SKIP_PREFIX = FIXTURES / "actions_logs" / "real"
 
-
-def _fixture_xml_paths() -> list[Path]:
-    return sorted(FIXTURES.rglob("*.xml"))
+SCAN_SUFFIXES = (".xml", ".out", ".log", ".stderr", ".json")
 
 
-def _fixture_log_paths() -> list[Path]:
-    out: list[Path] = []
-    for path in sorted(FIXTURES.rglob("*.log")):
+def _fixture_scan_paths() -> list[Path]:
+    paths: list[Path] = []
+    for path in sorted(FIXTURES.rglob("*")):
+        if not path.is_file():
+            continue
+        if path.suffix not in SCAN_SUFFIXES:
+            continue
         if path.is_relative_to(LOG_SCAN_SKIP_PREFIX):
             continue
-        out.append(path)
-    return out
+        paths.append(path)
+    return paths
 
 
 @pytest.mark.junit_corpus
-@pytest.mark.parametrize("xml_path", _fixture_xml_paths(), ids=lambda p: p.relative_to(FIXTURES).as_posix())
-def test_fixture_xml_has_no_redaction_leaks(xml_path: Path) -> None:
-    text = xml_path.read_text(encoding="utf-8")
+@pytest.mark.parametrize(
+    "fixture_path",
+    _fixture_scan_paths(),
+    ids=lambda p: p.relative_to(FIXTURES).as_posix(),
+)
+def test_fixture_file_has_no_redaction_leaks(fixture_path: Path) -> None:
+    text = fixture_path.read_text(encoding="utf-8", errors="replace")
     leaks = find_corpus_leaks(text)
-    assert not leaks, f"{xml_path.relative_to(FIXTURES)}: {', '.join(leaks)}"
-
-
-@pytest.mark.junit_corpus
-@pytest.mark.parametrize("log_path", _fixture_log_paths(), ids=lambda p: p.relative_to(FIXTURES).as_posix())
-def test_fixture_log_has_no_redaction_leaks(log_path: Path) -> None:
-    text = log_path.read_text(encoding="utf-8", errors="replace")
-    leaks = find_corpus_leaks(text)
-    assert not leaks, f"{log_path.relative_to(FIXTURES)}: {', '.join(leaks)}"
+    assert not leaks, f"{fixture_path.relative_to(FIXTURES)}: {', '.join(leaks)}"

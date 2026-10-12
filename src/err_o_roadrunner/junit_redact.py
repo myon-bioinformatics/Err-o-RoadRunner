@@ -4,17 +4,8 @@ from __future__ import annotations
 
 import re
 import xml.etree.ElementTree as ET
-
-SECRET_PATTERNS: list[tuple[re.Pattern[str], str]] = [
-    (re.compile(r"ghs_[A-Za-z0-9_]{20,}"), "ghs_<redacted>"),
-    (re.compile(r"Bearer\s+[A-Za-z0-9._-]+"), "Bearer <redacted>"),
-    (re.compile(r"sk-[A-Za-z0-9]{20,}"), "sk-<redacted>"),
-    (re.compile(r"/home/runner/work/[^/]+/[^/]+"), "<runner-work>"),
-    (re.compile(r"/Users/[^/\s]+"), "<user-home>"),
-    (re.compile(r"/opt/hostedtoolcache/"), "<toolcache>/"),
-    (re.compile(r"/tmp/pytest-of-runner/"), "<pytest-tmp>/"),
-    (re.compile(r"0x[0-9a-fA-F]{8,}"), "0x<addr>"),
-]
+from dataclasses import dataclass
+from typing import Callable
 
 ISO_TIMESTAMP_RE = re.compile(
     r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2})$"
@@ -25,23 +16,105 @@ REDACTED_HOST_MARKERS = frozenset(
 )
 REDACTED_TIMESTAMP_MARKERS = frozenset({"<timestamp>", "&lt;timestamp&gt;"})
 
-# Patterns for checked-in fixture scans (paths, tokens, JUnit metadata).
-FIXTURE_LEAK_PATTERNS: list[tuple[str, re.Pattern[str]]] = [
-    ("runner_work_path", re.compile(r"/home/runner/work/")),
-    ("user_home_path", re.compile(r"/Users/[^/\s<\"']+")),
-    ("hostedtoolcache_path", re.compile(r"/opt/hostedtoolcache/")),
-    ("pytest_runner_tmp", re.compile(r"/tmp/pytest-of-runner/")),
-    ("github_app_token", re.compile(r"ghs_[A-Za-z0-9_]{20,}")),
-    ("openai_sk_key", re.compile(r"sk-[A-Za-z0-9]{20,}")),
-    ("bearer_token", re.compile(r"Bearer\s+[A-Za-z0-9._-]{8,}")),
-    ("github_runner_hostname", re.compile(r"hostname=\"runnervm", re.IGNORECASE)),
-]
-
 HOSTNAME_ATTR_RE = re.compile(r"""hostname\s*=\s*["']([^"']*)["']""", re.IGNORECASE)
 TIMESTAMP_ATTR_RE = re.compile(
     r"""timestamp\s*=\s*["'](\d{4}-\d{2}-\d{2}T[^"']*)["']""",
     re.IGNORECASE,
 )
+
+
+@dataclass(frozen=True)
+class CredentialPatternSpec:
+    """Shared credential definition for redaction and fixture leak scans."""
+
+    label: str
+    regex: str
+    replacement: str
+
+
+# Single source of truth for credential-like secrets in corpus XML/text.
+CREDENTIAL_PATTERN_SPECS: tuple[CredentialPatternSpec, ...] = (
+    CredentialPatternSpec(
+        "github_oauth_token",
+        r"gh[pousr]_[A-Za-z0-9]{36,}",
+        "ghp_<redacted>",
+    ),
+    CredentialPatternSpec(
+        "github_app_token",
+        r"ghs_[A-Za-z0-9_]{20,}",
+        "ghs_<redacted>",
+    ),
+    CredentialPatternSpec(
+        "github_pat_token",
+        r"github_pat_[A-Za-z0-9_]{22,}",
+        "github_pat_<redacted>",
+    ),
+    CredentialPatternSpec(
+        "aws_access_key_id",
+        r"(?:AKIA|ASIA)[A-Z0-9]{16}",
+        "<aws-access-key-id>",
+    ),
+    CredentialPatternSpec(
+        "aws_secret_access_key",
+        r"(?i)aws_secret_access_key\s*[=:]\s*['\"]?[A-Za-z0-9/+=]{40}\b",
+        "aws_secret_access_key=<redacted>",
+    ),
+    CredentialPatternSpec(
+        "bearer_token",
+        r"Bearer\s+[A-Za-z0-9._-]{8,}",
+        "Bearer <redacted>",
+    ),
+    CredentialPatternSpec(
+        "openai_sk_key",
+        r"sk-[A-Za-z0-9]{20,}",
+        "sk-<redacted>",
+    ),
+)
+
+
+def _oauth_replacement(match: re.Match[str]) -> str:
+    token = match.group(0)
+    return f"{token[:4]}<redacted>"
+
+
+def _compile_credential_redaction(
+    spec: CredentialPatternSpec,
+) -> tuple[re.Pattern[str], str | Callable[[re.Match[str]], str]]:
+    pattern = re.compile(spec.regex)
+    if spec.label == "github_oauth_token":
+        return pattern, _oauth_replacement
+    return pattern, spec.replacement
+
+
+_CREDENTIAL_REDUCTION: list[tuple[re.Pattern[str], str | Callable[[re.Match[str]], str]]] = [
+    _compile_credential_redaction(spec) for spec in CREDENTIAL_PATTERN_SPECS
+]
+
+_PATH_REDACTION_PATTERNS: list[tuple[re.Pattern[str], str]] = [
+    (re.compile(r"/home/runner/work/[^/]+/[^/]+"), "<runner-work>"),
+    (re.compile(r"/Users/[^/\s]+"), "<user-home>"),
+    (re.compile(r"/opt/hostedtoolcache/"), "<toolcache>/"),
+    (re.compile(r"/tmp/pytest-of-runner/"), "<pytest-tmp>/"),
+    (re.compile(r"0x[0-9a-fA-F]{8,}"), "0x<addr>"),
+]
+
+SECRET_PATTERNS: list[tuple[re.Pattern[str], str | Callable[[re.Match[str]], str]]] = [
+    *_CREDENTIAL_REDUCTION,
+    *_PATH_REDACTION_PATTERNS,
+]
+
+_FIXTURE_PATH_LEAK_PATTERNS: list[tuple[str, re.Pattern[str]]] = [
+    ("runner_work_path", re.compile(r"/home/runner/work/")),
+    ("user_home_path", re.compile(r"/Users/[^/\s<\"']+")),
+    ("hostedtoolcache_path", re.compile(r"/opt/hostedtoolcache/")),
+    ("pytest_runner_tmp", re.compile(r"/tmp/pytest-of-runner/")),
+    ("github_runner_hostname", re.compile(r"hostname=\"runnervm", re.IGNORECASE)),
+]
+
+FIXTURE_LEAK_PATTERNS: list[tuple[str, re.Pattern[str]]] = [
+    *[(spec.label, re.compile(spec.regex)) for spec in CREDENTIAL_PATTERN_SPECS],
+    *_FIXTURE_PATH_LEAK_PATTERNS,
+]
 
 
 def redact_text(text: str) -> str:
@@ -113,3 +186,20 @@ def find_corpus_leaks(text: str) -> list[str]:
 
 # Backwards-compatible alias for corpus tooling.
 CORPUS_LEAK_PATTERNS = FIXTURE_LEAK_PATTERNS
+
+
+def secret_patterns_excluding_credential(label: str) -> list[
+    tuple[re.Pattern[str], str | Callable[[re.Match[str]], str]]
+]:
+    kept = [
+        entry
+        for spec, entry in zip(CREDENTIAL_PATTERN_SPECS, _CREDENTIAL_REDUCTION, strict=True)
+        if spec.label != label
+    ]
+    return [*kept, *_PATH_REDACTION_PATTERNS]
+
+
+def fixture_leak_patterns_excluding_credential(label: str) -> list[tuple[str, re.Pattern[str]]]:
+    return [
+        *(pair for pair in FIXTURE_LEAK_PATTERNS if pair[0] != label),
+    ]
