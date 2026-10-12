@@ -51,6 +51,8 @@ PYPROJECT_STATES = (
     "toml_version_unicode_escape",
     "name_pep503_mixed_case",
     "name_pep503_underscore",
+    "name_pep503_dots",
+    "name_pep503_mixed_separators",
 )
 
 DUPLICATE_FIRST_VERSION = "1.2.3"
@@ -74,6 +76,8 @@ WHEEL_BUILDABLE_PYPROJECT_STATES = frozenset(
         "toml_version_unicode_escape",
         "name_pep503_mixed_case",
         "name_pep503_underscore",
+        "name_pep503_dots",
+        "name_pep503_mixed_separators",
     }
 )
 
@@ -211,6 +215,18 @@ def pyproject_text(state: str) -> str | None:
         return (
             "[project]\n"
             'name = "err_o_roadrunner"\n'
+            f'version = "{CHECKOUT_VERSION}"\n'
+        )
+    if state == "name_pep503_dots":
+        return (
+            "[project]\n"
+            'name = "err.o.roadrunner"\n'
+            f'version = "{CHECKOUT_VERSION}"\n'
+        )
+    if state == "name_pep503_mixed_separators":
+        return (
+            "[project]\n"
+            'name = "err--o__roadrunner"\n'
             f'version = "{CHECKOUT_VERSION}"\n'
         )
     raise ValueError(state)

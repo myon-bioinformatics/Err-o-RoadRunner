@@ -1,12 +1,12 @@
 """Partition tests for project_version resolution (pyproject × metadata × run mode).
 
-Matrix size: 23 pyproject states × 3 metadata states × 4 run modes = 276 cells.
+Matrix size: 25 pyproject states × 3 metadata states × 4 run modes = 300 cells.
 
-Unreachable (49 cells, see tests/version_matrix_support.UNREACHABLE):
-- wheel_console × metadata absent (10): installed wheels always ship dist-info metadata.
+Unreachable (51 cells, see tests/version_matrix_support.UNREACHABLE):
+- wheel_console × metadata absent (12): installed wheels always ship dist-info metadata.
 - wheel_console × other pyproject fixtures (39): console scripts read wheel metadata only.
 
-Covered: 227 cells exercised by test_version_resolution_matrix_cell.
+Covered: 249 cells exercised by test_version_resolution_matrix_cell.
 """
 
 from __future__ import annotations
@@ -141,9 +141,9 @@ def test_version_resolution_matrix_cell(
 
 def test_version_matrix_coverage_summary() -> None:
     total, unreachable, covered = matrix_totals()
-    assert total == 276
-    assert unreachable == 49
-    assert covered == 227
+    assert total == 300
+    assert unreachable == 51
+    assert covered == 249
 
 
 @pytest.mark.parametrize("pyproject_state", PYPROJECT_STATES)
@@ -240,6 +240,30 @@ def test_mutation_guard_pep503_name_underscore_accepted(
     sandbox = tmp_path / "s"
     sandbox.mkdir()
     populate_sandbox(sandbox, "name_pep503_underscore")
+    monkeypatch.setattr("project_version._installed_version", lambda: META_VERSION)
+    assert resolve_version(package_dir=sandbox) == CHECKOUT_VERSION
+
+
+@pytest.mark.mutation_guard
+def test_mutation_guard_pep503_name_dots_accepted(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    sandbox = tmp_path / "s"
+    sandbox.mkdir()
+    populate_sandbox(sandbox, "name_pep503_dots")
+    monkeypatch.setattr("project_version._installed_version", lambda: META_VERSION)
+    assert resolve_version(package_dir=sandbox) == CHECKOUT_VERSION
+
+
+@pytest.mark.mutation_guard
+def test_mutation_guard_pep503_name_mixed_separators_accepted(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    sandbox = tmp_path / "s"
+    sandbox.mkdir()
+    populate_sandbox(sandbox, "name_pep503_mixed_separators")
     monkeypatch.setattr("project_version._installed_version", lambda: META_VERSION)
     assert resolve_version(package_dir=sandbox) == CHECKOUT_VERSION
 

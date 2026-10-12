@@ -76,6 +76,16 @@ MUTATIONS: list[Mutation] = [
         "    if False and data is None:\n"
         "        return None",
     ),
+    Mutation(
+        "pep503_drop_dot_separator",
+        '    return re.sub(r"[-_.]+", "-", name).lower()',
+        '    return re.sub(r"[-_]+", "-", name).lower()',
+    ),
+    Mutation(
+        "pep503_drop_plus_quantifier",
+        '    return re.sub(r"[-_.]+", "-", name).lower()',
+        '    return re.sub(r"[-_.]", "-", name).lower()',
+    ),
 ]
 
 
