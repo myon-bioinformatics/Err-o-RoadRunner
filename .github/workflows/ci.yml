@@ -57,7 +57,7 @@ jobs:
     needs: [changes, vendor-locked]
     if: needs.changes.outputs.non_docs_changed == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
