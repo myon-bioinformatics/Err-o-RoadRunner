@@ -57,6 +57,28 @@ MUTATIONS: list[Mutation] = [
         "        return checkout\n"
         "    return VERSION_UNKNOWN",
     ),
+    Mutation(
+        "project_table_boundary_pass",
+        "        if _PROJECT_TABLE_END_RE.match(stripped) and stripped != \"[project]\":\n"
+        "            break",
+        "        if _PROJECT_TABLE_END_RE.match(stripped) and stripped != \"[project]\":\n"
+        "            pass",
+    ),
+    Mutation(
+        "drop_oserror_catch",
+        "    try:\n"
+        "        text = pyproject.read_text(encoding=\"utf-8\")\n"
+        "    except (OSError, UnicodeDecodeError):\n"
+        "        return None\n"
+        "    return _parse_pyproject_text(text)",
+        "    text = pyproject.read_text(encoding=\"utf-8\")\n"
+        "    return _parse_pyproject_text(text)",
+    ),
+    Mutation(
+        "drop_unknown_fallback",
+        "    return VERSION_UNKNOWN",
+        '    return "not-unknown"',
+    ),
 ]
 
 
@@ -72,6 +94,8 @@ def main() -> int:
     survivors: list[str] = []
     for mutation in MUTATIONS:
         if mutation.mutation_id == "drop_name_check_tomllib" and sys.version_info < (3, 11):
+            continue
+        if mutation.mutation_id == "project_table_boundary_pass" and sys.version_info >= (3, 11):
             continue
         TARGET.write_text(apply_mutation(mutation), encoding="utf-8")
         proc = subprocess.run(GUARD_CMD, cwd=ROOT, check=False, capture_output=True)

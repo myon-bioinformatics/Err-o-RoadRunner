@@ -1,13 +1,13 @@
 """Partition tests for project_version resolution (pyproject × metadata × run mode).
 
-Matrix size: 12 pyproject states × 3 metadata states × 4 run modes = 144 cells.
+Matrix size: 14 pyproject states × 3 metadata states × 4 run modes = 168 cells.
 
-Unreachable (30 cells, see tests/version_matrix_support.UNREACHABLE):
+Unreachable (36 cells, see tests/version_matrix_support.UNREACHABLE):
 - wheel_console × metadata absent (3): wheels always ship dist-info metadata.
-- wheel_console × non-buildable pyproject (27): hatchling cannot build a wheel from
+- wheel_console × non-buildable pyproject (33): hatchling cannot build a wheel from
   missing/invalid/malformed pyproject fixtures.
 
-Covered: 114 cells exercised by test_version_resolution_matrix_cell.
+Covered: 132 cells exercised by test_version_resolution_matrix_cell.
 """
 
 from __future__ import annotations
@@ -146,9 +146,9 @@ def test_version_resolution_matrix_cell(
 
 def test_version_matrix_coverage_summary() -> None:
     total, unreachable, covered = matrix_totals()
-    assert total == 144
-    assert unreachable == 30
-    assert covered == 114
+    assert total == 168
+    assert unreachable == 36
+    assert covered == 132
 
 
 def test_resolve_version_direct_matches_matrix_expectations(
@@ -173,6 +173,7 @@ def test_resolve_version_direct_matches_matrix_expectations(
         assert got == want
 
 
+@pytest.mark.mutation_guard
 def test_import_succeeds_with_unknown_version(
     tmp_path: Path,
 ) -> None:
@@ -226,6 +227,55 @@ def test_mutation_guard_pyproject_before_metadata(
     populate_sandbox(sandbox, "valid")
     monkeypatch.setattr("project_version._installed_version", lambda: META_VERSION)
     assert resolve_version(package_dir=sandbox) == CHECKOUT_VERSION
+
+
+@pytest.mark.mutation_guard
+def test_mutation_guard_version_whitespace_rejected(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    sandbox = tmp_path / "s"
+    sandbox.mkdir()
+    populate_sandbox(sandbox, "version_whitespace")
+    monkeypatch.setattr("project_version._installed_version", lambda: META_VERSION)
+    assert resolve_version(package_dir=sandbox) == META_VERSION
+
+
+@pytest.mark.mutation_guard
+def test_mutation_guard_version_in_later_table_ignored(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    sandbox = tmp_path / "s"
+    sandbox.mkdir()
+    populate_sandbox(sandbox, "version_in_later_table")
+    monkeypatch.setattr("project_version._installed_version", lambda: META_VERSION)
+    assert resolve_version(package_dir=sandbox) == META_VERSION
+
+
+@pytest.mark.mutation_guard
+def test_mutation_guard_oserror_on_read_falls_back(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    sandbox = tmp_path / "s"
+    sandbox.mkdir()
+    populate_sandbox(sandbox, "valid")
+    monkeypatch.setattr("project_version._installed_version", lambda: META_VERSION)
+    with mock.patch.object(Path, "read_text", side_effect=OSError("permission denied")):
+        assert resolve_version(package_dir=sandbox) == META_VERSION
+
+
+@pytest.mark.mutation_guard
+def test_mutation_guard_unknown_when_no_version_sources(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    sandbox = tmp_path / "s"
+    sandbox.mkdir()
+    populate_sandbox(sandbox, "missing")
+    monkeypatch.setattr("project_version._installed_version", lambda: None)
+    assert resolve_version(package_dir=sandbox) == VERSION_UNKNOWN
 
 
 def test_repo_checkout_version_matches_pyproject() -> None:

@@ -60,8 +60,11 @@ def _parse_pyproject_fallback(text: str) -> str | None:
         if _NAME_LINE_RE.match(stripped):
             saw_name = True
         match = _VERSION_LINE_RE.match(stripped)
-        if match:
-            found_version = match.group(1) or match.group(2)
+        if match and found_version is None:
+            raw = match.group(1) or match.group(2)
+            stripped_version = raw.strip()
+            if stripped_version:
+                found_version = stripped_version
     if saw_name and found_version is not None:
         return found_version
     return None

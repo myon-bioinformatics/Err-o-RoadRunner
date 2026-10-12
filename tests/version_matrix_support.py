@@ -28,6 +28,8 @@ PYPROJECT_STATES = (
     "version_trailing_comment",
     "unreadable_oserror",
     "empty_file",
+    "version_whitespace",
+    "version_in_later_table",
 )
 
 METADATA_STATES = ("same", "different", "absent")
@@ -96,6 +98,15 @@ def pyproject_text(state: str) -> str | None:
         return f'[project]\nname = "{DISTRIBUTION_NAME}"\n'
     if state == "version_malformed":
         return f'[project]\nname = "{DISTRIBUTION_NAME}"\nversion = ""\n'
+    if state == "version_whitespace":
+        return f'[project]\nname = "{DISTRIBUTION_NAME}"\nversion = " "\n'
+    if state == "version_in_later_table":
+        return (
+            "[project]\n"
+            f'name = "{DISTRIBUTION_NAME}"\n'
+            "[tool.foo]\n"
+            'version = "9.9.9"\n'
+        )
     if state == "unreadable_oserror":
         return (
             "[project]\n"
