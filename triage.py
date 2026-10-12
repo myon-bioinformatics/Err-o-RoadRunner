@@ -14,38 +14,9 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterator, Sequence
 
-_PYPROJECT_VERSION_RE = re.compile(r'^version\s*=\s*"([^"]+)"\s*$')
+from project_version import resolve_version
 
-
-def _read_pyproject_version() -> str:
-    path = Path(__file__).resolve().parent / "pyproject.toml"
-    in_project = False
-    for line in path.read_text(encoding="utf-8").splitlines():
-        stripped = line.strip()
-        if stripped == "[project]":
-            in_project = True
-            continue
-        if in_project:
-            if stripped.startswith("[") and stripped.endswith("]"):
-                break
-            match = _PYPROJECT_VERSION_RE.match(stripped)
-            if match:
-                return match.group(1)
-    raise RuntimeError("version not found in pyproject.toml [project]")
-
-
-def _resolve_version() -> str:
-    try:
-        from importlib.metadata import PackageNotFoundError, version
-
-        return version("err-o-roadrunner")
-    except PackageNotFoundError:
-        return _read_pyproject_version()
-    except Exception:
-        return _read_pyproject_version()
-
-
-__version__ = _resolve_version()
+__version__ = resolve_version(package_dir=Path(__file__).resolve().parent)
 
 # Stable exit codes (documented in README).
 EXIT_OK = 0

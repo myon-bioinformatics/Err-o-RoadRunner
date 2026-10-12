@@ -75,9 +75,9 @@ jobs:
       - name: Install test dependencies
         run: python -m pip install -e ".[test]"
       - name: Compile
-        run: python -m compileall -q triage.py actions_log.py junit_redact.py
+        run: python -m compileall -q triage.py actions_log.py junit_redact.py project_version.py
       - name: Import smoke
-        run: python -c "import triage, actions_log, junit_redact"
+        run: python -c "import triage, actions_log, junit_redact, project_version"
       - name: Combo mutation (zero survivors)
         run: python scripts/combo_mutation.py
       - name: Tests with JUnit
