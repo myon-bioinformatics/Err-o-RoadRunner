@@ -2,20 +2,11 @@
 
 from __future__ import annotations
 
-import re
 from pathlib import Path
+from typing import Any, Callable
 
 DISTRIBUTION_NAME = "err-o-roadrunner"
 VERSION_UNKNOWN = "unknown"
-
-_PROJECT_SECTION_RE = re.compile(r"^\[project\]\s*$")
-_PROJECT_TABLE_END_RE = re.compile(r"^\[")
-_NAME_VALUE_RE = re.compile(
-    r"""^name\s*=\s*(?:"([^"]+)"|'([^']+)')\s*(?:#.*)?$"""
-)
-_VERSION_LINE_RE = re.compile(
-    r"""^version\s*=\s*(?:"([^"]+)"|'([^']+)')\s*(?:#.*)?$"""
-)
 
 
 def _normalize_project_version(name: str | None, raw_version: str | None) -> str | None:
@@ -23,44 +14,53 @@ def _normalize_project_version(name: str | None, raw_version: str | None) -> str
         return None
     if raw_version is None:
         return None
+    if not isinstance(raw_version, str):
+        return None
     stripped = raw_version.strip()
     if not stripped:
         return None
     return stripped
 
 
-def _extract_project_fields_from_lines(text: str) -> tuple[str | None, str | None]:
-    """Read name and first version= from [project] only (duplicate keys: first wins)."""
-    in_project = False
-    found_name: str | None = None
-    found_version: str | None = None
-    for line in text.splitlines():
-        stripped = line.strip()
-        if _PROJECT_SECTION_RE.match(stripped):
-            in_project = True
-            continue
-        if not in_project:
-            continue
-        if _PROJECT_TABLE_END_RE.match(stripped) and stripped != "[project]":
-            break
-        name_match = _NAME_VALUE_RE.match(stripped)
-        if name_match:
-            found_name = name_match.group(1) or name_match.group(2)
-        version_match = _VERSION_LINE_RE.match(stripped)
-        if version_match and found_version is None:
-            raw = version_match.group(1) or version_match.group(2)
-            found_version = raw
-    return found_name, found_version
+def _version_from_toml_data(data: dict[str, Any]) -> str | None:
+    project = data.get("project")
+    if not isinstance(project, dict):
+        return None
+    name = project.get("name")
+    version = project.get("version")
+    if not isinstance(name, str):
+        name = None
+    if not isinstance(version, str):
+        version = None
+    return _normalize_project_version(name, version)
 
 
-def parse_pyproject_version_from_lines(text: str) -> str | None:
-    """Line-based [project] extraction (canonical on all Python versions)."""
-    name, raw_version = _extract_project_fields_from_lines(text)
-    return _normalize_project_version(name, raw_version)
+def _toml_loader() -> tuple[Callable[[str], dict[str, Any]], type[Exception]] | None:
+    try:
+        import tomllib
+
+        return tomllib.loads, tomllib.TOMLDecodeError
+    except ImportError:
+        try:
+            import tomli
+        except ImportError:
+            return None
+        return tomli.loads, tomli.TOMLDecodeError
 
 
-def parse_pyproject_version_from_tomllib(text: str) -> str | None:
-    """[project] name/version via tomllib, then shared normalization (tests / parity)."""
+def _loads_toml(text: str) -> dict[str, Any] | None:
+    loader = _toml_loader()
+    if loader is None:
+        return None
+    loads, decode_error = loader
+    try:
+        return loads(text)
+    except decode_error:
+        return None
+
+
+def parse_pyproject_version_via_tomllib(text: str) -> str | None:
+    """Parse with stdlib tomllib when available (parity tests)."""
     try:
         import tomllib
     except ImportError:
@@ -69,16 +69,28 @@ def parse_pyproject_version_from_tomllib(text: str) -> str | None:
         data = tomllib.loads(text)
     except tomllib.TOMLDecodeError:
         return None
-    project = data.get("project")
-    if not isinstance(project, dict):
-        return _normalize_project_version(None, None)
-    name = project.get("name")
-    version = project.get("version")
-    if not isinstance(name, str):
-        name = None
-    if not isinstance(version, str):
-        version = None
-    return _normalize_project_version(name, version)
+    return _version_from_toml_data(data)
+
+
+def parse_pyproject_version_via_tomli(text: str) -> str | None:
+    """Parse with tomli when available (parity tests / Python 3.10)."""
+    try:
+        import tomli
+    except ImportError:
+        return None
+    try:
+        data = tomli.loads(text)
+    except tomli.TOMLDecodeError:
+        return None
+    return _version_from_toml_data(data)
+
+
+def parse_pyproject_version(text: str) -> str | None:
+    """Return normalized [project].version when TOML parses and name matches."""
+    data = _loads_toml(text)
+    if data is None:
+        return None
+    return _version_from_toml_data(data)
 
 
 def read_pyproject_version(pyproject: Path) -> str | None:
@@ -89,7 +101,7 @@ def read_pyproject_version(pyproject: Path) -> str | None:
         text = pyproject.read_text(encoding="utf-8")
     except (OSError, UnicodeDecodeError):
         return None
-    return parse_pyproject_version_from_lines(text)
+    return parse_pyproject_version(text)
 
 
 def _installed_version() -> str | None:

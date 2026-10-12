@@ -53,26 +53,28 @@ MUTATIONS: list[Mutation] = [
         "    return VERSION_UNKNOWN",
     ),
     Mutation(
-        "project_table_boundary_pass",
-        "        if _PROJECT_TABLE_END_RE.match(stripped) and stripped != \"[project]\":\n"
-        "            break",
-        "        if _PROJECT_TABLE_END_RE.match(stripped) and stripped != \"[project]\":\n"
-        "            pass",
-    ),
-    Mutation(
         "drop_oserror_catch",
         "    try:\n"
         "        text = pyproject.read_text(encoding=\"utf-8\")\n"
         "    except (OSError, UnicodeDecodeError):\n"
         "        return None\n"
-        "    return parse_pyproject_version_from_lines(text)",
+        "    return parse_pyproject_version(text)",
         "    text = pyproject.read_text(encoding=\"utf-8\")\n"
-        "    return parse_pyproject_version_from_lines(text)",
+        "    return parse_pyproject_version(text)",
     ),
     Mutation(
         "drop_unknown_fallback",
         "    return VERSION_UNKNOWN",
         '    return "not-unknown"',
+    ),
+    Mutation(
+        "skip_toml_when_loader_missing",
+        "    data = _loads_toml(text)\n"
+        "    if data is None:\n"
+        "        return None",
+        "    data = _loads_toml(text)\n"
+        "    if False and data is None:\n"
+        "        return None",
     ),
 ]
 

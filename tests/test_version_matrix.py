@@ -1,20 +1,19 @@
 """Partition tests for project_version resolution (pyproject × metadata × run mode).
 
-Matrix size: 15 pyproject states × 3 metadata states × 4 run modes = 180 cells.
+Matrix size: 21 pyproject states × 3 metadata states × 4 run modes = 252 cells.
 
-Unreachable (39 cells, see tests/version_matrix_support.UNREACHABLE):
-- wheel_console × metadata absent (3): wheels always ship dist-info metadata.
-- wheel_console × non-buildable pyproject (36): hatchling cannot build a wheel from
-  missing/invalid/malformed pyproject fixtures.
+Unreachable (47 cells, see tests/version_matrix_support.UNREACHABLE):
+- wheel_console × metadata absent (8): installed wheels always ship dist-info metadata.
+- wheel_console × non-buildable pyproject (39): hatchling cannot build from fixture;
+  wheel console scripts do not read checkout pyproject.toml.
 
-Covered: 141 cells exercised by test_version_resolution_matrix_cell.
+Covered: 205 cells exercised by test_version_resolution_matrix_cell.
 """
 
 from __future__ import annotations
 
 import itertools
 import os
-import re
 import shutil
 import subprocess
 import sys
@@ -26,14 +25,15 @@ import pytest
 import triage
 from project_version import (
     VERSION_UNKNOWN,
-    parse_pyproject_version_from_lines,
-    parse_pyproject_version_from_tomllib,
+    parse_pyproject_version,
+    parse_pyproject_version_via_tomli,
+    parse_pyproject_version_via_tomllib,
     read_pyproject_version,
     resolve_version,
 )
 from tests.version_matrix_support import (
     CHECKOUT_VERSION,
-    DUPLICATE_FIRST_VERSION,
+    DECOY_VERSION_IN_STRING,
     META_VERSION,
     METADATA_STATES,
     PYPROJECT_STATES,
@@ -47,9 +47,8 @@ from tests.version_matrix_support import (
     populate_sandbox,
     pyproject_bytes,
     run_version_cli,
-    pyproject_text,
     wheel_pyproject_version,
-    write_buildable_pyproject,
+    write_wheel_build_pyproject,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -86,20 +85,11 @@ def test_version_resolution_matrix_cell(
     if run_mode == "wheel_console":
         for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
             (sandbox / name).write_bytes((ROOT / name).read_bytes())
-        write_buildable_pyproject(
+        write_wheel_build_pyproject(
             sandbox,
             pyproject_state,
             wheel_pyproject_version(metadata_state),
         )
-        full = (ROOT / "pyproject.toml").read_text(encoding="utf-8")
-        full = re.sub(
-            r'^version\s*=\s*"[^"]+"',
-            f'version = "{wheel_pyproject_version(metadata_state)}"',
-            full,
-            count=1,
-            flags=re.MULTILINE,
-        )
-        (sandbox / "pyproject.toml").write_text(full, encoding="utf-8")
         shutil.copy2(ROOT / "README.md", sandbox / "README.md")
         wheel = build_wheel(sandbox, tmp_path / "wheels")
     else:
@@ -154,25 +144,56 @@ def test_version_resolution_matrix_cell(
 
 def test_version_matrix_coverage_summary() -> None:
     total, unreachable, covered = matrix_totals()
-    assert total == 180
-    assert unreachable == 39
-    assert covered == 141
+    assert total == 252
+    assert unreachable == 47
+    assert covered == 205
 
 
 @pytest.mark.parametrize("pyproject_state", PYPROJECT_STATES)
-def test_line_and_tomllib_parsers_agree(pyproject_state: str) -> None:
-    text = pyproject_text(pyproject_state)
-    if text is None:
-        pytest.skip("no pyproject fixture text")
-    try:
-        import tomllib
-    except ImportError:
-        pytest.skip("tomllib not available")
-    try:
-        tomllib.loads(text)
-    except tomllib.TOMLDecodeError:
-        pytest.skip("fixture is not valid tomllib input")
-    assert parse_pyproject_version_from_lines(text) == parse_pyproject_version_from_tomllib(text)
+def test_toml_backends_agree_on_matrix_fixtures(pyproject_state: str) -> None:
+    if pyproject_state in {"missing", "invalid_utf8"}:
+        pytest.skip("no UTF-8 pyproject fixture text")
+    payload = pyproject_bytes(pyproject_state)
+    assert payload is not None
+    text = payload.decode("utf-8")
+
+    primary = parse_pyproject_version(text)
+    via_tomllib = parse_pyproject_version_via_tomllib(text)
+    via_tomli = parse_pyproject_version_via_tomli(text)
+
+    def tomllib_parses() -> bool:
+        try:
+            import tomllib
+        except ImportError:
+            return False
+        try:
+            tomllib.loads(text)
+            return True
+        except tomllib.TOMLDecodeError:
+            return False
+
+    def tomli_parses() -> bool:
+        try:
+            import tomli
+        except ImportError:
+            return False
+        try:
+            tomli.loads(text)
+            return True
+        except tomli.TOMLDecodeError:
+            return False
+
+    if tomllib_parses():
+        assert via_tomllib == primary
+    else:
+        assert via_tomllib is None
+        assert primary is None
+
+    if tomli_parses():
+        assert via_tomli == primary
+
+    if tomllib_parses() and tomli_parses():
+        assert via_tomllib == via_tomli
 
 
 def test_resolve_version_direct_matches_matrix_expectations(
@@ -291,7 +312,7 @@ def test_mutation_guard_oserror_on_read_falls_back(
 
 
 @pytest.mark.mutation_guard
-def test_mutation_guard_duplicate_version_first_wins(
+def test_mutation_guard_duplicate_version_invalid_toml_falls_back(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -299,7 +320,20 @@ def test_mutation_guard_duplicate_version_first_wins(
     sandbox.mkdir()
     populate_sandbox(sandbox, "duplicate_version_in_project")
     monkeypatch.setattr("project_version._installed_version", lambda: META_VERSION)
-    assert resolve_version(package_dir=sandbox) == DUPLICATE_FIRST_VERSION
+    assert resolve_version(package_dir=sandbox) == META_VERSION
+
+
+@pytest.mark.mutation_guard
+def test_mutation_guard_multiline_string_decoy_ignored(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    sandbox = tmp_path / "s"
+    sandbox.mkdir()
+    populate_sandbox(sandbox, "version_in_multiline_string")
+    monkeypatch.setattr("project_version._installed_version", lambda: META_VERSION)
+    assert resolve_version(package_dir=sandbox) == CHECKOUT_VERSION
+    assert resolve_version(package_dir=sandbox) != DECOY_VERSION_IN_STRING
 
 
 @pytest.mark.mutation_guard

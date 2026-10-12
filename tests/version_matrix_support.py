@@ -12,6 +12,18 @@ from project_version import DISTRIBUTION_NAME, VERSION_UNKNOWN
 
 ROOT = Path(__file__).resolve().parents[1]
 
+WHEEL_BUILD_PREFIX = (
+    "[build-system]\n"
+    'requires = ["hatchling>=1.32.4"]\n'
+    'build-backend = "hatchling.build"\n\n'
+)
+WHEEL_BUILD_SUFFIX = (
+    "\n[project.scripts]\n"
+    'err-o-roadrunner = "triage:main"\n'
+    "\n[tool.hatch.build.targets.wheel]\n"
+    'only-include = ["triage.py", "actions_log.py", "junit_redact.py", "project_version.py"]\n'
+)
+
 CHECKOUT_VERSION = "7.7.7"
 META_VERSION = "1.2.3"
 
@@ -31,10 +43,17 @@ PYPROJECT_STATES = (
     "version_whitespace",
     "version_in_later_table",
     "duplicate_version_in_project",
+    "version_in_multiline_string",
+    "toml_header_comment",
+    "toml_spaced_project_table",
+    "toml_quoted_keys",
+    "toml_inline_project_table",
+    "toml_version_unicode_escape",
 )
 
 DUPLICATE_FIRST_VERSION = "1.2.3"
 DUPLICATE_SECOND_VERSION = "9.9.9"
+DECOY_VERSION_IN_STRING = "6.6.6"
 
 METADATA_STATES = ("same", "different", "absent")
 
@@ -42,7 +61,20 @@ RUN_MODES = ("checkout_script", "module", "other_cwd", "wheel_console")
 
 # wheel_console needs a buildable pyproject at wheel build time.
 WHEEL_BUILDABLE_PYPROJECT_STATES = frozenset(
-    {"valid", "single_quoted", "version_trailing_comment"}
+    {
+        "valid",
+        "single_quoted",
+        "version_trailing_comment",
+        "version_in_multiline_string",
+        "toml_header_comment",
+        "toml_spaced_project_table",
+        "toml_quoted_keys",
+        "toml_version_unicode_escape",
+    }
+)
+
+CHECKOUT_USABLE_PYPROJECT_STATES = WHEEL_BUILDABLE_PYPROJECT_STATES | frozenset(
+    {"toml_inline_project_table"}
 )
 
 # Cells that cannot be exercised (documented in test_version_matrix.py).
@@ -51,12 +83,13 @@ for _state in PYPROJECT_STATES:
     if _state not in WHEEL_BUILDABLE_PYPROJECT_STATES:
         for _meta in METADATA_STATES:
             UNREACHABLE[(_state, _meta, "wheel_console")] = (
-                "wheel_console requires a successful hatchling wheel build; "
-                f"pyproject state '{_state}' is not buildable"
+                "wheel_console does not read checkout pyproject.toml; "
+                f"fixture pyproject state '{_state}' is not hatchling-buildable"
             )
 for _state in WHEEL_BUILDABLE_PYPROJECT_STATES:
     UNREACHABLE[(_state, "absent", "wheel_console")] = (
-        "installed wheels always carry dist-info metadata; absent is impossible"
+        "wheel_console does not read checkout pyproject.toml; "
+        "installed wheels always carry dist-info metadata"
     )
 
 
@@ -72,8 +105,10 @@ def pyproject_bytes(state: str) -> bytes | None:
 
 
 def pyproject_text(state: str) -> str | None:
-    if state in {"missing", "invalid_utf8", "empty_file"}:
+    if state in {"missing", "invalid_utf8"}:
         return None
+    if state == "empty_file":
+        return ""
     if state == "valid":
         return (
             "[project]\n"
@@ -124,6 +159,43 @@ def pyproject_text(state: str) -> str | None:
             f'name = "{DISTRIBUTION_NAME}"\n'
             f'version = "{CHECKOUT_VERSION}"\n'
         )
+    if state == "version_in_multiline_string":
+        return (
+            "[project]\n"
+            f'name = "{DISTRIBUTION_NAME}"\n'
+            f'version = "{CHECKOUT_VERSION}"\n'
+            'description = """\n'
+            f'version = "{DECOY_VERSION_IN_STRING}"\n'
+            '"""\n'
+        )
+    if state == "toml_header_comment":
+        return (
+            f"[project]  # main\n"
+            f'name = "{DISTRIBUTION_NAME}"\n'
+            f'version = "{CHECKOUT_VERSION}"\n'
+        )
+    if state == "toml_spaced_project_table":
+        return (
+            "[ project ]\n"
+            f'name = "{DISTRIBUTION_NAME}"\n'
+            f'version = "{CHECKOUT_VERSION}"\n'
+        )
+    if state == "toml_quoted_keys":
+        return (
+            "[project]\n"
+            f'"name" = "{DISTRIBUTION_NAME}"\n'
+            f'"version" = "{CHECKOUT_VERSION}"\n'
+        )
+    if state == "toml_inline_project_table":
+        return (
+            f'project = {{name = "{DISTRIBUTION_NAME}", version = "{CHECKOUT_VERSION}"}}\n'
+        )
+    if state == "toml_version_unicode_escape":
+        return (
+            "[project]\n"
+            f'name = "{DISTRIBUTION_NAME}"\n'
+            f'version = "7.7.\\u0037"\n'
+        )
     raise ValueError(state)
 
 
@@ -140,14 +212,7 @@ def expected_version(pyproject_state: str, metadata_state: str, run_mode: str) -
         meta = metadata_version(metadata_state)
         assert meta is not None
         return meta
-    if pyproject_state == "duplicate_version_in_project":
-        return DUPLICATE_FIRST_VERSION
-    checkout_usable = pyproject_state in {
-        "valid",
-        "single_quoted",
-        "version_trailing_comment",
-    }
-    if checkout_usable:
+    if pyproject_state in CHECKOUT_USABLE_PYPROJECT_STATES:
         return CHECKOUT_VERSION
     meta = metadata_version(metadata_state)
     if meta is not None:
@@ -187,27 +252,28 @@ def populate_sandbox(sandbox: Path, pyproject_state: str) -> None:
 
 
 def write_buildable_pyproject(sandbox: Path, pyproject_state: str, version: str) -> None:
-    if pyproject_state == "valid":
+    if pyproject_state not in WHEEL_BUILDABLE_PYPROJECT_STATES:
+        raise ValueError(pyproject_state)
+    base = pyproject_text(pyproject_state)
+    assert base is not None
+    if pyproject_state == "toml_version_unicode_escape":
         text = (
             "[project]\n"
             f'name = "{DISTRIBUTION_NAME}"\n'
             f'version = "{version}"\n'
         )
-    elif pyproject_state == "single_quoted":
-        text = (
-            "[project]\n"
-            f'name = "{DISTRIBUTION_NAME}"\n'
-            f"version = '{version}'\n"
-        )
-    elif pyproject_state == "version_trailing_comment":
-        text = (
-            "[project]\n"
-            f'name = "{DISTRIBUTION_NAME}"\n'
-            f'version = "{version}"  # tag\n'
-        )
     else:
-        raise ValueError(pyproject_state)
+        text = base.replace(CHECKOUT_VERSION, version)
     (sandbox / "pyproject.toml").write_text(text, encoding="utf-8")
+
+
+def write_wheel_build_pyproject(sandbox: Path, pyproject_state: str, version: str) -> None:
+    write_buildable_pyproject(sandbox, pyproject_state, version)
+    body = (sandbox / "pyproject.toml").read_text(encoding="utf-8")
+    (sandbox / "pyproject.toml").write_text(
+        WHEEL_BUILD_PREFIX + body + WHEEL_BUILD_SUFFIX,
+        encoding="utf-8",
+    )
 
 
 def build_wheel(sandbox: Path, wheel_dir: Path) -> Path:
