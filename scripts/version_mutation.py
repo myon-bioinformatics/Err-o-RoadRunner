@@ -31,9 +31,14 @@ class Mutation:
 
 MUTATIONS: list[Mutation] = [
     Mutation(
-        "drop_name_check",
+        "drop_name_check_tomllib",
         "    if name != DISTRIBUTION_NAME:\n        return None",
         "    if False and name != DISTRIBUTION_NAME:\n        return None",
+    ),
+    Mutation(
+        "drop_name_check_fallback",
+        "    if saw_name and found_version is not None:\n        return found_version",
+        "    if found_version is not None:\n        return found_version",
     ),
     Mutation(
         "metadata_before_pyproject",
