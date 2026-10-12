@@ -18,6 +18,5 @@ FOUND: gh version: <runtime>
 FOUND: environment variable count: <runtime>
 FOUND: environment variable names: <runtime>
 NOT FOUND: actions log ::error:: commands (actions-log)
-NOT FOUND: actions log ::error:: commands (actions-log)
 NOT FOUND: lock files in project root
 HINT: actions log search keywords (actions-log): FAILED tests/test_pr_status.py::test_cli_json_text_and_exclude_override - assert False

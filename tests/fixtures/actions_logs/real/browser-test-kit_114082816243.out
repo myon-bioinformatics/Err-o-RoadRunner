@@ -23,7 +23,6 @@ FOUND: gh version: <runtime>
 FOUND: environment variable count: <runtime>
 FOUND: environment variable names: <runtime>
 NOT FOUND: actions log ::error:: commands (actions-log)
-NOT FOUND: actions log ::error:: commands (actions-log)
 NOT FOUND: recognized failure pattern in log/stderr
 NOT FOUND: lock files in project root
 HINT: compiler error line (not node): error: test-results/btk-events.jsonl: no such file

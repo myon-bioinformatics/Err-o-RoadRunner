@@ -16,7 +16,5 @@ FOUND: environment variable count: <runtime>
 FOUND: environment variable names: <runtime>
 NOT FOUND: actions log ::error:: commands (actions-log)
 NOT FOUND: actions log pytest failed lines (actions-log)
-NOT FOUND: actions log ::error:: commands (actions-log)
-NOT FOUND: actions log pytest failed lines (actions-log)
 NOT FOUND: lock files in project root
 HINT: actions log search keywords (actions-log): Process completed with exit code 1.

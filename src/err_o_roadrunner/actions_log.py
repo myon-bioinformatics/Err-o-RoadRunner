@@ -362,7 +362,8 @@ def _emit_workflow_errors(
         return
     report.add_found(f"actions log ::error:: commands ({source}): {len(items)}")
     cap = MAX_ACTIONS_ERROR_LINES
-    for i, wf in enumerate(items[:cap], start=1):
+    shown = items[:cap]
+    for i, wf in enumerate(shown, start=1):
         loc = ""
         if wf.file:
             loc = f" file={wf.file}"
@@ -371,7 +372,7 @@ def _emit_workflow_errors(
         report.add_found(
             f"actions log workflow error {i}/{len(items)} ({source}):{loc} {wf.message[:360]}"
         )
-    omitted = len(items) - min(len(items), cap)
+    omitted = len(items) - len(shown)
     if omitted > 0:
         report.add_found(
             f"actions log workflow error omitted ({source}): +{omitted} omitted "
@@ -510,8 +511,6 @@ def parse_actions_log(text: str, source: str, report: Report) -> None:
             if wf0.file:
                 wf_msg = f"{wf0.file}:{wf0.line or '?'} {wf0.message}"[:400]
             report.add_found(f"actions log workflow error (first) ({source}): {wf_msg}")
-        elif not log_wf and not workflow_errors:
-            report.add_not_found(f"actions log ::error:: commands ({source})")
 
         if pytest_failed:
             report.add_found(
@@ -521,8 +520,6 @@ def parse_actions_log(text: str, source: str, report: Report) -> None:
                 report.add_found(
                     f"actions log pytest failed (last) ({source}): {pytest_failed[-1][:400]}"
                 )
-        elif not log_failed:
-            report.add_not_found(f"actions log pytest failed lines ({source})")
 
     multi_fail = len(failing_metas) > 1
     for meta in failing_metas:

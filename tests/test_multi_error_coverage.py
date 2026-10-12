@@ -154,6 +154,41 @@ def test_two_unrelated_tracebacks_not_chained() -> None:
 
 
 @pytest.mark.multi_error
+def test_node_err_module_not_found_bracket_headline() -> None:
+    text = (ROOT / "tests/fixtures/readme/inputs/node_module_not_found.stderr").read_text(
+        encoding="utf-8"
+    )
+    report = triage(
+        exit_code=1,
+        stderr_text=None,
+        log_text=text,
+        junit_paths=[],
+        project_root=ROOT,
+    )
+    lines = _lines(report)
+    assert not any(ln == "NOT FOUND: node error headline" for ln in lines)
+    assert any("FOUND: node error code: ERR_MODULE_NOT_FOUND" in ln for ln in lines)
+    assert any("Error [ERR_MODULE_NOT_FOUND]" in ln for ln in lines)
+
+
+@pytest.mark.multi_error
+def test_node_syntax_error_not_python_type() -> None:
+    text = (ROOT / "tests/fixtures/failure_suite/inputs/node_syntax_error.stderr").read_text(
+        encoding="utf-8"
+    )
+    report = triage(
+        exit_code=1,
+        stderr_text=text,
+        log_text=None,
+        junit_paths=[],
+        project_root=ROOT,
+    )
+    lines = _lines(report)
+    assert not any(ln == "FOUND: python exception type: SyntaxError" for ln in lines)
+    assert any(ln.startswith("FOUND: node error line: SyntaxError") for ln in lines)
+
+
+@pytest.mark.multi_error
 def test_node_err_assertion_headline() -> None:
     text = (MULTI / "node_err_assertion.stderr").read_text(encoding="utf-8")
     report = triage(
@@ -244,6 +279,12 @@ def test_actions_log_workflow_error_cap_and_omitted_count() -> None:
         ln == "FOUND: actions log workflow error omitted (actions-log): +5 omitted (total ::error 45)"
         for ln in lines
     )
+    wf_shown = [
+        ln
+        for ln in lines
+        if re.match(r"^FOUND: actions log workflow error \d+/45 ", ln)
+    ]
+    assert len(wf_shown) == 40
 
 
 @pytest.mark.multi_error
@@ -333,6 +374,9 @@ def test_mixed_python_and_node_log() -> None:
     lines = _lines(report)
     assert any("FOUND: python exception type: RuntimeError" in ln for ln in lines)
     assert any(ln.startswith("FOUND: node error line:") for ln in lines)
+    assert not any(
+        ln.startswith("FOUND: node error line:") and "RuntimeError" in ln for ln in lines
+    )
     _assert_standard_hint_floor(lines, location="runner.py:2")
 
 
@@ -372,6 +416,54 @@ def test_gh_run_view_threshold_two_lines() -> None:
     )
     _, is_gh = actions_log.preprocess_actions_log(text)
     assert is_gh is False
+
+
+@pytest.mark.multi_error
+def test_gcc_structured_hint_includes_line_column() -> None:
+    text = "main.c:3:5: error: expected ';' before '}' token\n"
+    report = triage(exit_code=1, stderr_text=text, log_text=None, junit_paths=[], project_root=ROOT)
+    lines = _lines(report)
+    assert any("gcc error (best effort): main.c:3:5:" in ln for ln in lines)
+    assert not any(ln == "NOT FOUND: recognized failure pattern in log/stderr" for ln in lines)
+
+
+@pytest.mark.multi_error
+def test_rustc_error_code_hint_suppresses_not_found() -> None:
+    text = "error[E0425]: cannot find value `x` in this scope\n --> src/main.rs:2:5\n"
+    report = triage(exit_code=1, stderr_text=text, log_text=None, junit_paths=[], project_root=ROOT)
+    lines = _lines(report)
+    assert any("rustc error (best effort):" in ln and "E0425" in ln for ln in lines)
+    assert not any(ln == "NOT FOUND: recognized failure pattern in log/stderr" for ln in lines)
+
+
+@pytest.mark.multi_error
+def test_asyncio_cancelled_error_no_message_not_found() -> None:
+    text = (
+        "Traceback (most recent call last):\n"
+        '  File "app.py", line 1, in main\n'
+        "asyncio.exceptions.CancelledError\n"
+    )
+    report = triage(exit_code=1, stderr_text=text, log_text=None, junit_paths=[], project_root=ROOT)
+    lines = _lines(report)
+    assert any(
+        ln.endswith(": CancelledError") or ln.endswith(": asyncio.exceptions.CancelledError")
+        for ln in lines
+        if ln.startswith("FOUND: python exception type:")
+    )
+    assert not any(ln == "NOT FOUND: python exception message" for ln in lines)
+
+
+@pytest.mark.multi_error
+def test_deprecation_warning_as_primary_exception_type() -> None:
+    text = (
+        "Traceback (most recent call last):\n"
+        '  File "app.py", line 1, in main\n'
+        "DeprecationWarning: legacy API\n"
+    )
+    report = triage(exit_code=1, stderr_text=text, log_text=None, junit_paths=[], project_root=ROOT)
+    lines = _lines(report)
+    assert any(ln == "FOUND: python exception type: DeprecationWarning" for ln in lines)
+    assert not any(ln == "NOT FOUND: python exception type" for ln in lines)
 
 
 @pytest.mark.multi_error

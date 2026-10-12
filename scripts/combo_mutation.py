@@ -59,8 +59,14 @@ MUTATIONS: list[Mutation] = [
     Mutation(
         "gh_cap_show_all",
         SRC / "actions_log.py",
-        "shown = items[:cap]",
-        "shown = items[:]",
+        'label: str,\n    items: list[str],\n    cap: int = MAX_ACTIONS_ERROR_LINES,\n) -> None:\n    if not items:\n        report.add_not_found(f"actions log {label} ({source})")\n        return\n    report.add_found(f"actions log {label} ({source}): {len(items)}")\n    shown = items[:cap]',
+        'label: str,\n    items: list[str],\n    cap: int = MAX_ACTIONS_ERROR_LINES,\n) -> None:\n    if not items:\n        report.add_not_found(f"actions log {label} ({source})")\n        return\n    report.add_found(f"actions log {label} ({source}): {len(items)}")\n    shown = items[:]',
+    ),
+    Mutation(
+        "workflow_cap_show_all",
+        SRC / "actions_log.py",
+        "    cap = MAX_ACTIONS_ERROR_LINES\n    shown = items[:cap]\n    for i, wf in enumerate(shown, start=1):",
+        "    cap = MAX_ACTIONS_ERROR_LINES\n    shown = items[:]\n    for i, wf in enumerate(shown, start=1):",
     ),
     Mutation(
         "gh_cap_omitted_off_by_one",
@@ -71,7 +77,7 @@ MUTATIONS: list[Mutation] = [
     Mutation(
         "workflow_omitted_count_zero",
         SRC / "actions_log.py",
-        "omitted = len(items) - min(len(items), cap)\n    if omitted > 0:\n        report.add_found(\n            f\"actions log workflow error omitted",
+        "omitted = len(items) - len(shown)\n    if omitted > 0:\n        report.add_found(\n            f\"actions log workflow error omitted",
         "omitted = 0\n    if omitted > 0:\n        report.add_found(\n            f\"actions log workflow error omitted",
     ),
     Mutation(

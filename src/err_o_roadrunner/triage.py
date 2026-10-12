@@ -70,6 +70,9 @@ NODE_CORE_ERROR_RE = re.compile(
     r"^(?P<head>(?:TypeError|ReferenceError|SyntaxError|RangeError|EvalError|URIError|AggregateError))\s*:\s*(?P<rest>.*)$",
 )
 NODE_CAPITAL_ERROR_RE = re.compile(r"^Error:\s*(?P<rest>.*)$")
+NODE_ERROR_BRACKET_CODE_RE = re.compile(
+    r"^Error \[(?P<code>ERR_[A-Z0-9_]+)\]:\s*(?P<rest>.*)$"
+)
 NODE_CAUSE_RE = re.compile(r"^\[cause\]:\s*(?P<rest>.+)$", re.IGNORECASE)
 NPM_ERR_RE = re.compile(r"^npm ERR!\s+(?P<rest>.+)$", re.IGNORECASE)
 JEST_FAILURE_BULLET_RE = re.compile(r"^●\s+(?P<rest>.+)$")
@@ -98,7 +101,14 @@ DART_COMPILER_ERROR_RE = re.compile(
     r"^(?P<file>\S+\.dart):(?P<line>\d+):(?P<col>\d+):\s*Error:\s*(?P<rest>.+)$"
 )
 PYTHON_EXCEPTIONS_WITHOUT_MESSAGE = frozenset(
-    {"KeyboardInterrupt", "MemoryError", "SystemExit", "GeneratorExit"}
+    {
+        "KeyboardInterrupt",
+        "MemoryError",
+        "SystemExit",
+        "GeneratorExit",
+        "CancelledError",
+        "TimeoutError",
+    }
 )
 NODE_BRACKET_REJECTION_RE = re.compile(
     r"^\[UnhandledPromiseRejection:\s*(?P<rest>.*)\]\s*$",
@@ -184,14 +194,15 @@ def strip_terminal_controls(text: str) -> str:
 
 
 def is_python_exception_type_name(name: str) -> bool:
-    if name in PYTHON_BUILTIN_EXCEPTIONS:
+    short = name.rsplit(".", 1)[-1]
+    if short in PYTHON_BUILTIN_EXCEPTIONS or name in PYTHON_BUILTIN_EXCEPTIONS:
         return True
-    if name in ("ExceptionGroup", "BaseExceptionGroup"):
+    if short in ("ExceptionGroup", "BaseExceptionGroup"):
         return True
     return bool(
         re.fullmatch(
             r"[A-Za-z_][\w.]*(?:Error|Exception|Warning|Interrupt|Exit|Group)",
-            name,
+            short,
         )
     )
 
@@ -348,13 +359,17 @@ def _split_python_trace_blocks(text: str) -> tuple[list[_TraceBlock], int]:
         elif current:
             current.append(line)
         elif SYNTAX_ERROR_LINE_RE.match(line.strip()):
-            stripped_syntax = line
+            stripped_syntax = line.strip()
+            if _is_node_syntax_error_line(stripped_syntax) or _text_has_node_stack_frames(
+                text
+            ):
+                continue
             if blocks and not blocks[-1].lines[0].startswith("Traceback"):
-                blocks[-1].lines.append(stripped_syntax)
+                blocks[-1].lines.append(line)
             elif current:
-                current.append(stripped_syntax)
+                current.append(line)
             else:
-                blocks.append(_TraceBlock([stripped_syntax], linked))
+                blocks.append(_TraceBlock([line], linked))
                 linked = False
                 next_linked = False
         elif line.startswith("  File "):
@@ -411,7 +426,12 @@ def _parse_one_python_block(tb: list[str], report: Report, label: str) -> tuple[
         if parsed:
             name, msg = parsed
             if name.endswith("Warning"):
-                report.add_hint(f"{_report_key(label, 'warning line after traceback')}: {stripped}")
+                if not exc_type:
+                    exc_type, exc_msg = name, msg
+                else:
+                    report.add_hint(
+                        f"{_report_key(label, 'warning line after traceback')}: {stripped}"
+                    )
                 continue
             if not exc_type:
                 exc_type, exc_msg = name, msg
@@ -443,7 +463,7 @@ def _parse_one_python_block(tb: list[str], report: Report, label: str) -> tuple[
         report.add_found(f"{_report_key(label, 'python exception type')}: {exc_type}")
         if exc_msg:
             report.add_found(f"{_report_key(label, 'python exception message')}: {exc_msg}")
-        elif exc_type not in PYTHON_EXCEPTIONS_WITHOUT_MESSAGE:
+        elif exc_type.rsplit(".", 1)[-1] not in PYTHON_EXCEPTIONS_WITHOUT_MESSAGE:
             report.add_not_found(_report_key(label, "python exception message"))
     else:
         report.add_not_found(_report_key(label, "python exception type"))
@@ -540,7 +560,50 @@ def _parse_node_at_line(line: str) -> StackFrame | None:
 
 
 
+def _text_has_node_stack_frames(text: str) -> bool:
+    return bool(re.search(r"(?:^|\n)\s*at .+:\d+", text))
+
+
+def _node_error_follows_line(lines: list[str], index: int) -> bool:
+    for j in range(index + 1, min(index + 4, len(lines))):
+        probe = lines[j].strip()
+        if not probe:
+            continue
+        if NODE_AT_FRAME_RE.match(lines[j]) or NODE_AT_LOOSE_RE.match(lines[j]):
+            return True
+        if probe.startswith("at "):
+            return True
+        break
+    return False
+
+
+def _skip_node_error_line_in_python_context(
+    text: str, line_index: int, stripped: str
+) -> bool:
+    if not _has_python_failure_signal(text):
+        return False
+    if not parse_exception_summary_line(stripped):
+        return False
+    if NODE_ERROR_BRACKET_CODE_RE.match(stripped):
+        return False
+    if NODE_ERR_ASSERTION_RE.match(stripped):
+        return False
+    if DENO_WRAPPED_ERROR_RE.match(stripped):
+        return False
+    lines = text.splitlines()
+    if _node_error_follows_line(lines, line_index):
+        return False
+    return True
+
+
 def _append_node_error_line(error_lines: list[str], stripped: str) -> None:
+    m_bracket = NODE_ERROR_BRACKET_CODE_RE.match(stripped)
+    if m_bracket:
+        code = m_bracket.group("code")
+        rest = (m_bracket.group("rest") or "").strip()
+        headline = f"Error [{code}]"
+        error_lines.append(f"{headline}: {rest}" if rest else f"{headline}:")
+        return
     m_assert = NODE_ERR_ASSERTION_RE.match(stripped)
     if m_assert:
         rest = (m_assert.group("rest") or "").strip()
@@ -595,13 +658,17 @@ def parse_node_stack(text: str, report: Report) -> None:
             frames_by_error.append(current_frames)
             current_frames = []
 
-    for line in text.splitlines():
+    lines = text.splitlines()
+    for line_index, line in enumerate(lines):
         stripped = line.strip()
+        if _skip_node_error_line_in_python_context(text, line_index, stripped):
+            continue
         if (
             parse_exception_summary_line(stripped)
             and not NODE_CORE_ERROR_RE.match(stripped)
             and not NODE_ERROR_HEADLINE_RE.match(stripped)
             and not NODE_CAPITAL_ERROR_RE.match(stripped)
+            and not NODE_ERROR_BRACKET_CODE_RE.match(stripped)
         ):
             continue
         if COMPILER_LOWERCASE_ERROR_RE.match(stripped) and not DENO_WRAPPED_ERROR_RE.match(
@@ -616,6 +683,9 @@ def parse_node_stack(text: str, report: Report) -> None:
         _append_node_error_line(error_lines, stripped)
         if len(error_lines) > before:
             _flush_frames()
+        m_bracket_code = NODE_ERROR_BRACKET_CODE_RE.match(stripped)
+        if m_bracket_code:
+            err_codes.append(m_bracket_code.group("code"))
         m_code = NODE_ERR_CODE_RE.search(stripped)
         if m_code:
             err_codes.append(m_code.group(1))
@@ -957,6 +1027,8 @@ def parse_junit_xml(text: str, source: str, report: Report) -> None:
 
 
 def _has_syntax_error_line(text: str) -> bool:
+    if _text_has_node_stack_frames(text) and "Traceback (most recent call last):" not in text:
+        return False
     for line in text.splitlines():
         stripped = line.strip()
         if SYNTAX_ERROR_LINE_RE.match(stripped) and not _is_node_syntax_error_line(stripped):
@@ -985,8 +1057,9 @@ def _has_python_failure_signal(text: str) -> bool:
     return False
 
 
-def _hint_best_effort_compilers(text: str, report: Report) -> None:
+def _hint_best_effort_compilers(text: str, report: Report) -> bool:
     lines = text.splitlines()
+    structured = False
     for i, line in enumerate(lines):
         stripped = line.strip()
         if not stripped:
@@ -1001,12 +1074,12 @@ def _hint_best_effort_compilers(text: str, report: Report) -> None:
                 if m_arrow:
                     loc = f" {m_arrow.group('file')}:{m_arrow.group('line')}:{m_arrow.group('col')}"
             report.add_hint(f"rustc error (best effort):{loc} {stripped[:360]}")
+            structured = True
             continue
         m_gcc = GCC_ERROR_RE.match(stripped)
         if m_gcc:
-            report.add_hint(
-                f"gcc error (best effort): {m_gcc.group('file')}: {m_gcc.group('rest')[:360]}"
-            )
+            report.add_hint(f"gcc error (best effort): {stripped[:400]}")
+            structured = True
             continue
         m_dart = DART_COMPILER_ERROR_RE.match(stripped)
         if m_dart:
@@ -1014,9 +1087,11 @@ def _hint_best_effort_compilers(text: str, report: Report) -> None:
                 f"dart error (best effort): {m_dart.group('file')}:"
                 f"{m_dart.group('line')}: {m_dart.group('rest')[:300]}"
             )
+            structured = True
             continue
         if COMPILER_LOWERCASE_ERROR_RE.match(stripped):
             report.add_hint(f"compiler error line (not node): {stripped[:400]}")
+    return structured
 
 
 def _should_parse_node_stack(text: str) -> bool:
@@ -1045,6 +1120,8 @@ def _looks_like_node_failure(text: str) -> bool:
             return True
         if SYNTAX_ERROR_LINE_RE.match(stripped):
             continue
+        if NODE_ERROR_BRACKET_CODE_RE.match(stripped):
+            return True
         if NODE_ERROR_HEADLINE_RE.match(stripped) or NODE_CORE_ERROR_RE.match(stripped):
             return True
         if NPM_ERR_RE.match(stripped) or JEST_FAILURE_BULLET_RE.match(stripped):
@@ -1076,9 +1153,9 @@ def detect_and_parse_log(text: str, report: Report, label_suffix: str = "") -> N
     if _should_parse_node_stack(text):
         parse_node_stack(text, report)
         parsed = True
-    if not parsed:
+    compiler_structured = _hint_best_effort_compilers(text, report)
+    if not parsed and not compiler_structured:
         report.add_not_found("recognized failure pattern in log/stderr")
-    _hint_best_effort_compilers(text, report)
 
 
 
