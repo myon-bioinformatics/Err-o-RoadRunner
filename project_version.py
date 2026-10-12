@@ -2,15 +2,27 @@
 
 from __future__ import annotations
 
+import re
+import tomllib
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 DISTRIBUTION_NAME = "err-o-roadrunner"
 VERSION_UNKNOWN = "unknown"
 
 
+def _pep503_normalize_name(name: str) -> str:
+    return re.sub(r"[-_.]+", "-", name).lower()
+
+
+def _project_name_matches(name: str | None) -> bool:
+    if not isinstance(name, str):
+        return False
+    return _pep503_normalize_name(name) == _pep503_normalize_name(DISTRIBUTION_NAME)
+
+
 def _normalize_project_version(name: str | None, raw_version: str | None) -> str | None:
-    if name != DISTRIBUTION_NAME:
+    if not _project_name_matches(name):
         return None
     if raw_version is None:
         return None
@@ -35,54 +47,11 @@ def _version_from_toml_data(data: dict[str, Any]) -> str | None:
     return _normalize_project_version(name, version)
 
 
-def _toml_loader() -> tuple[Callable[[str], dict[str, Any]], type[Exception]] | None:
-    try:
-        import tomllib
-
-        return tomllib.loads, tomllib.TOMLDecodeError
-    except ImportError:
-        try:
-            import tomli
-        except ImportError:
-            return None
-        return tomli.loads, tomli.TOMLDecodeError
-
-
 def _loads_toml(text: str) -> dict[str, Any] | None:
-    loader = _toml_loader()
-    if loader is None:
-        return None
-    loads, decode_error = loader
     try:
-        return loads(text)
-    except decode_error:
-        return None
-
-
-def parse_pyproject_version_via_tomllib(text: str) -> str | None:
-    """Parse with stdlib tomllib when available (parity tests)."""
-    try:
-        import tomllib
-    except ImportError:
-        return None
-    try:
-        data = tomllib.loads(text)
+        return tomllib.loads(text)
     except tomllib.TOMLDecodeError:
         return None
-    return _version_from_toml_data(data)
-
-
-def parse_pyproject_version_via_tomli(text: str) -> str | None:
-    """Parse with tomli when available (parity tests / Python 3.10)."""
-    try:
-        import tomli
-    except ImportError:
-        return None
-    try:
-        data = tomli.loads(text)
-    except tomli.TOMLDecodeError:
-        return None
-    return _version_from_toml_data(data)
 
 
 def parse_pyproject_version(text: str) -> str | None:

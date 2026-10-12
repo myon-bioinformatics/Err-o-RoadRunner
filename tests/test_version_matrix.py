@@ -1,13 +1,12 @@
 """Partition tests for project_version resolution (pyproject × metadata × run mode).
 
-Matrix size: 21 pyproject states × 3 metadata states × 4 run modes = 252 cells.
+Matrix size: 23 pyproject states × 3 metadata states × 4 run modes = 276 cells.
 
-Unreachable (47 cells, see tests/version_matrix_support.UNREACHABLE):
-- wheel_console × metadata absent (8): installed wheels always ship dist-info metadata.
-- wheel_console × non-buildable pyproject (39): hatchling cannot build from fixture;
-  wheel console scripts do not read checkout pyproject.toml.
+Unreachable (49 cells, see tests/version_matrix_support.UNREACHABLE):
+- wheel_console × metadata absent (10): installed wheels always ship dist-info metadata.
+- wheel_console × other pyproject fixtures (39): console scripts read wheel metadata only.
 
-Covered: 205 cells exercised by test_version_resolution_matrix_cell.
+Covered: 227 cells exercised by test_version_resolution_matrix_cell.
 """
 
 from __future__ import annotations
@@ -26,8 +25,6 @@ import triage
 from project_version import (
     VERSION_UNKNOWN,
     parse_pyproject_version,
-    parse_pyproject_version_via_tomli,
-    parse_pyproject_version_via_tomllib,
     read_pyproject_version,
     resolve_version,
 )
@@ -144,60 +141,29 @@ def test_version_resolution_matrix_cell(
 
 def test_version_matrix_coverage_summary() -> None:
     total, unreachable, covered = matrix_totals()
-    assert total == 252
-    assert unreachable == 47
-    assert covered == 205
+    assert total == 276
+    assert unreachable == 49
+    assert covered == 227
 
 
 @pytest.mark.parametrize("pyproject_state", PYPROJECT_STATES)
-def test_toml_backends_agree_on_matrix_fixtures(pyproject_state: str) -> None:
+def test_tomllib_parse_matches_parse_pyproject_version(pyproject_state: str) -> None:
     if pyproject_state in {"missing", "invalid_utf8"}:
         pytest.skip("no UTF-8 pyproject fixture text")
     payload = pyproject_bytes(pyproject_state)
     assert payload is not None
     text = payload.decode("utf-8")
 
-    primary = parse_pyproject_version(text)
-    via_tomllib = parse_pyproject_version_via_tomllib(text)
-    via_tomli = parse_pyproject_version_via_tomli(text)
+    import tomllib
 
-    def tomllib_parses() -> bool:
-        try:
-            import tomllib
-        except ImportError:
-            return False
-        try:
-            tomllib.loads(text)
-            return True
-        except tomllib.TOMLDecodeError:
-            return False
+    from project_version import _version_from_toml_data
 
-    def tomli_parses() -> bool:
-        try:
-            import tomli
-        except ImportError:
-            return False
-        try:
-            tomli.loads(text)
-            return True
-        except tomli.TOMLDecodeError:
-            return False
-
-    if tomllib_parses():
-        assert via_tomllib == primary
-    else:
-        assert via_tomllib is None
-
-    if tomli_parses():
-        assert via_tomli == primary
-    else:
-        assert via_tomli is None
-
-    if not tomllib_parses() and not tomli_parses():
-        assert primary is None
-
-    if tomllib_parses() and tomli_parses():
-        assert via_tomllib == via_tomli
+    try:
+        data = tomllib.loads(text)
+    except tomllib.TOMLDecodeError:
+        assert parse_pyproject_version(text) is None
+        return
+    assert parse_pyproject_version(text) == _version_from_toml_data(data)
 
 
 def test_resolve_version_direct_matches_matrix_expectations(
@@ -252,6 +218,30 @@ def test_import_succeeds_with_unknown_version(
         check=False,
     )
     assert proc2.returncode == 0, proc2.stderr
+
+
+@pytest.mark.mutation_guard
+def test_mutation_guard_pep503_name_mixed_case_accepted(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    sandbox = tmp_path / "s"
+    sandbox.mkdir()
+    populate_sandbox(sandbox, "name_pep503_mixed_case")
+    monkeypatch.setattr("project_version._installed_version", lambda: META_VERSION)
+    assert resolve_version(package_dir=sandbox) == CHECKOUT_VERSION
+
+
+@pytest.mark.mutation_guard
+def test_mutation_guard_pep503_name_underscore_accepted(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    sandbox = tmp_path / "s"
+    sandbox.mkdir()
+    populate_sandbox(sandbox, "name_pep503_underscore")
+    monkeypatch.setattr("project_version._installed_version", lambda: META_VERSION)
+    assert resolve_version(package_dir=sandbox) == CHECKOUT_VERSION
 
 
 @pytest.mark.mutation_guard

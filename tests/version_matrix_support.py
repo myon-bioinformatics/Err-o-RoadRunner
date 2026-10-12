@@ -49,6 +49,8 @@ PYPROJECT_STATES = (
     "toml_quoted_keys",
     "toml_inline_project_table",
     "toml_version_unicode_escape",
+    "name_pep503_mixed_case",
+    "name_pep503_underscore",
 )
 
 DUPLICATE_FIRST_VERSION = "1.2.3"
@@ -70,6 +72,8 @@ WHEEL_BUILDABLE_PYPROJECT_STATES = frozenset(
         "toml_spaced_project_table",
         "toml_quoted_keys",
         "toml_version_unicode_escape",
+        "name_pep503_mixed_case",
+        "name_pep503_underscore",
     }
 )
 
@@ -77,19 +81,20 @@ CHECKOUT_USABLE_PYPROJECT_STATES = WHEEL_BUILDABLE_PYPROJECT_STATES | frozenset(
     {"toml_inline_project_table"}
 )
 
+_WHEEL_CONSOLE_BASE_REASON = (
+    "wheel_console resolves version from the installed wheel's dist-info metadata only; "
+    "checkout pyproject.toml beside the console script is not read"
+)
+
 # Cells that cannot be exercised (documented in test_version_matrix.py).
 UNREACHABLE: dict[tuple[str, str, str], str] = {}
 for _state in PYPROJECT_STATES:
     if _state not in WHEEL_BUILDABLE_PYPROJECT_STATES:
         for _meta in METADATA_STATES:
-            UNREACHABLE[(_state, _meta, "wheel_console")] = (
-                "wheel_console does not read checkout pyproject.toml; "
-                f"fixture pyproject state '{_state}' is not hatchling-buildable"
-            )
+            UNREACHABLE[(_state, _meta, "wheel_console")] = _WHEEL_CONSOLE_BASE_REASON
 for _state in WHEEL_BUILDABLE_PYPROJECT_STATES:
     UNREACHABLE[(_state, "absent", "wheel_console")] = (
-        "wheel_console does not read checkout pyproject.toml; "
-        "installed wheels always carry dist-info metadata"
+        f"{_WHEEL_CONSOLE_BASE_REASON}; absent metadata is impossible for installed wheels"
     )
 
 
@@ -195,6 +200,18 @@ def pyproject_text(state: str) -> str | None:
             "[project]\n"
             f'name = "{DISTRIBUTION_NAME}"\n'
             f'version = "7.7.\\u0037"\n'
+        )
+    if state == "name_pep503_mixed_case":
+        return (
+            "[project]\n"
+            'name = "Err-O-RoadRunner"\n'
+            f'version = "{CHECKOUT_VERSION}"\n'
+        )
+    if state == "name_pep503_underscore":
+        return (
+            "[project]\n"
+            'name = "err_o_roadrunner"\n'
+            f'version = "{CHECKOUT_VERSION}"\n'
         )
     raise ValueError(state)
 

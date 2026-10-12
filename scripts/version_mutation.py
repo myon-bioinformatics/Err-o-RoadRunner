@@ -32,8 +32,8 @@ class Mutation:
 MUTATIONS: list[Mutation] = [
     Mutation(
         "drop_name_check",
-        "    if name != DISTRIBUTION_NAME:\n        return None",
-        "    if False and name != DISTRIBUTION_NAME:\n        return None",
+        "    if not _project_name_matches(name):\n        return None",
+        "    if False and not _project_name_matches(name):\n        return None",
     ),
     Mutation(
         "metadata_before_pyproject",

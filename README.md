@@ -51,7 +51,7 @@ err-o-roadrunner --exit-code "$?" --stderr /path/to/stderr.txt --junit reports/j
 
 `--version` and `triage.__version__` resolve in this order:
 
-1. **`pyproject.toml` next to `triage.py`** when the file is readable UTF-8, parses as TOML (or the Python 3.10 line fallback), and `[project]` has `name = "err-o-roadrunner"` with a non-empty `version`.
+1. **`pyproject.toml` next to `triage.py`** when the file is readable UTF-8, parses as TOML with stdlib `tomllib`, `[project]` name matches `err-o-roadrunner` under [PEP 503](https://peps.python.org/pep-0503/) normalization, and `version` is a non-empty string after stripping.
 2. **Installed distribution metadata** for `err-o-roadrunner` (for example after `pip install`).
 3. **`unknown`** when neither source is usable.
 
