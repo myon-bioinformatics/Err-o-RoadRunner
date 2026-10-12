@@ -31,14 +31,9 @@ class Mutation:
 
 MUTATIONS: list[Mutation] = [
     Mutation(
-        "drop_name_check_tomllib",
+        "drop_name_check",
         "    if name != DISTRIBUTION_NAME:\n        return None",
         "    if False and name != DISTRIBUTION_NAME:\n        return None",
-    ),
-    Mutation(
-        "drop_name_check_fallback",
-        "    if saw_name and found_version is not None:\n        return found_version",
-        "    if found_version is not None:\n        return found_version",
     ),
     Mutation(
         "metadata_before_pyproject",
@@ -70,9 +65,9 @@ MUTATIONS: list[Mutation] = [
         "        text = pyproject.read_text(encoding=\"utf-8\")\n"
         "    except (OSError, UnicodeDecodeError):\n"
         "        return None\n"
-        "    return _parse_pyproject_text(text)",
+        "    return parse_pyproject_version_from_lines(text)",
         "    text = pyproject.read_text(encoding=\"utf-8\")\n"
-        "    return _parse_pyproject_text(text)",
+        "    return parse_pyproject_version_from_lines(text)",
     ),
     Mutation(
         "drop_unknown_fallback",
@@ -93,10 +88,7 @@ def main() -> int:
     original = TARGET.read_text(encoding="utf-8")
     survivors: list[str] = []
     for mutation in MUTATIONS:
-        if mutation.mutation_id == "drop_name_check_tomllib" and sys.version_info < (3, 11):
-            continue
-        if mutation.mutation_id == "project_table_boundary_pass" and sys.version_info >= (3, 11):
-            continue
+        TARGET.write_text(original, encoding="utf-8")
         TARGET.write_text(apply_mutation(mutation), encoding="utf-8")
         proc = subprocess.run(GUARD_CMD, cwd=ROOT, check=False, capture_output=True)
         if proc.returncode == 0:

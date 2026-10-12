@@ -1,13 +1,13 @@
 """Partition tests for project_version resolution (pyproject × metadata × run mode).
 
-Matrix size: 14 pyproject states × 3 metadata states × 4 run modes = 168 cells.
+Matrix size: 15 pyproject states × 3 metadata states × 4 run modes = 180 cells.
 
-Unreachable (36 cells, see tests/version_matrix_support.UNREACHABLE):
+Unreachable (39 cells, see tests/version_matrix_support.UNREACHABLE):
 - wheel_console × metadata absent (3): wheels always ship dist-info metadata.
-- wheel_console × non-buildable pyproject (33): hatchling cannot build a wheel from
+- wheel_console × non-buildable pyproject (36): hatchling cannot build a wheel from
   missing/invalid/malformed pyproject fixtures.
 
-Covered: 132 cells exercised by test_version_resolution_matrix_cell.
+Covered: 141 cells exercised by test_version_resolution_matrix_cell.
 """
 
 from __future__ import annotations
@@ -24,9 +24,16 @@ from unittest import mock
 import pytest
 
 import triage
-from project_version import VERSION_UNKNOWN, read_pyproject_version, resolve_version
+from project_version import (
+    VERSION_UNKNOWN,
+    parse_pyproject_version_from_lines,
+    parse_pyproject_version_from_tomllib,
+    read_pyproject_version,
+    resolve_version,
+)
 from tests.version_matrix_support import (
     CHECKOUT_VERSION,
+    DUPLICATE_FIRST_VERSION,
     META_VERSION,
     METADATA_STATES,
     PYPROJECT_STATES,
@@ -40,6 +47,7 @@ from tests.version_matrix_support import (
     populate_sandbox,
     pyproject_bytes,
     run_version_cli,
+    pyproject_text,
     wheel_pyproject_version,
     write_buildable_pyproject,
 )
@@ -146,9 +154,25 @@ def test_version_resolution_matrix_cell(
 
 def test_version_matrix_coverage_summary() -> None:
     total, unreachable, covered = matrix_totals()
-    assert total == 168
-    assert unreachable == 36
-    assert covered == 132
+    assert total == 180
+    assert unreachable == 39
+    assert covered == 141
+
+
+@pytest.mark.parametrize("pyproject_state", PYPROJECT_STATES)
+def test_line_and_tomllib_parsers_agree(pyproject_state: str) -> None:
+    text = pyproject_text(pyproject_state)
+    if text is None:
+        pytest.skip("no pyproject fixture text")
+    try:
+        import tomllib
+    except ImportError:
+        pytest.skip("tomllib not available")
+    try:
+        tomllib.loads(text)
+    except tomllib.TOMLDecodeError:
+        pytest.skip("fixture is not valid tomllib input")
+    assert parse_pyproject_version_from_lines(text) == parse_pyproject_version_from_tomllib(text)
 
 
 def test_resolve_version_direct_matches_matrix_expectations(
@@ -264,6 +288,18 @@ def test_mutation_guard_oserror_on_read_falls_back(
     monkeypatch.setattr("project_version._installed_version", lambda: META_VERSION)
     with mock.patch.object(Path, "read_text", side_effect=OSError("permission denied")):
         assert resolve_version(package_dir=sandbox) == META_VERSION
+
+
+@pytest.mark.mutation_guard
+def test_mutation_guard_duplicate_version_first_wins(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    sandbox = tmp_path / "s"
+    sandbox.mkdir()
+    populate_sandbox(sandbox, "duplicate_version_in_project")
+    monkeypatch.setattr("project_version._installed_version", lambda: META_VERSION)
+    assert resolve_version(package_dir=sandbox) == DUPLICATE_FIRST_VERSION
 
 
 @pytest.mark.mutation_guard

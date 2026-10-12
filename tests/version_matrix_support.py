@@ -30,7 +30,11 @@ PYPROJECT_STATES = (
     "empty_file",
     "version_whitespace",
     "version_in_later_table",
+    "duplicate_version_in_project",
 )
+
+DUPLICATE_FIRST_VERSION = "1.2.3"
+DUPLICATE_SECOND_VERSION = "9.9.9"
 
 METADATA_STATES = ("same", "different", "absent")
 
@@ -107,6 +111,13 @@ def pyproject_text(state: str) -> str | None:
             "[tool.foo]\n"
             'version = "9.9.9"\n'
         )
+    if state == "duplicate_version_in_project":
+        return (
+            "[project]\n"
+            f'name = "{DISTRIBUTION_NAME}"\n'
+            f'version = "{DUPLICATE_FIRST_VERSION}"\n'
+            f'version = "{DUPLICATE_SECOND_VERSION}"\n'
+        )
     if state == "unreadable_oserror":
         return (
             "[project]\n"
@@ -129,6 +140,8 @@ def expected_version(pyproject_state: str, metadata_state: str, run_mode: str) -
         meta = metadata_version(metadata_state)
         assert meta is not None
         return meta
+    if pyproject_state == "duplicate_version_in_project":
+        return DUPLICATE_FIRST_VERSION
     checkout_usable = pyproject_state in {
         "valid",
         "single_quoted",
