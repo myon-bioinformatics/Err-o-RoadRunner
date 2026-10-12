@@ -77,6 +77,29 @@ COMPILER_LOWERCASE_ERROR_RE = re.compile(r"^error:\s+")
 EXCEPTION_GROUP_SUMMARY_RE = re.compile(
     r"^(?P<exc>(?:Base)?ExceptionGroup)(?::\s*(?P<msg>.*))?$"
 )
+EXCEPTION_GROUP_TB_START_RE = re.compile(
+    r"^\s*\+ Exception Group Traceback \(most recent call last\):"
+)
+EXCEPTION_GROUP_BORDER_RE = re.compile(r"^\s*\+[-+].*$")
+NODE_ERR_ASSERTION_RE = re.compile(
+    r"^AssertionError\s+\[ERR_ASSERTION\]:\s*(?P<rest>.*)$",
+    re.IGNORECASE,
+)
+DENO_WRAPPED_ERROR_RE = re.compile(
+    r"^error:\s*(?:Uncaught\b.*?\s+)?(?P<head>[A-Za-z_][\w]*Error)\s*:\s*(?P<rest>.*)$",
+    re.IGNORECASE,
+)
+RUSTC_ERROR_CODE_RE = re.compile(r"^error\[E\d+\]:\s*(?P<rest>.+)$")
+RUSTC_ARROW_RE = re.compile(r"^\s*-->\s+(?P<file>\S+):(?P<line>\d+):(?P<col>\d+)")
+GCC_ERROR_RE = re.compile(
+    r"^(?P<file>[^:\s]+):\d+:\d+:\s+error:\s*(?P<rest>.+)$"
+)
+DART_COMPILER_ERROR_RE = re.compile(
+    r"^(?P<file>\S+\.dart):(?P<line>\d+):(?P<col>\d+):\s*Error:\s*(?P<rest>.+)$"
+)
+PYTHON_EXCEPTIONS_WITHOUT_MESSAGE = frozenset(
+    {"KeyboardInterrupt", "MemoryError", "SystemExit", "GeneratorExit"}
+)
 NODE_BRACKET_REJECTION_RE = re.compile(
     r"^\[UnhandledPromiseRejection:\s*(?P<rest>.*)\]\s*$",
     re.IGNORECASE,
@@ -274,36 +297,75 @@ class StackFrame:
         return f"{self.file}:{self.line}"
 
 
-def _split_python_trace_blocks(text: str) -> tuple[list[list[str]], int]:
+@dataclass(frozen=True)
+class _TraceBlock:
+    lines: list[str]
+    linked_to_previous: bool
+
+
+def _normalize_python_trace_line(line: str) -> str:
+    if EXCEPTION_GROUP_TB_START_RE.match(line):
+        return "Traceback (most recent call last):"
+    pipe = re.match(r"^(\s*)\| (.*)$", line)
+    if pipe:
+        line = f"{pipe.group(1)}{pipe.group(2)}"
+    if re.match(r"^\s+File ", line):
+        return "  " + line.lstrip()
+    return line
+
+
+def _prepare_python_trace_text(text: str) -> str:
+    out: list[str] = []
+    for raw in text.splitlines():
+        if EXCEPTION_GROUP_BORDER_RE.match(raw):
+            continue
+        if re.match(r"^\s*\+-+\s*\d+\s*-+", raw):
+            continue
+        out.append(_normalize_python_trace_line(raw))
+    return "\n".join(out)
+
+
+def _split_python_trace_blocks(text: str) -> tuple[list[_TraceBlock], int]:
+    text = _prepare_python_trace_text(text)
     lines = text.splitlines()
-    blocks: list[list[str]] = []
-    unrelated = 0
+    blocks: list[_TraceBlock] = []
     current: list[str] = []
+    next_linked = False
+    linked = False
     for line in lines:
         if line.startswith("Traceback (most recent call last):"):
             if current:
-                blocks.append(current)
+                blocks.append(_TraceBlock(current, linked))
+                current = []
+            linked = next_linked
+            next_linked = False
             current = [line]
         elif line in PYTHON_CHAIN_MARKERS:
             if current:
-                blocks.append(current)
-            current = []
+                blocks.append(_TraceBlock(current, linked))
+                current = []
+            next_linked = True
         elif current:
             current.append(line)
         elif SYNTAX_ERROR_LINE_RE.match(line.strip()):
             stripped_syntax = line
-            if blocks and not blocks[-1][0].startswith("Traceback"):
-                blocks[-1].append(stripped_syntax)
+            if blocks and not blocks[-1].lines[0].startswith("Traceback"):
+                blocks[-1].lines.append(stripped_syntax)
             elif current:
                 current.append(stripped_syntax)
             else:
-                blocks.append([stripped_syntax])
+                blocks.append(_TraceBlock([stripped_syntax], linked))
+                linked = False
+                next_linked = False
         elif line.startswith("  File "):
             if current:
-                blocks.append(current)
+                blocks.append(_TraceBlock(current, linked))
+            linked = next_linked
+            next_linked = False
             current = [line]
     if current:
-        blocks.append(current)
+        blocks.append(_TraceBlock(current, linked))
+    unrelated = sum(1 for i, block in enumerate(blocks) if i > 0 and not block.linked_to_previous)
     return blocks, unrelated
 
 
@@ -334,7 +396,11 @@ def _parse_one_python_block(tb: list[str], report: Report, label: str) -> tuple[
                 frame_cap_reported = True
             continue
         if re.match(r"^    \S", line):
-            continue
+            probe = line.strip()
+            if not parse_exception_summary_line(probe) and not EXCEPTION_GROUP_SUMMARY_RE.match(
+                probe
+            ):
+                continue
         stripped = line.strip()
         if not stripped or stripped.startswith("^"):
             continue
@@ -362,11 +428,22 @@ def _parse_one_python_block(tb: list[str], report: Report, label: str) -> tuple[
         elif re.match(r"^[A-Za-z_][\w.]*$", stripped):
             report.add_hint(f"{_report_key(label, 'uncertain traceback line')}: {stripped}")
 
+    if exc_type in ("ExceptionGroup", "BaseExceptionGroup"):
+        loc = frames[0].format() if frames else ""
+        for stripped in tail_lines:
+            sub = parse_exception_summary_line(stripped)
+            if sub and sub[0] not in ("ExceptionGroup", "BaseExceptionGroup"):
+                suffix = f" ({loc})" if loc else ""
+                report.add_hint(
+                    f"{_report_key(label, 'exception group sub-exception')}: "
+                    f"{stripped[:360]}{suffix}"
+                )
+
     if exc_type:
         report.add_found(f"{_report_key(label, 'python exception type')}: {exc_type}")
         if exc_msg:
             report.add_found(f"{_report_key(label, 'python exception message')}: {exc_msg}")
-        else:
+        elif exc_type not in PYTHON_EXCEPTIONS_WITHOUT_MESSAGE:
             report.add_not_found(_report_key(label, "python exception message"))
     else:
         report.add_not_found(_report_key(label, "python exception type"))
@@ -387,9 +464,7 @@ def _parse_one_python_block(tb: list[str], report: Report, label: str) -> tuple[
 
 
 def parse_python_traceback(text: str, report: Report, label: str = "") -> None:
-    blocks, unrelated = _split_python_trace_blocks(text)
-    if unrelated:
-        report.add_found(f"python unrelated traceback blocks: {unrelated}")
+    blocks, unrelated_count = _split_python_trace_blocks(text)
     if not blocks:
         if any(m in text for m in PYTHON_CHAIN_MARKERS):
             report.add_hint(
@@ -397,23 +472,39 @@ def parse_python_traceback(text: str, report: Report, label: str = "") -> None:
                 + next(m for m in PYTHON_CHAIN_MARKERS if m in text)[:120]
             )
             return
+        if EXCEPTION_GROUP_TB_START_RE.search(text) or "ExceptionGroup" in text:
+            report.add_hint("python exception group traceback present but unparsed")
+            return
         report.add_not_found("python traceback")
         return
 
-    if len(blocks) > 1:
-        report.add_found(f"python chained traceback blocks: {len(blocks)}")
-
     prefix = label
-    if len(blocks) == 1:
-        block_labels = [prefix]
-    else:
-        block_labels = [f"{prefix}primary" if prefix else "primary"] + [
-            f"{prefix}chained-{i}" if prefix else f"chained-{i}" for i in range(1, len(blocks))
-        ]
+    block_labels: list[str] = []
+    chained_n = 0
+    unrelated_n = 0
+    for i, block in enumerate(blocks):
+        if i == 0:
+            block_labels.append(prefix)
+        elif block.linked_to_previous:
+            chained_n += 1
+            block_labels.append(
+                f"{prefix}chained-{chained_n}" if prefix else f"chained-{chained_n}"
+            )
+        else:
+            unrelated_n += 1
+            block_labels.append(
+                f"{prefix}unrelated-{unrelated_n}" if prefix else f"unrelated-{unrelated_n}"
+            )
+
+    if chained_n:
+        report.add_found(f"python chained traceback blocks: {chained_n}")
+    if unrelated_n:
+        report.add_found(f"python unrelated traceback blocks: {unrelated_n}")
+
     last_type = ""
     last_msg = ""
-    for block, label in zip(blocks, block_labels):
-        exc_type, exc_msg = _parse_one_python_block(block, report, label)
+    for block, block_label in zip(blocks, block_labels):
+        exc_type, exc_msg = _parse_one_python_block(block.lines, report, block_label)
         if exc_type:
             last_type, last_msg = exc_type, exc_msg
 
@@ -450,6 +541,17 @@ def _parse_node_at_line(line: str) -> StackFrame | None:
 
 
 def _append_node_error_line(error_lines: list[str], stripped: str) -> None:
+    m_assert = NODE_ERR_ASSERTION_RE.match(stripped)
+    if m_assert:
+        rest = (m_assert.group("rest") or "").strip()
+        error_lines.append(f"AssertionError [ERR_ASSERTION]: {rest}" if rest else "AssertionError [ERR_ASSERTION]")
+        return
+    m_deno = DENO_WRAPPED_ERROR_RE.match(stripped)
+    if m_deno:
+        rest = (m_deno.group("rest") or "").strip()
+        head = m_deno.group("head")
+        error_lines.append(f"{head}: {rest}" if rest else f"{head}:")
+        return
     m_head = NODE_ERROR_HEADLINE_RE.match(stripped)
     if m_head:
         rest = (m_head.group("rest") or "").strip()
@@ -502,8 +604,9 @@ def parse_node_stack(text: str, report: Report) -> None:
             and not NODE_CAPITAL_ERROR_RE.match(stripped)
         ):
             continue
-        if COMPILER_LOWERCASE_ERROR_RE.match(stripped):
-            report.add_hint(f"compiler error line (not node): {stripped[:400]}")
+        if COMPILER_LOWERCASE_ERROR_RE.match(stripped) and not DENO_WRAPPED_ERROR_RE.match(
+            stripped
+        ):
             continue
         m_cause = NODE_CAUSE_RE.match(stripped)
         if m_cause:
@@ -854,7 +957,11 @@ def parse_junit_xml(text: str, source: str, report: Report) -> None:
 
 
 def _has_syntax_error_line(text: str) -> bool:
-    return any(SYNTAX_ERROR_LINE_RE.match(line.strip()) for line in text.splitlines())
+    for line in text.splitlines():
+        stripped = line.strip()
+        if SYNTAX_ERROR_LINE_RE.match(stripped) and not _is_node_syntax_error_line(stripped):
+            return True
+    return False
 
 
 def _is_node_syntax_error_line(stripped: str) -> bool:
@@ -869,11 +976,62 @@ def _is_node_syntax_error_line(stripped: str) -> bool:
 def _has_python_failure_signal(text: str) -> bool:
     if "Traceback (most recent call last):" in text or any(m in text for m in PYTHON_CHAIN_MARKERS):
         return True
+    if EXCEPTION_GROUP_TB_START_RE.search(text):
+        return True
     if _has_syntax_error_line(text):
         return True
     if "ExceptionGroup" in text or "BaseExceptionGroup" in text:
         return True
     return False
+
+
+def _hint_best_effort_compilers(text: str, report: Report) -> None:
+    lines = text.splitlines()
+    for i, line in enumerate(lines):
+        stripped = line.strip()
+        if not stripped:
+            continue
+        if DENO_WRAPPED_ERROR_RE.match(stripped):
+            continue
+        m_rust = RUSTC_ERROR_CODE_RE.match(stripped)
+        if m_rust:
+            loc = ""
+            if i + 1 < len(lines):
+                m_arrow = RUSTC_ARROW_RE.match(lines[i + 1].strip())
+                if m_arrow:
+                    loc = f" {m_arrow.group('file')}:{m_arrow.group('line')}:{m_arrow.group('col')}"
+            report.add_hint(f"rustc error (best effort):{loc} {stripped[:360]}")
+            continue
+        m_gcc = GCC_ERROR_RE.match(stripped)
+        if m_gcc:
+            report.add_hint(
+                f"gcc error (best effort): {m_gcc.group('file')}: {m_gcc.group('rest')[:360]}"
+            )
+            continue
+        m_dart = DART_COMPILER_ERROR_RE.match(stripped)
+        if m_dart:
+            report.add_hint(
+                f"dart error (best effort): {m_dart.group('file')}:"
+                f"{m_dart.group('line')}: {m_dart.group('rest')[:300]}"
+            )
+            continue
+        if COMPILER_LOWERCASE_ERROR_RE.match(stripped):
+            report.add_hint(f"compiler error line (not node): {stripped[:400]}")
+
+
+def _should_parse_node_stack(text: str) -> bool:
+    if not _looks_like_node_failure(text):
+        return False
+    if not _has_python_failure_signal(text):
+        return True
+    return bool(
+        re.search(r"\n\s*at .+:\d+", text)
+        or NPM_ERR_RE.search(text)
+        or NODE_ERR_ASSERTION_RE.search(text)
+        or DENO_WRAPPED_ERROR_RE.search(text)
+        or JEST_FAILURE_BULLET_RE.search(text)
+        or NODE_ERR_CODE_RE.search(text)
+    )
 
 
 def _looks_like_node_failure(text: str) -> bool:
@@ -910,20 +1068,17 @@ def detect_and_parse_log(text: str, report: Report, label_suffix: str = "") -> N
     if not text.strip():
         report.add_not_found("log text (empty)")
         return
-    for line in text.splitlines():
-        stripped = line.strip()
-        if COMPILER_LOWERCASE_ERROR_RE.match(stripped):
-            report.add_hint(f"compiler error line (not node): {stripped[:400]}")
     label = label_suffix.strip()
     parsed = False
     if _has_python_failure_signal(text):
         parse_python_traceback(text, report, label=label)
         parsed = True
-    if _looks_like_node_failure(text):
+    if _should_parse_node_stack(text):
         parse_node_stack(text, report)
         parsed = True
     if not parsed:
         report.add_not_found("recognized failure pattern in log/stderr")
+    _hint_best_effort_compilers(text, report)
 
 
 

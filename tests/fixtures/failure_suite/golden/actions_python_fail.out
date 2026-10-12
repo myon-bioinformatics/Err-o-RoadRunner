@@ -14,8 +14,6 @@ FOUND: python exception message: assert 1 == 2
 FOUND: python traceback frame (first): /repo/tests/demo_test.py:2 in test_x
 FOUND: python traceback frame (last): /repo/tests/demo_test.py:2 in test_x
 FOUND: python traceback frame count: 1
-FOUND: node error lines: 1
-FOUND: node error line: AssertionError: assert 1 == 2
 FOUND: python version: 3.12.3 (cpython)
 FOUND: node version: v22.14.0
 FOUND: gh version: gh version 2.102.0 (2026-09-30)
@@ -25,8 +23,6 @@ NOT FOUND: actions log ::error:: commands (actions-log)
 NOT FOUND: actions log pytest failed lines (actions-log)
 NOT FOUND: actions log ::error:: commands (actions-log)
 NOT FOUND: actions log pytest failed lines (actions-log)
-NOT FOUND: node stack frames
 NOT FOUND: lock files in project root
 HINT: web search keywords: AssertionError assert 1 == 2
-HINT: web search keywords: AssertionError: assert 1 == 2
 HINT: actions log search keywords (actions-log): Process completed with exit code 1.

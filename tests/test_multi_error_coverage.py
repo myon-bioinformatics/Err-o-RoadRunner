@@ -116,8 +116,10 @@ def test_flutter_real_log_three_gh_errors() -> None:
 
 
 @pytest.mark.multi_error
-def test_python_exception_group() -> None:
-    text = (MULTI / "exception_group.stderr").read_text(encoding="utf-8")
+@pytest.mark.mutation_guard
+def test_python_exception_group_cpython_real_output() -> None:
+    text = (MULTI / "exception_group_cpython.stderr").read_text(encoding="utf-8")
+    assert "+ Exception Group Traceback" in text
     report = triage(
         exit_code=1,
         stderr_text=text,
@@ -126,8 +128,179 @@ def test_python_exception_group() -> None:
         project_root=ROOT,
     )
     lines = _lines(report)
-    assert any("ExceptionGroup" in ln for ln in lines)
-    _assert_standard_hint_floor(lines, location="main.py:10")
+    assert not any(ln == "NOT FOUND: python traceback" for ln in lines)
+    assert any(ln.startswith("FOUND: python exception type: ExceptionGroup") for ln in lines)
+    assert any("exception group sub-exception" in ln and "ValueError" in ln for ln in lines)
+    assert any("exception group sub-exception" in ln and "TypeError" in ln for ln in lines)
+    assert any("<string>:1" in ln for ln in lines)
+    _assert_standard_hint_floor(lines, location="<string>:1")
+
+
+@pytest.mark.multi_error
+@pytest.mark.mutation_guard
+def test_two_unrelated_tracebacks_not_chained() -> None:
+    text = (MULTI / "two_unrelated_tracebacks.stderr").read_text(encoding="utf-8")
+    report = triage(
+        exit_code=1,
+        stderr_text=text,
+        log_text=None,
+        junit_paths=[],
+        project_root=ROOT,
+    )
+    lines = _lines(report)
+    assert any(ln == "FOUND: python unrelated traceback blocks: 1" for ln in lines)
+    assert not any("python chained traceback blocks" in ln for ln in lines)
+    assert any("python exception type (unrelated-1): TypeError" in ln for ln in lines)
+
+
+@pytest.mark.multi_error
+def test_node_err_assertion_headline() -> None:
+    text = (MULTI / "node_err_assertion.stderr").read_text(encoding="utf-8")
+    report = triage(
+        exit_code=1,
+        stderr_text=None,
+        log_text=text,
+        junit_paths=[],
+        project_root=ROOT,
+    )
+    lines = _lines(report)
+    assert any("AssertionError [ERR_ASSERTION]" in ln for ln in lines)
+    assert not any(ln == "NOT FOUND: node error headline" for ln in lines)
+
+
+@pytest.mark.multi_error
+def test_deno_wrapped_error_single_hint() -> None:
+    text = (MULTI / "deno_wrapped_type_error.stderr").read_text(encoding="utf-8")
+    report = triage(
+        exit_code=1,
+        stderr_text=text,
+        log_text=None,
+        junit_paths=[],
+        project_root=ROOT,
+    )
+    lines = _lines(report)
+    assert any(ln.startswith("FOUND: node error line:") and "TypeError" in ln for ln in lines)
+    compiler_hints = [ln for ln in lines if "compiler error line (not node)" in ln]
+    assert len(compiler_hints) == 0
+
+
+def _overflow_actions_log(n: int) -> str:
+    lines = ["2026-10-11T16:00:00.0000000Z ##[group]Run cap-test"]
+    for i in range(n):
+        lines.append(f"2026-10-11T16:00:00.{i:04d}Z ##[error]synthetic error {i}")
+    lines.append("2026-10-11T16:00:01.0000000Z ##[error]Process completed with exit code 1.")
+    lines.append("2026-10-11T16:00:01.0000001Z ##[endgroup]")
+    return "\n".join(lines) + "\n"
+
+
+@pytest.mark.multi_error
+@pytest.mark.mutation_guard
+def test_actions_log_gh_error_cap_and_omitted_count() -> None:
+    report = triage(
+        exit_code=1,
+        actions_log_text=_overflow_actions_log(45),
+        stderr_text=None,
+        log_text=None,
+        junit_paths=[],
+        project_root=ROOT,
+    )
+    lines = _lines(report)
+    assert any(ln == "FOUND: actions log ##[error] markers (actions-log): 46" for ln in lines)
+    assert any(
+        ln == "FOUND: actions log ##[error] markers 40/46 (actions-log): synthetic error 39"
+        for ln in lines
+    )
+    assert any(
+        ln == "FOUND: actions log ##[error] markers omitted (actions-log): +6 omitted (total ##[error] markers 46)"
+        for ln in lines
+    )
+
+
+@pytest.mark.multi_error
+@pytest.mark.mutation_guard
+def test_actions_log_workflow_error_cap_and_omitted_count() -> None:
+    body = "\n".join(
+        f"2026-10-11T16:00:00.{i:04d}Z ::error file=f{i}.ts,line={i}::msg {i}"
+        for i in range(45)
+    )
+    text = (
+        "2026-10-11T16:00:00.0000000Z ##[group]Run wf-cap\n"
+        f"{body}\n"
+        "2026-10-11T16:00:01.0000000Z ##[error]Process completed with exit code 1.\n"
+        "2026-10-11T16:00:01.0000001Z ##[endgroup]\n"
+    )
+    report = triage(
+        exit_code=1,
+        actions_log_text=text,
+        stderr_text=None,
+        log_text=None,
+        junit_paths=[],
+        project_root=ROOT,
+    )
+    lines = _lines(report)
+    assert any(ln == "FOUND: actions log ::error:: commands (actions-log): 45" for ln in lines)
+    assert any(ln.startswith("FOUND: actions log workflow error 40/45") for ln in lines)
+    assert any(
+        ln == "FOUND: actions log workflow error omitted (actions-log): +5 omitted (total ::error 45)"
+        for ln in lines
+    )
+
+
+@pytest.mark.multi_error
+@pytest.mark.mutation_guard
+def test_actions_log_pytest_failed_cap_and_omitted_count() -> None:
+    body = "\n".join(
+        f"2026-10-11T16:00:00.{i:04d}Z FAILED tests/t_{i}.py::test_x - assert {i}"
+        for i in range(45)
+    )
+    text = (
+        "2026-10-11T16:00:00.0000000Z ##[group]Run pytest-cap\n"
+        "2026-10-11T16:00:00.0000001Z ##[endgroup]\n"
+        f"{body}\n"
+        "2026-10-11T16:00:01.0000000Z ##[error]Process completed with exit code 1.\n"
+    )
+    report = triage(
+        exit_code=1,
+        actions_log_text=text,
+        stderr_text=None,
+        log_text=None,
+        junit_paths=[],
+        project_root=ROOT,
+    )
+    lines = _lines(report)
+    assert any(ln == "FOUND: actions log pytest failed lines (actions-log): 45" for ln in lines)
+    assert any(ln.startswith("FOUND: actions log pytest failed lines 40/45") for ln in lines)
+    assert any(
+        ln
+        == "FOUND: actions log pytest failed lines omitted (actions-log): +5 omitted (total pytest failed lines 45)"
+        for ln in lines
+    )
+
+
+@pytest.mark.multi_error
+def test_python_recursion_no_duplicate_node_line() -> None:
+    text = (
+        "Traceback (most recent call last):\n"
+        '  File "r.py", line 1, in f\n'
+        "RecursionError: maximum recursion depth exceeded\n"
+    )
+    report = triage(exit_code=1, stderr_text=text, log_text=None, junit_paths=[], project_root=ROOT)
+    lines = _lines(report)
+    assert any("FOUND: python exception type: RecursionError" in ln for ln in lines)
+    assert not any(ln.startswith("FOUND: node error line:") for ln in lines)
+
+
+@pytest.mark.multi_error
+def test_keyboard_interrupt_no_message_not_found() -> None:
+    text = (
+        "Traceback (most recent call last):\n"
+        '  File "t.py", line 1, in main\n'
+        "KeyboardInterrupt\n"
+    )
+    report = triage(exit_code=1, stderr_text=text, log_text=None, junit_paths=[], project_root=ROOT)
+    lines = _lines(report)
+    assert any("FOUND: python exception type: KeyboardInterrupt" in ln for ln in lines)
+    assert not any(ln == "NOT FOUND: python exception message" for ln in lines)
 
 
 @pytest.mark.multi_error
@@ -147,6 +320,7 @@ def test_node_error_with_cause() -> None:
 
 
 @pytest.mark.multi_error
+@pytest.mark.mutation_guard
 def test_mixed_python_and_node_log() -> None:
     text = (MULTI / "mixed_python_node.log").read_text(encoding="utf-8")
     report = triage(
@@ -257,6 +431,23 @@ def test_mutation_guard_truncated_traceback_frame_hint() -> None:
     assert any(
         "python traceback without exception summary" in ln and "guard.py:9" in ln for ln in hints
     )
+
+
+@pytest.mark.mutation_guard
+def test_mutation_guard_chained_exceptions_linked() -> None:
+    text = (
+        "Traceback (most recent call last):\n"
+        '  File "a.py", line 1, in first\n'
+        "ValueError: one\n"
+        "During handling of the above exception, another exception occurred:\n"
+        "Traceback (most recent call last):\n"
+        '  File "b.py", line 2, in second\n'
+        "TypeError: two\n"
+    )
+    report = triage(exit_code=1, stderr_text=text, log_text=None, junit_paths=[], project_root=ROOT)
+    lines = _lines(report)
+    assert any(ln == "FOUND: python chained traceback blocks: 1" for ln in lines)
+    assert any("python exception type (chained-1): TypeError" in ln for ln in lines)
 
 
 @pytest.mark.mutation_guard

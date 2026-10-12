@@ -104,6 +104,7 @@ def test_chain_marker_splits_blocks() -> None:
     )
     blocks, _unrelated = _split_python_trace_blocks(text)
     assert len(blocks) == 2
+    assert blocks[1].linked_to_previous
 
 
 @pytest.mark.gap

@@ -501,7 +501,7 @@ def parse_actions_log(text: str, source: str, report: Report) -> None:
             report.add_found(
                 f"actions log error marker (first) ({source}): {error_msgs[0][:400]}"
             )
-        else:
+        elif not log_gh:
             report.add_not_found(f"actions log ##[error] markers ({source})")
 
         if workflow_errors and not log_wf:
@@ -521,7 +521,7 @@ def parse_actions_log(text: str, source: str, report: Report) -> None:
                 report.add_found(
                     f"actions log pytest failed (last) ({source}): {pytest_failed[-1][:400]}"
                 )
-        else:
+        elif not log_failed:
             report.add_not_found(f"actions log pytest failed lines ({source})")
 
     multi_fail = len(failing_metas) > 1
