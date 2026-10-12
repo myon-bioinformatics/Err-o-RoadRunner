@@ -8,12 +8,27 @@ import sys
 from pathlib import Path
 
 
+def _toml_backend_paths() -> list[str]:
+    paths: list[str] = []
+    try:
+        import tomli
+    except ImportError:
+        pass
+    else:
+        paths.append(str(Path(tomli.__file__).resolve().parent))
+    return paths
+
+
 def _scrub_site_packages() -> None:
+    preserved = _toml_backend_paths()
     sys.path[:] = [
         entry
         for entry in sys.path
         if "site-packages" not in entry and "dist-packages" not in entry
     ]
+    for entry in preserved:
+        if entry not in sys.path:
+            sys.path.append(entry)
 
 
 def _run_as_script(sandbox: Path, triage_args: list[str]) -> None:
