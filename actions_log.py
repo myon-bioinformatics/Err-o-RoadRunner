@@ -6,10 +6,10 @@ import re
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
-from err_o_roadrunner.triage import strip_terminal_controls
+from triage import strip_terminal_controls
 
 if TYPE_CHECKING:
-    from err_o_roadrunner.triage import Report
+    from triage import Report
 
 GH_LOG_TS_PREFIX = re.compile(
     r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z "
@@ -525,7 +525,7 @@ def parse_actions_log(text: str, source: str, report: Report) -> None:
     for meta in failing_metas:
         embedded = _step_embedded_output(meta.body, skip_failed_lines=True)
         if embedded.strip():
-            from err_o_roadrunner.triage import detect_and_parse_log, embedded_failure_signals
+            from triage import detect_and_parse_log, embedded_failure_signals
 
             if embedded_failure_signals(embedded):
                 step_label = f"step:{meta.name}" if multi_fail else ""

@@ -34,7 +34,7 @@ def triage_cli(
     log: Path | None = None,
     junit: list[Path] | None = None,
 ) -> str:
-    cmd = [sys.executable, "-m", "err_o_roadrunner", "--exit-code", str(exit_code), "--project-root", str(EMPTY_ROOT)]
+    cmd = [sys.executable, "-m", "triage", "--exit-code", str(exit_code), "--project-root", str(EMPTY_ROOT)]
     if stderr:
         cmd.extend(["--stderr", str(stderr)])
     if log:
@@ -69,7 +69,7 @@ def main() -> None:
         {
             "id": "python_module_not_found",
             "title": "Python ModuleNotFoundError",
-            "command": "python -m err_o_roadrunner --exit-code 1 --stderr tests/fixtures/readme/inputs/python_module_not_found.stderr --project-root tests/fixtures/readme/empty_root",
+            "command": "python3 triage.py --exit-code 1 --stderr tests/fixtures/readme/inputs/python_module_not_found.stderr --project-root tests/fixtures/readme/empty_root",
             "input": p.relative_to(ROOT).as_posix(),
             "golden": (GOLDEN / "python_module_not_found.out").relative_to(ROOT).as_posix(),
             "note": "FOUND names the missing module; HINT suggests search terms.",
@@ -88,7 +88,7 @@ def main() -> None:
         {
             "id": "python_import_error",
             "title": "Python ImportError",
-            "command": "python -m err_o_roadrunner --exit-code 1 --stderr tests/fixtures/readme/inputs/python_import_error.stderr --project-root tests/fixtures/readme/empty_root",
+            "command": "python3 triage.py --exit-code 1 --stderr tests/fixtures/readme/inputs/python_import_error.stderr --project-root tests/fixtures/readme/empty_root",
             "input": p.relative_to(ROOT).as_posix(),
             "golden": (GOLDEN / "python_import_error.out").relative_to(ROOT).as_posix(),
             "note": "FOUND captures ImportError and the import stack frame.",
@@ -105,7 +105,7 @@ def main() -> None:
         {
             "id": "python_key_error",
             "title": "Python KeyError",
-            "command": "python -m err_o_roadrunner --exit-code 1 --stderr tests/fixtures/readme/inputs/python_key_error.stderr --project-root tests/fixtures/readme/empty_root",
+            "command": "python3 triage.py --exit-code 1 --stderr tests/fixtures/readme/inputs/python_key_error.stderr --project-root tests/fixtures/readme/empty_root",
             "input": p.relative_to(ROOT).as_posix(),
             "golden": (GOLDEN / "python_import_error.out").relative_to(ROOT).as_posix(),
             "note": "FOUND shows KeyError and the code line frame.",
@@ -128,7 +128,7 @@ def main() -> None:
         {
             "id": "python_chained",
             "title": "Python chained exceptions",
-            "command": "python -m err_o_roadrunner --exit-code 1 --stderr tests/fixtures/readme/inputs/python_chained.stderr --project-root tests/fixtures/readme/empty_root",
+            "command": "python3 triage.py --exit-code 1 --stderr tests/fixtures/readme/inputs/python_chained.stderr --project-root tests/fixtures/readme/empty_root",
             "input": p.relative_to(ROOT).as_posix(),
             "golden": (GOLDEN / "python_chained.out").relative_to(ROOT).as_posix(),
             "note": "FOUND reports both blocks; primary vs chained labels separate causes.",
@@ -147,7 +147,7 @@ def main() -> None:
         {
             "id": "python_syntax_error",
             "title": "Python SyntaxError",
-            "command": "python -m err_o_roadrunner --exit-code 1 --stderr tests/fixtures/readme/inputs/python_syntax_error.stderr --project-root tests/fixtures/readme/empty_root",
+            "command": "python3 triage.py --exit-code 1 --stderr tests/fixtures/readme/inputs/python_syntax_error.stderr --project-root tests/fixtures/readme/empty_root",
             "input": p.relative_to(ROOT).as_posix(),
             "golden": (GOLDEN / "python_syntax_error.out").relative_to(ROOT).as_posix(),
             "note": "FOUND reports SyntaxError even without a full traceback header.",
@@ -164,7 +164,7 @@ def main() -> None:
         {
             "id": "python_info_hint",
             "title": "Log line after traceback (INFO)",
-            "command": "python -m err_o_roadrunner --exit-code 1 --log tests/fixtures/readme/inputs/python_with_info_trailing.log --project-root tests/fixtures/readme/empty_root",
+            "command": "python3 triage.py --exit-code 1 --log tests/fixtures/readme/inputs/python_with_info_trailing.log --project-root tests/fixtures/readme/empty_root",
             "input": info_log.relative_to(ROOT).as_posix(),
             "golden": (GOLDEN / "python_info_hint.out").relative_to(ROOT).as_posix(),
             "note": "HINT records INFO as a trailing colon line, not the exception type.",
@@ -179,7 +179,7 @@ def main() -> None:
         [sys.executable, "-m", "pytest", "-q", str(mini_test), f"--junitxml={junit_path}"],
         cwd=INPUTS,
     )
-    from err_o_roadrunner.junit_redact import redact_xml_document
+    from junit_redact import redact_xml_document
 
     junit_path.write_text(redact_xml_document(junit_path.read_text(encoding="utf-8")), encoding="utf-8")
     out = triage_cli(exit_code=1, junit=[junit_path])
@@ -188,7 +188,7 @@ def main() -> None:
         {
             "id": "pytest_junit_assertion",
             "title": "pytest assertion (JUnit XML)",
-            "command": "python -m err_o_roadrunner --exit-code 1 --junit tests/fixtures/readme/inputs/pytest_assertion.junit.xml --project-root tests/fixtures/readme/empty_root",
+            "command": "python3 triage.py --exit-code 1 --junit tests/fixtures/readme/inputs/pytest_assertion.junit.xml --project-root tests/fixtures/readme/empty_root",
             "input": junit_path.relative_to(ROOT).as_posix(),
             "golden": (GOLDEN / "pytest_junit_assertion.out").relative_to(ROOT).as_posix(),
             "note": "FOUND pulls failure text from JUnit without re-running pytest.",
@@ -219,7 +219,7 @@ def main() -> None:
         {
             "id": "junit_mix",
             "title": "JUnit failure, error, and skipped",
-            "command": "python -m err_o_roadrunner --exit-code 1 --junit tests/fixtures/readme/inputs/junit_mix.xml --project-root tests/fixtures/readme/empty_root",
+            "command": "python3 triage.py --exit-code 1 --junit tests/fixtures/readme/inputs/junit_mix.xml --project-root tests/fixtures/readme/empty_root",
             "input": junit_mix.relative_to(ROOT).as_posix(),
             "golden": (GOLDEN / "junit_mix.out").relative_to(ROOT).as_posix(),
             "note": "FOUND counts failures, errors, and skipped separately.",
@@ -243,7 +243,7 @@ def main() -> None:
         {
             "id": "hostile_osc",
             "title": "Hostile OSC sequences stripped",
-            "command": "python -m err_o_roadrunner --exit-code 1 --stderr tests/fixtures/readme/inputs/hostile_osc.stderr --project-root tests/fixtures/readme/empty_root",
+            "command": "python3 triage.py --exit-code 1 --stderr tests/fixtures/readme/inputs/hostile_osc.stderr --project-root tests/fixtures/readme/empty_root",
             "input": hostile_in.relative_to(ROOT).as_posix(),
             "golden": (GOLDEN / "hostile_osc.out").relative_to(ROOT).as_posix(),
             "note": "Report output contains no escape bytes; exception facts still FOUND.",
@@ -253,7 +253,7 @@ def main() -> None:
         {
             "id": "hostile_symlink",
             "title": "Symlink stderr refused",
-            "command": "python -m err_o_roadrunner --exit-code 1 --stderr tests/fixtures/readme/inputs/secret_link.stderr --project-root tests/fixtures/readme/empty_root",
+            "command": "python3 triage.py --exit-code 1 --stderr tests/fixtures/readme/inputs/secret_link.stderr --project-root tests/fixtures/readme/empty_root",
             "input": "symlink -> python_key_error.stderr",
             "golden": (GOLDEN / "hostile_symlink.out").relative_to(ROOT).as_posix(),
             "note": "NOT FOUND explains the symlink was not followed.",
@@ -278,7 +278,7 @@ def main() -> None:
                 {
                     "id": nid,
                     "title": nid.replace("_", " ").title(),
-                    "command": f"python -m err_o_roadrunner --exit-code 1 --log tests/fixtures/readme/inputs/{nid}.stderr --project-root tests/fixtures/readme/empty_root",
+                    "command": f"python3 triage.py --exit-code 1 --log tests/fixtures/readme/inputs/{nid}.stderr --project-root tests/fixtures/readme/empty_root",
                     "input": p.relative_to(ROOT).as_posix(),
                     "golden": (GOLDEN / f"{nid}.out").relative_to(ROOT).as_posix(),
                     "note": "FOUND captures Node headline and stack frames from real node output.",

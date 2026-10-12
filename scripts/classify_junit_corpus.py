@@ -28,7 +28,7 @@ def run_triage(xml: Path) -> list[str]:
         [
             sys.executable,
             "-m",
-            "err_o_roadrunner",
+            "triage",
             "--exit-code",
             "1",
             "--project-root",

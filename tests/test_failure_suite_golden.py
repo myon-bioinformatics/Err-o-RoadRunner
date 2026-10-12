@@ -40,7 +40,7 @@ def normalize(text: str) -> str:
 
 
 def run_entry(entry: dict) -> str:
-    cmd = [sys.executable, "-m", "err_o_roadrunner", "--exit-code", "1", "--project-root", str(EMPTY)]
+    cmd = [sys.executable, "-m", "triage", "--exit-code", "1", "--project-root", str(EMPTY)]
     if "stderr" in entry:
         cmd.extend(["--stderr", str(ROOT / entry["stderr"])])
     if "log" in entry:

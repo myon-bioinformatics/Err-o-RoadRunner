@@ -1,4 +1,4 @@
-from err_o_roadrunner import EXIT_OK, main
+from triage import EXIT_OK, main
 
 
 def test_package_entrypoint_exists() -> None:

@@ -7,7 +7,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from err_o_roadrunner.triage import triage
+from triage import triage
 from tests.report_assert import assert_report_has_exact_line
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -61,7 +61,7 @@ def triage_actions_log_cli(log_path: Path) -> str:
         [
             sys.executable,
             "-m",
-            "err_o_roadrunner",
+            "triage",
             "--exit-code",
             "1",
             "--actions-log",

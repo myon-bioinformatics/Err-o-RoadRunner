@@ -40,7 +40,7 @@ def run_cli(xml_path: Path) -> str:
         [
             sys.executable,
             "-m",
-            "err_o_roadrunner",
+            "triage",
             "--exit-code",
             "1",
             "--project-root",

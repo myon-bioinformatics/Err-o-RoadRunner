@@ -26,7 +26,7 @@ def triage_out(**kwargs: object) -> str:
     cmd = [
         sys.executable,
         "-m",
-        "err_o_roadrunner",
+        "triage",
         "--exit-code",
         "1",
         "--project-root",
@@ -116,7 +116,7 @@ def main() -> None:
     write(mini, "def test_fail():\n    assert 0\n")
     junit = INPUTS / "suite.junit.xml"
     run_fail([sys.executable, "-m", "pytest", "-q", str(mini), f"--junitxml={junit}"], cwd=INPUTS)
-    from err_o_roadrunner.junit_redact import redact_xml_document
+    from junit_redact import redact_xml_document
 
     junit.write_text(redact_xml_document(junit.read_text(encoding="utf-8")), encoding="utf-8")
     write(GOLDEN / "pytest_junit.out", triage_out(junit=[junit]))

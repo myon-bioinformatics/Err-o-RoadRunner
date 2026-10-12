@@ -15,9 +15,9 @@ ROOT = Path(__file__).resolve().parents[1]
 CORPUS = ROOT / "tests" / "fixtures" / "junit_corpus"
 MANIFEST = CORPUS / "manifest.json"
 
-sys.path.insert(0, str(ROOT / "src"))
+sys.path.insert(0, str(ROOT))
 
-from err_o_roadrunner.junit_redact import redact_attribute, redact_text
+from junit_redact import redact_attribute, redact_text
 
 ORG = "myon-bioinformatics"
 REPOS = [
