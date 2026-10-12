@@ -1,6 +1,7 @@
 FOUND: exit code: 1
 FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37883351127_junit-python-3.13_62.xml): 1
 FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37883351127_junit-python-3.13_62.xml): AssertionError: assert ['æ—¥æœ¬èªž',..., '&', 'text'] == ['日本語', 'Body', '&', 'text']\n  \n  At index 0 diff: 'æ—¥æœ¬èªž' != '日本語'\n  \n  Full diff:\n    [\n  -     '日本語',\n  +     'æ—¥æœ¬èªž',\n        'Body',\n        '&',\n        'text',\n    ]\ntmp_path = PosixPath('/tmp/pytest-of-runner/pytest-0/test_dom_capture_local_page0')\n\n    def test_dom_capture_local_page(tmp_path):\n        (tmp_pa
+FOUND: junit failure groups (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37883351127_junit-python-3.13_62.xml): 1 failure in 1 group
 FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37883351127_junit-python-3.13_62.xml): tests.python.test_browser_dom_local
 FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_37883351127_junit-python-3.13_62.xml): AssertionError
 FOUND: python version: 3.12.3 (cpython)

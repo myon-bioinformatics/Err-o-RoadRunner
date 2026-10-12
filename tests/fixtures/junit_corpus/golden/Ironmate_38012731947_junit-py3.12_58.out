@@ -1,6 +1,7 @@
 FOUND: exit code: 1
 FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38012731947_junit-py3.12_58.xml): 1
 FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38012731947_junit-py3.12_58.xml): tests/test_mermaid_svg.py:44: in test_pipeline_opt_in_uses_svg_and_preserves_original\n    result = pptx_pipeline.run(text=source, output=tmp_path / "out.pptx", mmdc="mmdc")\n             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\npptx_pipeline.py:26: in run\n    prepared, images = render_mermaid(raw, working, mmdc=mmdc, background=background)\n                     
+FOUND: junit failure groups (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38012731947_junit-py3.12_58.xml): 1 failure in 1 group
 FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38012731947_junit-py3.12_58.xml): tests.test_mermaid_svg
 FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38012731947_junit-py3.12_58.xml): TypeError
 FOUND: python version: 3.12.3 (cpython)

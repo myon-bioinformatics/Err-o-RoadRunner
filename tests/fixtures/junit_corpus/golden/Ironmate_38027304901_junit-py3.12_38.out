@@ -2,6 +2,8 @@ FOUND: exit code: 1
 FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38027304901_junit-py3.12_38.xml): 3
 FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38027304901_junit-py3.12_38.xml): tests/test_marp_input_modes.py:17: in test_input_modes_share_converter\n    monkeypatch.setattr(marp_pptx, "convert", fake_convert)\n                        ^^^^^^^^^\nE   NameError: name 'marp_pptx' is not defined
 FOUND: junit failure (last) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38027304901_junit-py3.12_38.xml): tests/test_marp_input_modes.py:17: in test_input_modes_share_converter\n    monkeypatch.setattr(marp_pptx, "convert", fake_convert)\n                        ^^^^^^^^^\nE   NameError: name 'marp_pptx' is not defined
+FOUND: junit failure groups (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38027304901_junit-py3.12_38.xml): 3 failures in 1 group
+FOUND: junit failure group 1/1 (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38027304901_junit-py3.12_38.xml): 3× NameError: name <q> is not defined — first: tests.test_marp_input_modes::test_input_modes_share_converter[file] — msg: NameError: name 'marp_pptx' is not defined
 FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38027304901_junit-py3.12_38.xml): tests.test_marp_input_modes
 FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38027304901_junit-py3.12_38.xml): NameError
 FOUND: python version: 3.12.3 (cpython)
