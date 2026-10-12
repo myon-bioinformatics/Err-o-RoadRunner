@@ -1,13 +1,13 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling>=1.32.4"]
 build-backend = "hatchling.build"
 
 [project]
 name = "err-o-roadrunner"
-version = "0.4.0"
+version = "0.5.0"
 description = "Error-triggered triage tool (read-only failure report)"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 license = { text = "MIT" }
 
 [project.scripts]
@@ -17,10 +17,10 @@ err-o-roadrunner = "triage:main"
 test = ["pytest>=8,<10"]
 
 [tool.hatch.build.targets.wheel]
-only-include = ["triage.py", "actions_log.py", "junit_redact.py"]
+only-include = ["triage.py", "actions_log.py", "junit_redact.py", "project_version.py"]
 
 [tool.hatch.build.targets.sdist]
-only-include = ["triage.py", "actions_log.py", "junit_redact.py"]
+only-include = ["triage.py", "actions_log.py", "junit_redact.py", "project_version.py"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

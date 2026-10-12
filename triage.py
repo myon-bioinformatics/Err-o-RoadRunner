@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-__version__ = "0.3.0"
-
 import argparse
 import os
 import re
@@ -15,6 +13,10 @@ import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterator, Sequence
+
+from project_version import resolve_version
+
+__version__ = resolve_version(package_dir=Path(__file__).resolve().parent)
 
 # Stable exit codes (documented in README).
 EXIT_OK = 0
@@ -1559,6 +1561,11 @@ def build_parser() -> argparse.ArgumentParser:
         metavar="DIR",
         default=".",
         help="Directory for lock-file detection (default: current directory).",
+    )
+    parser.add_argument(
+        "--version",
+        action="version",
+        version=f"%(prog)s {__version__}",
     )
     return parser
 
