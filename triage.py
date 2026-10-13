@@ -804,9 +804,13 @@ JUNIT_BARE_EXCEPTION_NAME_RE = re.compile(r"^[A-Za-z_][\w.]+$")
 JUNIT_FAILURE_GROUP_CAP = 10
 
 
+JUnitFailureTypeKey = tuple[str, str, tuple[str, ...]]
+
+
 @dataclass(frozen=True)
 class JUnitFailureGroup:
-    type_key: str
+    type_key: JUnitFailureTypeKey
+    display_type: str
     count: int
     first_label: str
     representative_message: str
@@ -819,13 +823,13 @@ def _junit_normalize_type_message(line: str) -> str:
     return line
 
 
-def _junit_quote_fingerprint(line: str) -> str:
+def _junit_quote_fingerprint(line: str) -> tuple[str, ...]:
     """Stable discriminator for quoted literals before they collapse to <q>."""
     parts = re.findall(r"'([^']*)'|\"([^\"]*)\"", line)
     if not parts:
-        return ""
+        return ()
     inner = [p[0] if p[0] else p[1] for p in parts]
-    return "|".join(re.sub(r"\d+", "N", piece) for piece in inner)
+    return tuple(re.sub(r"\d+", "N", piece) for piece in inner)
 
 
 def _junit_line_without_exception_prefix(line: str) -> str:
@@ -889,20 +893,17 @@ def _junit_exception_type_for_type_key(message: str, blob: str, first_line: str)
     return "Unknown"
 
 
-def _junit_failure_type_key(blob: str, message: str = "") -> str:
+def _junit_failure_type_key(blob: str, message: str = "") -> JUnitFailureTypeKey:
     """Type key: exception type + normalized first line of the failure message."""
     first_line = _junit_failure_message_first_line(message, blob)
     exc = _junit_exception_type_for_type_key(message, blob, first_line)
     norm = _junit_normalize_type_message(_junit_line_without_exception_prefix(first_line))
     fp = _junit_quote_fingerprint(first_line)
-    if fp:
-        return f"{exc}|{norm}|{fp}"
-    return f"{exc}|{norm}"
+    return exc, norm, fp
 
 
-def _junit_group_display_type(type_key: str) -> str:
-    parts = type_key.split("|")
-    exc, norm = parts[0], parts[1]
+def _junit_group_display_type(exc: str, norm: str) -> str:
+    """Format display data without decoding the internal identity or fingerprint."""
     if exc == "Error" and norm.startswith("Error when"):
         return norm
     if norm.startswith(f"{exc}:"):
@@ -919,13 +920,14 @@ def _junit_group_failures(
 ) -> list[JUnitFailureGroup]:
     from collections import OrderedDict
 
-    buckets: OrderedDict[str, JUnitFailureGroup] = OrderedDict()
+    buckets: OrderedDict[JUnitFailureTypeKey, JUnitFailureGroup] = OrderedDict()
     for label, message, blob in zip(labels, messages, blobs, strict=True):
         key = _junit_failure_type_key(blob, message)
         if key in buckets:
             prev = buckets[key]
             buckets[key] = JUnitFailureGroup(
                 type_key=key,
+                display_type=prev.display_type,
                 count=prev.count + 1,
                 first_label=prev.first_label,
                 representative_message=prev.representative_message,
@@ -934,6 +936,7 @@ def _junit_group_failures(
             rep = _junit_representative_message_line(message, blob)
             buckets[key] = JUnitFailureGroup(
                 type_key=key,
+                display_type=_junit_group_display_type(key[0], key[1]),
                 count=1,
                 first_label=label,
                 representative_message=rep,
@@ -963,7 +966,7 @@ def _junit_emit_failure_groups(
     shown = groups[:JUNIT_FAILURE_GROUP_CAP]
     if total > 1:
         for idx, group in enumerate(shown, start=1):
-            display = _junit_group_display_type(group.type_key)
+            display = group.display_type
             report.add_found(
                 f"junit failure group {idx}/{len(groups)} ({source}): "
                 f"{group.count}× {display} — first: {group.first_label[:200]} — "
