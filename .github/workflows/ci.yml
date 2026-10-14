@@ -16,7 +16,7 @@ concurrency:
 jobs:
   changes:
     name: Change detection
-    uses: myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-change-detection.yml@9c69600d97a6fe9faf97999c3fddc2d41ed6b1a5
+    uses: myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-change-detection.yml@f907560c2b9b3f7a0f78f4434f547f91cb2ef954
 
   vendor-locked:
     name: Vendor locked baseline
@@ -101,7 +101,7 @@ jobs:
     permissions:
       contents: read
       actions: read
-    uses: myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-junit-identity.yml@652608b16c73ecd1e39db848abba3d08a00a8a3a
+    uses: myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-junit-identity.yml@f907560c2b9b3f7a0f78f4434f547f91cb2ef954
     with:
       expected-reports: '["junit-py3.11/junit.xml","junit-py3.12/junit.xml","junit-py3.13/junit.xml","junit-py3.14/junit.xml","junit-py3.15/junit.xml","junit-py3.x/junit.xml"]'
       artifact-pattern: "junit-*"
@@ -111,4 +111,4 @@ jobs:
   actionlint:
     needs: changes
     if: needs.changes.outputs.workflow_changed == 'true'
-    uses: myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-actionlint.yml@9c69600d97a6fe9faf97999c3fddc2d41ed6b1a5
+    uses: myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-actionlint.yml@f907560c2b9b3f7a0f78f4434f547f91cb2ef954
