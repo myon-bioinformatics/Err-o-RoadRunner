@@ -78,7 +78,7 @@ SYNTAX_ERROR_LINE_RE = re.compile(
     r"^(?P<exc>SyntaxError)(?::\s*(?P<msg>.*))?$"
 )
 NODE_ERROR_HEADLINE_RE = re.compile(
-    r"^(?P<head>(?:[A-Za-z_][\w]*(?:Error|Warning|Rejection)|Unhandled\s+rejection(?:\s+\([^)]+\))?))"
+    r"^(?P<head>(?:[A-Za-z_][\w]*(?:Error|Warning)|Unhandled\s+rejection(?:\s+\([^)]+\))?))"
     r"\s*:\s*(?P<rest>.*)$",
     re.IGNORECASE,
 )
@@ -1640,10 +1640,11 @@ def digest(
     keys: Sequence[str] = DIGEST_DEFAULT_KEYS,
     max_bytes: int = DIGEST_DEFAULT_MAX_BYTES,
     list_members: bool = False,
-) -> tuple[list[str], int]:
+) -> tuple[list[str], int, int]:
     """Summarize CI artifact zips/directories without extracting (see ``digest`` subcommand)."""
     lines: list[str] = []
     failures: list[str] = []
+    problems = 0
     other: collections.Counter[str] = collections.Counter()
     skipped: list[str] = []
     listed: list[str] = []
@@ -1656,6 +1657,7 @@ def digest(
             )
             if data is None:
                 skipped.append(f"{label} ({size} bytes)")
+                problems += 1
                 continue
             base = os.path.basename(member_name)
             try:
@@ -1671,6 +1673,7 @@ def digest(
                     listed.append(label)
             except ValueError as exc:
                 lines.append(f"problem {label}: {exc}")
+                problems += 1
     shown = failures[:limit]
     lines.extend(shown)
     if len(failures) > len(shown):
@@ -1686,7 +1689,8 @@ def digest(
     if skipped:
         lines.append("skipped (over --max-bytes): " + ", ".join(skipped))
     lines.append(f"failing testcases: {len(failures)}")
-    return lines, len(failures)
+    lines.append(f"unverifiable inputs: {problems}")
+    return lines, len(failures), problems
 
 
 def build_digest_parser() -> argparse.ArgumentParser:
@@ -1748,7 +1752,7 @@ def run_digest(argv: Sequence[str] | None = None) -> int:
             return EXIT_OK
         return EXIT_USAGE
     try:
-        lines, failing = digest(
+        lines, failing, problems = digest(
             args.sources,
             width=args.width,
             limit=args.limit,
@@ -1764,6 +1768,8 @@ def run_digest(argv: Sequence[str] | None = None) -> int:
         print(f"triage digest: {exc}", file=sys.stderr)
         return EXIT_USAGE
     print("\n".join(lines))
+    if problems:
+        return EXIT_USAGE
     return EXIT_DIGEST_FAILURES if failing else EXIT_OK
 
 

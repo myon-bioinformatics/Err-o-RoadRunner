@@ -73,13 +73,13 @@ python3 -S triage.py digest junit-dir/ results.xml --limit 5 --width 300
 python3 -S triage.py digest evidence.zip --json route-audit.json --keys stage,failed_step
 ```
 
-Per JUnit XML: one counts line and one `FAIL class::name: message` line per failing testcase (`--limit`, `--width`). Matching receipt JSON (`route-audit.json`, `*receipt*.json` by default) prints only `--keys` fields. Other members are counted by extension (`--list` names them). Oversize members and unsafe XML (DOCTYPE/ENTITY) are reported without aborting the whole run.
+Per JUnit XML: one counts line and one `FAIL class::name: message` line per failing testcase (`--limit`, `--width`). Matching receipt JSON (`route-audit.json`, `*receipt*.json` by default) prints only `--keys` fields. Other members are counted by extension (`--list` names them). Oversize members, malformed XML/JSON, and unsafe XML (DOCTYPE/ENTITY) are reported without aborting the whole run. These unverifiable inputs are counted separately from failing testcases and cause exit code `2`.
 
 | Digest exit code | Meaning |
 |------------------|---------|
 | `0` | No failing testcase |
 | `1` | At least one failing testcase |
-| `2` | Input error (missing path, bad zip, etc.) |
+| `2` | Input error or unverifiable input (missing path, bad zip, malformed/unsafe XML or JSON, or oversized member) |
 
 | Flag | Purpose |
 |------|---------|
@@ -97,7 +97,7 @@ Per JUnit XML: one counts line and one `FAIL class::name: message` line per fail
 | `0` | Triage finished and the report was printed |
 | `2` | Invalid CLI usage (also used by `digest` for input errors) |
 
-The default triage mode always exits `0` after printing a report. The `digest` subcommand additionally exits `1` when JUnit reports failing testcases.
+The default triage mode always exits `0` after printing a report. The `digest` subcommand exits `1` when JUnit reports failing testcases and `2` when any digest input cannot be verified. Input problems take precedence when both conditions occur.
 
 Triage does not re-raise the original failure; it always aims to print a report instead of crashing.
 
