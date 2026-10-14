@@ -12,7 +12,7 @@
     },
     {
       "repository": "myon-bioinformatics/yourself",
-      "ref": "refs/heads/main",
+      "ref": "eebdc95b1b037cfe6d3e9089ec9de8ef5488d2cb",
       "commit": "eebdc95b1b037cfe6d3e9089ec9de8ef5488d2cb",
       "source": "yourself.py",
       "destination": "vendor/yourself.py",
@@ -21,7 +21,7 @@
     },
     {
       "repository": "myon-bioinformatics/xprobe",
-      "ref": "refs/heads/main",
+      "ref": "37d582ee4039d2803335b54e855ed770caedabfc",
       "commit": "37d582ee4039d2803335b54e855ed770caedabfc",
       "source": "xprobe.py",
       "destination": "vendor/xprobe.py",
@@ -30,7 +30,7 @@
     },
     {
       "repository": "myon-bioinformatics/browser-test-kit",
-      "ref": "refs/heads/main",
+      "ref": "0f73f07530040461914af53cc469b893d4b4cbdd",
       "commit": "0f73f07530040461914af53cc469b893d4b4cbdd",
       "source": "scripts/gh_ops.py",
       "destination": "vendor/gh_ops.py",
@@ -39,7 +39,7 @@
     },
     {
       "repository": "myon-bioinformatics/browser-test-kit",
-      "ref": "refs/heads/main",
+      "ref": "0f73f07530040461914af53cc469b893d4b4cbdd",
       "commit": "0f73f07530040461914af53cc469b893d4b4cbdd",
       "source": "scripts/check_evidence.py",
       "destination": "vendor/check_evidence.py",
@@ -48,7 +48,7 @@
     },
     {
       "repository": "myon-bioinformatics/browser-test-kit",
-      "ref": "refs/heads/main",
+      "ref": "0f73f07530040461914af53cc469b893d4b4cbdd",
       "commit": "0f73f07530040461914af53cc469b893d4b4cbdd",
       "source": "scripts/jsonl_digest.py",
       "destination": "vendor/jsonl_digest.py",
@@ -57,7 +57,7 @@
     },
     {
       "repository": "myon-bioinformatics/cli_args",
-      "ref": "refs/heads/main",
+      "ref": "d849c17f5e7c18037e2ab2c04bc71eee3e22cd35",
       "commit": "d849c17f5e7c18037e2ab2c04bc71eee3e22cd35",
       "source": "cli_args.py",
       "destination": "vendor/cli_args.py",
@@ -66,7 +66,7 @@
     },
     {
       "repository": "myon-bioinformatics/yourself",
-      "ref": "refs/heads/main",
+      "ref": "eebdc95b1b037cfe6d3e9089ec9de8ef5488d2cb",
       "commit": "eebdc95b1b037cfe6d3e9089ec9de8ef5488d2cb",
       "source": "LICENSE",
       "destination": "vendor/yourself-LICENSE",
@@ -75,7 +75,7 @@
     },
     {
       "repository": "myon-bioinformatics/xprobe",
-      "ref": "refs/heads/main",
+      "ref": "37d582ee4039d2803335b54e855ed770caedabfc",
       "commit": "37d582ee4039d2803335b54e855ed770caedabfc",
       "source": "LICENSE",
       "destination": "vendor/xprobe-LICENSE",
@@ -84,7 +84,7 @@
     },
     {
       "repository": "myon-bioinformatics/browser-test-kit",
-      "ref": "refs/heads/main",
+      "ref": "0f73f07530040461914af53cc469b893d4b4cbdd",
       "commit": "0f73f07530040461914af53cc469b893d4b4cbdd",
       "source": "LICENSE",
       "destination": "vendor/browser-test-kit-LICENSE",
@@ -93,7 +93,7 @@
     },
     {
       "repository": "myon-bioinformatics/cli_args",
-      "ref": "refs/heads/main",
+      "ref": "d849c17f5e7c18037e2ab2c04bc71eee3e22cd35",
       "commit": "d849c17f5e7c18037e2ab2c04bc71eee3e22cd35",
       "source": "LICENSE",
       "destination": "vendor/cli_args-LICENSE",
@@ -102,7 +102,7 @@
     },
     {
       "repository": "myon-bioinformatics/browser-test-kit",
-      "ref": "refs/heads/main",
+      "ref": "0f73f07530040461914af53cc469b893d4b4cbdd",
       "commit": "0f73f07530040461914af53cc469b893d4b4cbdd",
       "source": "scripts/check_png.py",
       "destination": "vendor/check_png.py",
@@ -111,7 +111,7 @@
     },
     {
       "repository": "myon-bioinformatics/gh_identity",
-      "ref": "refs/heads/main",
+      "ref": "c6b52a29d8cd1dce0ebe0c4288cd16b0e4b84b96",
       "commit": "c6b52a29d8cd1dce0ebe0c4288cd16b0e4b84b96",
       "source": "gh_identity.py",
       "destination": "vendor/gh_identity.py",
@@ -120,7 +120,7 @@
     },
     {
       "repository": "myon-bioinformatics/gh_identity",
-      "ref": "refs/heads/main",
+      "ref": "dc200b90aa96838444e114a7a67a455366de5076",
       "commit": "dc200b90aa96838444e114a7a67a455366de5076",
       "source": "LICENSE",
       "destination": "vendor/gh_identity-LICENSE",

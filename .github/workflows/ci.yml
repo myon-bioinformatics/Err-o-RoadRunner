@@ -35,7 +35,7 @@ jobs:
         uses: actions/checkout@v7.0.1
         with:
           repository: myon-bioinformatics/myon-bioinformatics
-          ref: 9c69600d97a6fe9faf97999c3fddc2d41ed6b1a5
+          ref: f907560c2b9b3f7a0f78f4434f547f91cb2ef954
           path: .vendor-sync-tools
           persist-credentials: false
       - name: Verify and recreate locked vendor snapshot
