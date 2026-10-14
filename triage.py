@@ -78,7 +78,7 @@ SYNTAX_ERROR_LINE_RE = re.compile(
     r"^(?P<exc>SyntaxError)(?::\s*(?P<msg>.*))?$"
 )
 NODE_ERROR_HEADLINE_RE = re.compile(
-    r"^(?P<head>(?:[A-Za-z_][\w]*(?:Error|Warning)|Unhandled\s+rejection(?:\s+\([^)]+\))?))"
+    r"^(?P<head>(?:[A-Za-z_][\w]*(?:Error|Warning|Rejection)|Unhandled\s+rejection(?:\s+\([^)]+\))?))"
     r"\s*:\s*(?P<rest>.*)$",
     re.IGNORECASE,
 )
