@@ -5,24 +5,6 @@
       "repository": "myon-bioinformatics/Ironmate",
       "ref": "73157cb7fed236a4a941722a6dcddd69a33ab95a",
       "commit": "73157cb7fed236a4a941722a6dcddd69a33ab95a",
-      "source": "repository_metadata_contract.py",
-      "destination": "vendor/repository_metadata_contract.py",
-      "blob_sha": "a61a2949e58a42635b0830289e368b4125b1274b",
-      "sha256": "c8093d806756925b68978b5a40a218e4acd5daf43f2d7fc2e358cabf8dc39e9a"
-    },
-    {
-      "repository": "myon-bioinformatics/Ironmate",
-      "ref": "73157cb7fed236a4a941722a6dcddd69a33ab95a",
-      "commit": "73157cb7fed236a4a941722a6dcddd69a33ab95a",
-      "source": "repository_metadata_generator.py",
-      "destination": "vendor/repository_metadata_generator.py",
-      "blob_sha": "050a8810dfe5dfd74248bff7bac1e13f628b44dc",
-      "sha256": "182e2bfee787cb7846a6116ac696399f6f3c8927d026bac4f53ee8764ae6e41a"
-    },
-    {
-      "repository": "myon-bioinformatics/Ironmate",
-      "ref": "73157cb7fed236a4a941722a6dcddd69a33ab95a",
-      "commit": "73157cb7fed236a4a941722a6dcddd69a33ab95a",
       "source": "LICENSE",
       "destination": "vendor/Ironmate-LICENSE",
       "blob_sha": "4ec4989b801bf1a3df6184d21f79e6e7ed5931f6",
@@ -130,11 +112,11 @@
     {
       "repository": "myon-bioinformatics/gh_identity",
       "ref": "refs/heads/main",
-      "commit": "dc200b90aa96838444e114a7a67a455366de5076",
+      "commit": "c6b52a29d8cd1dce0ebe0c4288cd16b0e4b84b96",
       "source": "gh_identity.py",
       "destination": "vendor/gh_identity.py",
-      "blob_sha": "16412ecd92374c30ccfe1300a399c7b3762d1f45",
-      "sha256": "8d860659a6647f12f3d320e2eff0189d84026d500bbdf1bd2e814418f435947b"
+      "blob_sha": "1a88e4147a93ca293218a2c2a5d1c4ae1801a839",
+      "sha256": "fa560589b132893d2bab4859aee14b781e54aa170b53092d28ab3554abc550c1"
     },
     {
       "repository": "myon-bioinformatics/gh_identity",

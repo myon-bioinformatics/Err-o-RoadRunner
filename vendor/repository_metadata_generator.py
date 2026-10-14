@@ -1,13 +1,12 @@
 #!/usr/bin/env python3
 """Generate canonical repository metadata JSON and JSONL from a Git checkout.
 
-Keep this file beside repository_metadata_contract.py when vendoring it.
+Uses gh_identity.repository_metadata_v1 for the stable v1 contract.
 """
 from __future__ import annotations
 
 import argparse
 from collections.abc import Mapping, Sequence
-from datetime import datetime, timezone
 from importlib import metadata as importlib_metadata
 from pathlib import Path
 import os
@@ -16,7 +15,7 @@ import re
 import shutil
 import subprocess
 
-from repository_metadata_contract import build_repository_record, to_json, to_jsonl
+import gh_identity
 
 
 _TOOL_COMMANDS = {
@@ -38,18 +37,6 @@ _TOOL_PATTERNS = {
 }
 _PLAIN_VERSION_RE = re.compile(r"^(?P<version>" + _PACKAGE_VERSION + r")$")
 _DEFAULT_TOOL_TIMEOUT = 5.0
-
-
-def git(*args: str, cwd: Path) -> str:
-    result = subprocess.run(
-        ["git", "-c", "i18n.logOutputEncoding=UTF-8", *args],
-        cwd=cwd,
-        check=True,
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-    )
-    return result.stdout.strip()
 
 
 def _normalize_version_label(pattern: re.Pattern[str], text: str) -> str | None:
@@ -185,18 +172,6 @@ def record_from_checkout(
     if overlap:
         raise ValueError("caller tooling overlaps canonical tooling: " + ", ".join(sorted(overlap)))
 
-    sha = git("rev-parse", "HEAD", cwd=root)
-    branch = (
-        (env.get("GITHUB_HEAD_REF") or "").strip()
-        or (env.get("GITHUB_REF_NAME") or "").strip()
-        or git("rev-parse", "--abbrev-ref", "HEAD", cwd=root)
-    )
-    if branch == "HEAD":
-        branch = "detached"
-    timestamp = git("show", "-s", "--format=%cI", "HEAD", cwd=root)
-    subject = git("show", "-s", "--format=%s", "HEAD", cwd=root)
-    generated_at = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
-
     canonical = collect_portable_tooling(
         include_python=include_python_tooling,
         commands=tooling_commands,
@@ -204,26 +179,29 @@ def record_from_checkout(
     ) if (include_python_tooling or tooling_commands or tooling_distributions) else {}
     supplied.update(canonical)
 
-    return build_repository_record(
-        full_name=full_name,
-        sha=sha,
-        branch=branch,
-        timestamp=timestamp,
-        subject=subject,
-        generated_at=generated_at,
-        github_reported_size_bytes=github_reported_size_bytes,
-        working_tree_bytes=working_tree_bytes,
-        release_artifact_bytes=release_artifact_bytes,
+    measurements = {
+        key: value
+        for key, value in (
+            ("github_reported_size_bytes", github_reported_size_bytes),
+            ("working_tree_bytes", working_tree_bytes),
+            ("release_artifact_bytes", release_artifact_bytes),
+        )
+        if value is not None
+    }
+
+    return gh_identity.repository_metadata_v1(
+        root,
+        repository=full_name,
+        env=env,
         tooling=supplied,
+        measurements=measurements or None,
     )
 
 
 def write_metadata(record: dict, output_dir: Path) -> tuple[Path, Path]:
-    output_dir.mkdir(parents=True, exist_ok=True)
+    gh_identity.write_repository_metadata(record, output_dir)
     json_path = output_dir / "repository-metadata.json"
     jsonl_path = output_dir / "repository-metadata.jsonl"
-    json_path.write_text(to_json(record), encoding="utf-8")
-    jsonl_path.write_text(to_jsonl(record), encoding="utf-8")
     return json_path, jsonl_path
 
 
