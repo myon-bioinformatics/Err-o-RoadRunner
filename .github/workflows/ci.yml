@@ -16,12 +16,12 @@ concurrency:
 jobs:
   changes:
     name: Change detection
-    uses: myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-change-detection.yml@f907560c2b9b3f7a0f78f4434f547f91cb2ef954
+    uses: myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-change-detection.yml@40bd74c4a36896509b506d6d06251255be6c77c7
 
   vendor-locked:
     name: Vendor locked baseline
     needs: changes
-    if: needs.changes.outputs.non_docs_changed == 'true' || github.event_name == 'workflow_dispatch'
+    if: needs.changes.outputs.product_changed == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -55,7 +55,7 @@ jobs:
   test:
     name: pytest (Python ${{ matrix.python-version }})
     needs: [changes, vendor-locked]
-    if: needs.changes.outputs.non_docs_changed == 'true' || github.event_name == 'workflow_dispatch'
+    if: needs.changes.outputs.product_changed == 'true' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
@@ -97,7 +97,7 @@ jobs:
 
   failure-identity:
     needs: [changes, test]
-    if: always() && (needs.changes.outputs.non_docs_changed == 'true' || github.event_name == 'workflow_dispatch')
+    if: always() && (needs.changes.outputs.product_changed == 'true' || github.event_name == 'workflow_dispatch')
     permissions:
       contents: read
       actions: read
