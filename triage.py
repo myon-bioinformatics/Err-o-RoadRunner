@@ -3,6 +3,9 @@
 from __future__ import annotations
 
 import argparse
+import collections
+import fnmatch
+import json
 import os
 import re
 import shutil
@@ -10,17 +13,25 @@ import stat
 import subprocess
 import sys
 import xml.etree.ElementTree as ET
+import zipfile
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterator, Sequence
 
+from junit_redact import redact_text
 from project_version import resolve_version
 
 __version__ = resolve_version(package_dir=Path(__file__).resolve().parent)
 
 # Stable exit codes (documented in README).
 EXIT_OK = 0
+EXIT_DIGEST_FAILURES = 1
 EXIT_USAGE = 2
+
+DIGEST_DEFAULT_JSON = ("route-audit.json", "*receipt*.json")
+DIGEST_DEFAULT_KEYS = ("schema", "stage", "failed_step", "last_capture", "error")
+DIGEST_DEFAULT_MAX_BYTES = 50_000_000
+_JUNIT_UNSAFE_XML_RE = re.compile(rb"<!(?:DOCTYPE|ENTITY)\b", re.I)
 
 MAX_READ_BYTES = 10 * 1024 * 1024
 MAX_XML_TAGS = 100_000
@@ -1526,6 +1537,236 @@ def triage(
     return report
 
 
+def _digest_collapse(text: str, width: int) -> str:
+    flat = re.sub(r"\s+", " ", text or "").strip()
+    if len(flat) <= width:
+        return flat
+    return flat[: max(width - 1, 0)] + "…"
+
+
+def _digest_members(source: str, max_bytes: int) -> Iterator[tuple[str, bytes | None, int]]:
+    """Yield (name, data_or_None, size) for zip, directory, or single file."""
+    if os.path.isdir(source):
+        for root, _dirs, files in sorted(os.walk(source)):
+            for fname in sorted(files):
+                path = os.path.join(root, fname)
+                size = os.path.getsize(path)
+                name = os.path.relpath(path, source)
+                if size > max_bytes:
+                    yield name, None, size
+                else:
+                    with open(path, "rb") as handle:
+                        yield name, handle.read(), size
+    elif zipfile.is_zipfile(source):
+        with zipfile.ZipFile(source) as archive:
+            for info in archive.infolist():
+                if info.is_dir():
+                    continue
+                if info.file_size > max_bytes:
+                    yield info.filename, None, info.file_size
+                else:
+                    yield info.filename, archive.read(info), info.file_size
+    elif os.path.isfile(source):
+        size = os.path.getsize(source)
+        base = os.path.basename(source)
+        if size > max_bytes:
+            yield base, None, size
+        else:
+            with open(source, "rb") as handle:
+                yield base, handle.read(), size
+    else:
+        raise FileNotFoundError(source)
+
+
+def _digest_parse_junit_xml(data: bytes) -> ET.Element:
+    if _JUNIT_UNSAFE_XML_RE.search(data):
+        raise ValueError("DOCTYPE/ENTITY declarations are refused")
+    try:
+        return ET.fromstring(data)
+    except ET.ParseError as exc:
+        raise ValueError(f"invalid XML: {exc}") from exc
+
+
+def _digest_failure_detail(elem: ET.Element, testcase: ET.Element, width: int) -> str:
+    msg = redact_text(sanitize_report_text((elem.attrib.get("message") or "").strip()))
+    body = redact_text(sanitize_report_text((elem.text or "").strip()))
+    if msg:
+        raw = f"{msg} | {body}" if body else msg
+    else:
+        raw = body
+    return _digest_collapse(raw, width)
+
+
+def _digest_junit_summary(
+    name: str, data: bytes, width: int, failures: list[str]
+) -> str:
+    root = _digest_parse_junit_xml(data)
+    totals: collections.Counter[str] = collections.Counter()
+    for case in root.iter("testcase"):
+        totals["tests"] += 1
+        bad = [*case.findall("failure"), *case.findall("error")]
+        if case.find("skipped") is not None:
+            totals["skipped"] += 1
+        for node in bad:
+            kind = "error" if node.tag.split("}")[-1] == "error" else "failure"
+            totals[kind + "s"] += 1
+            title = _junit_case_label(case)
+            detail = _digest_failure_detail(node, case, width)
+            failures.append(f"FAIL {name} {title}: {detail}")
+    return (
+        f"junit {name}: tests={totals['tests']} failures={totals['failures']} "
+        f"errors={totals['errors']} skipped={totals['skipped']}"
+    )
+
+
+def _digest_receipt(name: str, data: bytes, keys: Sequence[str], width: int) -> str:
+    try:
+        doc = json.loads(data)
+    except ValueError as exc:
+        raise ValueError(f"invalid JSON: {exc}") from exc
+    if not isinstance(doc, dict):
+        return f"json {name}: {type(doc).__name__}"
+    picked = {k: doc[k] for k in keys if k in doc}
+    payload = redact_text(json.dumps(picked, ensure_ascii=False, sort_keys=False))
+    return f"json {name}: " + _digest_collapse(payload, width * 2)
+
+
+def digest(
+    sources: Sequence[str],
+    *,
+    width: int = 240,
+    limit: int = 20,
+    json_patterns: Sequence[str] = DIGEST_DEFAULT_JSON,
+    keys: Sequence[str] = DIGEST_DEFAULT_KEYS,
+    max_bytes: int = DIGEST_DEFAULT_MAX_BYTES,
+    list_members: bool = False,
+) -> tuple[list[str], int]:
+    """Summarize CI artifact zips/directories without extracting (see ``digest`` subcommand)."""
+    lines: list[str] = []
+    failures: list[str] = []
+    other: collections.Counter[str] = collections.Counter()
+    skipped: list[str] = []
+    listed: list[str] = []
+    for source in sources:
+        for member_name, data, size in _digest_members(source, max_bytes):
+            label = (
+                member_name
+                if len(sources) == 1
+                else f"{os.path.basename(source)}:{member_name}"
+            )
+            if data is None:
+                skipped.append(f"{label} ({size} bytes)")
+                continue
+            base = os.path.basename(member_name)
+            try:
+                if member_name.lower().endswith(".xml"):
+                    lines.append(_digest_junit_summary(label, data, width, failures))
+                elif member_name.lower().endswith(".json") and any(
+                    fnmatch.fnmatch(base, pattern) for pattern in json_patterns
+                ):
+                    lines.append(_digest_receipt(label, data, keys, width))
+                else:
+                    ext = os.path.splitext(member_name)[1].lower() or "(none)"
+                    other[ext] += 1
+                    listed.append(label)
+            except ValueError as exc:
+                lines.append(f"problem {label}: {exc}")
+    shown = failures[:limit]
+    lines.extend(shown)
+    if len(failures) > len(shown):
+        lines.append(
+            f"... {len(failures) - len(shown)} more failing testcase(s); raise --limit"
+        )
+    if other:
+        lines.append(
+            "other: " + ", ".join(f"{ext}×{n}" for ext, n in sorted(other.items()))
+        )
+    if list_members:
+        lines.extend(f"  {item}" for item in listed)
+    if skipped:
+        lines.append("skipped (over --max-bytes): " + ", ".join(skipped))
+    lines.append(f"failing testcases: {len(failures)}")
+    return lines, len(failures)
+
+
+def build_digest_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="err-o-roadrunner digest",
+        description="Digest CI artifact zips/directories without extracting to disk.",
+    )
+    parser.add_argument(
+        "sources",
+        nargs="+",
+        help="zip file, directory, or .xml/.json file",
+    )
+    parser.add_argument(
+        "--width",
+        type=int,
+        default=240,
+        help="characters kept per failure message (default 240)",
+    )
+    parser.add_argument(
+        "--limit",
+        type=int,
+        default=20,
+        help="failing testcases printed (default 20)",
+    )
+    parser.add_argument(
+        "--json",
+        action="append",
+        dest="json_patterns",
+        metavar="GLOB",
+        help="JSON member basename pattern to summarize (repeatable)",
+    )
+    parser.add_argument(
+        "--keys",
+        default=",".join(DIGEST_DEFAULT_KEYS),
+        help="comma-separated JSON fields to keep",
+    )
+    parser.add_argument(
+        "--max-bytes",
+        type=int,
+        default=DIGEST_DEFAULT_MAX_BYTES,
+        help="skip members larger than this",
+    )
+    parser.add_argument(
+        "--list",
+        action="store_true",
+        dest="list_members",
+        help="also name the uncategorized members",
+    )
+    return parser
+
+
+def run_digest(argv: Sequence[str] | None = None) -> int:
+    parser = build_digest_parser()
+    try:
+        args = parser.parse_args(argv)
+    except SystemExit as exc:
+        code = exc.code
+        if code in (0, None):
+            return EXIT_OK
+        return EXIT_USAGE
+    try:
+        lines, failing = digest(
+            args.sources,
+            width=args.width,
+            limit=args.limit,
+            json_patterns=tuple(args.json_patterns or DIGEST_DEFAULT_JSON),
+            keys=tuple(k for k in args.keys.split(",") if k),
+            max_bytes=args.max_bytes,
+            list_members=args.list_members,
+        )
+    except (OSError, zipfile.BadZipFile) as exc:
+        print(f"triage digest: {exc}", file=sys.stderr)
+        return EXIT_USAGE
+    except FileNotFoundError as exc:
+        print(f"triage digest: {exc}", file=sys.stderr)
+        return EXIT_USAGE
+    print("\n".join(lines))
+    return EXIT_DIGEST_FAILURES if failing else EXIT_OK
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="err-o-roadrunner",
@@ -1574,6 +1815,12 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: Sequence[str] | None = None) -> int:
+    if argv is None:
+        argv = sys.argv[1:]
+    else:
+        argv = list(argv)
+    if argv and argv[0] == "digest":
+        return run_digest(argv[1:])
     parser = build_parser()
     try:
         args = parser.parse_args(argv)
