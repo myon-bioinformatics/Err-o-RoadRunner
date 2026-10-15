@@ -30,8 +30,8 @@
     },
     {
       "repository": "myon-bioinformatics/myon-bioinformatics",
-      "ref": "7f45f52ae677e879de49db01008d8ddf4ce5a54d",
-      "commit": "7f45f52ae677e879de49db01008d8ddf4ce5a54d",
+      "ref": "9cc33f08f225eaf67d9a00489a1bf15977ebee25",
+      "commit": "9cc33f08f225eaf67d9a00489a1bf15977ebee25",
       "source": "gh_ops.py",
       "destination": "vendor/gh_ops.py",
       "blob_sha": "73c34b26c0f0cfa1be544e7885dcfae0e518c985",
