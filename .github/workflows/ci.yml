@@ -111,4 +111,4 @@ jobs:
   actionlint:
     needs: changes
     if: needs.changes.outputs.workflow_changed == 'true'
-    uses: myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-actionlint.yml@f907560c2b9b3f7a0f78f4434f547f91cb2ef954
+    uses: myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-actionlint.yml@ab17b409d82f95abc81116af7ff0d3e7bdc4158c
