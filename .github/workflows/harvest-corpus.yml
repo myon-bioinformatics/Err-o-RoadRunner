@@ -1,0 +1,60 @@
+# .github/workflows/harvest-corpus.yml
+# Daily harvest of failed-run test results (JUnit XML / JSON / JSONL) from every public,
+# non-archived myon-bioinformatics repository, so artifacts are captured before their
+# 14-day retention expires. Opens a PR with new corpus entries; never auto-merges.
+#
+# Requirements:
+# - Settings > Actions > General > "Allow GitHub Actions to create and approve pull requests".
+# - GITHUB_TOKEN can read Actions artifacts of other *public* repositories.
+name: Harvest failure corpus
+
+on:
+  schedule:
+    - cron: "17 18 * * *"   # 03:17 JST daily
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: harvest-corpus
+  cancel-in-progress: false
+
+jobs:
+  harvest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.0.0
+        with:
+          python-version: "3.12"
+      - run: python -m pip install pytest
+      - name: Harvest (partial results allowed)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python scripts/harvest_junit_corpus.py --allow-partial --per-repo 25 --report "$RUNNER_TEMP/harvest-report.json"
+          python scripts/patch_junit_manifest_jobs.py || true
+          python scripts/capture_junit_corpus_goldens.py --missing-only
+      - name: Validate corpus
+        run: python -m pytest -q tests/test_junit_corpus_golden.py tests/test_results_corpus.py tests/test_fixture_redaction_scan.py
+      - name: Open PR with new entries
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet && [ -z "$(git ls-files --others --exclude-standard tests/fixtures)" ]; then
+            echo "No new corpus entries"; exit 0
+          fi
+          branch="corpus/harvest-$(date -u +%Y%m%d)-${GITHUB_RUN_ID}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$branch"
+          git add tests/fixtures
+          git commit -m "失敗コーパスを自動収集 ($(date -u +%F))"
+          git push origin "$branch"
+          summary=$(python -c "import json,sys;r=json.load(open(sys.argv[1]));print('\n'.join(f'- {k}: {v}' for k,v in sorted(r['by_repo'].items())) or '- (none)')" "$RUNNER_TEMP/harvest-report.json")
+          gh pr create --base main --head "$branch" \
+            --title "失敗コーパスの定期収集 $(date -u +%F)" \
+            --body "$(printf '定期ハーベストで収集した失敗事例です（自動マージしません）。\n\n新規件数:\n%s\n' "$summary")"
