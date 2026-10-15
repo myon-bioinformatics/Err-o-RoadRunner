@@ -1,0 +1,22 @@
+FOUND: exit code: 1
+FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/web-ui_38582501173_junit-python-3.12_pytest-3.12.xml): 2
+FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/web-ui_38582501173_junit-python-3.12_pytest-3.12.xml): AssertionError: assert ['changes', 'tooling'] == ['tooling']\n  \n  At index 0 diff: 'changes' != 'tooling'\n  Left contains one more item: 'tooling'\n  \n  Full diff:\n    [\n  +     'changes',\n        'tooling',\n    ]\ndef test_failure_evidence_workflow_contract():\n>       _assert_contract(yaml.safe_load(WORKFLOW.read_text(encoding="utf-8")))\n\ntests/test_junit_workflow_contract.py:66: \n_ _
+FOUND: junit failure (last) (<repo>/tests/fixtures/junit_corpus/cases/web-ui_38582501173_junit-python-3.12_pytest-3.12.xml): AssertionError: assert ['changes', 'tooling'] == ['tooling']\n  \n  At index 0 diff: 'changes' != 'tooling'\n  Left contains one more item: 'tooling'\n  \n  Full diff:\n    [\n  +     'changes',\n        'tooling',\n    ]\ndef test_failure_evidence_contract_rejects_unsafe_mutations():\n        workflow = yaml.safe_load(WORKFLOW.read_text(encoding="utf-8"))\n>       _assert_contract(workflow)  # A 
+FOUND: junit failure groups (<repo>/tests/fixtures/junit_corpus/cases/web-ui_38582501173_junit-python-3.12_pytest-3.12.xml): 2 failures in 1 group
+FOUND: junit failure group 1/1 (<repo>/tests/fixtures/junit_corpus/cases/web-ui_38582501173_junit-python-3.12_pytest-3.12.xml): 2× AssertionError: assert [<q>, <q>] == [<q>] — first: tests.test_junit_workflow_contract::test_failure_evidence_workflow_contract — msg: AssertionError: assert ['changes', 'tooling'] == ['tooling']
+FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/web-ui_38582501173_junit-python-3.12_pytest-3.12.xml): tests.test_junit_workflow_contract
+FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/web-ui_38582501173_junit-python-3.12_pytest-3.12.xml): AssertionError
+FOUND: python version: 3.13.5 (cpython)
+FOUND: node version: v20.19.2
+FOUND: gh version: gh version 2.46.0 (2025-01-13 Debian 2.46.0-3)
+FOUND: environment variable count: 55
+FOUND: environment variable names: AGENT_TRANSCRIPTS, BROWSER, COREPACK_HOME, CURSOR_AGENT, CURSOR_AGENT_SOCKET, CURSOR_CONVERSATION_ID, CURSOR_REQUEST_ID, CURSOR_RIPGREP_PATH, DEBIAN_FRONTEND, DISPLAY, EXEC_DAEMON_CWD, FORCE_COLOR, HOME, LANG, LC_ALL, LOGNAME, LS_COLORS, NO_COLOR, NPM_CONFIG_PREFIX, OLDPWD, PATH, PWD, SAND_BOX_AUTH_ID, SAND_BOX_BOOT_ID, SAND_BOX_BOOT_STARTED_AT_MS, SAND_BOX_CLUSTER, SAND_BOX_LEGACY_STORE, SAND_BOX_MAX_WINDOWS, SAND_BOX_SCRIPT_SYNC_DISABLED, SAND_BOX_STORE_BACKEND, SAND_BOX_STORE_COPY_IN, SAND_BOX_STORE_HIBERNATE_HOOK, SAND_BOX_STORE_ID, SAND_BOX_STORE_SYNC, SAND_BOX_TELEMETRY_LOG, SAND_BOX_TENANT_ID, SAND_EGRESS_TUNNEL_ENABLED, SAND_EGRESS_TUNNEL_PROXY_ADDR, SAND_EGRESS_TUNNEL_WS_ADDR, SAND_EGRESS_TUNNEL_WS_PORT, ...
+NOT FOUND: junit errors (<repo>/tests/fixtures/junit_corpus/cases/web-ui_38582501173_junit-python-3.12_pytest-3.12.xml)
+NOT FOUND: junit skipped (<repo>/tests/fixtures/junit_corpus/cases/web-ui_38582501173_junit-python-3.12_pytest-3.12.xml)
+NOT FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/web-ui_38582501173_junit-python-3.12_pytest-3.12.xml)
+NOT FOUND: junit system-err (<repo>/tests/fixtures/junit_corpus/cases/web-ui_38582501173_junit-python-3.12_pytest-3.12.xml)
+NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/web-ui_38582501173_junit-python-3.12_pytest-3.12.xml)
+NOT FOUND: lock files in project root
+HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/web-ui_38582501173_junit-python-3.12_pytest-3.12.xml): pytest/python
+HINT: junit assertion diff (<repo>/tests/fixtures/junit_corpus/cases/web-ui_38582501173_junit-python-3.12_pytest-3.12.xml):   +     'changes',
+HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/web-ui_38582501173_junit-python-3.12_pytest-3.12.xml): AssertionError: assert ['changes', 'tooling'] == ['tooling']\n  \n  At index 0 diff: 'changes' != 'tooling'\n  Left contains one more item: 'tooling'\n  \n  Full diff:\n    [\n  +     'changes',\n        'tooling',\n    ]\ndef test_failure_evidence_workflow_contract():\n>       _assert_contract(yaml.safe_load(WORKFLOW.read_text(encoding="utf-8")))\n\ntests/test_junit_workflow_contract.py:66: \n_ _

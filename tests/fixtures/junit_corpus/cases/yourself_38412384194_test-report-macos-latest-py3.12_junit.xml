@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="137" time="4.967" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_runner_fingerprint" name="test_os_release_parsed" time="0.002"><failure message="KeyError: 'os_release'">tmp_path = PosixPath('/private/var/folders/36/tjdph2t965j8snz9_vkdnw0r0000gn/T/pytest-of-runner/pytest-0/test_os_release_parsed0')
+
+    def test_os_release_parsed(tmp_path):
+        etc = tmp_path / "etc"
+        etc.mkdir()
+        (etc / "os-release").write_text('ID=ubuntu\nVERSION_ID="24.04"\n', encoding="utf-8")
+        fp = yourself.runner_fingerprint(environ={}, root=str(tmp_path), etc_root=str(etc),
+                                         sys_root=str(tmp_path))
+&gt;       assert fp["os_identity"]["os_release"]["value"]["ID"] == "ubuntu"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'os_release'
+
+tests/test_runner_fingerprint.py:50: KeyError</failure></testcase></testsuite></testsuites>

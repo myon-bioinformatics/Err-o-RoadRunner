@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="129" time="0.530" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_vendor_workflow" name="test_public_vendor_ci_locked_without_repository_writes" time="0.015"><failure message="AssertionError: assert ['9cc33f08f22...f15977ebee25'] == ['b000e5967cb...686fdc700c16']&#10;  &#10;  At index 0 diff: '9cc33f08f225eaf67d9a00489a1bf15977ebee25' != 'b000e5967cb7596f6f9f20fe396a686fdc700c16'&#10;  &#10;  Full diff:&#10;    [&#10;  -     'b000e5967cb7596f6f9f20fe396a686fdc700c16',&#10;  -     'b000e5967cb7596f6f9f20fe396a686fdc700c16',&#10;  +     '9cc33f08f225eaf67d9a00489a1bf15977ebee25',&#10;  +     '9cc33f08f225eaf67d9a00489a1bf15977ebee25',&#10;    ]">def test_public_vendor_ci_locked_without_repository_writes():
+        import yaml
+        ci = yaml.load((ROOT / '.github/workflows/python.yml').read_text(encoding='utf-8'), Loader=yaml.BaseLoader)
+        jobs = ci['jobs']
+        resolve = jobs['resolve-vendor']['steps']
+        test = jobs['test']['steps']
+        assert not any(s.get('name') == 'Update public vendor files for this run' for s in resolve)
+        assert 'inputs' not in ci.get('on', {}).get('workflow_dispatch', {})
+        assert set(jobs['test']['needs']) == {'changes', 'resolve-vendor'}
+        assert jobs['resolve-vendor']['needs'] == 'changes'
+        assert jobs['test']['if'] == "needs.changes.outputs.product_changed == 'true'"
+        assert not any('vendor_sync.py promote' in s.get('run', '') for steps in (resolve, test) for s in steps)
+        assert not any('vendor_sync.py update' in s.get('run', '') for steps in (resolve, test) for s in steps)
+        download = next(i for i,s in enumerate(test) if s.get('uses', '').startswith('actions/download-artifact@'))
+        verify = next(i for i,s in enumerate(test) if s.get('name') == 'Verify resolved vendor snapshot')
+        assert test[download]['with']['name'] == 'vendor-snapshot'
+        assert download &lt; verify
+        assert 'vendor_sync.py check' in test[verify]['run']
+        for steps, name in ((resolve, 'Preserve resolved vendor snapshot'), (test, 'Preserve vendor lock used by this run')):
+            upload = next(s for s in steps if s.get('name') == name)
+            assert upload['if'] == 'always()'
+            assert upload['with']['if-no-files-found'] == 'error'
+            assert upload['with']['path'].startswith('build/vendor-evidence-')
+        pins = [s['with']['ref'] for steps in (resolve, test) for s in steps
+                if s.get('with', {}).get('repository') == 'myon-bioinformatics/myon-bioinformatics']
+&gt;       assert pins == [VENDOR_TOOL_PIN] * 2
+E       AssertionError: assert ['9cc33f08f22...f15977ebee25'] == ['b000e5967cb...686fdc700c16']
+E         
+E         At index 0 diff: '9cc33f08f225eaf67d9a00489a1bf15977ebee25' != 'b000e5967cb7596f6f9f20fe396a686fdc700c16'
+E         
+E         Full diff:
+E           [
+E         -     'b000e5967cb7596f6f9f20fe396a686fdc700c16',
+E         -     'b000e5967cb7596f6f9f20fe396a686fdc700c16',
+E         +     '9cc33f08f225eaf67d9a00489a1bf15977ebee25',
+E         +     '9cc33f08f225eaf67d9a00489a1bf15977ebee25',
+E           ]
+
+tests/test_vendor_workflow.py:34: AssertionError</failure></testcase></testsuite></testsuites>

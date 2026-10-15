@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="6" tests="987" time="52.480" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_junit_ci" name="test_python_junit_workflow_keeps_failed_producer_visible" time="0.001"><failure message="assert &quot;if: always() &amp;&amp; needs.changes.outputs.non_docs_changed == 'true'&quot; in '    needs: [changes, test]\n    if: always() &amp;&amp; needs.changes.outputs.product_changed == \'true\'\n    permissions:\n...3.11\n      expected-reports: \'[&quot;junit-python-3.11/pytest.xml&quot;]\'\n      output-artifact: python-failure-identity\n\n'">def test_python_junit_workflow_keeps_failed_producer_visible():
+        workflow = (Path(__file__).parents[1] / ".github/workflows/test.yml").read_text(encoding="utf-8")
+        producer = workflow.split("  test:\n", 1)[1].split("  junit-identity:\n", 1)[0]
+        collector = workflow.split("  junit-identity:\n", 1)[1].split("  public-resolver-compat:", 1)[0]
+        assert 'pip install -e ".[test]"' in producer
+        assert "run: pytest -q --junitxml=reports/pytest.xml" in producer
+        assert "continue-on-error" not in producer
+        assert "|| true" not in producer
+        assert "if: always()" in producer
+        assert "name: junit-python-3.11" in producer
+        assert "path: reports/pytest.xml" in producer
+        assert "if-no-files-found: error" in producer
+        assert "needs: [changes, test]" in collector
+&gt;       assert "if: always() &amp;&amp; needs.changes.outputs.non_docs_changed == 'true'" in collector
+E       assert "if: always() &amp;&amp; needs.changes.outputs.non_docs_changed == 'true'" in '    needs: [changes, test]\n    if: always() &amp;&amp; needs.changes.outputs.product_changed == \'true\'\n    permissions:\n...3.11\n      expected-reports: \'["junit-python-3.11/pytest.xml"]\'\n      output-artifact: python-failure-identity\n\n'
+
+tests/test_junit_ci.py:60: AssertionError</failure></testcase></testsuite></testsuites>

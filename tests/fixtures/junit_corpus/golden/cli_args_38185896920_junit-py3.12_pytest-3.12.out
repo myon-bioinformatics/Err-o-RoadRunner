@@ -1,0 +1,21 @@
+FOUND: exit code: 1
+FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/cli_args_38185896920_junit-py3.12_pytest-3.12.xml): 1
+FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/cli_args_38185896920_junit-py3.12_pytest-3.12.xml): AssertionError: fatal: pathspec '-NUL 日本語 file.txt\0' did not match any files\n  \nassert 128 == 0\n +  where 128 = CommandResult(argv=('/usr/bin/git', '-C', '<pytest-tmp>/pytest-0/test_git_machine_readable_porc0', 'add', '--..., stdout='', stderr="fatal: pathspec '-NUL 日本語 file.txt\\0' did not match any files\n", executed=True, timed_out=False).returncode\ntests/test_commands.py:119: in test_git_
+FOUND: junit failure groups (<repo>/tests/fixtures/junit_corpus/cases/cli_args_38185896920_junit-py3.12_pytest-3.12.xml): 1 failure in 1 group
+FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/cli_args_38185896920_junit-py3.12_pytest-3.12.xml): tests.test_commands
+FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/cli_args_38185896920_junit-py3.12_pytest-3.12.xml): AssertionError
+FOUND: python version: 3.13.5 (cpython)
+FOUND: node version: v20.19.2
+FOUND: gh version: gh version 2.46.0 (2025-01-13 Debian 2.46.0-3)
+FOUND: environment variable count: 55
+FOUND: environment variable names: AGENT_TRANSCRIPTS, BROWSER, COREPACK_HOME, CURSOR_AGENT, CURSOR_AGENT_SOCKET, CURSOR_CONVERSATION_ID, CURSOR_REQUEST_ID, CURSOR_RIPGREP_PATH, DEBIAN_FRONTEND, DISPLAY, EXEC_DAEMON_CWD, FORCE_COLOR, HOME, LANG, LC_ALL, LOGNAME, LS_COLORS, NO_COLOR, NPM_CONFIG_PREFIX, OLDPWD, PATH, PWD, SAND_BOX_AUTH_ID, SAND_BOX_BOOT_ID, SAND_BOX_BOOT_STARTED_AT_MS, SAND_BOX_CLUSTER, SAND_BOX_LEGACY_STORE, SAND_BOX_MAX_WINDOWS, SAND_BOX_SCRIPT_SYNC_DISABLED, SAND_BOX_STORE_BACKEND, SAND_BOX_STORE_COPY_IN, SAND_BOX_STORE_HIBERNATE_HOOK, SAND_BOX_STORE_ID, SAND_BOX_STORE_SYNC, SAND_BOX_TELEMETRY_LOG, SAND_BOX_TENANT_ID, SAND_EGRESS_TUNNEL_ENABLED, SAND_EGRESS_TUNNEL_PROXY_ADDR, SAND_EGRESS_TUNNEL_WS_ADDR, SAND_EGRESS_TUNNEL_WS_PORT, ...
+NOT FOUND: junit errors (<repo>/tests/fixtures/junit_corpus/cases/cli_args_38185896920_junit-py3.12_pytest-3.12.xml)
+NOT FOUND: junit skipped (<repo>/tests/fixtures/junit_corpus/cases/cli_args_38185896920_junit-py3.12_pytest-3.12.xml)
+NOT FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/cli_args_38185896920_junit-py3.12_pytest-3.12.xml)
+NOT FOUND: junit system-err (<repo>/tests/fixtures/junit_corpus/cases/cli_args_38185896920_junit-py3.12_pytest-3.12.xml)
+NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/cli_args_38185896920_junit-py3.12_pytest-3.12.xml)
+NOT FOUND: lock files in project root
+HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/cli_args_38185896920_junit-py3.12_pytest-3.12.xml): pytest/python
+HINT: junit pytest assert line (<repo>/tests/fixtures/junit_corpus/cases/cli_args_38185896920_junit-py3.12_pytest-3.12.xml): E   assert 128 == 0
+HINT: junit assertion diff (<repo>/tests/fixtures/junit_corpus/cases/cli_args_38185896920_junit-py3.12_pytest-3.12.xml):  +  where 128 = CommandResult(argv=('/usr/bin/git', '-C', '<pytest-tmp>/pytest-0/test_git_machine_readable_porc0', 'add', '--..., stdout='', stderr="fatal: pathspec '-NUL 日本語 file.txt\\0' did not match any files\n", executed=True, timed_out=False).returncode
+HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/cli_args_38185896920_junit-py3.12_pytest-3.12.xml): AssertionError: fatal: pathspec '-NUL 日本語 file.txt\0' did not match any files\n  \nassert 128 == 0\n +  where 128 = CommandResult(argv=('/usr/bin/git', '-C', '<pytest-tmp>/pytest-0/test_git_machine_readable_porc0', 'add', '--..., stdout='', stderr="fatal: pathspec '-NUL 日本語 file.txt\\0' did not match any files\n", executed=True, timed_out=False).returncode\ntests/test_commands.py:119: in test_git_

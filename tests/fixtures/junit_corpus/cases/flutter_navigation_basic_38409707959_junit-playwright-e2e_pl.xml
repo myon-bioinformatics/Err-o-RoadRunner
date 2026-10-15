@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites id="" name="" tests="195" failures="1" skipped="6" errors="0" time="840.561663"><testsuite name="home_discovery_journeys.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="3" failures="1" skipped="0" time="20.715" errors="0"><testcase name="Home discovery journeys › Home draw → stable tool Door → drawn screen with screenshot evidence @portable" classname="home_discovery_journeys.spec.ts" time="6.319"><system-out>
+::notice title=route-audit chromium::stage=failed last=source-tool failed_step=open-door ids=129,114,76 route=#/tools/media/photo-studio menu=[] door=[{"via":"button-press","opened":false,"record":{"schema":"pointer-press/1","input":"mouse","input_source":"explicit","x":640,"y":588,"visible_ratio":1,"box":{"x":280,"y":568,"width":720,"height":40},"hit":{"tag":"flt-semantics","self":false}}}]
+::notice title=journey chromium::Home draw → stable tool Door → drawn screen with screenshot evidence @portable :: Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+journey-semantics chromium [{"role":"group","id":null,"name":"⚖ repo not measured · repo not measured · Version v0.1.0 · Commit unknown","text":"BackPhoto Studio 🖼️HomeFavorite this pageMenuUndoRedoA corner for frames and marks on photos. Geographic bounds live under Latitude / Longitude.Select an image or paste here\nSelec","box":{"x":0,"y":0,"width":1280,"height":720}},{"role":null,"id":null,"name":null,"text":"BackPhoto Studio 🖼️HomeFavorite this pageMenuUndoRedo","box":{"x":0,"y":0,"width":1280,"height":104}},{"role":null,"id":"shared-header-home","name":null,"text":"Home","box":{"x":1160,"y":8,"width":40,"height":40}},{"role":null,"id":"shared-header-favorite","name":null,"text":"Favorite this page","box":{"x":1200,"y":8,"width":40,"height":40}},{"role":null,"id":"shared-header-menu","name":null,"text":"Menu","box":{"x":1240,"y":8,"width":40,"height":40}},{"role":null,"id":"shared-header-secondary","name":null,"text":"UndoRedo","box":{"x":0,"y":56,"width":1280,"height":48}},{"role":"group","id":null,"name":"Door-to-Door tools","text":"Door-to-Door tools\nPhoto Studio (current)","box":{"x":260,"y":502,"width":760,"height":122}},{"role":"group","id":null,"name":"Door-to-Door tools\nJump to another tool without going Home first.","text":"Door-to-Door tools\nPhoto Studio (current)","box":{"x":260,"y":502,"width":760,"height":122}},{"role":"button","id":"tool-door-dropdown","name":null,"text":"Door-to-Door tools\nPhoto Studio (current)","box":{"x":280,"y":568,"width":720,"height":40}}]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-chromium/attachments/home-draw-png-2766c28c19f2fe24d0ed0a3c47d17f630eff5cfc.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-chromium/attachments/source-tool-png-b525856aaf00a71cfd79b92f933638f85277d95c.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-chromium/attachments/route-audit-json-08f609acf7ae16483289c9f31d22099da2f25b10.json]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-chromium/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-chromium/error-context.md]]
+
+</system-out>
+<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
+  [chromium] › home_discovery_journeys.spec.ts:127:7 › Home discovery journeys › Home draw → stable tool Door → drawn screen with screenshot evidence @portable 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('[role="menuitem"]').first()
+    Expected: visible
+    Timeout: 3000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('[role="menuitem"]').first() with timeout 3000ms
+      - waiting for locator('[role="menuitem"]').first()
+
+
+      67 |   const attempt = { via: 'button-press', opened: false, record };
+      68 |   attempts.push(attempt);
+    &gt; 69 |   await expect(items.first()).toBeVisible({ timeout: 3_000 });
+         |                               ^
+      70 |   attempt.opened = true;
+      71 | }
+      72 |
+        at openDoor (&lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:69:31)
+        at &lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:180:7
+
+    attachment #1: home-draw.png (image/png) ───────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-chromium/attachments/home-draw-png-2766c28c19f2fe24d0ed0a3c47d17f630eff5cfc.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: source-tool.png (image/png) ─────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-chromium/attachments/source-tool-png-b525856aaf00a71cfd79b92f933638f85277d95c.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: route-audit.json (application/json) ─────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-chromium/attachments/route-audit-json-08f609acf7ae16483289c9f31d22099da2f25b10.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #6: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-chromium/error-context.md
+
+</failure>
+</testcase></testsuite></testsuites>

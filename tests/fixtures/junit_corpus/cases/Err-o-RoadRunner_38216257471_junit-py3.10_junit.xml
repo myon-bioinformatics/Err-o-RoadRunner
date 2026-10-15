@@ -1,0 +1,3614 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="64" skipped="49" tests="905" time="369.560" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[valid|different|checkout_script]" time="0.093"><failure message="AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  ?                  ^ ^ ^&#10;  + err-o-roadrunner 1.2.3&#10;  ?                  ^ ^ ^">pyproject_state = 'valid', metadata_state = 'different'
+run_mode = 'checkout_script'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix4')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         ?                  ^ ^ ^
+E         + err-o-roadrunner 1.2.3
+E         ?                  ^ ^ ^
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[valid|different|module]" time="0.097"><failure message="AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  ?                  ^ ^ ^&#10;  + err-o-roadrunner 1.2.3&#10;  ?                  ^ ^ ^">pyproject_state = 'valid', metadata_state = 'different', run_mode = 'module'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix5')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         ?                  ^ ^ ^
+E         + err-o-roadrunner 1.2.3
+E         ?                  ^ ^ ^
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[valid|different|other_cwd]" time="0.094"><failure message="AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  ?                  ^ ^ ^&#10;  + err-o-roadrunner 1.2.3&#10;  ?                  ^ ^ ^">pyproject_state = 'valid', metadata_state = 'different', run_mode = 'other_cwd'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix6')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         ?                  ^ ^ ^
+E         + err-o-roadrunner 1.2.3
+E         ?                  ^ ^ ^
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[valid|absent|checkout_script]" time="0.093"><failure message="AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  + err-o-roadrunner unknown">pyproject_state = 'valid', metadata_state = 'absent'
+run_mode = 'checkout_script'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix8')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         + err-o-roadrunner unknown
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[valid|absent|module]" time="0.096"><failure message="AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  + err-o-roadrunner unknown">pyproject_state = 'valid', metadata_state = 'absent', run_mode = 'module'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix9')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         + err-o-roadrunner unknown
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[valid|absent|other_cwd]" time="0.092"><failure message="AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  + err-o-roadrunner unknown">pyproject_state = 'valid', metadata_state = 'absent', run_mode = 'other_cwd'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix10')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         + err-o-roadrunner unknown
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[single_quoted|different|checkout_script]" time="0.094"><failure message="AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  ?                  ^ ^ ^&#10;  + err-o-roadrunner 1.2.3&#10;  ?                  ^ ^ ^">pyproject_state = 'single_quoted', metadata_state = 'different'
+run_mode = 'checkout_script'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix100')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         ?                  ^ ^ ^
+E         + err-o-roadrunner 1.2.3
+E         ?                  ^ ^ ^
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[single_quoted|different|module]" time="0.095"><failure message="AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  ?                  ^ ^ ^&#10;  + err-o-roadrunner 1.2.3&#10;  ?                  ^ ^ ^">pyproject_state = 'single_quoted', metadata_state = 'different'
+run_mode = 'module'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix101')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         ?                  ^ ^ ^
+E         + err-o-roadrunner 1.2.3
+E         ?                  ^ ^ ^
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[single_quoted|different|other_cwd]" time="0.095"><failure message="AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  ?                  ^ ^ ^&#10;  + err-o-roadrunner 1.2.3&#10;  ?                  ^ ^ ^">pyproject_state = 'single_quoted', metadata_state = 'different'
+run_mode = 'other_cwd'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix102')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         ?                  ^ ^ ^
+E         + err-o-roadrunner 1.2.3
+E         ?                  ^ ^ ^
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[single_quoted|absent|checkout_script]" time="0.093"><failure message="AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  + err-o-roadrunner unknown">pyproject_state = 'single_quoted', metadata_state = 'absent'
+run_mode = 'checkout_script'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix104')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         + err-o-roadrunner unknown
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[single_quoted|absent|module]" time="0.095"><failure message="AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  + err-o-roadrunner unknown">pyproject_state = 'single_quoted', metadata_state = 'absent'
+run_mode = 'module'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix105')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         + err-o-roadrunner unknown
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[single_quoted|absent|other_cwd]" time="0.093"><failure message="AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  + err-o-roadrunner unknown">pyproject_state = 'single_quoted', metadata_state = 'absent'
+run_mode = 'other_cwd'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix106')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         + err-o-roadrunner unknown
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[version_trailing_comment|different|checkout_script]" time="0.094"><failure message="AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  ?                  ^ ^ ^&#10;  + err-o-roadrunner 1.2.3&#10;  ?                  ^ ^ ^">pyproject_state = 'version_trailing_comment', metadata_state = 'different'
+run_mode = 'checkout_script'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix112')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         ?                  ^ ^ ^
+E         + err-o-roadrunner 1.2.3
+E         ?                  ^ ^ ^
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[version_trailing_comment|different|module]" time="0.098"><failure message="AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  ?                  ^ ^ ^&#10;  + err-o-roadrunner 1.2.3&#10;  ?                  ^ ^ ^">pyproject_state = 'version_trailing_comment', metadata_state = 'different'
+run_mode = 'module'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix113')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         ?                  ^ ^ ^
+E         + err-o-roadrunner 1.2.3
+E         ?                  ^ ^ ^
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[version_trailing_comment|different|other_cwd]" time="0.102"><failure message="AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  ?                  ^ ^ ^&#10;  + err-o-roadrunner 1.2.3&#10;  ?                  ^ ^ ^">pyproject_state = 'version_trailing_comment', metadata_state = 'different'
+run_mode = 'other_cwd'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix114')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         ?                  ^ ^ ^
+E         + err-o-roadrunner 1.2.3
+E         ?                  ^ ^ ^
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[version_trailing_comment|absent|checkout_script]" time="0.094"><failure message="AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  + err-o-roadrunner unknown">pyproject_state = 'version_trailing_comment', metadata_state = 'absent'
+run_mode = 'checkout_script'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix116')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         + err-o-roadrunner unknown
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[version_trailing_comment|absent|module]" time="0.095"><failure message="AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  + err-o-roadrunner unknown">pyproject_state = 'version_trailing_comment', metadata_state = 'absent'
+run_mode = 'module'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix117')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         + err-o-roadrunner unknown
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[version_trailing_comment|absent|other_cwd]" time="0.093"><failure message="AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  + err-o-roadrunner unknown">pyproject_state = 'version_trailing_comment', metadata_state = 'absent'
+run_mode = 'other_cwd'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix118')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         + err-o-roadrunner unknown
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[version_in_multiline_string|different|checkout_script]" time="0.095"><failure message="AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  ?                  ^ ^ ^&#10;  + err-o-roadrunner 1.2.3&#10;  ?                  ^ ^ ^">pyproject_state = 'version_in_multiline_string', metadata_state = 'different'
+run_mode = 'checkout_script'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix184')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         ?                  ^ ^ ^
+E         + err-o-roadrunner 1.2.3
+E         ?                  ^ ^ ^
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[version_in_multiline_string|different|module]" time="0.094"><failure message="AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  ?                  ^ ^ ^&#10;  + err-o-roadrunner 1.2.3&#10;  ?                  ^ ^ ^">pyproject_state = 'version_in_multiline_string', metadata_state = 'different'
+run_mode = 'module'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix185')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         ?                  ^ ^ ^
+E         + err-o-roadrunner 1.2.3
+E         ?                  ^ ^ ^
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[version_in_multiline_string|different|other_cwd]" time="0.095"><failure message="AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  ?                  ^ ^ ^&#10;  + err-o-roadrunner 1.2.3&#10;  ?                  ^ ^ ^">pyproject_state = 'version_in_multiline_string', metadata_state = 'different'
+run_mode = 'other_cwd'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix186')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         ?                  ^ ^ ^
+E         + err-o-roadrunner 1.2.3
+E         ?                  ^ ^ ^
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[version_in_multiline_string|absent|checkout_script]" time="0.097"><failure message="AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  + err-o-roadrunner unknown">pyproject_state = 'version_in_multiline_string', metadata_state = 'absent'
+run_mode = 'checkout_script'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix188')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         + err-o-roadrunner unknown
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[version_in_multiline_string|absent|module]" time="0.094"><failure message="AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  + err-o-roadrunner unknown">pyproject_state = 'version_in_multiline_string', metadata_state = 'absent'
+run_mode = 'module'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix189')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         + err-o-roadrunner unknown
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[version_in_multiline_string|absent|other_cwd]" time="0.093"><failure message="AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  + err-o-roadrunner unknown">pyproject_state = 'version_in_multiline_string', metadata_state = 'absent'
+run_mode = 'other_cwd'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix190')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         + err-o-roadrunner unknown
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[toml_header_comment|different|checkout_script]" time="0.096"><failure message="AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  ?                  ^ ^ ^&#10;  + err-o-roadrunner 1.2.3&#10;  ?                  ^ ^ ^">pyproject_state = 'toml_header_comment', metadata_state = 'different'
+run_mode = 'checkout_script'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix196')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         ?                  ^ ^ ^
+E         + err-o-roadrunner 1.2.3
+E         ?                  ^ ^ ^
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[toml_header_comment|different|module]" time="0.093"><failure message="AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  ?                  ^ ^ ^&#10;  + err-o-roadrunner 1.2.3&#10;  ?                  ^ ^ ^">pyproject_state = 'toml_header_comment', metadata_state = 'different'
+run_mode = 'module'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix197')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         ?                  ^ ^ ^
+E         + err-o-roadrunner 1.2.3
+E         ?                  ^ ^ ^
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[toml_header_comment|different|other_cwd]" time="0.096"><failure message="AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  ?                  ^ ^ ^&#10;  + err-o-roadrunner 1.2.3&#10;  ?                  ^ ^ ^">pyproject_state = 'toml_header_comment', metadata_state = 'different'
+run_mode = 'other_cwd'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix198')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         ?                  ^ ^ ^
+E         + err-o-roadrunner 1.2.3
+E         ?                  ^ ^ ^
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[toml_header_comment|absent|checkout_script]" time="0.096"><failure message="AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  + err-o-roadrunner unknown">pyproject_state = 'toml_header_comment', metadata_state = 'absent'
+run_mode = 'checkout_script'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix200')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         + err-o-roadrunner unknown
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[toml_header_comment|absent|module]" time="0.093"><failure message="AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  + err-o-roadrunner unknown">pyproject_state = 'toml_header_comment', metadata_state = 'absent'
+run_mode = 'module'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix201')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         + err-o-roadrunner unknown
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[toml_header_comment|absent|other_cwd]" time="0.094"><failure message="AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  + err-o-roadrunner unknown">pyproject_state = 'toml_header_comment', metadata_state = 'absent'
+run_mode = 'other_cwd'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix202')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         + err-o-roadrunner unknown
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[toml_spaced_project_table|different|checkout_script]" time="0.093"><failure message="AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  ?                  ^ ^ ^&#10;  + err-o-roadrunner 1.2.3&#10;  ?                  ^ ^ ^">pyproject_state = 'toml_spaced_project_table', metadata_state = 'different'
+run_mode = 'checkout_script'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix208')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         ?                  ^ ^ ^
+E         + err-o-roadrunner 1.2.3
+E         ?                  ^ ^ ^
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[toml_spaced_project_table|different|module]" time="0.093"><failure message="AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  ?                  ^ ^ ^&#10;  + err-o-roadrunner 1.2.3&#10;  ?                  ^ ^ ^">pyproject_state = 'toml_spaced_project_table', metadata_state = 'different'
+run_mode = 'module'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix209')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         ?                  ^ ^ ^
+E         + err-o-roadrunner 1.2.3
+E         ?                  ^ ^ ^
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[toml_spaced_project_table|different|other_cwd]" time="0.094"><failure message="AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  ?                  ^ ^ ^&#10;  + err-o-roadrunner 1.2.3&#10;  ?                  ^ ^ ^">pyproject_state = 'toml_spaced_project_table', metadata_state = 'different'
+run_mode = 'other_cwd'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix210')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         ?                  ^ ^ ^
+E         + err-o-roadrunner 1.2.3
+E         ?                  ^ ^ ^
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[toml_spaced_project_table|absent|checkout_script]" time="0.096"><failure message="AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  + err-o-roadrunner unknown">pyproject_state = 'toml_spaced_project_table', metadata_state = 'absent'
+run_mode = 'checkout_script'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix212')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         + err-o-roadrunner unknown
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[toml_spaced_project_table|absent|module]" time="0.095"><failure message="AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  + err-o-roadrunner unknown">pyproject_state = 'toml_spaced_project_table', metadata_state = 'absent'
+run_mode = 'module'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix213')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         + err-o-roadrunner unknown
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[toml_spaced_project_table|absent|other_cwd]" time="0.098"><failure message="AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  + err-o-roadrunner unknown">pyproject_state = 'toml_spaced_project_table', metadata_state = 'absent'
+run_mode = 'other_cwd'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix214')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         + err-o-roadrunner unknown
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[toml_quoted_keys|different|checkout_script]" time="0.094"><failure message="AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  ?                  ^ ^ ^&#10;  + err-o-roadrunner 1.2.3&#10;  ?                  ^ ^ ^">pyproject_state = 'toml_quoted_keys', metadata_state = 'different'
+run_mode = 'checkout_script'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix220')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         ?                  ^ ^ ^
+E         + err-o-roadrunner 1.2.3
+E         ?                  ^ ^ ^
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[toml_quoted_keys|different|module]" time="0.095"><failure message="AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  ?                  ^ ^ ^&#10;  + err-o-roadrunner 1.2.3&#10;  ?                  ^ ^ ^">pyproject_state = 'toml_quoted_keys', metadata_state = 'different'
+run_mode = 'module'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix221')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         ?                  ^ ^ ^
+E         + err-o-roadrunner 1.2.3
+E         ?                  ^ ^ ^
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[toml_quoted_keys|different|other_cwd]" time="0.094"><failure message="AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  ?                  ^ ^ ^&#10;  + err-o-roadrunner 1.2.3&#10;  ?                  ^ ^ ^">pyproject_state = 'toml_quoted_keys', metadata_state = 'different'
+run_mode = 'other_cwd'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix222')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         ?                  ^ ^ ^
+E         + err-o-roadrunner 1.2.3
+E         ?                  ^ ^ ^
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[toml_quoted_keys|absent|checkout_script]" time="0.093"><failure message="AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  + err-o-roadrunner unknown">pyproject_state = 'toml_quoted_keys', metadata_state = 'absent'
+run_mode = 'checkout_script'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix224')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         + err-o-roadrunner unknown
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[toml_quoted_keys|absent|module]" time="0.094"><failure message="AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  + err-o-roadrunner unknown">pyproject_state = 'toml_quoted_keys', metadata_state = 'absent'
+run_mode = 'module'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix225')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         + err-o-roadrunner unknown
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[toml_quoted_keys|absent|other_cwd]" time="0.095"><failure message="AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  + err-o-roadrunner unknown">pyproject_state = 'toml_quoted_keys', metadata_state = 'absent'
+run_mode = 'other_cwd'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix226')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         + err-o-roadrunner unknown
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[toml_inline_project_table|different|checkout_script]" time="0.094"><failure message="AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  ?                  ^ ^ ^&#10;  + err-o-roadrunner 1.2.3&#10;  ?                  ^ ^ ^">pyproject_state = 'toml_inline_project_table', metadata_state = 'different'
+run_mode = 'checkout_script'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix232')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         ?                  ^ ^ ^
+E         + err-o-roadrunner 1.2.3
+E         ?                  ^ ^ ^
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[toml_inline_project_table|different|module]" time="0.095"><failure message="AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  ?                  ^ ^ ^&#10;  + err-o-roadrunner 1.2.3&#10;  ?                  ^ ^ ^">pyproject_state = 'toml_inline_project_table', metadata_state = 'different'
+run_mode = 'module'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix233')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         ?                  ^ ^ ^
+E         + err-o-roadrunner 1.2.3
+E         ?                  ^ ^ ^
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[toml_inline_project_table|different|other_cwd]" time="0.094"><failure message="AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  ?                  ^ ^ ^&#10;  + err-o-roadrunner 1.2.3&#10;  ?                  ^ ^ ^">pyproject_state = 'toml_inline_project_table', metadata_state = 'different'
+run_mode = 'other_cwd'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix234')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         ?                  ^ ^ ^
+E         + err-o-roadrunner 1.2.3
+E         ?                  ^ ^ ^
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[toml_inline_project_table|absent|checkout_script]" time="0.095"><failure message="AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  + err-o-roadrunner unknown">pyproject_state = 'toml_inline_project_table', metadata_state = 'absent'
+run_mode = 'checkout_script'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix236')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         + err-o-roadrunner unknown
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[toml_inline_project_table|absent|module]" time="0.093"><failure message="AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  + err-o-roadrunner unknown">pyproject_state = 'toml_inline_project_table', metadata_state = 'absent'
+run_mode = 'module'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix237')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         + err-o-roadrunner unknown
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[toml_inline_project_table|absent|other_cwd]" time="0.095"><failure message="AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  + err-o-roadrunner unknown">pyproject_state = 'toml_inline_project_table', metadata_state = 'absent'
+run_mode = 'other_cwd'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix238')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         + err-o-roadrunner unknown
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[toml_version_unicode_escape|different|checkout_script]" time="0.095"><failure message="AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  ?                  ^ ^ ^&#10;  + err-o-roadrunner 1.2.3&#10;  ?                  ^ ^ ^">pyproject_state = 'toml_version_unicode_escape', metadata_state = 'different'
+run_mode = 'checkout_script'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix244')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         ?                  ^ ^ ^
+E         + err-o-roadrunner 1.2.3
+E         ?                  ^ ^ ^
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[toml_version_unicode_escape|different|module]" time="0.096"><failure message="AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  ?                  ^ ^ ^&#10;  + err-o-roadrunner 1.2.3&#10;  ?                  ^ ^ ^">pyproject_state = 'toml_version_unicode_escape', metadata_state = 'different'
+run_mode = 'module'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix245')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         ?                  ^ ^ ^
+E         + err-o-roadrunner 1.2.3
+E         ?                  ^ ^ ^
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[toml_version_unicode_escape|different|other_cwd]" time="0.094"><failure message="AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  ?                  ^ ^ ^&#10;  + err-o-roadrunner 1.2.3&#10;  ?                  ^ ^ ^">pyproject_state = 'toml_version_unicode_escape', metadata_state = 'different'
+run_mode = 'other_cwd'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix246')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         ?                  ^ ^ ^
+E         + err-o-roadrunner 1.2.3
+E         ?                  ^ ^ ^
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[toml_version_unicode_escape|absent|checkout_script]" time="0.094"><failure message="AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  + err-o-roadrunner unknown">pyproject_state = 'toml_version_unicode_escape', metadata_state = 'absent'
+run_mode = 'checkout_script'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix248')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         + err-o-roadrunner unknown
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[toml_version_unicode_escape|absent|module]" time="0.094"><failure message="AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  + err-o-roadrunner unknown">pyproject_state = 'toml_version_unicode_escape', metadata_state = 'absent'
+run_mode = 'module'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix249')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         + err-o-roadrunner unknown
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_version_resolution_matrix_cell[toml_version_unicode_escape|absent|other_cwd]" time="0.093"><failure message="AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'&#10;  &#10;  - err-o-roadrunner 7.7.7&#10;  + err-o-roadrunner unknown">pyproject_state = 'toml_version_unicode_escape', metadata_state = 'absent'
+run_mode = 'other_cwd'
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-5/test_version_resolution_matrix250')
+
+    @pytest.mark.parametrize(
+        ("pyproject_state", "metadata_state", "run_mode"),
+        MATRIX_CASES,
+        ids=[f"{a}|{b}|{c}" for a, b, c in MATRIX_CASES],
+    )
+    def test_version_resolution_matrix_cell(
+        pyproject_state: str,
+        metadata_state: str,
+        run_mode: str,
+        tmp_path: Path,
+    ) -&gt; None:
+        key = (pyproject_state, metadata_state, run_mode)
+        if key in UNREACHABLE:
+            pytest.skip(UNREACHABLE[key])
+    
+        sandbox = tmp_path / "sandbox"
+        sandbox.mkdir()
+        meta_dir = tmp_path / "meta"
+        meta_dir.mkdir()
+        install_fake_metadata(meta_dir, metadata_version(metadata_state))
+    
+        env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
+        wheel = None
+        if run_mode == "wheel_console":
+            for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
+                (sandbox / name).write_bytes((ROOT / name).read_bytes())
+            write_wheel_build_pyproject(
+                sandbox,
+                pyproject_state,
+                wheel_pyproject_version(metadata_state),
+            )
+            shutil.copy2(ROOT / "README.md", sandbox / "README.md")
+            wheel = build_wheel(sandbox, tmp_path / "wheels")
+        else:
+            populate_sandbox(sandbox, pyproject_state)
+            if pyproject_state == "unreadable_oserror":
+                pyproject = sandbox / "pyproject.toml"
+                if os.access(pyproject, os.R_OK):
+                    pytest.skip("cannot simulate unreadable pyproject.toml on this runner")
+    
+        proc = run_version_cli(
+            sandbox=sandbox,
+            run_mode=run_mode,
+            env=env,
+            wheel=wheel,
+        )
+        assert proc.returncode == 0
+        want = expected_version(pyproject_state, metadata_state, run_mode)
+&gt;       assert proc.stdout.strip() == f"err-o-roadrunner {want}"
+E       AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'
+E         
+E         - err-o-roadrunner 7.7.7
+E         + err-o-roadrunner unknown
+
+tests/test_version_matrix.py:110: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_toml_backends_agree_on_matrix_fixtures[valid]" time="0.001"><failure message="AssertionError: assert '7.7.7' is None">pyproject_state = 'valid'
+
+    @pytest.mark.parametrize("pyproject_state", PYPROJECT_STATES)
+    def test_toml_backends_agree_on_matrix_fixtures(pyproject_state: str) -&gt; None:
+        if pyproject_state in {"missing", "invalid_utf8"}:
+            pytest.skip("no UTF-8 pyproject fixture text")
+        payload = pyproject_bytes(pyproject_state)
+        assert payload is not None
+        text = payload.decode("utf-8")
+    
+        primary = parse_pyproject_version(text)
+        via_tomllib = parse_pyproject_version_via_tomllib(text)
+        via_tomli = parse_pyproject_version_via_tomli(text)
+    
+        def tomllib_parses() -&gt; bool:
+            try:
+                import tomllib
+            except ImportError:
+                return False
+            try:
+                tomllib.loads(text)
+                return True
+            except tomllib.TOMLDecodeError:
+                return False
+    
+        def tomli_parses() -&gt; bool:
+            try:
+                import tomli
+            except ImportError:
+                return False
+            try:
+                tomli.loads(text)
+                return True
+            except tomli.TOMLDecodeError:
+                return False
+    
+        if tomllib_parses():
+            assert via_tomllib == primary
+        else:
+            assert via_tomllib is None
+&gt;           assert primary is None
+E           AssertionError: assert '7.7.7' is None
+
+tests/test_version_matrix.py:190: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_toml_backends_agree_on_matrix_fixtures[single_quoted]" time="0.001"><failure message="AssertionError: assert '7.7.7' is None">pyproject_state = 'single_quoted'
+
+    @pytest.mark.parametrize("pyproject_state", PYPROJECT_STATES)
+    def test_toml_backends_agree_on_matrix_fixtures(pyproject_state: str) -&gt; None:
+        if pyproject_state in {"missing", "invalid_utf8"}:
+            pytest.skip("no UTF-8 pyproject fixture text")
+        payload = pyproject_bytes(pyproject_state)
+        assert payload is not None
+        text = payload.decode("utf-8")
+    
+        primary = parse_pyproject_version(text)
+        via_tomllib = parse_pyproject_version_via_tomllib(text)
+        via_tomli = parse_pyproject_version_via_tomli(text)
+    
+        def tomllib_parses() -&gt; bool:
+            try:
+                import tomllib
+            except ImportError:
+                return False
+            try:
+                tomllib.loads(text)
+                return True
+            except tomllib.TOMLDecodeError:
+                return False
+    
+        def tomli_parses() -&gt; bool:
+            try:
+                import tomli
+            except ImportError:
+                return False
+            try:
+                tomli.loads(text)
+                return True
+            except tomli.TOMLDecodeError:
+                return False
+    
+        if tomllib_parses():
+            assert via_tomllib == primary
+        else:
+            assert via_tomllib is None
+&gt;           assert primary is None
+E           AssertionError: assert '7.7.7' is None
+
+tests/test_version_matrix.py:190: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_toml_backends_agree_on_matrix_fixtures[version_trailing_comment]" time="0.001"><failure message="AssertionError: assert '7.7.7' is None">pyproject_state = 'version_trailing_comment'
+
+    @pytest.mark.parametrize("pyproject_state", PYPROJECT_STATES)
+    def test_toml_backends_agree_on_matrix_fixtures(pyproject_state: str) -&gt; None:
+        if pyproject_state in {"missing", "invalid_utf8"}:
+            pytest.skip("no UTF-8 pyproject fixture text")
+        payload = pyproject_bytes(pyproject_state)
+        assert payload is not None
+        text = payload.decode("utf-8")
+    
+        primary = parse_pyproject_version(text)
+        via_tomllib = parse_pyproject_version_via_tomllib(text)
+        via_tomli = parse_pyproject_version_via_tomli(text)
+    
+        def tomllib_parses() -&gt; bool:
+            try:
+                import tomllib
+            except ImportError:
+                return False
+            try:
+                tomllib.loads(text)
+                return True
+            except tomllib.TOMLDecodeError:
+                return False
+    
+        def tomli_parses() -&gt; bool:
+            try:
+                import tomli
+            except ImportError:
+                return False
+            try:
+                tomli.loads(text)
+                return True
+            except tomli.TOMLDecodeError:
+                return False
+    
+        if tomllib_parses():
+            assert via_tomllib == primary
+        else:
+            assert via_tomllib is None
+&gt;           assert primary is None
+E           AssertionError: assert '7.7.7' is None
+
+tests/test_version_matrix.py:190: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_toml_backends_agree_on_matrix_fixtures[unreadable_oserror]" time="0.001"><failure message="AssertionError: assert '7.7.7' is None">pyproject_state = 'unreadable_oserror'
+
+    @pytest.mark.parametrize("pyproject_state", PYPROJECT_STATES)
+    def test_toml_backends_agree_on_matrix_fixtures(pyproject_state: str) -&gt; None:
+        if pyproject_state in {"missing", "invalid_utf8"}:
+            pytest.skip("no UTF-8 pyproject fixture text")
+        payload = pyproject_bytes(pyproject_state)
+        assert payload is not None
+        text = payload.decode("utf-8")
+    
+        primary = parse_pyproject_version(text)
+        via_tomllib = parse_pyproject_version_via_tomllib(text)
+        via_tomli = parse_pyproject_version_via_tomli(text)
+    
+        def tomllib_parses() -&gt; bool:
+            try:
+                import tomllib
+            except ImportError:
+                return False
+            try:
+                tomllib.loads(text)
+                return True
+            except tomllib.TOMLDecodeError:
+                return False
+    
+        def tomli_parses() -&gt; bool:
+            try:
+                import tomli
+            except ImportError:
+                return False
+            try:
+                tomli.loads(text)
+                return True
+            except tomli.TOMLDecodeError:
+                return False
+    
+        if tomllib_parses():
+            assert via_tomllib == primary
+        else:
+            assert via_tomllib is None
+&gt;           assert primary is None
+E           AssertionError: assert '7.7.7' is None
+
+tests/test_version_matrix.py:190: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_toml_backends_agree_on_matrix_fixtures[version_in_multiline_string]" time="0.001"><failure message="AssertionError: assert '7.7.7' is None">pyproject_state = 'version_in_multiline_string'
+
+    @pytest.mark.parametrize("pyproject_state", PYPROJECT_STATES)
+    def test_toml_backends_agree_on_matrix_fixtures(pyproject_state: str) -&gt; None:
+        if pyproject_state in {"missing", "invalid_utf8"}:
+            pytest.skip("no UTF-8 pyproject fixture text")
+        payload = pyproject_bytes(pyproject_state)
+        assert payload is not None
+        text = payload.decode("utf-8")
+    
+        primary = parse_pyproject_version(text)
+        via_tomllib = parse_pyproject_version_via_tomllib(text)
+        via_tomli = parse_pyproject_version_via_tomli(text)
+    
+        def tomllib_parses() -&gt; bool:
+            try:
+                import tomllib
+            except ImportError:
+                return False
+            try:
+                tomllib.loads(text)
+                return True
+            except tomllib.TOMLDecodeError:
+                return False
+    
+        def tomli_parses() -&gt; bool:
+            try:
+                import tomli
+            except ImportError:
+                return False
+            try:
+                tomli.loads(text)
+                return True
+            except tomli.TOMLDecodeError:
+                return False
+    
+        if tomllib_parses():
+            assert via_tomllib == primary
+        else:
+            assert via_tomllib is None
+&gt;           assert primary is None
+E           AssertionError: assert '7.7.7' is None
+
+tests/test_version_matrix.py:190: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_toml_backends_agree_on_matrix_fixtures[toml_header_comment]" time="0.001"><failure message="AssertionError: assert '7.7.7' is None">pyproject_state = 'toml_header_comment'
+
+    @pytest.mark.parametrize("pyproject_state", PYPROJECT_STATES)
+    def test_toml_backends_agree_on_matrix_fixtures(pyproject_state: str) -&gt; None:
+        if pyproject_state in {"missing", "invalid_utf8"}:
+            pytest.skip("no UTF-8 pyproject fixture text")
+        payload = pyproject_bytes(pyproject_state)
+        assert payload is not None
+        text = payload.decode("utf-8")
+    
+        primary = parse_pyproject_version(text)
+        via_tomllib = parse_pyproject_version_via_tomllib(text)
+        via_tomli = parse_pyproject_version_via_tomli(text)
+    
+        def tomllib_parses() -&gt; bool:
+            try:
+                import tomllib
+            except ImportError:
+                return False
+            try:
+                tomllib.loads(text)
+                return True
+            except tomllib.TOMLDecodeError:
+                return False
+    
+        def tomli_parses() -&gt; bool:
+            try:
+                import tomli
+            except ImportError:
+                return False
+            try:
+                tomli.loads(text)
+                return True
+            except tomli.TOMLDecodeError:
+                return False
+    
+        if tomllib_parses():
+            assert via_tomllib == primary
+        else:
+            assert via_tomllib is None
+&gt;           assert primary is None
+E           AssertionError: assert '7.7.7' is None
+
+tests/test_version_matrix.py:190: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_toml_backends_agree_on_matrix_fixtures[toml_spaced_project_table]" time="0.001"><failure message="AssertionError: assert '7.7.7' is None">pyproject_state = 'toml_spaced_project_table'
+
+    @pytest.mark.parametrize("pyproject_state", PYPROJECT_STATES)
+    def test_toml_backends_agree_on_matrix_fixtures(pyproject_state: str) -&gt; None:
+        if pyproject_state in {"missing", "invalid_utf8"}:
+            pytest.skip("no UTF-8 pyproject fixture text")
+        payload = pyproject_bytes(pyproject_state)
+        assert payload is not None
+        text = payload.decode("utf-8")
+    
+        primary = parse_pyproject_version(text)
+        via_tomllib = parse_pyproject_version_via_tomllib(text)
+        via_tomli = parse_pyproject_version_via_tomli(text)
+    
+        def tomllib_parses() -&gt; bool:
+            try:
+                import tomllib
+            except ImportError:
+                return False
+            try:
+                tomllib.loads(text)
+                return True
+            except tomllib.TOMLDecodeError:
+                return False
+    
+        def tomli_parses() -&gt; bool:
+            try:
+                import tomli
+            except ImportError:
+                return False
+            try:
+                tomli.loads(text)
+                return True
+            except tomli.TOMLDecodeError:
+                return False
+    
+        if tomllib_parses():
+            assert via_tomllib == primary
+        else:
+            assert via_tomllib is None
+&gt;           assert primary is None
+E           AssertionError: assert '7.7.7' is None
+
+tests/test_version_matrix.py:190: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_toml_backends_agree_on_matrix_fixtures[toml_quoted_keys]" time="0.001"><failure message="AssertionError: assert '7.7.7' is None">pyproject_state = 'toml_quoted_keys'
+
+    @pytest.mark.parametrize("pyproject_state", PYPROJECT_STATES)
+    def test_toml_backends_agree_on_matrix_fixtures(pyproject_state: str) -&gt; None:
+        if pyproject_state in {"missing", "invalid_utf8"}:
+            pytest.skip("no UTF-8 pyproject fixture text")
+        payload = pyproject_bytes(pyproject_state)
+        assert payload is not None
+        text = payload.decode("utf-8")
+    
+        primary = parse_pyproject_version(text)
+        via_tomllib = parse_pyproject_version_via_tomllib(text)
+        via_tomli = parse_pyproject_version_via_tomli(text)
+    
+        def tomllib_parses() -&gt; bool:
+            try:
+                import tomllib
+            except ImportError:
+                return False
+            try:
+                tomllib.loads(text)
+                return True
+            except tomllib.TOMLDecodeError:
+                return False
+    
+        def tomli_parses() -&gt; bool:
+            try:
+                import tomli
+            except ImportError:
+                return False
+            try:
+                tomli.loads(text)
+                return True
+            except tomli.TOMLDecodeError:
+                return False
+    
+        if tomllib_parses():
+            assert via_tomllib == primary
+        else:
+            assert via_tomllib is None
+&gt;           assert primary is None
+E           AssertionError: assert '7.7.7' is None
+
+tests/test_version_matrix.py:190: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_toml_backends_agree_on_matrix_fixtures[toml_inline_project_table]" time="0.001"><failure message="AssertionError: assert '7.7.7' is None">pyproject_state = 'toml_inline_project_table'
+
+    @pytest.mark.parametrize("pyproject_state", PYPROJECT_STATES)
+    def test_toml_backends_agree_on_matrix_fixtures(pyproject_state: str) -&gt; None:
+        if pyproject_state in {"missing", "invalid_utf8"}:
+            pytest.skip("no UTF-8 pyproject fixture text")
+        payload = pyproject_bytes(pyproject_state)
+        assert payload is not None
+        text = payload.decode("utf-8")
+    
+        primary = parse_pyproject_version(text)
+        via_tomllib = parse_pyproject_version_via_tomllib(text)
+        via_tomli = parse_pyproject_version_via_tomli(text)
+    
+        def tomllib_parses() -&gt; bool:
+            try:
+                import tomllib
+            except ImportError:
+                return False
+            try:
+                tomllib.loads(text)
+                return True
+            except tomllib.TOMLDecodeError:
+                return False
+    
+        def tomli_parses() -&gt; bool:
+            try:
+                import tomli
+            except ImportError:
+                return False
+            try:
+                tomli.loads(text)
+                return True
+            except tomli.TOMLDecodeError:
+                return False
+    
+        if tomllib_parses():
+            assert via_tomllib == primary
+        else:
+            assert via_tomllib is None
+&gt;           assert primary is None
+E           AssertionError: assert '7.7.7' is None
+
+tests/test_version_matrix.py:190: AssertionError</failure></testcase><testcase classname="tests.test_version_matrix" name="test_toml_backends_agree_on_matrix_fixtures[toml_version_unicode_escape]" time="0.001"><failure message="AssertionError: assert '7.7.7' is None">pyproject_state = 'toml_version_unicode_escape'
+
+    @pytest.mark.parametrize("pyproject_state", PYPROJECT_STATES)
+    def test_toml_backends_agree_on_matrix_fixtures(pyproject_state: str) -&gt; None:
+        if pyproject_state in {"missing", "invalid_utf8"}:
+            pytest.skip("no UTF-8 pyproject fixture text")
+        payload = pyproject_bytes(pyproject_state)
+        assert payload is not None
+        text = payload.decode("utf-8")
+    
+        primary = parse_pyproject_version(text)
+        via_tomllib = parse_pyproject_version_via_tomllib(text)
+        via_tomli = parse_pyproject_version_via_tomli(text)
+    
+        def tomllib_parses() -&gt; bool:
+            try:
+                import tomllib
+            except ImportError:
+                return False
+            try:
+                tomllib.loads(text)
+                return True
+            except tomllib.TOMLDecodeError:
+                return False
+    
+        def tomli_parses() -&gt; bool:
+            try:
+                import tomli
+            except ImportError:
+                return False
+            try:
+                tomli.loads(text)
+                return True
+            except tomli.TOMLDecodeError:
+                return False
+    
+        if tomllib_parses():
+            assert via_tomllib == primary
+        else:
+            assert via_tomllib is None
+&gt;           assert primary is None
+E           AssertionError: assert '7.7.7' is None
+
+tests/test_version_matrix.py:190: AssertionError</failure></testcase></testsuite></testsuites>

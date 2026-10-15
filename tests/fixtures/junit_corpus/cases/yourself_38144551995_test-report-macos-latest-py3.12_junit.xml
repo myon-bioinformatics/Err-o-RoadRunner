@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="93" time="3.296" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_direct" name="test_default_readonly" time="0.023"><failure message="AssertionError: assert ({'errors': ['unsupported_platform'], 'measured': False, 'tcp_ports': []} is None or 'bindings' in {'errors': ['unsupported_platform'], 'measured': False, 'tcp_ports': []})">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+tmp_path = PosixPath('/private/var/folders/36/tjdph2t965j8snz9_vkdnw0r0000gn/T/pytest-of-runner/pytest-0/test_default_readonly0')
+capsys = &lt;_pytest.capture.CaptureFixture object at 0x&lt;addr&gt;&gt;
+
+    def test_default_readonly(monkeypatch, tmp_path, capsys):
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.setattr(yourself.subprocess, "run", lambda *a, **k: pytest.fail("executed tool"))
+        (tmp_path / "pyproject.toml").write_text("SECRET_TOKEN = 'never-read'")
+        assert yourself.main(["--format", "json", "--no-probes"]) == 0  # probes are the only executions
+        report = json.loads(capsys.readouterr().out)
+        assert report["host"] is None
+        # The CLI now lists local listeners (proc read, not an execution).
+&gt;       assert report["listeners"] is None or "bindings" in report["listeners"]
+E       AssertionError: assert ({'errors': ['unsupported_platform'], 'measured': False, 'tcp_ports': []} is None or 'bindings' in {'errors': ['unsupported_platform'], 'measured': False, 'tcp_ports': []})
+
+&lt;user-home&gt;/work/yourself/yourself/tests/test_direct.py:18: AssertionError</failure></testcase></testsuite></testsuites>

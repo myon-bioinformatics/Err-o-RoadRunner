@@ -1,0 +1,26 @@
+{
+  "org": "myon-bioinformatics",
+  "note": "Public, non-archived repositories whose failed CI runs feed the failure corpus. Refresh with: gh repo list myon-bioinformatics --visibility public --no-archived",
+  "repos": [
+    "Aoi",
+    "BlueProbe",
+    "Err-o-RoadRunner",
+    "Ironmate",
+    "ascii_artist",
+    "browser-test-kit",
+    "cli_args",
+    "flutter_navigation_basic",
+    "gh_identity",
+    "markdown",
+    "mcp-toolcall-lab",
+    "myon-bioinformatics",
+    "myon-bioinformatics.github.io",
+    "nvd_nist_known_vulns",
+    "search_seq_including_spaces",
+    "web-ui",
+    "xprobe",
+    "yourself"
+  ],
+  "artifact_markers": ["junit", "failure-identity", "test-report", "test-results", "playwright-report", "pytest-events", "results"],
+  "skip_workflows": ["Copilot", "copilot-pull-request-reviewer", "Copilot code review"]
+}

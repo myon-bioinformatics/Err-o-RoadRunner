@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="1" tests="137" time="23.291" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_runner_fingerprint" name="test_imagedata_garbage_and_missing" time="0.034"><failure message="AssertionError: assert 'not_object' == 'invalid_json'&#10;  &#10;  - invalid_json&#10;  + not_object">tmp_path = WindowsPath('C:&lt;user-home&gt;/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_imagedata_garbage_and_mis0')
+
+    def test_imagedata_garbage_and_missing(tmp_path):
+        img_dir = tmp_path / "imagegeneration"
+        img_dir.mkdir()
+        bad = img_dir / "imagedata.json"
+        bad.write_text("{not json", encoding="utf-8")
+        fp = yourself.runner_fingerprint(environ={}, root=str(tmp_path),
+                                         etc_root=str(tmp_path), sys_root=str(tmp_path))
+        assert fp["imagedata"]["ok"] is False
+&gt;       assert fp["imagedata"]["reason"] == "invalid_json"
+E       AssertionError: assert 'not_object' == 'invalid_json'
+E         
+E         - invalid_json
+E         + not_object
+
+tests\test_runner_fingerprint.py:31: AssertionError</failure></testcase><testcase classname="tests.test_runner_fingerprint" name="test_imagedata_success" time="0.029"><failure message="assert False is True">tmp_path = WindowsPath('C:&lt;user-home&gt;/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_imagedata_success0')
+
+    def test_imagedata_success(tmp_path):
+        img_dir = tmp_path / "imagegeneration"
+        img_dir.mkdir()
+        (img_dir / "imagedata.json").write_text('{"image":"ubuntu-24.04"}', encoding="utf-8")
+        fp = yourself.runner_fingerprint(environ={}, root=str(tmp_path),
+                                         etc_root=str(tmp_path), sys_root=str(tmp_path))
+&gt;       assert fp["imagedata"]["ok"] is True
+E       assert False is True
+
+tests\test_runner_fingerprint.py:40: AssertionError</failure></testcase><testcase classname="tests.test_runner_fingerprint" name="test_os_release_parsed" time="0.028"><failure message="KeyError: 'os_release'">tmp_path = WindowsPath('C:&lt;user-home&gt;/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_os_release_parsed0')
+
+    def test_os_release_parsed(tmp_path):
+        etc = tmp_path / "etc"
+        etc.mkdir()
+        (etc / "os-release").write_text('ID=ubuntu\nVERSION_ID="24.04"\n', encoding="utf-8")
+        fp = yourself.runner_fingerprint(environ={}, root=str(tmp_path), etc_root=str(etc),
+                                         sys_root=str(tmp_path))
+&gt;       assert fp["os_identity"]["os_release"]["value"]["ID"] == "ubuntu"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'os_release'
+
+tests\test_runner_fingerprint.py:50: KeyError</failure></testcase></testsuite></testsuites>

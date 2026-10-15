@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="3" time="0.199" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_blueprobe_html_source" name="test_verified_cache_real_lab_snapshot_replay" time="0.003"><failure message="ImportError: cannot import name 'Cache' from 'queryu' (unknown location)">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_verified_cache_real_lab_s0')
+lab_source_access = &lt;module 'mcp_toolcall_lab.source_access' from '&lt;runner-work&gt;/.test-deps/lab/src/mcp_toolcall_lab/source_access.py'&gt;
+
+    def test_verified_cache_real_lab_snapshot_replay(tmp_path, lab_source_access):
+        import hashlib
+        import npb_calendar
+        from pathlib import Path
+        from blueprobe import inspect_cache
+&gt;       from queryu import Cache
+E       ImportError: cannot import name 'Cache' from 'queryu' (unknown location)
+
+blueprobe/tests/test_blueprobe_html_source.py:137: ImportError</failure></testcase></testsuite></testsuites>

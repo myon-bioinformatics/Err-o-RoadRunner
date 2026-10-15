@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="2" tests="633" time="11.299" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_vendor_parent_evidence" name="test_plan_heads_refresh_drops_unmonitored_stale_entries" time="0.078"><failure message="urllib.error.HTTPError: HTTP Error 403: rate limit exceeded">def test_plan_heads_refresh_drops_unmonitored_stale_entries():
+        registry = {'schema': 'vendor-consumers/1', 'consumers': []}
+        heads = {
+            'schema': sync.CHILD_HEADS_SCHEMA,
+            'ref': 'main',
+            'heads': {
+                NAME: {'sha': SHA, 'repository_id': 42},
+                'owner/former-public': {'sha': NEW, 'repository_id': 99},
+            },
+        }
+&gt;       plan = sync.plan_heads_refresh(
+            registry, heads, {NAME: {'sha': NEW, 'repository_id': 42}}, TEMPLATE.decode(),
+        )
+
+tests/test_vendor_parent_evidence.py:155: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+vendor_sync.py:864: in plan_heads_refresh
+    reason = _workflow_refresh_block_reason(
+vendor_sync.py:824: in _workflow_refresh_block_reason
+    old_text = _fetch_repo_text(name, CHILD_CI_WORKFLOW_PATH, old_sha, _api_token(token))
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+vendor_sync.py:1931: in _fetch_repo_text
+    data = _github_json(url, token)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+vendor_sync.py:1910: in _github_json
+    with urlopen(Request(url, headers=headers), timeout=30) as response:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;toolcache&gt;/Python/3.13.16/x64/lib/python3.13/urllib/request.py:189: in urlopen
+    return opener.open(url, data, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;toolcache&gt;/Python/3.13.16/x64/lib/python3.13/urllib/request.py:495: in open
+    response = meth(req, response)
+               ^^^^^^^^^^^^^^^^^^^
+&lt;toolcache&gt;/Python/3.13.16/x64/lib/python3.13/urllib/request.py:604: in http_response
+    response = self.parent.error(
+&lt;toolcache&gt;/Python/3.13.16/x64/lib/python3.13/urllib/request.py:533: in error
+    return self._call_chain(*args)
+           ^^^^^^^^^^^^^^^^^^^^^^^
+&lt;toolcache&gt;/Python/3.13.16/x64/lib/python3.13/urllib/request.py:466: in _call_chain
+    result = func(*args)
+             ^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;urllib.request.HTTPDefaultErrorHandler object at 0x&lt;addr&gt;&gt;
+req = &lt;urllib.request.Request object at 0x&lt;addr&gt;&gt;
+fp = &lt;http.client.HTTPResponse object at 0x&lt;addr&gt;&gt;, code = 403
+msg = 'rate limit exceeded'
+hdrs = &lt;http.client.HTTPMessage object at 0x&lt;addr&gt;&gt;
+
+    def http_error_default(self, req, fp, code, msg, hdrs):
+&gt;       raise HTTPError(req.full_url, code, msg, hdrs, fp)
+E       urllib.error.HTTPError: HTTP Error 403: rate limit exceeded
+
+&lt;toolcache&gt;/Python/3.13.16/x64/lib/python3.13/urllib/request.py:613: HTTPError</failure></testcase></testsuite></testsuites>

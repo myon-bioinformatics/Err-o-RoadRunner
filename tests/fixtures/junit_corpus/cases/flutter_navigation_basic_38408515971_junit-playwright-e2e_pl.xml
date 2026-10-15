@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites id="" name="" tests="195" failures="5" skipped="6" errors="0" time="902.369021"><testsuite name="home_discovery_journeys.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="3" failures="1" skipped="0" time="23.058" errors="0"><testcase name="Home discovery journeys › Door-to-Door dropdown navigates from URL Params to another tool @portable" classname="home_discovery_journeys.spec.ts" time="6.517"><system-out>
+::notice title=journey chromium::Door-to-Door dropdown navigates from URL Params to another tool @portable :: Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoContainText[2m([22m[32mexpected[39m[2m)[22m failed
+journey-semantics chromium [{"role":null,"id":"shared-header-home","name":null,"text":"Home","box":{"x":1160,"y":8,"width":40,"height":40}},{"role":null,"id":"shared-header-favorite","name":null,"text":"Favorite this page","box":{"x":1200,"y":8,"width":40,"height":40}},{"role":null,"id":"shared-header-menu","name":null,"text":"Menu","box":{"x":1240,"y":8,"width":40,"height":40}},{"role":"group","id":null,"name":"Door-to-Door tools","text":"Door-to-Door tools\nURL Params(Screen 5🔗) (current)","box":{"x":12,"y":558,"width":1256,"height":122}},{"role":"group","id":null,"name":"Door-to-Door tools\nJump to another tool without going Home first.","text":"Door-to-Door tools\nURL Params(Screen 5🔗) (current)","box":{"x":12,"y":558,"width":1256,"height":122}},{"role":"button","id":"tool-door-dropdown","name":null,"text":"Door-to-Door tools\nURL Params(Screen 5🔗) (current)","box":{"x":32,"y":624,"width":1216,"height":40}}]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-chromium/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-chromium/error-context.md]]
+
+</system-out>
+<failure message="expect(locator).toContainText(expected) failed" type="expect.toContainText">
+  [chromium] › home_discovery_journeys.spec.ts:112:7 › Home discovery journeys › Door-to-Door dropdown navigates from URL Params to another tool @portable 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('[flt-semantics-identifier="tool-door-dropdown"]')
+    Timeout: 5000ms
+    - Expected substring  - 1
+    + Received string     + 2
+
+    - URL Params (current)
+    + Door-to-Door tools
+    + URL Params(Screen 5🔗) (current)
+
+    Call log:
+      - Expect "toContainText" locator('[flt-semantics-identifier="tool-door-dropdown"]') with timeout 5000ms
+      - waiting for locator('[flt-semantics-identifier="tool-door-dropdown"]')
+        13 × locator resolved to &lt;flt-semantics tabindex="0" role="button" flt-tappable="" aria-invalid="false" aria-expanded="false" id="flt-semantic-node-20" flt-semantics-identifier="tool-door-dropdown"&gt;Door-to-Door tools↵URL Params(Screen 5🔗) (current)&lt;/flt-semantics&gt;
+           - unexpected value "Door-to-Door tools
+    URL Params(Screen 5🔗) (current)"
+
+
+      55 |   await expect(button).toHaveCount(1);
+      56 |   await expect(button).toBeVisible();
+    &gt; 57 |   await expect(button).toContainText(`${current} (current)`);
+         |                        ^
+      58 |   return button;
+      59 | }
+      60 |
+        at doorButton (&lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:57:24)
+        at &lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:116:26
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-chromium/error-context.md
+
+</failure>
+</testcase></testsuite><testsuite name="home_discovery_journeys.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="3" failures="1" skipped="0" time="26.958" errors="0"><testcase name="Home discovery journeys › Door-to-Door dropdown navigates from URL Params to another tool @portable" classname="home_discovery_journeys.spec.ts" time="6.903"><system-out>
+::notice title=journey firefox::Door-to-Door dropdown navigates from URL Params to another tool @portable :: Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoContainText[2m([22m[32mexpected[39m[2m)[22m failed
+journey-semantics firefox [{"role":null,"id":"shared-header-home","name":null,"text":"Home","box":{"x":1160,"y":8,"width":40,"height":40}},{"role":null,"id":"shared-header-favorite","name":null,"text":"Favorite this page","box":{"x":1200,"y":8,"width":40,"height":40}},{"role":null,"id":"shared-header-menu","name":null,"text":"Menu","box":{"x":1240,"y":8,"width":40,"height":40}},{"role":"group","id":null,"name":"Door-to-Door tools","text":"Door-to-Door tools\nURL Params(Screen 5🔗) (current)","box":{"x":12,"y":558,"width":1256,"height":122}},{"role":"group","id":null,"name":"Door-to-Door tools\nJump to another tool without going Home first.","text":"Door-to-Door tools\nURL Params(Screen 5🔗) (current)","box":{"x":12,"y":558,"width":1256,"height":122}},{"role":"button","id":"tool-door-dropdown","name":null,"text":"Door-to-Door tools\nURL Params(Screen 5🔗) (current)","box":{"x":32,"y":624,"width":1216,"height":40}}]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-firefox/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-firefox/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-firefox/error-context.md]]
+
+</system-out>
+<failure message="expect(locator).toContainText(expected) failed" type="expect.toContainText">
+  [firefox] › home_discovery_journeys.spec.ts:112:7 › Home discovery journeys › Door-to-Door dropdown navigates from URL Params to another tool @portable 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('[flt-semantics-identifier="tool-door-dropdown"]')
+    Timeout: 5000ms
+    - Expected substring  - 1
+    + Received string     + 2
+
+    - URL Params (current)
+    + Door-to-Door tools
+    + URL Params(Screen 5🔗) (current)
+
+    Call log:
+      - Expect "toContainText" locator('[flt-semantics-identifier="tool-door-dropdown"]') with timeout 5000ms
+      - waiting for locator('[flt-semantics-identifier="tool-door-dropdown"]')
+        14 × locator resolved to &lt;flt-semantics tabindex="0" role="button" flt-tappable="" aria-invalid="false" aria-expanded="false" id="flt-semantic-node-20" flt-semantics-identifier="tool-door-dropdown"&gt;Door-to-Door tools↵URL Params(Screen 5🔗) (current)&lt;/flt-semantics&gt;
+           - unexpected value "Door-to-Door tools
+    URL Params(Screen 5🔗) (current)"
+
+
+      55 |   await expect(button).toHaveCount(1);
+      56 |   await expect(button).toBeVisible();
+    &gt; 57 |   await expect(button).toContainText(`${current} (current)`);
+         |                        ^
+      58 |   return button;
+      59 | }
+      60 |
+        at doorButton (&lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:57:24)
+        at &lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:116:26
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-firefox/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-firefox/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-firefox/error-context.md
+
+</failure>
+</testcase></testsuite><testsuite name="home_discovery_journeys.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="3" failures="1" skipped="0" time="43.56" errors="0"><testcase name="Home discovery journeys › Door-to-Door dropdown navigates from URL Params to another tool @portable" classname="home_discovery_journeys.spec.ts" time="7.597"><system-out>
+::notice title=journey webkit::Door-to-Door dropdown navigates from URL Params to another tool @portable :: Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoContainText[2m([22m[32mexpected[39m[2m)[22m failed
+journey-semantics webkit [{"role":null,"id":"shared-header-home","name":null,"text":"Home","box":{"x":1160,"y":8,"width":40,"height":40}},{"role":null,"id":"shared-header-favorite","name":null,"text":"Favorite this page","box":{"x":1200,"y":8,"width":40,"height":40}},{"role":null,"id":"shared-header-menu","name":null,"text":"Menu","box":{"x":1240,"y":8,"width":40,"height":40}},{"role":"group","id":null,"name":"Door-to-Door tools","text":"Door-to-Door tools\nURL Params(Screen 5🔗) (current)","box":{"x":12,"y":558,"width":1256,"height":122}},{"role":"group","id":null,"name":"Door-to-Door tools\nJump to another tool without going Home first.","text":"Door-to-Door tools\nURL Params(Screen 5🔗) (current)","box":{"x":12,"y":558,"width":1256,"height":122}},{"role":"button","id":"tool-door-dropdown","name":null,"text":"Door-to-Door tools\nURL Params(Screen 5🔗) (current)","box":{"x":32,"y":624,"width":1216,"height":40}}]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-webkit/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-webkit/error-context.md]]
+
+</system-out>
+<failure message="expect(locator).toContainText(expected) failed" type="expect.toContainText">
+  [webkit] › home_discovery_journeys.spec.ts:112:7 › Home discovery journeys › Door-to-Door dropdown navigates from URL Params to another tool @portable 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('[flt-semantics-identifier="tool-door-dropdown"]')
+    Timeout: 5000ms
+    - Expected substring  - 1
+    + Received string     + 2
+
+    - URL Params (current)
+    + Door-to-Door tools
+    + URL Params(Screen 5🔗) (current)
+
+    Call log:
+      - Expect "toContainText" locator('[flt-semantics-identifier="tool-door-dropdown"]') with timeout 5000ms
+      - waiting for locator('[flt-semantics-identifier="tool-door-dropdown"]')
+        13 × locator resolved to &lt;flt-semantics tabindex="0" role="button" flt-tappable="" aria-invalid="false" aria-expanded="false" id="flt-semantic-node-20" flt-semantics-identifier="tool-door-dropdown"&gt;Door-to-Door tools↵URL Params(Screen 5🔗) (current)&lt;/flt-semantics&gt;
+           - unexpected value "Door-to-Door tools
+    URL Params(Screen 5🔗) (current)"
+
+
+      55 |   await expect(button).toHaveCount(1);
+      56 |   await expect(button).toBeVisible();
+    &gt; 57 |   await expect(button).toContainText(`${current} (current)`);
+         |                        ^
+      58 |   return button;
+      59 | }
+      60 |
+        at doorButton (&lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:57:24)
+        at &lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:116:26
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-webkit/error-context.md
+
+</failure>
+</testcase></testsuite><testsuite name="home_discovery_journeys.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="3" failures="1" skipped="0" time="26.902" errors="0"><testcase name="Home discovery journeys › Door-to-Door dropdown navigates from URL Params to another tool @portable" classname="home_discovery_journeys.spec.ts" time="6.634"><system-out>
+::notice title=journey mobile-chromium::Door-to-Door dropdown navigates from URL Params to another tool @portable :: Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoContainText[2m([22m[32mexpected[39m[2m)[22m failed
+journey-semantics mobile-chromium [{"role":null,"id":"shared-header-home","name":null,"text":"Home","box":{"x":268,"y":4,"width":48,"height":48}},{"role":null,"id":"shared-header-favorite","name":null,"text":"Favorite this page","box":{"x":316,"y":4,"width":48,"height":48}},{"role":null,"id":"shared-header-menu","name":null,"text":"Menu","box":{"x":364,"y":4,"width":48,"height":48}},{"role":"group","id":null,"name":"Door-to-Door tools","text":"Door-to-Door tools\nURL Params(Screen 5🔗) (current)","box":{"x":12,"y":669,"width":388,"height":130}},{"role":"group","id":null,"name":"Door-to-Door tools\nJump to another tool without going Home first.","text":"Door-to-Door tools\nURL Params(Screen 5🔗) (current)","box":{"x":12,"y":669,"width":388,"height":130}},{"role":"button","id":"tool-door-dropdown","name":null,"text":"Door-to-Door tools\nURL Params(Screen 5🔗) (current)","box":{"x":32,"y":735,"width":348,"height":48}}]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-mobile-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-mobile-chromium/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-mobile-chromium/error-context.md]]
+
+</system-out>
+<failure message="expect(locator).toContainText(expected) failed" type="expect.toContainText">
+  [mobile-chromium] › home_discovery_journeys.spec.ts:112:7 › Home discovery journeys › Door-to-Door dropdown navigates from URL Params to another tool @portable 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('[flt-semantics-identifier="tool-door-dropdown"]')
+    Timeout: 5000ms
+    - Expected substring  - 1
+    + Received string     + 2
+
+    - URL Params (current)
+    + Door-to-Door tools
+    + URL Params(Screen 5🔗) (current)
+
+    Call log:
+      - Expect "toContainText" locator('[flt-semantics-identifier="tool-door-dropdown"]') with timeout 5000ms
+      - waiting for locator('[flt-semantics-identifier="tool-door-dropdown"]')
+        13 × locator resolved to &lt;flt-semantics tabindex="0" role="button" flt-tappable="" aria-invalid="false" aria-expanded="false" id="flt-semantic-node-22" flt-semantics-identifier="tool-door-dropdown"&gt;Door-to-Door tools↵URL Params(Screen 5🔗) (current)&lt;/flt-semantics&gt;
+           - unexpected value "Door-to-Door tools
+    URL Params(Screen 5🔗) (current)"
+
+
+      55 |   await expect(button).toHaveCount(1);
+      56 |   await expect(button).toBeVisible();
+    &gt; 57 |   await expect(button).toContainText(`${current} (current)`);
+         |                        ^
+      58 |   return button;
+      59 | }
+      60 |
+        at doorButton (&lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:57:24)
+        at &lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:116:26
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-mobile-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-mobile-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-mobile-chromium/error-context.md
+
+</failure>
+</testcase></testsuite><testsuite name="home_discovery_journeys.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="3" failures="1" skipped="0" time="24.998" errors="0"><testcase name="Home discovery journeys › Door-to-Door dropdown navigates from URL Params to another tool @portable" classname="home_discovery_journeys.spec.ts" time="6.575"><system-out>
+::notice title=journey mobile-webkit::Door-to-Door dropdown navigates from URL Params to another tool @portable :: Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoContainText[2m([22m[32mexpected[39m[2m)[22m failed
+journey-semantics mobile-webkit [{"role":null,"id":"shared-header-home","name":null,"text":"Home","box":{"x":270,"y":8,"width":40,"height":40}},{"role":null,"id":"shared-header-favorite","name":null,"text":"Favorite this page","box":{"x":310,"y":8,"width":40,"height":40}},{"role":null,"id":"shared-header-menu","name":null,"text":"Menu","box":{"x":350,"y":8,"width":40,"height":40}},{"role":"group","id":null,"name":"Door-to-Door tools","text":"Door-to-Door tools\nURL Params(Screen 5🔗) (current)","box":{"x":12,"y":502,"width":366,"height":122}},{"role":"group","id":null,"name":"Door-to-Door tools\nJump to another tool without going Home first.","text":"Door-to-Door tools\nURL Params(Screen 5🔗) (current)","box":{"x":12,"y":502,"width":366,"height":122}},{"role":"button","id":"tool-door-dropdown","name":null,"text":"Door-to-Door tools\nURL Params(Screen 5🔗) (current)","box":{"x":32,"y":568,"width":326,"height":40}}]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-mobile-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-mobile-webkit/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-mobile-webkit/error-context.md]]
+
+</system-out>
+<failure message="expect(locator).toContainText(expected) failed" type="expect.toContainText">
+  [mobile-webkit] › home_discovery_journeys.spec.ts:112:7 › Home discovery journeys › Door-to-Door dropdown navigates from URL Params to another tool @portable 
+
+    Error: expect(locator).toContainText(expected) failed
+
+    Locator: locator('[flt-semantics-identifier="tool-door-dropdown"]')
+    Timeout: 5000ms
+    - Expected substring  - 1
+    + Received string     + 2
+
+    - URL Params (current)
+    + Door-to-Door tools
+    + URL Params(Screen 5🔗) (current)
+
+    Call log:
+      - Expect "toContainText" locator('[flt-semantics-identifier="tool-door-dropdown"]') with timeout 5000ms
+      - waiting for locator('[flt-semantics-identifier="tool-door-dropdown"]')
+        13 × locator resolved to &lt;flt-semantics tabindex="0" role="button" flt-tappable="" aria-invalid="false" aria-expanded="false" id="flt-semantic-node-20" flt-semantics-identifier="tool-door-dropdown"&gt;Door-to-Door tools↵URL Params(Screen 5🔗) (current)&lt;/flt-semantics&gt;
+           - unexpected value "Door-to-Door tools
+    URL Params(Screen 5🔗) (current)"
+
+
+      55 |   await expect(button).toHaveCount(1);
+      56 |   await expect(button).toBeVisible();
+    &gt; 57 |   await expect(button).toContainText(`${current} (current)`);
+         |                        ^
+      58 |   return button;
+      59 | }
+      60 |
+        at doorButton (&lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:57:24)
+        at &lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:116:26
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-mobile-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-mobile-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-mobile-webkit/error-context.md
+
+</failure>
+</testcase></testsuite></testsuites>

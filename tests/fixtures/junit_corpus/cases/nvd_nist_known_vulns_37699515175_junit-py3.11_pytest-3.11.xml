@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="34" time="0.349" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_vendor_workflow" name="test_public_vendor_ci_updates_without_repository_writes" time="0.010"><failure message="AssertionError: assert ['python -S ....or.lock.json'] == ['python -S ....or.lock.json']&#10;  &#10;  At index 0 diff: 'python -S .vendor-sync-tools/vendor_sync.py promote --manifest vendor.lock.json | tee vendor-promotion.json' != 'python -S .vendor-sync-tools/vendor_sync.py update --manifest vendor.lock.json'&#10;  Left contains one more item: 'python -S .vendor-sync-tools/vendor_sync.py check --manifest vendor.lock.json'&#10;  &#10;  Full diff:&#10;    [&#10;  -     'python -S .vendor-sync-tools/vendor_sync.py update --manifest '&#10;  ?                                                  - ^^&#10;  +     'python -S .vendor-sync-tools/vendor_sync.py promote --manifest '&#10;  ?                                                   ^^^^&#10;  -     'vendor.lock.json',&#10;  +     'vendor.lock.json | tee vendor-promotion.json',&#10;  +     'python -S -m json.tool vendor-promotion.json &gt; /dev/null',&#10;        'python -S .vendor-sync-tools/vendor_sync.py check --manifest '&#10;        'vendor.lock.json',&#10;    ]">def test_public_vendor_ci_updates_without_repository_writes():
+        import yaml
+        ci = yaml.load((ROOT / '.github/workflows/python.yml').read_text(encoding='utf-8'), Loader=yaml.BaseLoader)
+        jobs = ci['jobs']
+        resolve = jobs['resolve-vendor']['steps']
+        test = jobs['test']['steps']
+        update = next(s for s in resolve if s.get('name') == 'Update public vendor files for this run')
+        assert update['if'] == "inputs.vendor-mode != 'locked'"
+        assert update['shell'] == 'bash'
+        assert not any(word in update['run'] for word in ('|| true', '|| :', 'set +e'))
+        assert 'continue-on-error' not in update
+&gt;       assert update['run'].splitlines() == [
+            'python -S .vendor-sync-tools/vendor_sync.py update --manifest vendor.lock.json',
+            'python -S .vendor-sync-tools/vendor_sync.py check --manifest vendor.lock.json']
+E       AssertionError: assert ['python -S ....or.lock.json'] == ['python -S ....or.lock.json']
+E         
+E         At index 0 diff: 'python -S .vendor-sync-tools/vendor_sync.py promote --manifest vendor.lock.json | tee vendor-promotion.json' != 'python -S .vendor-sync-tools/vendor_sync.py update --manifest vendor.lock.json'
+E         Left contains one more item: 'python -S .vendor-sync-tools/vendor_sync.py check --manifest vendor.lock.json'
+E         
+E         Full diff:
+E           [
+E         -     'python -S .vendor-sync-tools/vendor_sync.py update --manifest '
+E         ?                                                  - ^^
+E         +     'python -S .vendor-sync-tools/vendor_sync.py promote --manifest '
+E         ?                                                   ^^^^
+E         -     'vendor.lock.json',
+E         +     'vendor.lock.json | tee vendor-promotion.json',
+E         +     'python -S -m json.tool vendor-promotion.json &gt; /dev/null',
+E               'python -S .vendor-sync-tools/vendor_sync.py check --manifest '
+E               'vendor.lock.json',
+E           ]
+
+tests/test_vendor_workflow.py:19: AssertionError</failure></testcase></testsuite></testsuites>

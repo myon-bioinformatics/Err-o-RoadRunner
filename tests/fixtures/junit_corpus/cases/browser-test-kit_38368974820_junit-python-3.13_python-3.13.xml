@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="451" time="62.116" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.python.test_interaction" name="test_press_reaches_coordinate_hit_target_and_watch_records[firefox]" time="2.565"><failure message="AssertionError: assert ['http://side...valid/beacon'] == ['http://side...valid/beacon']&#10;  &#10;  Left contains one more item: 'https://side-effect.invalid/beacon'&#10;  &#10;  Full diff:&#10;    [&#10;        'http://side-effect.invalid/beacon',&#10;  +     'https://side-effect.invalid/beacon',&#10;    ]">browser_name = 'firefox'
+
+    @pytest.mark.parametrize("browser_name", ("chromium", "firefox", "webkit"))
+    def test_press_reaches_coordinate_hit_target_and_watch_records(browser_name):
+        from playwright.sync_api import sync_playwright, Error as PlaywrightError
+        with sync_playwright() as pw:
+            browser = getattr(pw, browser_name).launch()
+            try:
+                page = browser.new_page(viewport=VIEW)
+                page.goto(URL)
+                target, log = page.locator("#target"), page.locator("#log")
+                # Actionability sees the pane on top: the DOM click path cannot work.
+                with pytest.raises(PlaywrightError):
+                    target.click(timeout=500)
+                record = interaction.press(page, target, touch=False)
+                assert log.inner_text() == "pressed 1 mouse"
+                assert record["hit"] == {"tag": "div", "self": False}
+                assert record["visible_ratio"] == 1.0 and isinstance(record["x"], int) and record["input_source"] == "explicit"
+                # A synthetic DOM click "passes" through a path no real input can take.
+                target.evaluate("el =&gt; el.click()")
+                assert log.inner_text() == "synthetic"
+    
+                page.goto(URL)
+                w = interaction.watch(page)
+                page.locator("#quiet").click()
+                assert w.stop()["quiet"] is True
+                w = interaction.watch(page)
+                page.locator("#noisy").click()
+                page.wait_for_timeout(200)
+                report = w.stop()
+                assert report["quiet"] is False
+&gt;               assert report["requests"] == ["http://side-effect.invalid/beacon"]
+E               AssertionError: assert ['http://side...valid/beacon'] == ['http://side...valid/beacon']
+E                 
+E                 Left contains one more item: 'https://side-effect.invalid/beacon'
+E                 
+E                 Full diff:
+E                   [
+E                       'http://side-effect.invalid/beacon',
+E                 +     'https://side-effect.invalid/beacon',
+E                   ]
+
+tests/python/test_interaction.py:87: AssertionError</failure></testcase></testsuite></testsuites>

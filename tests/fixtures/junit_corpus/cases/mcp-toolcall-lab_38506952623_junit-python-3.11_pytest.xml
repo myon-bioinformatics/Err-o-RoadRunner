@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="6" tests="987" time="43.417" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_vendor_staging.VendorStagingTests" name="test_workflow_payload_and_fail_closed" time="0.001"><failure message="AssertionError: [] is not true">self = &lt;tests.test_vendor_staging.VendorStagingTests testMethod=test_workflow_payload_and_fail_closed&gt;
+
+    def test_workflow_payload_and_fail_closed(self):
+        tool = ROOT / '.vendor-sync-tools/vendor_stage.py'
+        if not tool.is_file():
+            self.skipTest('requires the workflow full-SHA parent checkout')
+        commands = []
+        for workflow in (ROOT / '.github/workflows').glob('*.yml'):
+            text = workflow.read_text(encoding='utf-8')
+            for match in re.finditer(r'(?m)^( +)- name: Stage canonical vendor evidence\n', text):
+                indent = match[1]
+                tail = text[match.end():]
+                block = re.split(r'\n' + indent + r'- ', tail, maxsplit=1)[0] + '\n'
+                self.assertIn('if: always()', block)
+                self.assertNotIn('continue-on-error', block)
+                run = re.search(r'(?m)^' + indent + r'  run: &gt;-\n((?:' + indent + r'    [^\n]*\n)+)', block)
+                self.assertIsNotNone(run)
+                command = ' '.join(line.strip() for line in run[1].splitlines())
+                if '$VENDOR_EVIDENCE_KIND' in command:
+                    self.assertIn('--promotion-receipt vendor-promotion.json', command)
+                output = shlex.split(command)[shlex.split(command).index('--output') + 1]
+                upload = re.split(r'\n' + indent + r'- ', tail, maxsplit=1)[1]
+                self.assertIn('path: ' + output, upload.split('retention-days:', 1)[0])
+                commands.append(command)
+&gt;       self.assertTrue(commands)
+E       AssertionError: [] is not true
+
+tests/test_vendor_staging.py:39: AssertionError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="6" tests="988" time="65.971" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_aoi_gguf_benchmark" name="test_paired_metrics_and_secret_free_artifact" time="0.005"><failure message="assert 0 == 24">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_paired_metrics_and_secret0')
+
+    def test_paired_metrics_and_secret_free_artifact(tmp_path):
+        data = _data(tmp_path)
+        result = run(data, _fake_post, context_window=2048, repeats=2,
+                     model_sha256="f" * 64)
+        a = result["aggregate"]
+        assert a["paired_samples"] == 24
+        assert a["compacted_samples"] == 20
+        assert a["declined_samples"] == 4
+&gt;       assert a["quality_exact_original"] == a["quality_exact_reduced"] == 24
+E       assert 0 == 24
+
+tests/test_aoi_gguf_benchmark.py:113: AssertionError</failure></testcase><testcase classname="tests.test_aoi_gguf_benchmark" name="test_invalid_predictions_never_rewritten_as_valid_digit" time="0.001"><failure message="AssertionError: assert None == 3&#10; +  where None = _as_digit({'choices': [{'message': {'content': ' 3 '}}]})">def test_invalid_predictions_never_rewritten_as_valid_digit():
+        for reply in ("exit=1", "4\nexplanation", "0 1", "unknown", ""):
+            assert _as_digit({"choices": [{"message": {"content": reply}}]}) is None
+&gt;       assert _as_digit({"choices": [{"message": {"content": " 3 "}}]}) == 3
+E       AssertionError: assert None == 3
+E        +  where None = _as_digit({'choices': [{'message': {'content': ' 3 '}}]})
+
+tests/test_aoi_gguf_benchmark.py:132: AssertionError</failure></testcase></testsuite></testsuites>

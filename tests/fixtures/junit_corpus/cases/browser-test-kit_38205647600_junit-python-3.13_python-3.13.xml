@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="388" time="39.650" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.python.test_hit_probe_browser" name="test_hit_maps_need_few_probes_and_agree_with_clicks[firefox]" time="4.174"><failure message="AssertionError: rotated&#10;assert False">browser_name = 'firefox'
+capsys = &lt;_pytest.capture.CaptureFixture object at 0x&lt;addr&gt;&gt;
+
+    @pytest.mark.parametrize("browser_name", BROWSERS)
+    def test_hit_maps_need_few_probes_and_agree_with_clicks(browser_name, capsys):
+        RESULTS.mkdir(parents=True, exist_ok=True)
+        with sync_playwright() as pw:
+            browser = getattr(pw, browser_name).launch()
+            try:
+                page = browser.new_page(viewport={"width": 480, "height": 320})
+                page.goto(FIXTURE)
+                observed = {t: observe(page, t) for t in ("plain", "rounded", "covered", "rotated")}
+            except Exception as exc:
+                annotate(capsys, browser_name, f"observe failed: {type(exc).__name__}: {exc}")
+                raise
+            finally:
+                browser.close()
+        (RESULTS / f"{browser_name}.json").write_text(json.dumps(observed, indent=1) + "\n", encoding="utf-8")
+        annotate(capsys, browser_name, summary(observed))
+    
+        for target, obs in observed.items():
+            ev = obs["evidence"]
+&gt;           assert obs["matches_exhaustive"], target
+E           AssertionError: rotated
+E           assert False
+
+tests/python/test_hit_probe_browser.py:102: AssertionError</failure></testcase><testcase classname="tests.python.test_hit_probe_browser" name="test_hit_maps_need_few_probes_and_agree_with_clicks[webkit]" time="6.694"><failure message="AssertionError: ('rotated', [{'point': (277.0384826660156, 73.67948913574219), 'predicted': 1, 'clicked': 1, 'hit_before': 'rotated', .....}, {'point': (257.0384826660156, 107.67948913574219), 'predicted': 0, 'clicked': 1, 'hit_before': 'HTML', ...}, ...])&#10;assert False&#10; +  where False = all(&lt;generator object test_hit_maps_need_few_probes_and_agree_with_clicks.&lt;locals&gt;.&lt;genexpr&gt; at 0x&lt;addr&gt;&gt;)">browser_name = 'webkit'
+capsys = &lt;_pytest.capture.CaptureFixture object at 0x&lt;addr&gt;&gt;
+
+    @pytest.mark.parametrize("browser_name", BROWSERS)
+    def test_hit_maps_need_few_probes_and_agree_with_clicks(browser_name, capsys):
+        RESULTS.mkdir(parents=True, exist_ok=True)
+        with sync_playwright() as pw:
+            browser = getattr(pw, browser_name).launch()
+            try:
+                page = browser.new_page(viewport={"width": 480, "height": 320})
+                page.goto(FIXTURE)
+                observed = {t: observe(page, t) for t in ("plain", "rounded", "covered", "rotated")}
+            except Exception as exc:
+                annotate(capsys, browser_name, f"observe failed: {type(exc).__name__}: {exc}")
+                raise
+            finally:
+                browser.close()
+        (RESULTS / f"{browser_name}.json").write_text(json.dumps(observed, indent=1) + "\n", encoding="utf-8")
+        annotate(capsys, browser_name, summary(observed))
+    
+        for target, obs in observed.items():
+            ev = obs["evidence"]
+            assert obs["matches_exhaustive"], target
+            assert ev["probes"] &lt; ev["cells"] * 0.5, (target, ev["probes"], ev["cells"])
+            assert obs["clicks"], f"{target}: no clean boundary pair to click"
+&gt;           assert all(c["clicked"] == c["predicted"] for c in obs["clicks"]), (target, obs["clicks"])
+E           AssertionError: ('rotated', [{'point': (277.0384826660156, 73.67948913574219), 'predicted': 1, 'clicked': 1, 'hit_before': 'rotated', .....}, {'point': (257.0384826660156, 107.67948913574219), 'predicted': 0, 'clicked': 1, 'hit_before': 'HTML', ...}, ...])
+E           assert False
+E            +  where False = all(&lt;generator object test_hit_maps_need_few_probes_and_agree_with_clicks.&lt;locals&gt;.&lt;genexpr&gt; at 0x&lt;addr&gt;&gt;)
+
+tests/python/test_hit_probe_browser.py:105: AssertionError</failure></testcase></testsuite></testsuites>

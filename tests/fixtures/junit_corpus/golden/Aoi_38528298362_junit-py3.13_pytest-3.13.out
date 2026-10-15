@@ -1,0 +1,18 @@
+FOUND: exit code: 1
+FOUND: junit errors (<repo>/tests/fixtures/junit_corpus/cases/Aoi_38528298362_junit-py3.13_pytest-3.13.xml): 1
+FOUND: junit error (first) (<repo>/tests/fixtures/junit_corpus/cases/Aoi_38528298362_junit-py3.13_pytest-3.13.xml): collection failure\nimport file mismatch:\nimported module 'test_vendor_lock' has this __file__ attribute:\n  <runner-work>/tests/test_vendor_lock.py\nwhich is not the same as the test file we want to collect:\n  <runner-work>/blueprobe/tests/test_vendor_lock.py\nHINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
+FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/Aoi_38528298362_junit-py3.13_pytest-3.13.xml): 1
+FOUND: junit collection error (first) (<repo>/tests/fixtures/junit_corpus/cases/Aoi_38528298362_junit-py3.13_pytest-3.13.xml): collection failure\ncollection failure\nimport file mismatch:\nimported module 'test_vendor_lock' has this __file__ attribute:\n  <runner-work>/tests/test_vendor_lock.py\nwhich is not the same as the test file we want to col
+FOUND: python version: 3.13.5 (cpython)
+FOUND: node version: v20.19.2
+FOUND: gh version: gh version 2.46.0 (2025-01-13 Debian 2.46.0-3)
+FOUND: environment variable count: 55
+FOUND: environment variable names: AGENT_TRANSCRIPTS, BROWSER, COREPACK_HOME, CURSOR_AGENT, CURSOR_AGENT_SOCKET, CURSOR_CONVERSATION_ID, CURSOR_REQUEST_ID, CURSOR_RIPGREP_PATH, DEBIAN_FRONTEND, DISPLAY, EXEC_DAEMON_CWD, FORCE_COLOR, HOME, LANG, LC_ALL, LOGNAME, LS_COLORS, NO_COLOR, NPM_CONFIG_PREFIX, OLDPWD, PATH, PWD, SAND_BOX_AUTH_ID, SAND_BOX_BOOT_ID, SAND_BOX_BOOT_STARTED_AT_MS, SAND_BOX_CLUSTER, SAND_BOX_LEGACY_STORE, SAND_BOX_MAX_WINDOWS, SAND_BOX_SCRIPT_SYNC_DISABLED, SAND_BOX_STORE_BACKEND, SAND_BOX_STORE_COPY_IN, SAND_BOX_STORE_HIBERNATE_HOOK, SAND_BOX_STORE_ID, SAND_BOX_STORE_SYNC, SAND_BOX_TELEMETRY_LOG, SAND_BOX_TENANT_ID, SAND_EGRESS_TUNNEL_ENABLED, SAND_EGRESS_TUNNEL_PROXY_ADDR, SAND_EGRESS_TUNNEL_WS_ADDR, SAND_EGRESS_TUNNEL_WS_PORT, ...
+NOT FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/Aoi_38528298362_junit-py3.13_pytest-3.13.xml)
+NOT FOUND: junit failure groups (<repo>/tests/fixtures/junit_corpus/cases/Aoi_38528298362_junit-py3.13_pytest-3.13.xml)
+NOT FOUND: junit skipped (<repo>/tests/fixtures/junit_corpus/cases/Aoi_38528298362_junit-py3.13_pytest-3.13.xml)
+NOT FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/Aoi_38528298362_junit-py3.13_pytest-3.13.xml)
+NOT FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/Aoi_38528298362_junit-py3.13_pytest-3.13.xml)
+NOT FOUND: junit system-err (<repo>/tests/fixtures/junit_corpus/cases/Aoi_38528298362_junit-py3.13_pytest-3.13.xml)
+NOT FOUND: lock files in project root
+HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/Aoi_38528298362_junit-py3.13_pytest-3.13.xml): collection failure\nimport file mismatch:\nimported module 'test_vendor_lock' has this __file__ attribute:\n  <runner-work>/tests/test_vendor_lock.py\nwhich is not the same as the test file we want to collect:\n  <runner-work>/blueprobe/tests/test_vendor_lock.py\nHINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules

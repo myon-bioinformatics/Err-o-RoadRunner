@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="1" failures="0" skipped="4" tests="5" time="3.398" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="" name="tests.test_aoi_gguf_benchmark" time="0.000"><error message="collection failure">&lt;toolcache&gt;/Python/3.11.17/x64/lib/python3.11/site-packages/_pytest/python.py:508: in importtestmodule
+    mod = import_path(
+&lt;toolcache&gt;/Python/3.11.17/x64/lib/python3.11/site-packages/_pytest/pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+&lt;toolcache&gt;/Python/3.11.17/x64/lib/python3.11/importlib/__init__.py:126: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;frozen importlib._bootstrap&gt;:1204: in _gcd_import
+    ???
+&lt;frozen importlib._bootstrap&gt;:1176: in _find_and_load
+    ???
+&lt;frozen importlib._bootstrap&gt;:1147: in _find_and_load_unlocked
+    ???
+&lt;frozen importlib._bootstrap&gt;:690: in _load_unlocked
+    ???
+&lt;toolcache&gt;/Python/3.11.17/x64/lib/python3.11/site-packages/_pytest/assertion/rewrite.py:179: in exec_module
+    source_stat, co = _rewrite_test(fn, self.config)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;toolcache&gt;/Python/3.11.17/x64/lib/python3.11/site-packages/_pytest/assertion/rewrite.py:348: in _rewrite_test
+    tree = ast.parse(source, filename=strfn)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;toolcache&gt;/Python/3.11.17/x64/lib/python3.11/ast.py:50: in parse
+    return compile(source, filename, mode, flags,
+E     File "&lt;runner-work&gt;/tests/test_aoi_gguf_benchmark.py", line 132
+E       "{\\"exit_code\\": true}", "{\\"exit_code\\": 7}",
+E                      ^
+E   SyntaxError: unexpected character after line continuation character</error></testcase></testsuite></testsuites>

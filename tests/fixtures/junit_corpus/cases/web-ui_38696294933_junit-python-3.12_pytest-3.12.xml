@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="1" tests="141" time="1.422" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_junit_workflow_contract" name="test_failure_evidence_workflow_contract" time="0.009"><failure message="AssertionError: assert 'myon-bioinfo...bf15977ebee25' == 'myon-bioinfo...a686fdc700c16'&#10;  &#10;  - myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-junit-identity.yml@b000e5967cb7596f6f9f20fe396a686fdc700c16&#10;  + myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-junit-identity.yml@9cc33f08f225eaf67d9a00489a1bf15977ebee25">def test_failure_evidence_workflow_contract():
+&gt;       _assert_contract(yaml.safe_load(WORKFLOW.read_text(encoding="utf-8")))
+
+tests/test_junit_workflow_contract.py:66: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+workflow = {'name': 'Tooling smoke', True: {'push': None, 'pull_request': None, 'workflow_dispatch': None}, 'jobs': {'changes': {...ct_changed == 'true'", 'needs': 'changes', 'permissions': {'contents': 'read'}, 'runs-on': 'ubuntu-latest', ...}, ...}}
+
+    def _assert_contract(workflow):
+        producer = workflow["jobs"]["tooling"]
+        run = _step(producer, "Run pytest")
+        assert producer.get("continue-on-error", False) is False
+        assert run.get("continue-on-error", False) is False
+        assert run.get("if") is None
+        # The exact normalized command rejects || true, set +e and trailing exit 0.
+        assert " ".join(run["run"].split()) == COMMAND
+        assert run["env"]["WEB_UI_FAILURE_EVIDENCE"] == "build/controlled-failure"
+        for name, path in (
+            ("junit-python-3.12", "build/test-results/pytest-3.12.xml"),
+            ("junit-controlled-python-3.12", "build/controlled-failure/"),
+        ):
+            upload = _upload(producer, name)
+            assert producer["steps"].index(run) &lt; producer["steps"].index(upload)
+            assert upload.get("if") == "always()"
+            assert upload.get("continue-on-error", False) is False
+            assert upload["with"]["path"].strip() == path
+            assert upload["with"]["if-no-files-found"] == "error"
+            assert upload["with"]["retention-days"] == 14
+        collector = workflow["jobs"]["junit-identity"]
+        assert collector["needs"] == ["changes", "tooling"]
+        assert collector["if"] == "(always()) &amp;&amp; needs.changes.outputs.product_changed == 'true'"
+        assert collector.get("continue-on-error", False) is False
+&gt;       assert collector["uses"] == COLLECTOR
+E       AssertionError: assert 'myon-bioinfo...bf15977ebee25' == 'myon-bioinfo...a686fdc700c16'
+E         
+E         - myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-junit-identity.yml@b000e5967cb7596f6f9f20fe396a686fdc700c16
+E         + myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-junit-identity.yml@9cc33f08f225eaf67d9a00489a1bf15977ebee25
+
+tests/test_junit_workflow_contract.py:56: AssertionError</failure></testcase><testcase classname="tests.test_junit_workflow_contract" name="test_failure_evidence_contract_rejects_unsafe_mutations" time="0.009"><failure message="AssertionError: assert 'myon-bioinfo...bf15977ebee25' == 'myon-bioinfo...a686fdc700c16'&#10;  &#10;  - myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-junit-identity.yml@b000e5967cb7596f6f9f20fe396a686fdc700c16&#10;  + myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-junit-identity.yml@9cc33f08f225eaf67d9a00489a1bf15977ebee25">def test_failure_evidence_contract_rejects_unsafe_mutations():
+        workflow = yaml.safe_load(WORKFLOW.read_text(encoding="utf-8"))
+&gt;       _assert_contract(workflow)  # A broken baseline must not make all mutants pass.
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_junit_workflow_contract.py:71: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+workflow = {'name': 'Tooling smoke', True: {'push': None, 'pull_request': None, 'workflow_dispatch': None}, 'jobs': {'changes': {...ct_changed == 'true'", 'needs': 'changes', 'permissions': {'contents': 'read'}, 'runs-on': 'ubuntu-latest', ...}, ...}}
+
+    def _assert_contract(workflow):
+        producer = workflow["jobs"]["tooling"]
+        run = _step(producer, "Run pytest")
+        assert producer.get("continue-on-error", False) is False
+        assert run.get("continue-on-error", False) is False
+        assert run.get("if") is None
+        # The exact normalized command rejects || true, set +e and trailing exit 0.
+        assert " ".join(run["run"].split()) == COMMAND
+        assert run["env"]["WEB_UI_FAILURE_EVIDENCE"] == "build/controlled-failure"
+        for name, path in (
+            ("junit-python-3.12", "build/test-results/pytest-3.12.xml"),
+            ("junit-controlled-python-3.12", "build/controlled-failure/"),
+        ):
+            upload = _upload(producer, name)
+            assert producer["steps"].index(run) &lt; producer["steps"].index(upload)
+            assert upload.get("if") == "always()"
+            assert upload.get("continue-on-error", False) is False
+            assert upload["with"]["path"].strip() == path
+            assert upload["with"]["if-no-files-found"] == "error"
+            assert upload["with"]["retention-days"] == 14
+        collector = workflow["jobs"]["junit-identity"]
+        assert collector["needs"] == ["changes", "tooling"]
+        assert collector["if"] == "(always()) &amp;&amp; needs.changes.outputs.product_changed == 'true'"
+        assert collector.get("continue-on-error", False) is False
+&gt;       assert collector["uses"] == COLLECTOR
+E       AssertionError: assert 'myon-bioinfo...bf15977ebee25' == 'myon-bioinfo...a686fdc700c16'
+E         
+E         - myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-junit-identity.yml@b000e5967cb7596f6f9f20fe396a686fdc700c16
+E         + myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-junit-identity.yml@9cc33f08f225eaf67d9a00489a1bf15977ebee25
+
+tests/test_junit_workflow_contract.py:56: AssertionError</failure></testcase><testcase classname="tests.test_vendor_automation" name="test_public_vendor_ci_updates_without_repository_writes" time="0.009"><failure message="AssertionError: assert ['9cc33f08f22...f15977ebee25'] == ['b000e5967cb...686fdc700c16']&#10;  &#10;  At index 0 diff: '9cc33f08f225eaf67d9a00489a1bf15977ebee25' != 'b000e5967cb7596f6f9f20fe396a686fdc700c16'&#10;  &#10;  Full diff:&#10;    [&#10;  -     'b000e5967cb7596f6f9f20fe396a686fdc700c16',&#10;  -     'b000e5967cb7596f6f9f20fe396a686fdc700c16',&#10;  +     '9cc33f08f225eaf67d9a00489a1bf15977ebee25',&#10;  +     '9cc33f08f225eaf67d9a00489a1bf15977ebee25',&#10;    ]">def test_public_vendor_ci_updates_without_repository_writes():
+        ci = _workflow()
+        assert {"push", "pull_request"} &lt;= set(ci["on"])
+        assert "schedule" not in ci["on"]
+        assert ci.get("permissions", {"contents": "read"}) == {"contents": "read"}
+        jobs = ci["jobs"]
+        for job in (jobs["resolve-vendor"], jobs[TEST_JOB]):
+            assert "continue-on-error" not in job
+        resolve = jobs["resolve-vendor"]["steps"]
+        test = jobs[TEST_JOB]["steps"]
+        assert jobs["resolve-vendor"]["permissions"] == jobs[TEST_JOB]["permissions"] == {"contents": "read"}
+        assert not any(s.get("name") == "Update public vendor files for this run" for s in resolve)
+        assert not any("vendor_sync.py promote" in s.get("run", "") for steps in (resolve, test) for s in steps)
+        assert not any("vendor_sync.py update" in s.get("run", "") for steps in (resolve, test) for s in steps)
+        assert not any("sync_vendor_provenance" in s.get("run", "") for steps in (resolve, test) for s in steps)
+        recreate = next(s for s in resolve if s.get("name") == "Recreate locked vendor files from GitHub")
+        assert recreate["shell"] == "bash"
+        assert recreate["run"].splitlines() == [
+            "python -S - &lt;&lt;'PY'",
+            "import json",
+            "from pathlib import Path",
+            "for entry in json.loads(Path('vendor.lock.json').read_text(encoding='utf-8'))['files']:",
+            "    Path(entry['destination']).unlink()",
+            "PY",
+            "python -S .vendor-sync-tools/vendor_sync.py materialize --manifest vendor.lock.json",
+            "python -S .vendor-sync-tools/vendor_sync.py check --manifest vendor.lock.json",
+        ]
+        needs = jobs[TEST_JOB]["needs"]
+        assert "resolve-vendor" in ([needs] if isinstance(needs, str) else needs)
+        download = next(i for i, s in enumerate(test) if s.get("name") == "Download resolved vendor snapshot")
+        verify = next(i for i, s in enumerate(test) if s.get("name") == "Verify resolved vendor snapshot")
+        tests = [i for i, s in enumerate(test) if "pytest " in s.get("run", "")]
+        assert tests and download &lt; verify &lt; min(tests)
+        assert test[download]["with"]["name"] == "vendor-snapshot"
+        assert test[verify]["run"].splitlines() == [
+            "python -S .vendor-sync-tools/vendor_sync.py check --manifest vendor.lock.json",
+        ]
+        for steps, name in (
+            (resolve, "Preserve resolved vendor snapshot"),
+            (test, "Preserve vendor lock used by this run"),
+        ):
+            upload = next(s for s in steps if s.get("name") == name)
+            assert upload["if"] == "always()"
+            assert upload["with"]["if-no-files-found"] == "error"
+            assert upload["with"]["path"].startswith("build/vendor-evidence-")
+        pins = [
+            s["with"]["ref"]
+            for steps in (resolve, test)
+            for s in steps
+            if s.get("with", {}).get("repository") == "myon-bioinformatics/myon-bioinformatics"
+        ]
+&gt;       assert pins == [PIN] * 2
+E       AssertionError: assert ['9cc33f08f22...f15977ebee25'] == ['b000e5967cb...686fdc700c16']
+E         
+E         At index 0 diff: '9cc33f08f225eaf67d9a00489a1bf15977ebee25' != 'b000e5967cb7596f6f9f20fe396a686fdc700c16'
+E         
+E         Full diff:
+E           [
+E         -     'b000e5967cb7596f6f9f20fe396a686fdc700c16',
+E         -     'b000e5967cb7596f6f9f20fe396a686fdc700c16',
+E         +     '9cc33f08f225eaf67d9a00489a1bf15977ebee25',
+E         +     '9cc33f08f225eaf67d9a00489a1bf15977ebee25',
+E           ]
+
+tests/test_vendor_automation.py:103: AssertionError</failure></testcase><testcase classname="tests.test_vendor_automation" name="test_locked_baseline_runs_automatically_without_candidate_snapshot" time="0.009"><failure message="AssertionError: assert '9cc33f08f225...bf15977ebee25' == 'b000e5967cb7...a686fdc700c16'&#10;  &#10;  - b000e5967cb7596f6f9f20fe396a686fdc700c16&#10;  + 9cc33f08f225eaf67d9a00489a1bf15977ebee25">def test_locked_baseline_runs_automatically_without_candidate_snapshot():
+        ci = _workflow()
+        job = ci["jobs"]["test-locked"]
+        assert job["permissions"] == {"contents": "read"}
+        assert "continue-on-error" not in job
+        assert job.get("needs") == ci["jobs"]["resolve-vendor"].get("needs")
+        assert job.get("if") == ci["jobs"]["resolve-vendor"].get("if")
+        matrix = job.get("strategy", {}).get("matrix", {})
+        assert all(len(values) == 1 for values in matrix.values())
+        steps = job["steps"]
+        assert not any("vendor_sync.py promote" in s.get("run", "") for s in steps)
+        assert not any("vendor_sync.py update" in s.get("run", "") for s in steps)
+        assert not any(s.get("uses", "").startswith("actions/download-artifact@") for s in steps)
+        verify = next(i for i, s in enumerate(steps) if s.get("name") == "Verify checked-in vendor copies")
+        recreate = next(i for i, s in enumerate(steps) if s.get("name") == "Recreate locked vendor files from GitHub")
+        tests = [i for i, s in enumerate(steps) if "pytest " in s.get("run", "")]
+        assert tests and verify &lt; recreate &lt; min(tests)
+        original = next(
+            s for s in ci["jobs"]["resolve-vendor"]["steps"]
+            if s.get("name") == "Recreate locked vendor files from GitHub"
+        )
+        assert steps[recreate] == original
+        tool = next(s for s in steps if s.get("name") == "Fetch pinned shared vendor tool")
+&gt;       assert tool["with"]["ref"] == PIN
+E       AssertionError: assert '9cc33f08f225...bf15977ebee25' == 'b000e5967cb7...a686fdc700c16'
+E         
+E         - b000e5967cb7596f6f9f20fe396a686fdc700c16
+E         + 9cc33f08f225eaf67d9a00489a1bf15977ebee25
+
+tests/test_vendor_automation.py:141: AssertionError</failure></testcase></testsuite></testsuites>

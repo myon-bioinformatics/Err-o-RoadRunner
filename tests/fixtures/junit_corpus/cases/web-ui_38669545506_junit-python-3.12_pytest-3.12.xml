@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="1" tests="141" time="1.475" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_junit_workflow_contract" name="test_failure_evidence_workflow_contract" time="0.010"><failure message="AssertionError: assert 'myon-bioinfo...0d3e7bdc4158c' == 'myon-bioinfo...47f91cb2ef954'&#10;  &#10;  - myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-junit-identity.yml@f907560c2b9b3f7a0f78f4434f547f91cb2ef954&#10;  + myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-junit-identity.yml@ab17b409d82f95abc81116af7ff0d3e7bdc4158c">def test_failure_evidence_workflow_contract():
+&gt;       _assert_contract(yaml.safe_load(WORKFLOW.read_text(encoding="utf-8")))
+
+tests/test_junit_workflow_contract.py:66: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+workflow = {'name': 'Tooling smoke', True: {'push': None, 'pull_request': None, 'workflow_dispatch': None}, 'jobs': {'changes': {...ct_changed == 'true'", 'needs': 'changes', 'permissions': {'contents': 'read'}, 'runs-on': 'ubuntu-latest', ...}, ...}}
+
+    def _assert_contract(workflow):
+        producer = workflow["jobs"]["tooling"]
+        run = _step(producer, "Run pytest")
+        assert producer.get("continue-on-error", False) is False
+        assert run.get("continue-on-error", False) is False
+        assert run.get("if") is None
+        # The exact normalized command rejects || true, set +e and trailing exit 0.
+        assert " ".join(run["run"].split()) == COMMAND
+        assert run["env"]["WEB_UI_FAILURE_EVIDENCE"] == "build/controlled-failure"
+        for name, path in (
+            ("junit-python-3.12", "build/test-results/pytest-3.12.xml"),
+            ("junit-controlled-python-3.12", "build/controlled-failure/"),
+        ):
+            upload = _upload(producer, name)
+            assert producer["steps"].index(run) &lt; producer["steps"].index(upload)
+            assert upload.get("if") == "always()"
+            assert upload.get("continue-on-error", False) is False
+            assert upload["with"]["path"].strip() == path
+            assert upload["with"]["if-no-files-found"] == "error"
+            assert upload["with"]["retention-days"] == 14
+        collector = workflow["jobs"]["junit-identity"]
+        assert collector["needs"] == ["changes", "tooling"]
+        assert collector["if"] == "(always()) &amp;&amp; needs.changes.outputs.product_changed == 'true'"
+        assert collector.get("continue-on-error", False) is False
+&gt;       assert collector["uses"] == COLLECTOR
+E       AssertionError: assert 'myon-bioinfo...0d3e7bdc4158c' == 'myon-bioinfo...47f91cb2ef954'
+E         
+E         - myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-junit-identity.yml@f907560c2b9b3f7a0f78f4434f547f91cb2ef954
+E         + myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-junit-identity.yml@ab17b409d82f95abc81116af7ff0d3e7bdc4158c
+
+tests/test_junit_workflow_contract.py:56: AssertionError</failure></testcase><testcase classname="tests.test_junit_workflow_contract" name="test_failure_evidence_contract_rejects_unsafe_mutations" time="0.010"><failure message="AssertionError: assert 'myon-bioinfo...0d3e7bdc4158c' == 'myon-bioinfo...47f91cb2ef954'&#10;  &#10;  - myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-junit-identity.yml@f907560c2b9b3f7a0f78f4434f547f91cb2ef954&#10;  + myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-junit-identity.yml@ab17b409d82f95abc81116af7ff0d3e7bdc4158c">def test_failure_evidence_contract_rejects_unsafe_mutations():
+        workflow = yaml.safe_load(WORKFLOW.read_text(encoding="utf-8"))
+&gt;       _assert_contract(workflow)  # A broken baseline must not make all mutants pass.
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_junit_workflow_contract.py:71: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+workflow = {'name': 'Tooling smoke', True: {'push': None, 'pull_request': None, 'workflow_dispatch': None}, 'jobs': {'changes': {...ct_changed == 'true'", 'needs': 'changes', 'permissions': {'contents': 'read'}, 'runs-on': 'ubuntu-latest', ...}, ...}}
+
+    def _assert_contract(workflow):
+        producer = workflow["jobs"]["tooling"]
+        run = _step(producer, "Run pytest")
+        assert producer.get("continue-on-error", False) is False
+        assert run.get("continue-on-error", False) is False
+        assert run.get("if") is None
+        # The exact normalized command rejects || true, set +e and trailing exit 0.
+        assert " ".join(run["run"].split()) == COMMAND
+        assert run["env"]["WEB_UI_FAILURE_EVIDENCE"] == "build/controlled-failure"
+        for name, path in (
+            ("junit-python-3.12", "build/test-results/pytest-3.12.xml"),
+            ("junit-controlled-python-3.12", "build/controlled-failure/"),
+        ):
+            upload = _upload(producer, name)
+            assert producer["steps"].index(run) &lt; producer["steps"].index(upload)
+            assert upload.get("if") == "always()"
+            assert upload.get("continue-on-error", False) is False
+            assert upload["with"]["path"].strip() == path
+            assert upload["with"]["if-no-files-found"] == "error"
+            assert upload["with"]["retention-days"] == 14
+        collector = workflow["jobs"]["junit-identity"]
+        assert collector["needs"] == ["changes", "tooling"]
+        assert collector["if"] == "(always()) &amp;&amp; needs.changes.outputs.product_changed == 'true'"
+        assert collector.get("continue-on-error", False) is False
+&gt;       assert collector["uses"] == COLLECTOR
+E       AssertionError: assert 'myon-bioinfo...0d3e7bdc4158c' == 'myon-bioinfo...47f91cb2ef954'
+E         
+E         - myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-junit-identity.yml@f907560c2b9b3f7a0f78f4434f547f91cb2ef954
+E         + myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-junit-identity.yml@ab17b409d82f95abc81116af7ff0d3e7bdc4158c
+
+tests/test_junit_workflow_contract.py:56: AssertionError</failure></testcase></testsuite></testsuites>

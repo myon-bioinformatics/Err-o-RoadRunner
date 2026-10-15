@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="174" time="16.799" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_native_observations" name="test_public_vendor_ci_updates_without_repository_writes" time="0.081"><failure message="AssertionError: assert ['changes', 'resolve-vendor'] == 'resolve-vendor'">def test_public_vendor_ci_updates_without_repository_writes():
+        import yaml
+        ci = yaml.load((ROOT / '.github/workflows/ci.yml').read_text(encoding='utf-8'), Loader=yaml.BaseLoader)
+        jobs = ci['jobs']
+        resolve = jobs['resolve-vendor']['steps']
+        test = jobs['test']['steps']
+        assert not any(s.get('name') == 'Update public vendor files for this run' for s in resolve)
+        dispatch = ci.get('on', {}).get('workflow_dispatch')
+        assert dispatch is None or not (isinstance(dispatch, dict) and 'vendor-mode' in dispatch.get('inputs', {}))
+&gt;       assert jobs['test']['needs'] == 'resolve-vendor'
+E       AssertionError: assert ['changes', 'resolve-vendor'] == 'resolve-vendor'
+
+tests/test_native_observations.py:50: AssertionError</failure></testcase></testsuite></testsuites>

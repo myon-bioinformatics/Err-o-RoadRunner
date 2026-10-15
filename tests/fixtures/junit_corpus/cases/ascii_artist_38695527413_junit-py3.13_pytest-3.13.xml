@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="62" time="1.447" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_vendor_automation" name="test_ci_excludes_auto_vendor_updates_and_legacy_provenance" time="0.019"><failure message="AssertionError: assert ['9cc33f08f22...f15977ebee25'] == ['b000e5967cb...686fdc700c16']&#10;  &#10;  At index 0 diff: '9cc33f08f225eaf67d9a00489a1bf15977ebee25' != 'b000e5967cb7596f6f9f20fe396a686fdc700c16'&#10;  &#10;  Full diff:&#10;    [&#10;  -     'b000e5967cb7596f6f9f20fe396a686fdc700c16',&#10;  -     'b000e5967cb7596f6f9f20fe396a686fdc700c16',&#10;  +     '9cc33f08f225eaf67d9a00489a1bf15977ebee25',&#10;  +     '9cc33f08f225eaf67d9a00489a1bf15977ebee25',&#10;    ]">def test_ci_excludes_auto_vendor_updates_and_legacy_provenance():
+        text = WORKFLOW.read_text(encoding="utf-8")
+        forbidden = (
+            "vendor_sync.py promote",
+            "vendor_sync.py update",
+            "sync_vendor_provenance",
+            "provenance.json",
+            "vendor-promotion.json",
+            "vendor-mode",
+        )
+        for token in forbidden:
+            assert token not in text
+        ci = _workflow()
+        assert {"push", "pull_request"} &lt;= set(ci["on"])
+        assert "schedule" not in ci["on"]
+        jobs = ci["jobs"]
+        resolve = jobs["resolve-vendor"]["steps"]
+        test = jobs[TEST_JOB]["steps"]
+        assert jobs["resolve-vendor"]["permissions"] == jobs[TEST_JOB]["permissions"] == {"contents": "read"}
+        recreate = next(s for s in resolve if s.get("name") == "Recreate locked vendor files from GitHub")
+        assert recreate["shell"] == "bash"
+        assert recreate["run"].splitlines() == [
+            "python -S - &lt;&lt;'PY'",
+            "import json",
+            "from pathlib import Path",
+            "for entry in json.loads(Path('vendor.lock.json').read_text(encoding='utf-8'))['files']:",
+            "    Path(entry['destination']).unlink()",
+            "PY",
+            "python -S .vendor-sync-tools/vendor_sync.py materialize --manifest vendor.lock.json",
+            "python -S .vendor-sync-tools/vendor_sync.py check --manifest vendor.lock.json",
+        ]
+        needs = jobs[TEST_JOB]["needs"]
+        assert "resolve-vendor" in ([needs] if isinstance(needs, str) else needs)
+        download = next(i for i, s in enumerate(test) if s.get("name") == "Download resolved vendor snapshot")
+        verify = next(i for i, s in enumerate(test) if s.get("name") == "Verify resolved vendor snapshot")
+        tests = [i for i, s in enumerate(test) if "pytest " in s.get("run", "")]
+        assert tests and download &lt; verify &lt; min(tests)
+        assert test[download]["with"]["name"] == "vendor-snapshot"
+        assert test[verify]["run"].splitlines() == [
+            "python -S .vendor-sync-tools/vendor_sync.py check --manifest vendor.lock.json"
+        ]
+        pins = [
+            s["with"]["ref"]
+            for steps in (resolve, test)
+            for s in steps
+            if s.get("with", {}).get("repository") == "myon-bioinformatics/myon-bioinformatics"
+        ]
+&gt;       assert pins == [VENDOR_SYNC_PIN] * 2
+E       AssertionError: assert ['9cc33f08f22...f15977ebee25'] == ['b000e5967cb...686fdc700c16']
+E         
+E         At index 0 diff: '9cc33f08f225eaf67d9a00489a1bf15977ebee25' != 'b000e5967cb7596f6f9f20fe396a686fdc700c16'
+E         
+E         Full diff:
+E           [
+E         -     'b000e5967cb7596f6f9f20fe396a686fdc700c16',
+E         -     'b000e5967cb7596f6f9f20fe396a686fdc700c16',
+E         +     '9cc33f08f225eaf67d9a00489a1bf15977ebee25',
+E         +     '9cc33f08f225eaf67d9a00489a1bf15977ebee25',
+E           ]
+
+tests/test_vendor_automation.py:68: AssertionError</failure></testcase><testcase classname="tests.test_vendor_automation" name="test_locked_baseline_runs_without_candidate_snapshot" time="0.010"><failure message="AssertionError: assert '9cc33f08f225...bf15977ebee25' == 'b000e5967cb7...a686fdc700c16'&#10;  &#10;  - b000e5967cb7596f6f9f20fe396a686fdc700c16&#10;  + 9cc33f08f225eaf67d9a00489a1bf15977ebee25">def test_locked_baseline_runs_without_candidate_snapshot():
+        ci = _workflow()
+        job = ci["jobs"]["test-locked"]
+        assert job["permissions"] == {"contents": "read"}
+        assert "continue-on-error" not in job
+        assert job.get("needs") == ci["jobs"]["resolve-vendor"].get("needs")
+        assert job.get("if") == ci["jobs"]["resolve-vendor"].get("if")
+        matrix = job.get("strategy", {}).get("matrix", {})
+        assert all(len(values) == 1 for values in matrix.values())
+        steps = job["steps"]
+        assert not any(
+            command in s.get("run", "")
+            for s in steps
+            for command in ("vendor_sync.py update", "vendor_sync.py promote", "sync_vendor_provenance")
+        )
+        assert not any(s.get("uses", "").startswith("actions/download-artifact@") for s in steps)
+        verify = next(i for i, s in enumerate(steps) if s.get("name") == "Verify checked-in vendor copies")
+        recreate = next(i for i, s in enumerate(steps) if s.get("name") == "Recreate locked vendor files from GitHub")
+        tests = [i for i, s in enumerate(steps) if "pytest " in s.get("run", "")]
+        assert tests and verify &lt; recreate &lt; min(tests)
+        original = next(
+            s for s in ci["jobs"]["resolve-vendor"]["steps"] if s.get("name") == "Recreate locked vendor files from GitHub"
+        )
+        assert steps[recreate] == original
+        tool = next(s for s in steps if s.get("name") == "Fetch pinned shared vendor tool")
+&gt;       assert tool["with"]["ref"] == VENDOR_SYNC_PIN
+E       AssertionError: assert '9cc33f08f225...bf15977ebee25' == 'b000e5967cb7...a686fdc700c16'
+E         
+E         - b000e5967cb7596f6f9f20fe396a686fdc700c16
+E         + 9cc33f08f225eaf67d9a00489a1bf15977ebee25
+
+tests/test_vendor_automation.py:127: AssertionError</failure></testcase></testsuite></testsuites>

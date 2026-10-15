@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="444" time="77.887" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.python.test_gh_ops" name="test_gh_ops_is_a_locked_parent_dependency" time="0.001"><failure message="AssertionError: assert '7f45f52ae677...d8ddf4ce5a54d' == 'refs/heads/main'&#10;  &#10;  - refs/heads/main&#10;  + 7f45f52ae677e879de49db01008d8ddf4ce5a54d">def test_gh_ops_is_a_locked_parent_dependency():
+        lock = json.loads((ROOT / 'vendor.lock.json').read_text())
+        entries = [e for e in lock['files'] if e['destination'] == 'scripts/gh_ops.py']
+        assert len(entries) == 1
+        assert entries[0]['repository'] == 'myon-bioinformatics/myon-bioinformatics'
+        assert entries[0]['source'] == 'gh_ops.py'
+&gt;       assert entries[0]['ref'] == 'refs/heads/main'
+E       AssertionError: assert '7f45f52ae677...d8ddf4ce5a54d' == 'refs/heads/main'
+E         
+E         - refs/heads/main
+E         + 7f45f52ae677e879de49db01008d8ddf4ce5a54d
+
+tests/python/test_gh_ops.py:35: AssertionError</failure></testcase></testsuite></testsuites>

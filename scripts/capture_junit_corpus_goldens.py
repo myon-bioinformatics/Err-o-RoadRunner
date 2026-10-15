@@ -22,10 +22,13 @@ def normalize(text: str) -> str:
 
 
 def main() -> None:
+    missing_only = "--missing-only" in sys.argv[1:]
     entries = json.loads(MANIFEST.read_text(encoding="utf-8"))
     for entry in entries:
         xml = CORPUS / entry["xml"]
         golden = CORPUS / entry["golden"]
+        if missing_only and golden.exists():
+            continue
         golden.parent.mkdir(parents=True, exist_ok=True)
         cmd = [
             sys.executable,

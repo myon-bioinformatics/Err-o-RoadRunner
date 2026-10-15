@@ -14,7 +14,7 @@ FIXTURES = ROOT / "tests" / "fixtures"
 # Full GitHub Actions job captures; runner paths are intentional test inputs.
 LOG_SCAN_SKIP_PREFIX = FIXTURES / "actions_logs" / "real"
 
-SCAN_SUFFIXES = (".xml", ".out", ".log", ".stderr", ".json")
+SCAN_SUFFIXES = (".xml", ".out", ".log", ".stderr", ".json", ".jsonl")
 
 
 def _fixture_scan_paths() -> list[Path]:

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="228" time="21.728" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_junit_mutations" name="test_mutation_dropping_testsuite_collection_scan_misses_suite_error" time="0.000"><failure message="AttributeError: &lt;function triage at 0x&lt;addr&gt;&gt; does not have the attribute '_junit_testsuite_collection_errors'">@pytest.mark.gap
+    def test_mutation_dropping_testsuite_collection_scan_misses_suite_error() -&gt; None:
+        xml = """&lt;?xml version="1.0" encoding="utf-8"?&gt;
+    &lt;testsuite name="pytest" tests="0" errors="1"&gt;
+      &lt;error message="collection failure"&gt;could not load&lt;/error&gt;
+    &lt;/testsuite&gt;"""
+        path = CORPUS / "inputs" / "_suite_collection.xml"
+        path.write_text(xml, encoding="utf-8")
+&gt;       with mock.patch(
+            "err_o_roadrunner.triage._junit_testsuite_collection_errors",
+            return_value=[],
+        ):
+
+tests/test_junit_mutations.py:48: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+&lt;toolcache&gt;/Python/3.10.22/x64/lib/python3.10/unittest/mock.py:1447: in __enter__
+    original, local = self.get_original()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;unittest.mock._patch object at 0x&lt;addr&gt;&gt;
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+    
+        original = DEFAULT
+        local = False
+    
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+    
+        if name in _builtins and isinstance(target, ModuleType):
+            self.create = True
+    
+        if not self.create and original is DEFAULT:
+&gt;           raise AttributeError(
+                "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: &lt;function triage at 0x&lt;addr&gt;&gt; does not have the attribute '_junit_testsuite_collection_errors'
+
+&lt;toolcache&gt;/Python/3.10.22/x64/lib/python3.10/unittest/mock.py:1420: AttributeError</failure></testcase><testcase classname="tests.test_junit_mutations" name="test_mutation_dropping_dart_core_filter_pollutes_diff_hint" time="0.000"><failure message="AttributeError: &lt;function triage at 0x&lt;addr&gt;&gt; does not have the attribute 'DART_NOISE_LINE_RE'">@pytest.mark.gap
+    def test_mutation_dropping_dart_core_filter_pollutes_diff_hint() -&gt; None:
+        import re
+    
+        from err_o_roadrunner.triage import _junit_diff_hint
+    
+        blob = "- 'Object' is from 'dart:core'.\n"
+        assert "dart:core" not in _junit_diff_hint(blob)
+&gt;       with mock.patch("err_o_roadrunner.triage.DART_NOISE_LINE_RE", re.compile("$^")):
+
+tests/test_junit_mutations.py:71: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+&lt;toolcache&gt;/Python/3.10.22/x64/lib/python3.10/unittest/mock.py:1447: in __enter__
+    original, local = self.get_original()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;unittest.mock._patch object at 0x&lt;addr&gt;&gt;
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+    
+        original = DEFAULT
+        local = False
+    
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+    
+        if name in _builtins and isinstance(target, ModuleType):
+            self.create = True
+    
+        if not self.create and original is DEFAULT:
+&gt;           raise AttributeError(
+                "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: &lt;function triage at 0x&lt;addr&gt;&gt; does not have the attribute 'DART_NOISE_LINE_RE'
+
+&lt;toolcache&gt;/Python/3.10.22/x64/lib/python3.10/unittest/mock.py:1420: AttributeError</failure></testcase></testsuite></testsuites>
