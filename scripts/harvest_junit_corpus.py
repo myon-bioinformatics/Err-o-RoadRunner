@@ -129,11 +129,14 @@ def _list_failed_runs_raw(repo: str, failures: list[HarvestFailure], limit: int)
         artifact=None,
         stage="list_failed_runs",
     )
-    if out is None or not out.strip():
+    if out is None:
         return []
     try:
-        return json.loads(out)
-    except json.JSONDecodeError as exc:
+        runs = json.loads(out)
+        if not isinstance(runs, list) or not all(isinstance(r, dict) and isinstance(r.get("databaseId"), int) for r in runs):
+            raise ValueError("expected run list with integer databaseId")
+        return runs
+    except ValueError as exc:
         failures.append(
             HarvestFailure(
                 repo=repo,
@@ -177,8 +180,11 @@ def list_artifacts(repo: str, run_id: int, failures: list[HarvestFailure]) -> li
         if not line:
             continue
         try:
-            items.append(json.loads(line))
-        except json.JSONDecodeError as exc:
+            item = json.loads(line)
+            if not isinstance(item, dict) or not isinstance(item.get("name"), str) or not isinstance(item.get("id"), int) or not isinstance(item.get("expired"), bool):
+                raise ValueError("expected artifact name/id/expired")
+            items.append(item)
+        except ValueError as exc:
             failures.append(
                 HarvestFailure(
                     repo=repo,
@@ -479,6 +485,7 @@ def _existing_keys(entries: list[dict]) -> tuple[set[tuple], set[str]]:
 def harvest(
     entries_limit_per_repo: int = 5,
     existing: list[dict] | None = None,
+    coverage: dict | None = None,
 ) -> tuple[list[dict], list[HarvestFailure], list[PendingCorpusWrite]]:
     """Return new entries for all formats. JUnit entries carry ``xml``/``golden``; JSON/JSONL
     entries carry ``format`` and ``data`` (path relative to the results corpus)."""
@@ -487,9 +494,13 @@ def harvest(
     pending: list[PendingCorpusWrite] = []
     seen_keys, seen_hashes = _existing_keys(existing or [])
 
+    coverage = coverage if coverage is not None else {}
     for repo in REPOS:
         count = 0
-        for run in list_failed_runs(repo, failures):
+        start = len(failures)
+        checked = 0
+        runs = list_failed_runs(repo, failures)
+        for run in runs:
             if count >= entries_limit_per_repo:
                 break
             run_id = int(run["databaseId"])
@@ -498,8 +509,6 @@ def harvest(
                     break
                 name = art["name"]
                 if not is_junit_artifact(name):
-                    continue
-                if (f"{ORG}/{repo}", run_id, name, "*") in seen_keys:
                     continue
                 if art.get("expired"):
                     failures.append(
@@ -510,12 +519,17 @@ def harvest(
                     dest = Path(tmp)
                     if not download_artifact(repo, run_id, name, dest, failures):
                         continue
-                    for path in sorted(p for p in dest.rglob("*") if p.is_file()):
+                    files = sorted(p for p in dest.rglob("*") if p.is_file())
+                    valid_files = [p for p in files if is_valid_result(p)]
+                    if not valid_files:
+                        failures.append(HarvestFailure(repo, run_id, name, "inspect_artifact", "no valid test result files"))
+                    checked += len(valid_files)
+                    for path in files:
                         if count >= entries_limit_per_repo:
                             break
                         rel_src = path.relative_to(dest).as_posix()
                         key = (f"{ORG}/{repo}", run_id, name, rel_src)
-                        if key in seen_keys:
+                        if key in seen_keys or (f"{ORG}/{repo}", run_id, name, "*") in seen_keys:
                             continue
                         made = _harvest_file(repo, run, name, path, rel_src, failures)
                         if made is None:
@@ -528,7 +542,66 @@ def harvest(
                         pending.append(write)
                         entries.append(entry)
                         count += 1
+        issues = failures[start:]
+        confirmed_empty = not runs and not issues
+        usable = checked > 0 or confirmed_empty
+        coverage[repo] = {
+            "status": ("partial" if issues else "complete") if usable else "unavailable",
+            "failed_runs": len(runs),
+            "checked_files": checked,
+            "no_failed_runs": confirmed_empty,
+            "failures": [f.as_dict() for f in issues],
+        }
+        if not usable and not issues:
+            failure = HarvestFailure(repo, None, None, "no_targets", "no valid collection targets confirmed")
+            failures.append(failure)
+            coverage[repo]["failures"].append(failure.as_dict())
     return entries, failures, pending
+
+
+def is_valid_result(path: Path) -> bool:
+    """Count readable result documents, including documents with no failing cases."""
+    try:
+        if path.suffix.lower() == ".xml":
+            return ET.parse(path).getroot().tag.split("}")[-1] in ("testsuite", "testsuites")
+        text = path.read_text(encoding="utf-8")
+        if path.suffix.lower() == ".json":
+            try:
+                obj = json.loads(text)
+            except ValueError:
+                pass  # Some reporters put JSONL in a .json file.
+            else:
+                records = obj if isinstance(obj, list) else [obj]
+                return any(isinstance(r, dict) and (
+                    any(k in r for k in ("suites", "failures", "failed", "errors", "tests", "results", "cases", "records"))
+                    or bool(_state(r))
+                ) for r in records)
+        if path.suffix.lower() in (".json", ".jsonl", ".ndjson", ".txt", ".log"):
+            records = [json.loads(line) for line in text.splitlines() if line.strip()]
+            return any(isinstance(r, dict) and (bool(_state(r)) or r.get("type") in ("testStart", "testDone", "suite", "error")) for r in records)
+    except (ValueError, OSError, UnicodeError, ET.ParseError):
+        return False
+    return False
+
+
+def report_markdown(report: dict) -> str:
+    def cell(value: object) -> str:
+        return str(value).replace("|", "\\|").replace("\n", " ").replace("\r", " ").replace("<", "&lt;").replace(">", "&gt;")
+
+    lines = ["## Harvest coverage", "", f"Status: **{report['status']}**; new entries: {report['new_entries']}",
+             "", "| Repository | Status | Checked files |", "| --- | --- | --- |"]
+    for repo, item in report["repositories"].items():
+        lines.append(f"| {cell(repo)} | {item['status']} | {item['checked_files']} |")
+    lines += ["", "### Collection failures / expired artifacts", ""]
+    for f in report["failures"]:
+        lines.append(f"- {cell(f['repo'])}, run {f['run_id']}, {cell(f['artifact'])}: {cell(f['stage'])}: {cell(f['detail'])}")
+    if not report["failures"]:
+        lines.append("- None")
+    lines += ["", "### New entries by repository", ""]
+    lines.extend(f"- {cell(repo)}: {count}" for repo, count in sorted(report["by_repo"].items()))
+    if not report["by_repo"]:
+        lines.append("- No new corpus entries in the confirmed scope; unavailable repositories remain unknown.")
+    return "\n".join(lines) + "\n"
 
 
 def _harvest_file(repo: str, run: dict, artifact: str, path: Path, rel_src: str, failures: list[HarvestFailure]) -> tuple[dict, PendingCorpusWrite] | None:
@@ -618,11 +691,19 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--allow-partial", action="store_true", help="write what succeeded even if some runs/artifacts failed (for scheduled harvests)")
     ap.add_argument("--per-repo", type=int, default=5, help="max new corpus files per repository per harvest")
     ap.add_argument("--report", type=Path, help="write a JSON summary (counts, failures) here")
+    ap.add_argument("--summary", type=Path, help="write Markdown for job summary and generated PR body")
     args = ap.parse_args(argv if argv is not None else [])
     existing_xml = _load_manifest(MANIFEST)
     existing_json = _load_manifest(RESULTS_MANIFEST)
-    entries, failures, pending = harvest(entries_limit_per_repo=args.per_repo, existing=existing_xml + existing_json)
+    coverage: dict = {}
+    entries, failures, pending = harvest(entries_limit_per_repo=args.per_repo, existing=existing_xml + existing_json, coverage=coverage)
+    usable = any(item["status"] in ("complete", "partial") for item in coverage.values())
+    blocked = not usable or (bool(failures) and not args.allow_partial)
+    status = "unavailable" if not usable else ("partial" if failures else "complete")
     report = {
+        "status": status,
+        "exit_code": int(blocked),
+        "repositories": coverage,
         "new_entries": len(entries),
         "by_repo": {},
         "failures": [f.as_dict() for f in failures],
@@ -632,12 +713,12 @@ def main(argv: list[str] | None = None) -> int:
         report["by_repo"][repo_name] = report["by_repo"].get(repo_name, 0) + 1
     if args.report:
         args.report.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
-    hard = [f for f in failures if f.stage != "artifact_expired"] if args.allow_partial else failures
-    if failures and not args.allow_partial:
-        print(json.dumps({"entries": len(entries), "failures": report["failures"]}, indent=2), file=sys.stderr)
+    if args.summary:
+        args.summary.write_text(report_markdown(report), encoding="utf-8")
+    if failures or blocked:
+        print(json.dumps(report, indent=2), file=sys.stderr)
+    if blocked:
         return 1
-    if hard:
-        print(json.dumps({"partial_failures": [f.as_dict() for f in hard]}, indent=2), file=sys.stderr)
     xml_e, xml_p, json_e, json_p = _split(entries, pending)
     CORPUS.mkdir(parents=True, exist_ok=True)
     apply_harvest_success(CORPUS, MANIFEST, existing_xml + xml_e, xml_p)

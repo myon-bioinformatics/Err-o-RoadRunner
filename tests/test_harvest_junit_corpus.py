@@ -78,7 +78,11 @@ def test_harvest_main_writes_on_full_success(tmp_path: Path) -> None:
     mod.MANIFEST = manifest
     pending = [mod.PendingCorpusWrite(rel_path=Path("cases/new.xml"), content="<testsuites/>")]
     entries = [{"id": "new", "xml": "cases/new.xml"}]
-    with mock.patch.object(mod, "harvest", return_value=(entries, [], pending)):
+    def successful_harvest(**kwargs):
+        kwargs["coverage"]["gh_identity"] = {"status": "complete", "checked_files": 1}
+        return entries, [], pending
+
+    with mock.patch.object(mod, "harvest", side_effect=successful_harvest):
         assert mod.main() == 0
     assert (tmp_path / "cases" / "new.xml").read_text(encoding="utf-8") == "<testsuites/>"
     # Harvest is incremental: existing entries are kept and new ones appended.
@@ -242,3 +246,135 @@ def test_pytest_events_jsonl_and_playwright_json() -> None:
     assert kind == "playwright-json"
     assert [f["title"][-1] for f in data["failures"]] == ["breaks"]
     assert mod.extract_failing_json({"config": {}, "suites": []}) is None
+
+
+@pytest.mark.parametrize("scenario,expected_code,expected_status", [
+    ("all_failed", 1, "unavailable"),
+    ("partial", 0, "partial"),
+    ("normal", 0, "complete"),
+    ("no_runs", 0, "complete"),
+    ("expired", 1, "unavailable"),
+    ("no_targets", 1, "unavailable"),
+    ("empty_artifact", 1, "unavailable"),
+    ("invalid_xml", 1, "unavailable"),
+])
+def test_collection_coverage_end_to_end(tmp_path, monkeypatch, scenario, expected_code, expected_status):
+    mod = _load_harvest_module()
+    monkeypatch.setattr(mod, "REPOS", ["good", "bad"])
+    monkeypatch.setattr(mod, "CORPUS", tmp_path / "junit")
+    monkeypatch.setattr(mod, "MANIFEST", tmp_path / "junit" / "manifest.json")
+    monkeypatch.setattr(mod, "RESULTS_CORPUS", tmp_path / "results")
+    monkeypatch.setattr(mod, "RESULTS_MANIFEST", tmp_path / "results" / "manifest.json")
+
+    def runs(repo, failures):
+        if scenario == "all_failed" or (scenario == "partial" and repo == "bad"):
+            failures.append(mod.HarvestFailure(repo, None, None, "list_failed_runs", "authentication required"))
+            return []
+        if scenario == "no_runs":
+            return []
+        return [{"databaseId": 1, "createdAt": "2026-10-15"}]
+
+    def artifacts(repo, run_id, failures):
+        if scenario == "no_targets":
+            return []
+        return [{"name": "junit", "id": 1, "expired": scenario == "expired"}]
+
+    def download(repo, run_id, name, dest, failures):
+        if scenario != "empty_artifact":
+            (dest / "result.xml").write_text("<broken" if scenario == "invalid_xml" else
+                '<testsuite><testcase name="bad"><failure>boom</failure></testcase></testsuite>')
+        return True
+
+    monkeypatch.setattr(mod, "list_failed_runs", runs)
+    monkeypatch.setattr(mod, "list_artifacts", artifacts)
+    monkeypatch.setattr(mod, "download_artifact", download)
+    report = tmp_path / "report.json"
+    summary = tmp_path / "summary.md"
+    assert mod.main(["--allow-partial", "--report", str(report), "--summary", str(summary)]) == expected_code
+    data = json.loads(report.read_text())
+    assert data["status"] == expected_status
+    assert data["exit_code"] == expected_code
+    assert set(data["repositories"]) == {"good", "bad"}
+    assert summary.read_text() == mod.report_markdown(data)
+    if expected_code:
+        assert not mod.MANIFEST.exists()
+        assert data["failures"]
+    if scenario == "partial":
+        assert data["repositories"]["good"]["status"] == "complete"
+        assert data["repositories"]["bad"]["status"] == "unavailable"
+        assert "authentication required" in summary.read_text()
+        assert "bad" in summary.read_text()
+    if scenario == "no_runs":
+        assert data["new_entries"] == 0
+        assert data["repositories"]["good"]["no_failed_runs"]
+        assert "No new corpus entries" in summary.read_text()
+    if scenario == "expired":
+        assert {f["stage"] for f in data["failures"]} == {"artifact_expired"}
+
+
+def test_download_failure_in_one_repository_with_other_confirmed_empty(tmp_path, monkeypatch):
+    mod = _load_harvest_module()
+    monkeypatch.setattr(mod, "REPOS", ["good", "bad"])
+    def runs(repo, failures):
+        return [] if repo == "good" else [{"databaseId": 1}]
+    def download(repo, run_id, name, dest, failures):
+        failures.append(mod.HarvestFailure(repo, run_id, name, "download_artifact", "network error"))
+        return False
+    monkeypatch.setattr(mod, "list_failed_runs", runs)
+    monkeypatch.setattr(mod, "list_artifacts", lambda *args: [{"name": "junit", "expired": False}])
+    monkeypatch.setattr(mod, "download_artifact", download)
+    coverage = {}
+    entries, failures, _ = mod.harvest(coverage=coverage)
+    assert not entries
+    assert coverage["good"]["status"] == "complete"
+    assert coverage["bad"]["status"] == "unavailable"
+    assert failures[0].detail == "network error"
+
+
+def test_workflow_and_proposal_publish_identical_coverage():
+    workflow = (ROOT / ".github/workflows/harvest-corpus.yml").read_text()
+    assert workflow == (ROOT / "docs/ci/harvest-corpus.yml.proposed").read_text()
+    assert '--summary "$RUNNER_TEMP/harvest-summary.md"' in workflow
+    assert 'cat "$RUNNER_TEMP/harvest-summary.md" >> "$GITHUB_STEP_SUMMARY"' in workflow
+    assert '--body-file "$RUNNER_TEMP/harvest-summary.md"' in workflow
+    assert "if: always() && steps.harvest.outcome" in workflow
+    assert 'continue-on-error' not in workflow
+
+
+def test_duplicate_corpus_still_checks_artifact(monkeypatch):
+    mod = _load_harvest_module()
+    monkeypatch.setattr(mod, "REPOS", ["good"])
+    monkeypatch.setattr(mod, "list_failed_runs", lambda *args: [{"databaseId": 1}])
+    monkeypatch.setattr(mod, "list_artifacts", lambda *args: [{"name": "junit", "expired": True}])
+    coverage = {}
+    mod.harvest(existing=[{"repo": mod.ORG + "/good", "run_id": 1, "artifact": "junit"}], coverage=coverage)
+    assert coverage["good"]["status"] == "unavailable"
+
+
+@pytest.mark.parametrize("raw", ["", "null", "{}", '[{"databaseId": "oops"}]'])
+def test_invalid_run_response_is_not_confirmed_empty(raw, monkeypatch):
+    mod = _load_harvest_module()
+    monkeypatch.setattr(mod, "run_gh", lambda *args, **kwargs: raw)
+    failures = []
+    assert mod.list_failed_runs("repo", failures) == []
+    assert failures and failures[0].stage == "list_failed_runs"
+
+
+def test_same_repository_partial_and_expired_with_valid_target(monkeypatch):
+    mod = _load_harvest_module()
+    monkeypatch.setattr(mod, "REPOS", ["repo"])
+    monkeypatch.setattr(mod, "list_failed_runs", lambda *args: [{"databaseId": 1}])
+    monkeypatch.setattr(mod, "list_artifacts", lambda *args: [
+        {"name": "junit-old", "expired": True},
+        {"name": "junit-new", "expired": False},
+    ])
+    def download(repo, run_id, name, dest, failures):
+        (dest / "passing.xml").write_text('<testsuite><testcase name="passing"/></testsuite>')
+        return True
+    monkeypatch.setattr(mod, "download_artifact", download)
+    coverage = {}
+    entries, failures, _ = mod.harvest(coverage=coverage)
+    assert not entries
+    assert coverage["repo"]["status"] == "partial"
+    assert coverage["repo"]["checked_files"] == 1
+    assert failures[0].stage == "artifact_expired"
