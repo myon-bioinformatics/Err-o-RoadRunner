@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="34" time="0.391" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_vendor_workflow" name="test_public_vendor_ci_updates_without_repository_writes" time="0.011"><failure message="assert {&quot;${{ inputs....n', 'vendor/'} == {'vendor.lock...n', 'vendor/'}&#10;  &#10;  Extra items in the left set:&#10;  &quot;${{ inputs.vendor-mode != 'locked' &amp;&amp; 'vendor-promotion.json' || '' }}&quot;&#10;  &#10;  Full diff:&#10;    {&#10;  +     &quot;${{ inputs.vendor-mode != 'locked' &amp;&amp; 'vendor-promotion.json' || '' }}&quot;,&#10;        'vendor.lock.json',&#10;        'vendor/',&#10;    }">def test_public_vendor_ci_updates_without_repository_writes():
+        import yaml
+        ci = yaml.load((ROOT / '.github/workflows/python.yml').read_text(encoding='utf-8'), Loader=yaml.BaseLoader)
+        jobs = ci['jobs']
+        resolve = jobs['resolve-vendor']['steps']
+        test = jobs['test']['steps']
+        update = next(s for s in resolve if s.get('name') == 'Update public vendor files for this run')
+        assert update['if'] == "inputs.vendor-mode != 'locked'"
+        assert update['shell'] == 'bash'
+        assert not any(word in update['run'] for word in ('|| true', '|| :', 'set +e'))
+        assert 'continue-on-error' not in update
+        assert update['run'].splitlines() == [
+            'python -S .vendor-sync-tools/vendor_sync.py promote --manifest vendor.lock.json | tee vendor-promotion.json',
+            'python -S -m json.tool vendor-promotion.json &gt; /dev/null',
+            'python -S .vendor-sync-tools/vendor_sync.py check --manifest vendor.lock.json']
+        assert ci['on']['workflow_dispatch']['inputs']['vendor-mode']['default'] == 'update'
+        assert jobs['test']['needs'] == 'resolve-vendor'
+        assert sum('vendor_sync.py promote' in s.get('run', '') for steps in (resolve, test) for s in steps) == 1
+        download = next(i for i,s in enumerate(test) if s.get('uses', '').startswith('actions/download-artifact@'))
+        verify = next(i for i,s in enumerate(test) if s.get('name') == 'Verify resolved vendor snapshot')
+        assert test[download]['with']['name'] == 'vendor-snapshot'
+        assert download &lt; verify
+        assert 'vendor_sync.py check' in test[verify]['run']
+        assert all('vendor_sync.py promote' not in s.get('run', '') for s in test)
+        for steps, name in ((resolve, 'Preserve resolved vendor snapshot'), (test, 'Preserve vendor lock used by this run')):
+            upload = next(s for s in steps if s.get('name') == name)
+            assert upload['if'] == 'always()'
+            assert upload['with']['if-no-files-found'] == 'error'
+&gt;           assert set(upload['with']['path'].splitlines()) == {'vendor.lock.json', 'vendor/'}
+E           assert {"${{ inputs....n', 'vendor/'} == {'vendor.lock...n', 'vendor/'}
+E             
+E             Extra items in the left set:
+E             "${{ inputs.vendor-mode != 'locked' &amp;&amp; 'vendor-promotion.json' || '' }}"
+E             
+E             Full diff:
+E               {
+E             +     "${{ inputs.vendor-mode != 'locked' &amp;&amp; 'vendor-promotion.json' || '' }}",
+E                   'vendor.lock.json',
+E                   'vendor/',
+E               }
+
+tests/test_vendor_workflow.py:36: AssertionError</failure></testcase></testsuite></testsuites>

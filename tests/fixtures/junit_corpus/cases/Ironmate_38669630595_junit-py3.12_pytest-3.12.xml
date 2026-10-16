@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="9" tests="558" time="109.993" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_junit_failure_identity" name="test_workflow_keeps_suite_failure_and_exact_reports" time="0.034"><failure message="AssertionError: assert False&#10; +  where False = &lt;built-in method endswith of str object at 0x&lt;addr&gt;&gt;('@f907560c2b9b3f7a0f78f4434f547f91cb2ef954')&#10; +    where &lt;built-in method endswith of str object at 0x&lt;addr&gt;&gt; = 'myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-junit-identity.yml@ab17b409d82f95abc81116af7ff0d3e7bdc4158c'.endswith">tests/test_junit_failure_identity.py:129: in test_workflow_keeps_suite_failure_and_exact_reports
+    assert collector['uses'].endswith('@f907560c2b9b3f7a0f78f4434f547f91cb2ef954')
+E   AssertionError: assert False
+E    +  where False = &lt;built-in method endswith of str object at 0x&lt;addr&gt;&gt;('@f907560c2b9b3f7a0f78f4434f547f91cb2ef954')
+E    +    where &lt;built-in method endswith of str object at 0x&lt;addr&gt;&gt; = 'myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-junit-identity.yml@ab17b409d82f95abc81116af7ff0d3e7bdc4158c'.endswith</failure></testcase></testsuite></testsuites>

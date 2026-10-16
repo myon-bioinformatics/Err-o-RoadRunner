@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="72" time="6.381" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_cli_args" name="test_exclusive_output_never_overwrites_existing_file_or_symlink" time="0.006"><failure message="Failed: DID NOT RAISE FileExistsError">tests\test_cli_args.py:304: in test_exclusive_output_never_overwrites_existing_file_or_symlink
+    with pytest.raises(FileExistsError):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   Failed: DID NOT RAISE FileExistsError</failure></testcase></testsuite></testsuites>

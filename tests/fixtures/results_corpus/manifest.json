@@ -1,0 +1,16 @@
+[
+  {
+    "id": "browser-test-kit_38695529104_junit-controlled-python-3.13_bt",
+    "repo": "myon-bioinformatics/browser-test-kit",
+    "run_id": 38695529104,
+    "artifact": "junit-controlled-python-3.13",
+    "job": "junit-controlled-python-3.13",
+    "workflow": "playwright-prototype",
+    "date": "2026-10-15T06:56:56Z",
+    "source_file": "btk-events.jsonl",
+    "format": "status-jsonl",
+    "data": "cases/browser-test-kit_38695529104_junit-controlled-python-3.13_bt.jsonl",
+    "records": 3,
+    "sha256": "804d67e2a736325bfb988e69e0f140f4b848b9e0a06e6080622a7603132e59a2"
+  }
+]

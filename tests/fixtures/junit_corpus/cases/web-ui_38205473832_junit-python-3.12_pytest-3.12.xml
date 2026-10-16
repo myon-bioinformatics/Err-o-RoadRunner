@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="1" tests="151" time="2.723" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_embedded_modules.EmbeddedModulesTests" name="test_reject_end_tag_and_duplicates" time="0.001"><failure message="AssertionError: ValueError not raised">self = &lt;test_embedded_modules.EmbeddedModulesTests testMethod=test_reject_end_tag_and_duplicates&gt;
+
+    def test_reject_end_tag_and_duplicates(self):
+        for source in ("&lt;/script&gt;", "&lt;/ScRiPt &gt;", "&lt;/script/"):
+&gt;           with self.assertRaises(ValueError):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: ValueError not raised
+
+tests/test_embedded_modules.py:34: AssertionError</failure></testcase></testsuite></testsuites>

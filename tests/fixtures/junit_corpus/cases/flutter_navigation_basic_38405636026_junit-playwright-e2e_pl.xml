@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites id="" name="" tests="195" failures="5" skipped="6" errors="0" time="891.371188"><testsuite name="home_discovery_journeys.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="3" failures="1" skipped="0" time="21.279" errors="0"><testcase name="Home discovery journeys › Home draw → stable tool Door → drawn screen with screenshot evidence @portable" classname="home_discovery_journeys.spec.ts" time="6.324"><system-out>
+::notice title=route-audit chromium::stage=failed last=source-tool failed_step=open-door ids=126,54,127 route=#/tools/media/photo-studio menu=[] door=[{"via":"button-press","opened":false,"record":{"schema":"pointer-press/1","input":"mouse","input_source":"explicit","x":640,"y":563,"visible_ratio":1,"box":{"x":260,"y":502,"width":760,"height":122},"hit":{"tag":"flt-semantics","self":false}}}]
+::notice title=journey chromium::Home draw → stable tool Door → drawn screen with screenshot evidence @portable :: Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+journey-semantics chromium [{"role":"group","id":null,"name":"⚖ repo not measured · repo not measured · Version v0.1.0 · Commit unknown","text":"BackPhoto Studio 🖼️HomeFavorite this pageMenuUndoRedoA corner for frames and marks on photos. Geographic bounds live under Latitude / Longitude.Select an image or paste here\nSelec","box":{"x":0,"y":0,"width":1280,"height":720}},{"role":null,"id":null,"name":null,"text":"BackPhoto Studio 🖼️HomeFavorite this pageMenuUndoRedo","box":{"x":0,"y":0,"width":1280,"height":104}},{"role":null,"id":"shared-header-home","name":null,"text":"Home","box":{"x":1160,"y":8,"width":40,"height":40}},{"role":null,"id":"shared-header-favorite","name":null,"text":"Favorite this page","box":{"x":1200,"y":8,"width":40,"height":40}},{"role":null,"id":"shared-header-menu","name":null,"text":"Menu","box":{"x":1240,"y":8,"width":40,"height":40}},{"role":null,"id":"shared-header-secondary","name":null,"text":"UndoRedo","box":{"x":0,"y":56,"width":1280,"height":48}},{"role":"group","id":null,"name":"Door-to-Door tools","text":"Door-to-Door tools\nJump to another tool without going Home first.\nDoor-to-Door tools\nPhoto Studio (current)","box":{"x":260,"y":502,"width":760,"height":122}},{"role":"button","id":null,"name":null,"text":"Door-to-Door tools\nJump to another tool without going Home first.\nDoor-to-Door tools\nPhoto Studio (current)","box":{"x":260,"y":502,"width":760,"height":122}}]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-chromium/attachments/home-draw-png-2766c28c19f2fe24d0ed0a3c47d17f630eff5cfc.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-chromium/attachments/source-tool-png-b525856aaf00a71cfd79b92f933638f85277d95c.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-chromium/attachments/route-audit-json-08f609acf7ae16483289c9f31d22099da2f25b10.json]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-chromium/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-chromium/error-context.md]]
+
+</system-out>
+<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
+  [chromium] › home_discovery_journeys.spec.ts:125:7 › Home discovery journeys › Home draw → stable tool Door → drawn screen with screenshot evidence @portable 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('[role="menuitem"]').first()
+    Expected: visible
+    Timeout: 3000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('[role="menuitem"]').first() with timeout 3000ms
+      - waiting for locator('[role="menuitem"]').first()
+
+
+      65 |   const attempt = { via: 'button-press', opened: false, record };
+      66 |   attempts.push(attempt);
+    &gt; 67 |   await expect(items.first()).toBeVisible({ timeout: 3_000 });
+         |                               ^
+      68 |   attempt.opened = true;
+      69 | }
+      70 |
+        at openDoor (&lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:67:31)
+        at &lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:178:7
+
+    attachment #1: home-draw.png (image/png) ───────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-chromium/attachments/home-draw-png-2766c28c19f2fe24d0ed0a3c47d17f630eff5cfc.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: source-tool.png (image/png) ─────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-chromium/attachments/source-tool-png-b525856aaf00a71cfd79b92f933638f85277d95c.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: route-audit.json (application/json) ─────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-chromium/attachments/route-audit-json-08f609acf7ae16483289c9f31d22099da2f25b10.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #6: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-chromium/error-context.md
+
+</failure>
+</testcase></testsuite><testsuite name="home_discovery_journeys.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="3" failures="1" skipped="0" time="24.889" errors="0"><testcase name="Home discovery journeys › Home draw → stable tool Door → drawn screen with screenshot evidence @portable" classname="home_discovery_journeys.spec.ts" time="5.907"><system-out>
+::notice title=route-audit firefox::stage=failed last=source-tool failed_step=open-door ids=24,22,125 route=#/tools/media/photo-studio menu=[] door=[{"via":"button-press","opened":false,"record":{"schema":"pointer-press/1","input":"mouse","input_source":"explicit","x":640,"y":563,"visible_ratio":1,"box":{"x":260,"y":502,"width":760,"height":122},"hit":{"tag":"flt-semantics","self":false}}}]
+::notice title=journey firefox::Home draw → stable tool Door → drawn screen with screenshot evidence @portable :: Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+journey-semantics firefox [{"role":"group","id":null,"name":"⚖ repo not measured · repo not measured · Version v0.1.0 · Commit unknown","text":"BackPhoto Studio 🖼️HomeFavorite this pageMenuUndoRedoA corner for frames and marks on photos. Geographic bounds live under Latitude / Longitude.Select an image or paste here\nSelec","box":{"x":0,"y":0,"width":1280,"height":720}},{"role":null,"id":null,"name":null,"text":"BackPhoto Studio 🖼️HomeFavorite this pageMenuUndoRedo","box":{"x":0,"y":0,"width":1280,"height":104}},{"role":null,"id":"shared-header-home","name":null,"text":"Home","box":{"x":1160,"y":8,"width":40,"height":40}},{"role":null,"id":"shared-header-favorite","name":null,"text":"Favorite this page","box":{"x":1200,"y":8,"width":40,"height":40}},{"role":null,"id":"shared-header-menu","name":null,"text":"Menu","box":{"x":1240,"y":8,"width":40,"height":40}},{"role":null,"id":"shared-header-secondary","name":null,"text":"UndoRedo","box":{"x":0,"y":56,"width":1280,"height":48}},{"role":"group","id":null,"name":"Door-to-Door tools","text":"Door-to-Door tools\nJump to another tool without going Home first.\nDoor-to-Door tools\nPhoto Studio (current)","box":{"x":260,"y":502,"width":760,"height":122}},{"role":"button","id":null,"name":null,"text":"Door-to-Door tools\nJump to another tool without going Home first.\nDoor-to-Door tools\nPhoto Studio (current)","box":{"x":260,"y":502,"width":760,"height":122}}]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-firefox/attachments/home-draw-png-b0ddf46a60982212b74a581829a2513ae3541fdd.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-firefox/attachments/source-tool-png-13720da93eb875f4542d861e4858eb28d7ca52e1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-firefox/attachments/route-audit-json-76d4ac75982a55af072893284adbe730db687d58.json]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-firefox/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-firefox/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-firefox/error-context.md]]
+
+</system-out>
+<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
+  [firefox] › home_discovery_journeys.spec.ts:125:7 › Home discovery journeys › Home draw → stable tool Door → drawn screen with screenshot evidence @portable 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('[role="menuitem"]').first()
+    Expected: visible
+    Timeout: 3000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('[role="menuitem"]').first() with timeout 3000ms
+      - waiting for locator('[role="menuitem"]').first()
+
+
+      65 |   const attempt = { via: 'button-press', opened: false, record };
+      66 |   attempts.push(attempt);
+    &gt; 67 |   await expect(items.first()).toBeVisible({ timeout: 3_000 });
+         |                               ^
+      68 |   attempt.opened = true;
+      69 | }
+      70 |
+        at openDoor (&lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:67:31)
+        at &lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:178:7
+
+    attachment #1: home-draw.png (image/png) ───────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-firefox/attachments/home-draw-png-b0ddf46a60982212b74a581829a2513ae3541fdd.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: source-tool.png (image/png) ─────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-firefox/attachments/source-tool-png-13720da93eb875f4542d861e4858eb28d7ca52e1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: route-audit.json (application/json) ─────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-firefox/attachments/route-audit-json-76d4ac75982a55af072893284adbe730db687d58.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-firefox/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #6: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-firefox/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-firefox/error-context.md
+
+</failure>
+</testcase></testsuite><testsuite name="home_discovery_journeys.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="3" failures="1" skipped="0" time="35.596" errors="0"><testcase name="Home discovery journeys › Home draw → stable tool Door → drawn screen with screenshot evidence @portable" classname="home_discovery_journeys.spec.ts" time="8.781"><system-out>
+::notice title=route-audit webkit::stage=failed last=source-tool failed_step=open-door ids=83,39,143 route=#/tools/media/photo-studio menu=[] door=[{"via":"button-press","opened":false,"record":{"schema":"pointer-press/1","input":"mouse","input_source":"explicit","x":640,"y":563,"visible_ratio":1,"box":{"x":260,"y":502,"width":760,"height":122},"hit":{"tag":"flt-semantics","self":false}}}]
+::notice title=journey webkit::Home draw → stable tool Door → drawn screen with screenshot evidence @portable :: Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+journey-semantics webkit [{"role":"group","id":null,"name":"⚖ repo not measured · repo not measured · Version v0.1.0 · Commit unknown","text":"BackPhoto Studio 🖼️HomeFavorite this pageMenuUndoRedoA corner for frames and marks on photos. Geographic bounds live under Latitude / Longitude.Select an image or paste here\nSelec","box":{"x":0,"y":0,"width":1280,"height":720}},{"role":null,"id":null,"name":null,"text":"BackPhoto Studio 🖼️HomeFavorite this pageMenuUndoRedo","box":{"x":0,"y":0,"width":1280,"height":104}},{"role":null,"id":"shared-header-home","name":null,"text":"Home","box":{"x":1160,"y":8,"width":40,"height":40}},{"role":null,"id":"shared-header-favorite","name":null,"text":"Favorite this page","box":{"x":1200,"y":8,"width":40,"height":40}},{"role":null,"id":"shared-header-menu","name":null,"text":"Menu","box":{"x":1240,"y":8,"width":40,"height":40}},{"role":null,"id":"shared-header-secondary","name":null,"text":"UndoRedo","box":{"x":0,"y":56,"width":1280,"height":48}},{"role":"group","id":null,"name":"Door-to-Door tools","text":"Door-to-Door tools\nJump to another tool without going Home first.\nDoor-to-Door tools\nPhoto Studio (current)","box":{"x":260,"y":502,"width":760,"height":122}},{"role":"button","id":null,"name":null,"text":"Door-to-Door tools\nJump to another tool without going Home first.\nDoor-to-Door tools\nPhoto Studio (current)","box":{"x":260,"y":502,"width":760,"height":122}}]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-webkit/attachments/home-draw-png-1d64ba0647bd69a4fa50b7e6ddf3bafb70a067ff.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-webkit/attachments/source-tool-png-8c75527d8e3268cdbfa470f8a0fc64bfe0d5a51f.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-webkit/attachments/route-audit-json-0b7e64d594b6328e5b05b8782ee4ba126bc4ffee.json]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-webkit/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-webkit/error-context.md]]
+
+</system-out>
+<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
+  [webkit] › home_discovery_journeys.spec.ts:125:7 › Home discovery journeys › Home draw → stable tool Door → drawn screen with screenshot evidence @portable 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('[role="menuitem"]').first()
+    Expected: visible
+    Timeout: 3000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('[role="menuitem"]').first() with timeout 3000ms
+      - waiting for locator('[role="menuitem"]').first()
+
+
+      65 |   const attempt = { via: 'button-press', opened: false, record };
+      66 |   attempts.push(attempt);
+    &gt; 67 |   await expect(items.first()).toBeVisible({ timeout: 3_000 });
+         |                               ^
+      68 |   attempt.opened = true;
+      69 | }
+      70 |
+        at openDoor (&lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:67:31)
+        at &lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:178:7
+
+    attachment #1: home-draw.png (image/png) ───────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-webkit/attachments/home-draw-png-1d64ba0647bd69a4fa50b7e6ddf3bafb70a067ff.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: source-tool.png (image/png) ─────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-webkit/attachments/source-tool-png-8c75527d8e3268cdbfa470f8a0fc64bfe0d5a51f.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: route-audit.json (application/json) ─────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-webkit/attachments/route-audit-json-0b7e64d594b6328e5b05b8782ee4ba126bc4ffee.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #6: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-webkit/error-context.md
+
+</failure>
+</testcase></testsuite><testsuite name="home_discovery_journeys.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="3" failures="1" skipped="0" time="25.977" errors="0"><testcase name="Home discovery journeys › Home draw → stable tool Door → drawn screen with screenshot evidence @portable" classname="home_discovery_journeys.spec.ts" time="7.185"><system-out>
+::notice title=route-audit mobile-chromium::stage=failed last=source-tool failed_step=open-door ids=129,114,76 route=#/tools/media/photo-studio menu=[] door=[{"via":"button-press","opened":false,"record":{"schema":"pointer-press/1","input":"touch","input_source":"explicit","x":206,"y":678,"visible_ratio":1,"box":{"x":24,"y":613,"width":364,"height":130},"hit":{"tag":"flt-semantics","self":false}}}]
+::notice title=journey mobile-chromium::Home draw → stable tool Door → drawn screen with screenshot evidence @portable :: Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+journey-semantics mobile-chromium [{"role":"group","id":null,"name":"⚖ repo not measured · repo not measured · Version v0.1.0 · Commit unknown","text":"Back\nBackPhoto Studio 🖼️HomeFavorite this pageMenuUndoRedoA corner for frames and marks on photos. Geographic bounds live under Latitude / Longitude.Select an image or paste here\n","box":{"x":0,"y":0,"width":412,"height":839}},{"role":null,"id":null,"name":null,"text":"Back\nBackPhoto Studio 🖼️HomeFavorite this pageMenuUndoRedo","box":{"x":0,"y":0,"width":412,"height":104}},{"role":null,"id":"shared-header-home","name":null,"text":"Home","box":{"x":268,"y":4,"width":48,"height":48}},{"role":null,"id":"shared-header-favorite","name":null,"text":"Favorite this page","box":{"x":316,"y":4,"width":48,"height":48}},{"role":null,"id":"shared-header-menu","name":null,"text":"Menu","box":{"x":364,"y":4,"width":48,"height":48}},{"role":null,"id":"shared-header-secondary","name":null,"text":"UndoRedo","box":{"x":0,"y":56,"width":412,"height":48}},{"role":"group","id":null,"name":"Door-to-Door tools","text":"Door-to-Door tools\nJump to another tool without going Home first.\nDoor-to-Door tools\nPhoto Studio (current)","box":{"x":24,"y":613,"width":364,"height":130}},{"role":"button","id":null,"name":null,"text":"Door-to-Door tools\nJump to another tool without going Home first.\nDoor-to-Door tools\nPhoto Studio (current)","box":{"x":24,"y":613,"width":364,"height":130}}]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-chromium/attachments/home-draw-png-6c8f9ed84cf4af88e0de6146136b342a49d22fa6.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-chromium/attachments/source-tool-png-12ed35d66717da799e4c3ad065973fce8c7a0a77.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-chromium/attachments/route-audit-json-9dfe39e271d2ea0ac96ff4b308e1d785e0ce4dbe.json]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-chromium/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-chromium/error-context.md]]
+
+</system-out>
+<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
+  [mobile-chromium] › home_discovery_journeys.spec.ts:125:7 › Home discovery journeys › Home draw → stable tool Door → drawn screen with screenshot evidence @portable 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('[role="menuitem"]').first()
+    Expected: visible
+    Timeout: 3000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('[role="menuitem"]').first() with timeout 3000ms
+      - waiting for locator('[role="menuitem"]').first()
+
+
+      65 |   const attempt = { via: 'button-press', opened: false, record };
+      66 |   attempts.push(attempt);
+    &gt; 67 |   await expect(items.first()).toBeVisible({ timeout: 3_000 });
+         |                               ^
+      68 |   attempt.opened = true;
+      69 | }
+      70 |
+        at openDoor (&lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:67:31)
+        at &lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:178:7
+
+    attachment #1: home-draw.png (image/png) ───────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-chromium/attachments/home-draw-png-6c8f9ed84cf4af88e0de6146136b342a49d22fa6.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: source-tool.png (image/png) ─────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-chromium/attachments/source-tool-png-12ed35d66717da799e4c3ad065973fce8c7a0a77.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: route-audit.json (application/json) ─────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-chromium/attachments/route-audit-json-9dfe39e271d2ea0ac96ff4b308e1d785e0ce4dbe.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #6: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-chromium/error-context.md
+
+</failure>
+</testcase></testsuite><testsuite name="home_discovery_journeys.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="3" failures="1" skipped="0" time="23.974" errors="0"><testcase name="Home discovery journeys › Home draw → stable tool Door → drawn screen with screenshot evidence @portable" classname="home_discovery_journeys.spec.ts" time="6.93"><system-out>
+::notice title=route-audit mobile-webkit::stage=failed last=source-tool failed_step=open-door ids=83,39,143 route=#/tools/media/photo-studio menu=[] door=[{"via":"button-press","opened":false,"record":{"schema":"pointer-press/1","input":"touch","input_source":"explicit","x":195,"y":507,"visible_ratio":1,"box":{"x":24,"y":446,"width":342,"height":122},"hit":{"tag":"flt-semantics","self":false}}}]
+::notice title=journey mobile-webkit::Home draw → stable tool Door → drawn screen with screenshot evidence @portable :: Error: [2mexpect([22m[31mlocator[39m[2m).[22mtoBeVisible[2m([22m[2m)[22m failed
+journey-semantics mobile-webkit [{"role":"group","id":null,"name":"⚖ repo not measured · repo not measured · Version v0.1.0 · Commit unknown","text":"BackPhoto Studio 🖼️HomeFavorite this pageMenuUndoRedoA corner for frames and marks on photos. Geographic bounds live under Latitude / Longitude.Select an image or paste here\nSelec","box":{"x":0,"y":0,"width":390,"height":664}},{"role":null,"id":null,"name":null,"text":"BackPhoto Studio 🖼️HomeFavorite this pageMenuUndoRedo","box":{"x":0,"y":0,"width":390,"height":104}},{"role":null,"id":"shared-header-home","name":null,"text":"Home","box":{"x":270,"y":8,"width":40,"height":40}},{"role":null,"id":"shared-header-favorite","name":null,"text":"Favorite this page","box":{"x":310,"y":8,"width":40,"height":40}},{"role":null,"id":"shared-header-menu","name":null,"text":"Menu","box":{"x":350,"y":8,"width":40,"height":40}},{"role":null,"id":"shared-header-secondary","name":null,"text":"UndoRedo","box":{"x":0,"y":56,"width":390,"height":48}},{"role":"group","id":null,"name":"Door-to-Door tools","text":"Door-to-Door tools\nJump to another tool without going Home first.\nDoor-to-Door tools\nPhoto Studio (current)","box":{"x":24,"y":446,"width":342,"height":122}},{"role":"button","id":null,"name":null,"text":"Door-to-Door tools\nJump to another tool without going Home first.\nDoor-to-Door tools\nPhoto Studio (current)","box":{"x":24,"y":446,"width":342,"height":122}}]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/attachments/home-draw-png-69d6ba1433f4254ba942d60161ddaf9e1bd321f5.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/attachments/source-tool-png-c9561e65667b3a8f3a903a3087946157d646e2fe.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/attachments/route-audit-json-6e189da6c8d4b5f976317c9ffd1ac244ed5988a8.json]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/error-context.md]]
+
+</system-out>
+<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
+  [mobile-webkit] › home_discovery_journeys.spec.ts:125:7 › Home discovery journeys › Home draw → stable tool Door → drawn screen with screenshot evidence @portable 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('[role="menuitem"]').first()
+    Expected: visible
+    Timeout: 3000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('[role="menuitem"]').first() with timeout 3000ms
+      - waiting for locator('[role="menuitem"]').first()
+
+
+      65 |   const attempt = { via: 'button-press', opened: false, record };
+      66 |   attempts.push(attempt);
+    &gt; 67 |   await expect(items.first()).toBeVisible({ timeout: 3_000 });
+         |                               ^
+      68 |   attempt.opened = true;
+      69 | }
+      70 |
+        at openDoor (&lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:67:31)
+        at &lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:178:7
+
+    attachment #1: home-draw.png (image/png) ───────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/attachments/home-draw-png-69d6ba1433f4254ba942d60161ddaf9e1bd321f5.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: source-tool.png (image/png) ─────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/attachments/source-tool-png-c9561e65667b3a8f3a903a3087946157d646e2fe.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: route-audit.json (application/json) ─────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/attachments/route-audit-json-6e189da6c8d4b5f976317c9ffd1ac244ed5988a8.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #6: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/error-context.md
+
+</failure>
+</testcase></testsuite></testsuites>

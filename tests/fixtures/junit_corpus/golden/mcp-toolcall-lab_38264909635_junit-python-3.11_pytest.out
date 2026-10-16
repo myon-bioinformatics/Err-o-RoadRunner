@@ -1,0 +1,23 @@
+FOUND: exit code: 1
+FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/mcp-toolcall-lab_38264909635_junit-python-3.11_pytest.xml): 2
+FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/mcp-toolcall-lab_38264909635_junit-python-3.11_pytest.xml): tmp_path = PosixPath('<pytest-tmp>/pytest-0/test_paired_metrics_and_secret0')\n\n    def test_paired_metrics_and_secret_free_artifact(tmp_path):\n        data = _data(tmp_path)\n        result = run(data, _fake_post, context_window=2048, repeats=2,\n                     model_sha256="f" * 64)\n        a = result["aggregate"]\n        assert a["paired_samples"] == 24\n        assert a["compacted_sa
+FOUND: junit failure (last) (<repo>/tests/fixtures/junit_corpus/cases/mcp-toolcall-lab_38264909635_junit-python-3.11_pytest.xml): AssertionError: assert None == 3\n +  where None = _as_digit({'choices': [{'message': {'content': ' 3 '}}]})\ndef test_invalid_predictions_never_rewritten_as_valid_digit():\n        for reply in ("exit=1", "4\nexplanation", "0 1", "unknown", ""):\n            assert _as_digit({"choices": [{"message": {"content": reply}}]}) is None\n>       assert _as_digit({"choices": [{"message": {"content": " 3 
+FOUND: junit failure groups (<repo>/tests/fixtures/junit_corpus/cases/mcp-toolcall-lab_38264909635_junit-python-3.11_pytest.xml): 2 failures in 2 groups
+FOUND: junit failure group 1/2 (<repo>/tests/fixtures/junit_corpus/cases/mcp-toolcall-lab_38264909635_junit-python-3.11_pytest.xml): 1× AssertionError: assert None == N — first: tests.test_aoi_gguf_benchmark::test_invalid_predictions_never_rewritten_as_valid_digit — msg: AssertionError: assert None == 3
+FOUND: junit failure group 2/2 (<repo>/tests/fixtures/junit_corpus/cases/mcp-toolcall-lab_38264909635_junit-python-3.11_pytest.xml): 1× AssertionError: assert N == N — first: tests.test_aoi_gguf_benchmark::test_paired_metrics_and_secret_free_artifact — msg: assert 0 == 24
+FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/mcp-toolcall-lab_38264909635_junit-python-3.11_pytest.xml): tests.test_aoi_gguf_benchmark
+FOUND: python version: 3.13.5 (cpython)
+FOUND: node version: v20.19.2
+FOUND: gh version: gh version 2.46.0 (2025-01-13 Debian 2.46.0-3)
+FOUND: environment variable count: 55
+FOUND: environment variable names: AGENT_TRANSCRIPTS, BROWSER, COREPACK_HOME, CURSOR_AGENT, CURSOR_AGENT_SOCKET, CURSOR_CONVERSATION_ID, CURSOR_REQUEST_ID, CURSOR_RIPGREP_PATH, DEBIAN_FRONTEND, DISPLAY, EXEC_DAEMON_CWD, FORCE_COLOR, HOME, LANG, LC_ALL, LOGNAME, LS_COLORS, NO_COLOR, NPM_CONFIG_PREFIX, OLDPWD, PATH, PWD, SAND_BOX_AUTH_ID, SAND_BOX_BOOT_ID, SAND_BOX_BOOT_STARTED_AT_MS, SAND_BOX_CLUSTER, SAND_BOX_LEGACY_STORE, SAND_BOX_MAX_WINDOWS, SAND_BOX_SCRIPT_SYNC_DISABLED, SAND_BOX_STORE_BACKEND, SAND_BOX_STORE_COPY_IN, SAND_BOX_STORE_HIBERNATE_HOOK, SAND_BOX_STORE_ID, SAND_BOX_STORE_SYNC, SAND_BOX_TELEMETRY_LOG, SAND_BOX_TENANT_ID, SAND_EGRESS_TUNNEL_ENABLED, SAND_EGRESS_TUNNEL_PROXY_ADDR, SAND_EGRESS_TUNNEL_WS_ADDR, SAND_EGRESS_TUNNEL_WS_PORT, ...
+NOT FOUND: junit errors (<repo>/tests/fixtures/junit_corpus/cases/mcp-toolcall-lab_38264909635_junit-python-3.11_pytest.xml)
+NOT FOUND: junit skipped (<repo>/tests/fixtures/junit_corpus/cases/mcp-toolcall-lab_38264909635_junit-python-3.11_pytest.xml)
+NOT FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/mcp-toolcall-lab_38264909635_junit-python-3.11_pytest.xml)
+NOT FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/mcp-toolcall-lab_38264909635_junit-python-3.11_pytest.xml)
+NOT FOUND: junit system-err (<repo>/tests/fixtures/junit_corpus/cases/mcp-toolcall-lab_38264909635_junit-python-3.11_pytest.xml)
+NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/mcp-toolcall-lab_38264909635_junit-python-3.11_pytest.xml)
+NOT FOUND: lock files in project root
+HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/mcp-toolcall-lab_38264909635_junit-python-3.11_pytest.xml): pytest/python
+HINT: junit pytest assert line (<repo>/tests/fixtures/junit_corpus/cases/mcp-toolcall-lab_38264909635_junit-python-3.11_pytest.xml): E       assert 0 == 24
+HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/mcp-toolcall-lab_38264909635_junit-python-3.11_pytest.xml): tmp_path = PosixPath('<pytest-tmp>/pytest-0/test_paired_metrics_and_secret0')\n\n    def test_paired_metrics_and_secret_free_artifact(tmp_path):\n        data = _data(tmp_path)\n        result = run(data, _fake_post, context_window=2048, repeats=2,\n                     model_sha256="f" * 64)\n        a = result["aggregate"]\n        assert a["paired_samples"] == 24\n        assert a["compacted_sa

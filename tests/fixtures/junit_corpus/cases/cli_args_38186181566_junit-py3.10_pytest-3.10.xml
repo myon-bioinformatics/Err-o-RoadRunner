@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="5" tests="88" time="8.415" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_commands" name="test_git_machine_readable_porcelain_refs_and_batch_shapes" time="0.025"><failure message="AssertionError: assert 'de60cdfafda2...0 missing\x00' == 'de60cdfafda2...lo\\0world\\0'&#10;  &#10;  - de60cdfafda2e5841bc3874b96f3f5c2fc20d0a8 blob 11\0hello\0world\0&#10;  + de60cdfafda2e5841bc3874b96f3f5c2fc20d0a8\0flush\0 missing#x00">tests/test_commands.py:134: in test_git_machine_readable_porcelain_refs_and_batch_shapes
+    assert batch.stdout == oid + " blob 11\\0hello\\0world\\0"
+E   AssertionError: assert 'de60cdfafda2...0 missing\x00' == 'de60cdfafda2...lo\\0world\\0'
+E     
+E     - de60cdfafda2e5841bc3874b96f3f5c2fc20d0a8 blob 11\0hello\0world\0
+E     + de60cdfafda2e5841bc3874b96f3f5c2fc20d0a8\0flush\0 missing#x00</failure></testcase></testsuite></testsuites>

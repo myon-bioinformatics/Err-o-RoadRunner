@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="4" failures="0" skipped="28" tests="898" time="10.508" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="nagoyaction.tests.test_research_digest" name="test_real_26_notes_101_table_references_and_catalog_match" time="0.015"><error message="failed on setup with &quot;research_digest.DigestError: &lt;runner-work&gt;/cycles/c001-chunichi/research/R27-season-sensitivity.md: filename and R heading differ&quot;">@pytest.fixture(scope="module")
+    def real_notes():
+&gt;       return digest.collect(CYCLE)
+               ^^^^^^^^^^^^^^^^^^^^^
+
+nagoyaction/tests/test_research_digest.py:48: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+nagoyaction/research_digest.py:183: in collect
+    notes = [parse_note(path) for path in paths]
+             ^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('&lt;runner-work&gt;/cycles/c001-chunichi/research/R27-season-sensitivity.md')
+
+    def parse_note(path: Path) -&gt; dict:
+        match = RESEARCH_FILE.fullmatch(path.name)
+        if match is None:
+            raise DigestError(f"Not a numbered research note: {path}")
+        raw = path.read_text(encoding="utf-8")
+        sections = _md.split_sections(raw)
+        top = next((s for s in sections if s["level"] == 1), None)
+        header = HEADING.fullmatch(top["title"]) if top else None
+        if header is None or header.group(1) != match.group(1):
+&gt;           raise DigestError(f"{path}: filename and R heading differ")
+E           research_digest.DigestError: &lt;runner-work&gt;/cycles/c001-chunichi/research/R27-season-sensitivity.md: filename and R heading differ
+
+nagoyaction/research_digest.py:109: DigestError</error></testcase><testcase classname="nagoyaction.tests.test_research_digest" name="test_real_r18_preregistered_vs_cumulative" time="0.000"><error message="failed on setup with &quot;research_digest.DigestError: &lt;runner-work&gt;/cycles/c001-chunichi/research/R27-season-sensitivity.md: filename and R heading differ&quot;">@pytest.fixture(scope="module")
+    def real_notes():
+&gt;       return digest.collect(CYCLE)
+               ^^^^^^^^^^^^^^^^^^^^^
+
+nagoyaction/tests/test_research_digest.py:48: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+nagoyaction/research_digest.py:183: in collect
+    notes = [parse_note(path) for path in paths]
+             ^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('&lt;runner-work&gt;/cycles/c001-chunichi/research/R27-season-sensitivity.md')
+
+    def parse_note(path: Path) -&gt; dict:
+        match = RESEARCH_FILE.fullmatch(path.name)
+        if match is None:
+            raise DigestError(f"Not a numbered research note: {path}")
+        raw = path.read_text(encoding="utf-8")
+        sections = _md.split_sections(raw)
+        top = next((s for s in sections if s["level"] == 1), None)
+        header = HEADING.fullmatch(top["title"]) if top else None
+        if header is None or header.group(1) != match.group(1):
+&gt;           raise DigestError(f"{path}: filename and R heading differ")
+E           research_digest.DigestError: &lt;runner-work&gt;/cycles/c001-chunichi/research/R27-season-sensitivity.md: filename and R heading differ
+
+nagoyaction/research_digest.py:109: DigestError</error></testcase><testcase classname="nagoyaction.tests.test_research_digest" name="test_real_explicit_and_unknown_statuses_remain_distinct" time="0.000"><error message="failed on setup with &quot;research_digest.DigestError: &lt;runner-work&gt;/cycles/c001-chunichi/research/R27-season-sensitivity.md: filename and R heading differ&quot;">@pytest.fixture(scope="module")
+    def real_notes():
+&gt;       return digest.collect(CYCLE)
+               ^^^^^^^^^^^^^^^^^^^^^
+
+nagoyaction/tests/test_research_digest.py:48: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+nagoyaction/research_digest.py:183: in collect
+    notes = [parse_note(path) for path in paths]
+             ^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('&lt;runner-work&gt;/cycles/c001-chunichi/research/R27-season-sensitivity.md')
+
+    def parse_note(path: Path) -&gt; dict:
+        match = RESEARCH_FILE.fullmatch(path.name)
+        if match is None:
+            raise DigestError(f"Not a numbered research note: {path}")
+        raw = path.read_text(encoding="utf-8")
+        sections = _md.split_sections(raw)
+        top = next((s for s in sections if s["level"] == 1), None)
+        header = HEADING.fullmatch(top["title"]) if top else None
+        if header is None or header.group(1) != match.group(1):
+&gt;           raise DigestError(f"{path}: filename and R heading differ")
+E           research_digest.DigestError: &lt;runner-work&gt;/cycles/c001-chunichi/research/R27-season-sensitivity.md: filename and R heading differ
+
+nagoyaction/research_digest.py:109: DigestError</error></testcase><testcase classname="nagoyaction.tests.test_research_digest" name="test_explicit_review_items_are_rendered_in_evidence_section" time="0.000"><error message="failed on setup with &quot;research_digest.DigestError: &lt;runner-work&gt;/cycles/c001-chunichi/research/R27-season-sensitivity.md: filename and R heading differ&quot;">@pytest.fixture(scope="module")
+    def real_notes():
+&gt;       return digest.collect(CYCLE)
+               ^^^^^^^^^^^^^^^^^^^^^
+
+nagoyaction/tests/test_research_digest.py:48: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+nagoyaction/research_digest.py:183: in collect
+    notes = [parse_note(path) for path in paths]
+             ^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+path = PosixPath('&lt;runner-work&gt;/cycles/c001-chunichi/research/R27-season-sensitivity.md')
+
+    def parse_note(path: Path) -&gt; dict:
+        match = RESEARCH_FILE.fullmatch(path.name)
+        if match is None:
+            raise DigestError(f"Not a numbered research note: {path}")
+        raw = path.read_text(encoding="utf-8")
+        sections = _md.split_sections(raw)
+        top = next((s for s in sections if s["level"] == 1), None)
+        header = HEADING.fullmatch(top["title"]) if top else None
+        if header is None or header.group(1) != match.group(1):
+&gt;           raise DigestError(f"{path}: filename and R heading differ")
+E           research_digest.DigestError: &lt;runner-work&gt;/cycles/c001-chunichi/research/R27-season-sensitivity.md: filename and R heading differ
+
+nagoyaction/research_digest.py:109: DigestError</error></testcase></testsuite></testsuites>

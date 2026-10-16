@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="487" time="82.130" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.python.test_junit_workflow_contract" name="test_failure_evidence_workflow_contract" time="0.012"><failure message="AssertionError: assert 'myon-bioinfo...0d3e7bdc4158c' == 'myon-bioinfo...47f91cb2ef954'&#10;  &#10;  Skipping 76 identical leading characters in diff, use -v to show&#10;  - ntity.yml@f907560c2b9b3f7a0f78f4434f547f91cb2ef954&#10;  + ntity.yml@ab17b409d82f95abc81116af7ff0d3e7bdc4158c">def test_failure_evidence_workflow_contract():
+&gt;       _assert_contract(yaml.safe_load(WORKFLOW.read_text(encoding="utf-8")))
+
+tests/python/test_junit_workflow_contract.py:76: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+workflow = {'name': 'playwright-prototype', True: {'pull_request': None, 'push': {'branches': ['main']}, 'workflow_dispatch': Non...'}, 'needs': 'changes', 'if': "needs.changes.outputs.product_changed == 'true'", 'runs-on': 'ubuntu-24.04', ...}, ...}}
+
+    def _assert_contract(workflow):
+        producer = workflow["jobs"]["python"]
+        run = _step(producer, "Run Python tests with JUnit")
+        assert producer.get("continue-on-error", False) is False
+        assert run.get("continue-on-error", False) is False
+        assert run.get("if") is None
+        # The exact normalized command rejects || true, set +e and trailing exit 0.
+        assert " ".join(run["run"].split()) == COMMAND
+        assert run["env"]["BTK_FAILURE_EVIDENCE"] == "test-results/controlled-failure"
+        for name, path in (
+            ("junit-python-3.13", "test-results/junit/python-3.13.xml"),
+            ("junit-controlled-python-3.13", "test-results/controlled-failure/"),
+        ):
+            upload = _upload(producer, name)
+            assert producer["steps"].index(run) &lt; producer["steps"].index(upload)
+            assert upload.get("if") == "always()"
+            assert upload.get("continue-on-error", False) is False
+            assert upload["with"]["path"].strip() == path
+            assert upload["with"]["if-no-files-found"] == "error"
+            assert upload["with"]["retention-days"] == 14
+        collector = workflow["jobs"]["junit-identity"]
+        assert collector["needs"] == ["changes", "python"]
+        assert collector["if"] == (
+            "always() &amp;&amp; needs.changes.outputs.product_changed == 'true'"
+        )
+        assert collector.get("continue-on-error", False) is False
+&gt;       assert collector["uses"] == COLLECTOR
+E       AssertionError: assert 'myon-bioinfo...0d3e7bdc4158c' == 'myon-bioinfo...47f91cb2ef954'
+E         
+E         Skipping 76 identical leading characters in diff, use -v to show
+E         - ntity.yml@f907560c2b9b3f7a0f78f4434f547f91cb2ef954
+E         + ntity.yml@ab17b409d82f95abc81116af7ff0d3e7bdc4158c
+
+tests/python/test_junit_workflow_contract.py:61: AssertionError</failure></testcase><testcase classname="tests.python.test_junit_workflow_contract" name="test_failure_evidence_contract_rejects_unsafe_mutations" time="0.010"><failure message="AssertionError: assert 'myon-bioinfo...0d3e7bdc4158c' == 'myon-bioinfo...47f91cb2ef954'&#10;  &#10;  Skipping 76 identical leading characters in diff, use -v to show&#10;  - ntity.yml@f907560c2b9b3f7a0f78f4434f547f91cb2ef954&#10;  + ntity.yml@ab17b409d82f95abc81116af7ff0d3e7bdc4158c">def test_failure_evidence_contract_rejects_unsafe_mutations():
+        workflow = yaml.safe_load(WORKFLOW.read_text(encoding="utf-8"))
+&gt;       _assert_contract(workflow)  # A broken baseline must not make all mutants pass.
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/python/test_junit_workflow_contract.py:81: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+workflow = {'name': 'playwright-prototype', True: {'pull_request': None, 'push': {'branches': ['main']}, 'workflow_dispatch': Non...'}, 'needs': 'changes', 'if': "needs.changes.outputs.product_changed == 'true'", 'runs-on': 'ubuntu-24.04', ...}, ...}}
+
+    def _assert_contract(workflow):
+        producer = workflow["jobs"]["python"]
+        run = _step(producer, "Run Python tests with JUnit")
+        assert producer.get("continue-on-error", False) is False
+        assert run.get("continue-on-error", False) is False
+        assert run.get("if") is None
+        # The exact normalized command rejects || true, set +e and trailing exit 0.
+        assert " ".join(run["run"].split()) == COMMAND
+        assert run["env"]["BTK_FAILURE_EVIDENCE"] == "test-results/controlled-failure"
+        for name, path in (
+            ("junit-python-3.13", "test-results/junit/python-3.13.xml"),
+            ("junit-controlled-python-3.13", "test-results/controlled-failure/"),
+        ):
+            upload = _upload(producer, name)
+            assert producer["steps"].index(run) &lt; producer["steps"].index(upload)
+            assert upload.get("if") == "always()"
+            assert upload.get("continue-on-error", False) is False
+            assert upload["with"]["path"].strip() == path
+            assert upload["with"]["if-no-files-found"] == "error"
+            assert upload["with"]["retention-days"] == 14
+        collector = workflow["jobs"]["junit-identity"]
+        assert collector["needs"] == ["changes", "python"]
+        assert collector["if"] == (
+            "always() &amp;&amp; needs.changes.outputs.product_changed == 'true'"
+        )
+        assert collector.get("continue-on-error", False) is False
+&gt;       assert collector["uses"] == COLLECTOR
+E       AssertionError: assert 'myon-bioinfo...0d3e7bdc4158c' == 'myon-bioinfo...47f91cb2ef954'
+E         
+E         Skipping 76 identical leading characters in diff, use -v to show
+E         - ntity.yml@f907560c2b9b3f7a0f78f4434f547f91cb2ef954
+E         + ntity.yml@ab17b409d82f95abc81116af7ff0d3e7bdc4158c
+
+tests/python/test_junit_workflow_contract.py:61: AssertionError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites id="" name="" tests="195" failures="0" skipped="6" errors="2" time="675.74046"><testsuite name="home_discovery_journeys.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="3" failures="0" skipped="0" time="12.632" errors="2"><testcase name="Home discovery journeys › Door-to-Door dropdown navigates from URL Params to another tool @portable" classname="home_discovery_journeys.spec.ts" time="1.913"><system-out>
+::notice title=journey mobile-webkit::Door-to-Door dropdown navigates from URL Params to another tool @portable :: Error: mouse.wheel: Mouse wheel is not supported in mobile WebKit
+journey-semantics mobile-webkit [{"role":null,"id":"shared-header-home","name":null,"text":"Home","box":{"x":270,"y":8,"width":40,"height":40}},{"role":null,"id":"shared-header-favorite","name":null,"text":"Favorite this page","box":{"x":310,"y":8,"width":40,"height":40}},{"role":null,"id":"shared-header-menu","name":null,"text":"Menu","box":{"x":350,"y":8,"width":40,"height":40}},{"role":"group","id":null,"name":"Door-to-Door tools","text":"Door-to-Door tools\nURL Params(Screen 5🔗) (current)","box":{"x":12,"y":502,"width":366,"height":122}},{"role":"group","id":null,"name":"Door-to-Door tools\nJump to another tool without going Home first.","text":"Door-to-Door tools\nURL Params(Screen 5🔗) (current)","box":{"x":12,"y":502,"width":366,"height":122}},{"role":"button","id":"tool-door-dropdown","name":null,"text":"Door-to-Door tools\nURL Params(Screen 5🔗) (current)","box":{"x":32,"y":568,"width":326,"height":40}}]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-mobile-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-mobile-webkit/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-mobile-webkit/error-context.md]]
+
+</system-out>
+<error message="mouse.wheel: Mouse wheel is not supported in mobile WebKit" type="Error">
+  [mobile-webkit] › home_discovery_journeys.spec.ts:142:7 › Home discovery journeys › Door-to-Door dropdown navigates from URL Params to another tool @portable 
+
+    Error: mouse.wheel: Mouse wheel is not supported in mobile WebKit
+
+      71 |   for (let index = 0; index &lt; 16; index++) {
+      72 |     const before = await field.boundingBox();
+    &gt; 73 |     await page.mouse.wheel(0, delta);
+         |                      ^
+      74 |     // Observe browser frames; do not synthesize a DOM scroll/click or retry a
+      75 |     // missed tap. Two stable samples after real input mean the body has settled.
+      76 |     await page.evaluate(() =&gt; new Promise&lt;void&gt;((resolve) =&gt; {
+        at scrollDoorIntoCanvas (&lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:73:22)
+        at &lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:147:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-mobile-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-mobile-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/home_discovery_journeys-Ho-614c5-ms-to-another-tool-portable-mobile-webkit/error-context.md
+
+</error>
+</testcase><testcase name="Home discovery journeys › Home draw → stable tool Door → drawn screen with screenshot evidence @portable" classname="home_discovery_journeys.spec.ts" time="2.609"><system-out>
+::notice title=route-audit mobile-webkit::stage=failed last=home-draw failed_step=scroll-source-door ids=104,57,169 route=#/tools/media/photo-studio menu=[] door=[]
+::notice title=journey mobile-webkit::Home draw → stable tool Door → drawn screen with screenshot evidence @portable :: Error: mouse.wheel: Mouse wheel is not supported in mobile WebKit
+journey-semantics mobile-webkit [{"role":"group","id":null,"name":"⚖ repo not measured · repo not measured · Version v0.1.0 · Commit unknown","text":"BackPhoto Studio 🖼️HomeFavorite this pageMenuUndoRedoA corner for frames and marks on photos. Geographic bounds live under Latitude / Longitude.Select an image or paste here\nSelec","box":{"x":0,"y":0,"width":390,"height":664}},{"role":null,"id":null,"name":null,"text":"BackPhoto Studio 🖼️HomeFavorite this pageMenuUndoRedo","box":{"x":0,"y":0,"width":390,"height":104}},{"role":null,"id":"shared-header-home","name":null,"text":"Home","box":{"x":270,"y":8,"width":40,"height":40}},{"role":null,"id":"shared-header-favorite","name":null,"text":"Favorite this page","box":{"x":310,"y":8,"width":40,"height":40}},{"role":null,"id":"shared-header-menu","name":null,"text":"Menu","box":{"x":350,"y":8,"width":40,"height":40}},{"role":null,"id":"shared-header-secondary","name":null,"text":"UndoRedo","box":{"x":0,"y":56,"width":390,"height":48}},{"role":"group","id":null,"name":"Door-to-Door tools","text":"Door-to-Door tools\nPhoto Studio (current)","box":{"x":24,"y":1774,"width":342,"height":122}},{"role":"group","id":null,"name":"Door-to-Door tools\nJump to another tool without going Home first.","text":"Door-to-Door tools\nPhoto Studio (current)","box":{"x":24,"y":1774,"width":342,"height":122}},{"role":"button","id":"tool-door-dropdown","name":null,"text":"Door-to-Door tools\nPhoto Studio (current)","box":{"x":44,"y":1840,"width":302,"height":40}}]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/attachments/home-draw-png-69d6ba1433f4254ba942d60161ddaf9e1bd321f5.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/attachments/route-audit-json-6e189da6c8d4b5f976317c9ffd1ac244ed5988a8.json]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/error-context.md]]
+
+</system-out>
+<error message="mouse.wheel: Mouse wheel is not supported in mobile WebKit" type="Error">
+  [mobile-webkit] › home_discovery_journeys.spec.ts:158:7 › Home discovery journeys › Home draw → stable tool Door → drawn screen with screenshot evidence @portable 
+
+    Error: mouse.wheel: Mouse wheel is not supported in mobile WebKit
+
+      71 |   for (let index = 0; index &lt; 16; index++) {
+      72 |     const before = await field.boundingBox();
+    &gt; 73 |     await page.mouse.wheel(0, delta);
+         |                      ^
+      74 |     // Observe browser frames; do not synthesize a DOM scroll/click or retry a
+      75 |     // missed tap. Two stable samples after real input mean the body has settled.
+      76 |     await page.evaluate(() =&gt; new Promise&lt;void&gt;((resolve) =&gt; {
+        at scrollDoorIntoCanvas (&lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:73:22)
+        at &lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:210:7
+
+    attachment #1: home-draw.png (image/png) ───────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/attachments/home-draw-png-69d6ba1433f4254ba942d60161ddaf9e1bd321f5.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: route-audit.json (application/json) ─────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/attachments/route-audit-json-6e189da6c8d4b5f976317c9ffd1ac244ed5988a8.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #5: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/error-context.md
+
+</error>
+</testcase></testsuite></testsuites>

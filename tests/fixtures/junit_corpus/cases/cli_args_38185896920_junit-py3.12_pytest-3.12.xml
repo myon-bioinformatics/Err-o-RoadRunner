@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="5" tests="88" time="6.906" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_commands" name="test_git_machine_readable_porcelain_refs_and_batch_shapes" time="0.022"><failure message="AssertionError: fatal: pathspec '-NUL 日本語 file.txt\0' did not match any files&#10;  &#10;assert 128 == 0&#10; +  where 128 = CommandResult(argv=('/usr/bin/git', '-C', '&lt;pytest-tmp&gt;/pytest-0/test_git_machine_readable_porc0', 'add', '--..., stdout='', stderr=&quot;fatal: pathspec '-NUL 日本語 file.txt\\0' did not match any files\n&quot;, executed=True, timed_out=False).returncode">tests/test_commands.py:119: in test_git_machine_readable_porcelain_refs_and_batch_shapes
+    assert staged.returncode == 0, staged.stderr
+E   AssertionError: fatal: pathspec '-NUL 日本語 file.txt\0' did not match any files
+E     
+E   assert 128 == 0
+E    +  where 128 = CommandResult(argv=('/usr/bin/git', '-C', '&lt;pytest-tmp&gt;/pytest-0/test_git_machine_readable_porc0', 'add', '--..., stdout='', stderr="fatal: pathspec '-NUL 日本語 file.txt\\0' did not match any files\n", executed=True, timed_out=False).returncode</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,21 @@
+FOUND: exit code: 1
+FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38409707959_junit-playwright-e2e_pl.xml): 1
+FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38409707959_junit-playwright-e2e_pl.xml): [chromium] › home_discovery_journeys.spec.ts:127:7 › Home discovery journeys › Home draw → stable tool Door → drawn screen with screenshot evidence @portable \n\n    Error: expect(locator).toBeVisible() failed\n\n    Locator: locator('[role="menuitem"]').first()\n    Expected: visible\n    Timeout: 3000ms\n    Error: element(s) not found\n\n    Call log:\n      - Expect "toBeVisible" locator('[rol
+FOUND: junit failure groups (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38409707959_junit-playwright-e2e_pl.xml): 1 failure in 1 group
+FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38409707959_junit-playwright-e2e_pl.xml): home_discovery_journeys.spec.ts
+FOUND: python version: 3.13.5 (cpython)
+FOUND: node version: v20.19.2
+FOUND: gh version: gh version 2.46.0 (2025-01-13 Debian 2.46.0-3)
+FOUND: environment variable count: 55
+FOUND: environment variable names: AGENT_TRANSCRIPTS, BROWSER, COREPACK_HOME, CURSOR_AGENT, CURSOR_AGENT_SOCKET, CURSOR_CONVERSATION_ID, CURSOR_REQUEST_ID, CURSOR_RIPGREP_PATH, DEBIAN_FRONTEND, DISPLAY, EXEC_DAEMON_CWD, FORCE_COLOR, HOME, LANG, LC_ALL, LOGNAME, LS_COLORS, NO_COLOR, NPM_CONFIG_PREFIX, OLDPWD, PATH, PWD, SAND_BOX_AUTH_ID, SAND_BOX_BOOT_ID, SAND_BOX_BOOT_STARTED_AT_MS, SAND_BOX_CLUSTER, SAND_BOX_LEGACY_STORE, SAND_BOX_MAX_WINDOWS, SAND_BOX_SCRIPT_SYNC_DISABLED, SAND_BOX_STORE_BACKEND, SAND_BOX_STORE_COPY_IN, SAND_BOX_STORE_HIBERNATE_HOOK, SAND_BOX_STORE_ID, SAND_BOX_STORE_SYNC, SAND_BOX_TELEMETRY_LOG, SAND_BOX_TENANT_ID, SAND_EGRESS_TUNNEL_ENABLED, SAND_EGRESS_TUNNEL_PROXY_ADDR, SAND_EGRESS_TUNNEL_WS_ADDR, SAND_EGRESS_TUNNEL_WS_PORT, ...
+NOT FOUND: junit errors (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38409707959_junit-playwright-e2e_pl.xml)
+NOT FOUND: junit skipped (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38409707959_junit-playwright-e2e_pl.xml)
+NOT FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38409707959_junit-playwright-e2e_pl.xml)
+NOT FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38409707959_junit-playwright-e2e_pl.xml)
+NOT FOUND: junit system-err (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38409707959_junit-playwright-e2e_pl.xml)
+NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38409707959_junit-playwright-e2e_pl.xml)
+NOT FOUND: lock files in project root
+HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38409707959_junit-playwright-e2e_pl.xml): pytest/python
+HINT: junit assertion diff (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38409707959_junit-playwright-e2e_pl.xml):       - Expect "toBeVisible" locator('[role="menuitem"]').first() with timeout 3000ms       - waiting for locator('[role="menuitem"]').first()
+HINT: junit timeout signal (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38409707959_junit-playwright-e2e_pl.xml): possible timeout in failure text
+HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38409707959_junit-playwright-e2e_pl.xml): [chromium] › home_discovery_journeys.spec.ts:127:7 › Home discovery journeys › Home draw → stable tool Door → drawn screen with screenshot evidence @portable \n\n    Error: expect(locator).toBeVisible() failed\n\n    Locator: locator('[role="menuitem"]').first()\n    Expected: visible\n    Timeout: 3000ms\n    Error: element(s) not found\n\n    Call log:\n      - Expect "toBeVisible" locator('[rol

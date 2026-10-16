@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="1" tests="158" time="1.708" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_junit_evidence" name="test_tooling_probe_child_keeps_exit_status_with_junit" time="0.311"><failure message="AssertionError: assert {('test_probe...', 'failure')} == {('test_probe...', 'failure')}&#10;  &#10;  Extra items in the left set:&#10;  ('test_unavailable_command', 'failure')&#10;  &#10;  Full diff:&#10;    {&#10;        (&#10;            'test_probe_setup_error',&#10;            'error',&#10;        ),&#10;        (&#10;  +         'test_unavailable_command',&#10;  +         'failure',&#10;  +     ),&#10;  +     (&#10;            'test_wrong_probe_expectation',&#10;            'failure',&#10;        ),&#10;    }">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_tooling_probe_child_keeps0')
+
+    def test_tooling_probe_child_keeps_exit_status_with_junit(tmp_path):
+        importer = ROOT / ".junit-tools" / "xprobe.py"
+        if not importer.is_file() and os.environ.get("GITHUB_ACTIONS") != "true" and not os.environ.get("WEB_UI_FAILURE_EVIDENCE"):
+            pytest.skip("optional local JUnit regression: fetch the pinned importer (docs/junit-evidence.md)")
+        assert importer.is_file(), "CI must provision the pinned test-only JUnit importer"
+        evidence = Path(os.environ.get("WEB_UI_FAILURE_EVIDENCE", tmp_path / "evidence")).resolve()
+        evidence.mkdir(parents=True, exist_ok=True)
+        fixture = tmp_path / "test_probe.py"
+        fixture.write_text('''
+    import pytest
+    from tool.tooling_meta import canonical
+    
+    @pytest.fixture
+    def unavailable(monkeypatch):
+        monkeypatch.setattr(canonical.shutil, "which", lambda _: None)
+    
+    def test_unavailable_command(unavailable):
+        assert canonical.observe_command_version("git") is None
+    
+    @pytest.mark.parametrize("command", ["PARAMETER_SENTINEL"], ids=["PARAMETER_SENTINEL"])
+    def test_wrong_probe_expectation(unavailable, command):
+        print("STDOUT_SENTINEL")
+        assert canonical.observe_command_version("git") == "ASSERTION_SENTINEL", command
+    
+    @pytest.fixture
+    def broken_setup():
+        raise RuntimeError("SETUP_SENTINEL")
+    
+    def test_probe_setup_error(broken_setup):
+        pass
+    
+    def test_skip():
+        pytest.skip("synthetic skipped probe")
+    ''', encoding="utf-8")
+        env = dict(os.environ, PYTHONPATH=str(ROOT), PYTEST_DISABLE_PLUGIN_AUTOLOAD="1", PYTEST_ADDOPTS="")
+        command = [sys.executable, "-m", "pytest", str(fixture), "-c", os.devnull,
+                   "--rootdir", str(tmp_path), "--confcutdir", str(tmp_path), "-q"]
+        plain = subprocess.run(command, cwd=tmp_path, env=env, capture_output=True, text=True, timeout=60)
+        reported = subprocess.run(command + ["--junitxml", str(evidence / "junit.xml"),
+                                  "-o", "junit_logging=all"], cwd=tmp_path, env=env,
+                                  capture_output=True, text=True, timeout=60)
+        (evidence / "exit.json").write_text(json.dumps({"without_junit": plain.returncode,
+                                                    "with_junit": reported.returncode}), encoding="utf-8")
+        assert plain.returncode == reported.returncode == 1, plain.stdout + plain.stderr + reported.stdout + reported.stderr
+        data = importer.read_bytes()
+        assert hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest() == "dbc5b7d55005d6288c072a7612584d6170c216f4"
+        spec = importlib.util.spec_from_file_location("probe_junit_xprobe", importer)
+        xprobe = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(xprobe)
+        raw = (evidence / "junit.xml").read_text(encoding="utf-8")
+        imported = xprobe.cases_from_junit(raw, repository="myon-bioinformatics/web-ui", report_id="controlled-probe")
+        assert imported["truncated"] is False
+        cases = imported["cases"]
+&gt;       assert {(c["value"]["test"], c["value"]["kind"]) for c in cases} == {
+            ("test_wrong_probe_expectation", "failure"), ("test_probe_setup_error", "error")}
+E       AssertionError: assert {('test_probe...', 'failure')} == {('test_probe...', 'failure')}
+E         
+E         Extra items in the left set:
+E         ('test_unavailable_command', 'failure')
+E         
+E         Full diff:
+E           {
+E               (
+E                   'test_probe_setup_error',
+E                   'error',
+E               ),
+E               (
+E         +         'test_unavailable_command',
+E         +         'failure',
+E         +     ),
+E         +     (
+E                   'test_wrong_probe_expectation',
+E                   'failure',
+E               ),
+E           }
+
+tests/test_junit_evidence.py:67: AssertionError</failure></testcase></testsuite></testsuites>

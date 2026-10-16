@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="1" tests="1014" time="32.341" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_parent_ref" name="test_enrollment_progress" time="0.002"><failure message="AssertionError: assert (set() == {'me/a', 'me/b', 'me/c'}&#10;  &#10;  Extra items in the right set:&#10;  'me/c'&#10;  'me/a'&#10;  'me/b'&#10;  &#10;  Full diff:&#10;  + set()&#10;  - {&#10;  -     'me/a',&#10;  -     'me/b',&#10;  -     'me/c',&#10;  - })">def test_enrollment_progress():
+        current = b"new\n"
+        def lock(files):
+            return {"encoding": "base64", "content": base64.b64encode(json.dumps({"schema": "vendor-lock/1", "files": files}).encode()).decode()}
+        enrolled = entry("vendor/gh_identity.py", b"old\n", repository="me/up", source="gh_identity.py", commit=X2)
+        fresh = entry("vendor/gh_identity.py", current, repository="me/up", source="gh_identity.py", commit=M3)
+        table = {
+            "repos/me/up": {"default_branch": "main", "visibility": "public"},
+            "repos/me/up/commits/main": {"sha": M3},
+            "repos/me/a/commits/main": {"sha": "a" * 40},
+            "repos/me/b/commits/main": {"sha": "b" * 40},
+            "repos/me/c/commits/main": {"sha": "c" * 40},
+            "repos/me/a/git/trees/" + "a" * 40 + "?recursive=1": {"tree": [{"path": "vendor.lock.json", "type": "blob", "mode": "100644", "sha": "0" * 40}]},
+            "repos/me/b/git/trees/" + "b" * 40 + "?recursive=1": {"tree": [{"path": "vendor.lock.json", "type": "blob", "mode": "100644", "sha": "0" * 40}]},
+            "repos/me/c/git/trees/" + "c" * 40 + "?recursive=1": {"tree": []},
+            "repos/me/a/contents/vendor.lock.json?ref=" + "a" * 40: lock([enrolled]),
+            "repos/me/b/contents/vendor.lock.json?ref=" + "b" * 40: lock([fresh]),
+        }
+        def fake(method, path, **kw):
+            if path in table:
+                return table[path]
+            if path.startswith("repos/me/up/commits?sha=main"):
+                return HISTORY if path.endswith("page=1") else []
+            raise g.Error("not_found_or_inaccessible")
+        repos = [{"name": n, "default_branch": "main", "owner": {"login": "me"}} for n in ("up", "a", "b", "c")] + \
+                [{"name": "secret", "private": True, "visibility": "private", "owner": {"login": "me"}}]
+        with patch.object(g, "pages", return_value=repos), patch.object(g, "request", side_effect=fake), \
+             patch.object(g, "_remote_file", return_value=current):
+            out = g.enrollment_progress("me", provider="me/up", source="gh_identity.py")
+        rows = {r["repository"]: r for r in out["repositories"]}
+&gt;       assert set(rows) == {"me/a", "me/b", "me/c"} and "secret" not in json.dumps(out)
+E       AssertionError: assert (set() == {'me/a', 'me/b', 'me/c'}
+E         
+E         Extra items in the right set:
+E         'me/c'
+E         'me/a'
+E         'me/b'
+E         
+E         Full diff:
+E         + set()
+E         - {
+E         -     'me/a',
+E         -     'me/b',
+E         -     'me/c',
+E         - })
+
+tests/test_parent_ref.py:222: AssertionError</failure></testcase><testcase classname="tests.test_tree" name="test_malformed_tree_fails_closed[payload7]" time="0.001"><failure message="Failed: DID NOT RAISE Error">payload = {'sha': 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'tree': [], 'truncated': None}
+
+    @pytest.mark.parametrize('payload', [
+        {}, response(T,[entry('../x')]), response(T,[entry('x'),entry('x')]),
+        response(T,[dict(entry('x'),mode=[])]), response(T,[dict(entry('x'),type='tree')]),
+        response(T,[dict(entry('x'),sha='short')]), response(T,[dict(entry('x'),size=True)]),
+        dict(response(T,[]),truncated=None),
+    ])
+    def test_malformed_tree_fails_closed(payload):
+&gt;       with patch.object(g,'request',side_effect=[{'sha':C},payload]),pytest.raises(g.Error):
+E       Failed: DID NOT RAISE Error
+
+tests/test_tree.py:91: Failed</failure></testcase></testsuite></testsuites>

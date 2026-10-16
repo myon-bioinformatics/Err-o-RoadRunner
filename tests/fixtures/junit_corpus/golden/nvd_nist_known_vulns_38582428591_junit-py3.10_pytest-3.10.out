@@ -1,0 +1,19 @@
+FOUND: exit code: 1
+FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/nvd_nist_known_vulns_38582428591_junit-py3.10_pytest-3.10.xml): 1
+FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/nvd_nist_known_vulns_38582428591_junit-py3.10_pytest-3.10.xml): def test_public_vendor_ci_locked_without_repository_writes():\n        import yaml\n        ci = yaml.load((ROOT / '.github/workflows/python.yml').read_text(encoding='utf-8'), Loader=yaml.BaseLoader)\n        jobs = ci['jobs']\n        resolve = jobs['resolve-vendor']['steps']\n        test = jobs['test']['steps']\n        assert not any(s.get('name') == 'Update public vendor files for this run' f
+FOUND: junit failure groups (<repo>/tests/fixtures/junit_corpus/cases/nvd_nist_known_vulns_38582428591_junit-py3.10_pytest-3.10.xml): 1 failure in 1 group
+FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/nvd_nist_known_vulns_38582428591_junit-py3.10_pytest-3.10.xml): tests.test_vendor_workflow
+FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/nvd_nist_known_vulns_38582428591_junit-py3.10_pytest-3.10.xml): AssertionError
+FOUND: python version: 3.13.5 (cpython)
+FOUND: node version: v20.19.2
+FOUND: gh version: gh version 2.46.0 (2025-01-13 Debian 2.46.0-3)
+FOUND: environment variable count: 55
+FOUND: environment variable names: AGENT_TRANSCRIPTS, BROWSER, COREPACK_HOME, CURSOR_AGENT, CURSOR_AGENT_SOCKET, CURSOR_CONVERSATION_ID, CURSOR_REQUEST_ID, CURSOR_RIPGREP_PATH, DEBIAN_FRONTEND, DISPLAY, EXEC_DAEMON_CWD, FORCE_COLOR, HOME, LANG, LC_ALL, LOGNAME, LS_COLORS, NO_COLOR, NPM_CONFIG_PREFIX, OLDPWD, PATH, PWD, SAND_BOX_AUTH_ID, SAND_BOX_BOOT_ID, SAND_BOX_BOOT_STARTED_AT_MS, SAND_BOX_CLUSTER, SAND_BOX_LEGACY_STORE, SAND_BOX_MAX_WINDOWS, SAND_BOX_SCRIPT_SYNC_DISABLED, SAND_BOX_STORE_BACKEND, SAND_BOX_STORE_COPY_IN, SAND_BOX_STORE_HIBERNATE_HOOK, SAND_BOX_STORE_ID, SAND_BOX_STORE_SYNC, SAND_BOX_TELEMETRY_LOG, SAND_BOX_TENANT_ID, SAND_EGRESS_TUNNEL_ENABLED, SAND_EGRESS_TUNNEL_PROXY_ADDR, SAND_EGRESS_TUNNEL_WS_ADDR, SAND_EGRESS_TUNNEL_WS_PORT, ...
+NOT FOUND: junit errors (<repo>/tests/fixtures/junit_corpus/cases/nvd_nist_known_vulns_38582428591_junit-py3.10_pytest-3.10.xml)
+NOT FOUND: junit skipped (<repo>/tests/fixtures/junit_corpus/cases/nvd_nist_known_vulns_38582428591_junit-py3.10_pytest-3.10.xml)
+NOT FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/nvd_nist_known_vulns_38582428591_junit-py3.10_pytest-3.10.xml)
+NOT FOUND: junit system-err (<repo>/tests/fixtures/junit_corpus/cases/nvd_nist_known_vulns_38582428591_junit-py3.10_pytest-3.10.xml)
+NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/nvd_nist_known_vulns_38582428591_junit-py3.10_pytest-3.10.xml)
+NOT FOUND: lock files in project root
+HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/nvd_nist_known_vulns_38582428591_junit-py3.10_pytest-3.10.xml): pytest/python
+HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/nvd_nist_known_vulns_38582428591_junit-py3.10_pytest-3.10.xml): def test_public_vendor_ci_locked_without_repository_writes():\n        import yaml\n        ci = yaml.load((ROOT / '.github/workflows/python.yml').read_text(encoding='utf-8'), Loader=yaml.BaseLoader)\n        jobs = ci['jobs']\n        resolve = jobs['resolve-vendor']['steps']\n        test = jobs['test']['steps']\n        assert not any(s.get('name') == 'Update public vendor files for this run' f

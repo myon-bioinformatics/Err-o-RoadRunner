@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="74" time="1.727" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_vendor_automation" name="test_vendor_lock_has_explicit_sources_and_verified_bytes" time="0.003"><failure message="AssertionError: assert 10 == 8&#10; +  where 10 = len({'vendor/git_inspector.py': {'repository': 'myon-bioinformatics/myon-bioinformatics', 'ref': 'refs/heads/main', 'commi...ds/main', 'commit': '0a1baf58cbb09297fe1703c24213b98b158e68a6', 'source': 'repository_metadata_contract.py', ...}, ...})&#10; +  and   8 = len({('myon-bioinformatics/Ironmate', 'LICENSE', 'vendor/Ironmate-LICENSE'), ('myon-bioinformatics/Ironmate', 'python_arti...ormatics/mcp-toolcall-lab', 'src/mcp_toolcall_lab/github_public_resolver.py', 'vendor/github_public_resolver.py'), ...})">def test_vendor_lock_has_explicit_sources_and_verified_bytes():
+        records = _projector().records(ROOT)
+&gt;       assert len(records) == len(EXPECTED)
+E       AssertionError: assert 10 == 8
+E        +  where 10 = len({'vendor/git_inspector.py': {'repository': 'myon-bioinformatics/myon-bioinformatics', 'ref': 'refs/heads/main', 'commi...ds/main', 'commit': '0a1baf58cbb09297fe1703c24213b98b158e68a6', 'source': 'repository_metadata_contract.py', ...}, ...})
+E        +  and   8 = len({('myon-bioinformatics/Ironmate', 'LICENSE', 'vendor/Ironmate-LICENSE'), ('myon-bioinformatics/Ironmate', 'python_arti...ormatics/mcp-toolcall-lab', 'src/mcp_toolcall_lab/github_public_resolver.py', 'vendor/github_public_resolver.py'), ...})
+
+tests/test_vendor_automation.py:68: AssertionError</failure></testcase><testcase classname="tests.test_vendor_automation" name="test_updated_lock_projects_exact_identity_and_keeps_reader_formats" time="0.004"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '&lt;pytest-tmp&gt;/pytest-0/test_updated_lock_projects_exa0/vendor/gh_identity.py'">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_updated_lock_projects_exa0')
+
+    def test_updated_lock_projects_exact_identity_and_keeps_reader_formats(tmp_path):
+        _copy_snapshot(tmp_path)
+        lock_path = tmp_path / 'vendor.lock.json'
+        lock = json.loads(lock_path.read_text(encoding='utf-8'))
+        for e in lock['files']: e['commit'] = 'a' * 40
+        lock_path.write_text(json.dumps(lock),encoding='utf-8')
+        projector = _projector()
+&gt;       projector.project(tmp_path)
+
+tests/test_vendor_automation.py:163: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/sync_vendor_provenance.py:88: in project
+    entries = records(root)  # Verify every source/LICENSE before writing any metadata.
+scripts/sync_vendor_provenance.py:80: in records
+    data = (root / e["destination"]).read_bytes()
+&lt;toolcache&gt;/Python/3.10.21/x64/lib/python3.10/pathlib.py:1126: in read_bytes
+    with self.open(mode='rb') as f:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_updated_lock_projects_exa0/vendor/gh_identity.py')
+mode = 'rb', buffering = -1, encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+&gt;       return self._accessor.open(self, mode, buffering, encoding, errors,
+                                   newline)
+E       FileNotFoundError: [Errno 2] No such file or directory: '&lt;pytest-tmp&gt;/pytest-0/test_updated_lock_projects_exa0/vendor/gh_identity.py'
+
+&lt;toolcache&gt;/Python/3.10.21/x64/lib/python3.10/pathlib.py:1119: FileNotFoundError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="1" tests="62" time="3.812" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_native_observations" name="test_vendor_lock_provenance" time="0.005"><failure message="AssertionError: assert {('LICENSE', ...r/xprobe.py')} == {('LICENSE', ...r/xprobe.py')}&#10;  &#10;  Extra items in the left set:&#10;  ('LICENSE', 'vendor/gh_identity-LICENSE')&#10;  ('gh_identity.py', 'vendor/gh_identity.py')&#10;  &#10;  Full diff:&#10;    {&#10;        (&#10;            'LICENSE',&#10;  +         'vendor/gh_identity-LICENSE',&#10;  +     ),&#10;  +     (&#10;  +         'LICENSE',&#10;            'vendor/xprobe-LICENSE',&#10;  +     ),&#10;  +     (&#10;  +         'gh_identity.py',&#10;  +         'vendor/gh_identity.py',&#10;        ),&#10;        (&#10;            'scripts/xprobe_pytest.py',&#10;            'vendor/xprobe_pytest.py',&#10;        ),&#10;        (&#10;            'xprobe.py',&#10;            'vendor/xprobe.py',&#10;        ),&#10;    }">def test_vendor_lock_provenance():
+        lock = json.loads((ROOT / 'vendor.lock.json').read_text(encoding='utf-8'))
+        assert lock['schema'] == 'vendor-lock/1'
+&gt;       assert {(entry['source'], entry['destination']) for entry in lock['files']} == {
+            ('scripts/xprobe_pytest.py', 'vendor/xprobe_pytest.py'),
+            ('xprobe.py', 'vendor/xprobe.py'), ('LICENSE', 'vendor/xprobe-LICENSE')}
+E       AssertionError: assert {('LICENSE', ...r/xprobe.py')} == {('LICENSE', ...r/xprobe.py')}
+E         
+E         Extra items in the left set:
+E         ('LICENSE', 'vendor/gh_identity-LICENSE')
+E         ('gh_identity.py', 'vendor/gh_identity.py')
+E         
+E         Full diff:
+E           {
+E               (
+E                   'LICENSE',
+E         +         'vendor/gh_identity-LICENSE',
+E         +     ),
+E         +     (
+E         +         'LICENSE',
+E                   'vendor/xprobe-LICENSE',
+E         +     ),
+E         +     (
+E         +         'gh_identity.py',
+E         +         'vendor/gh_identity.py',
+E               ),
+E               (
+E                   'scripts/xprobe_pytest.py',
+E                   'vendor/xprobe_pytest.py',
+E               ),
+E               (
+E                   'xprobe.py',
+E                   'vendor/xprobe.py',
+E               ),
+E           }
+
+tests\test_native_observations.py:20: AssertionError</failure></testcase></testsuite></testsuites>

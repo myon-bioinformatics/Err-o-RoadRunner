@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="1" failures="1" skipped="2" tests="5" time="0.030" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="test_fixture" name="test_fail[PARAMETER_SENTINEL]" time="0.001"><failure message="AssertionError: ASSERTION_SENTINEL&#10;assert False">value = 'PARAMETER_SENTINEL'
+
+    @pytest.mark.parametrize("value", ["PARAMETER_SENTINEL"], ids=["PARAMETER_SENTINEL"])
+    def test_fail(value):
+        print("STDOUT_SENTINEL")
+&gt;       assert False, "ASSERTION_SENTINEL"
+E       AssertionError: ASSERTION_SENTINEL
+E       assert False
+
+test_fixture.py:10: AssertionError</failure><system-out>--------------------------------- Captured Log ---------------------------------
+
+--------------------------------- Captured Out ---------------------------------
+STDOUT_SENTINEL
+
+</system-out><system-err>--------------------------------- Captured Err ---------------------------------
+
+</system-err></testcase><testcase classname="test_fixture" name="test_setup_error" time="0.001"><error message="failed on setup with &quot;RuntimeError: SETUP_SENTINEL&quot;">@pytest.fixture
+    def broken_fixture():
+&gt;       raise RuntimeError("SETUP_SENTINEL")
+E       RuntimeError: SETUP_SENTINEL
+
+test_fixture.py:21: RuntimeError</error><system-out>--------------------------------- Captured Log ---------------------------------
+
+--------------------------------- Captured Out ---------------------------------
+
+</system-out><system-err>--------------------------------- Captured Err ---------------------------------
+
+</system-err></testcase></testsuite></testsuites>

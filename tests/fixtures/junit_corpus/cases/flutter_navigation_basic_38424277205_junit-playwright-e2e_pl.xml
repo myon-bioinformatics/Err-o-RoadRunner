@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites id="" name="" tests="195" failures="2" skipped="6" errors="0" time="1004.088718"><testsuite name="home_discovery_journeys.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="3" failures="1" skipped="0" time="47.994" errors="0"><testcase name="Home discovery journeys › Home draw → stable tool Door → drawn screen with screenshot evidence @portable" classname="home_discovery_journeys.spec.ts" time="20.59"><system-out>
+::notice title=route-audit mobile-chromium::stage=failed last=discovered-screen failed_step=return-home ids=58,16,158 route= menu=[] door=[{"via":"button-press","opened":true,"record":{"schema":"pointer-press/1","input":"touch","input_source":"explicit","x":206,"y":703,"visible_ratio":1,"box":{"x":44,"y":679,"width":324,"height":48},"hit":{"tag":"flt-semantics","self":false}}}]
+::notice title=journey mobile-chromium::Home draw → stable tool Door → drawn screen with screenshot evidence @portable :: Error: Canvas header pixels must identify returned-home
+journey-semantics mobile-chromium [{"role":null,"id":"shared-header-home","name":null,"text":"Home","box":{"x":268,"y":4,"width":48,"height":48}},{"role":null,"id":"shared-header-favorite","name":null,"text":"Favorite this page","box":{"x":316,"y":4,"width":48,"height":48}},{"role":null,"id":"shared-header-menu","name":null,"text":"Menu","box":{"x":364,"y":4,"width":48,"height":48}},{"role":null,"id":"shared-header-secondary","name":null,"text":"Refresh","box":{"x":0,"y":56,"width":412,"height":48}},{"role":"button","id":null,"name":null,"text":"Photo Studio\nPlace frames and marks on photos.","box":{"x":25,"y":927,"width":362,"height":80}},{"role":"button","id":null,"name":null,"text":"Screen41 · 変換ルールフォーム\nNavigation: DeepLinkBasic, API: HmacSign, Theme: CupertinoPage, Data: OffsetLimit","box":{"x":25,"y":1791,"width":362,"height":98}},{"role":"button","id":null,"name":null,"text":"Screen99 · 表示モード切替ナビ\nNavigation: ThemeConditional, API: JsonPath, Theme: MaterialYou, Data: FormValidation","box":{"x":25,"y":1903,"width":362,"height":98}},{"role":"button","id":null,"name":null,"text":"Screen38 · サインインフォーム\nNavigation: NamedRouteObserver, API: OAuth2Implicit, Theme: CupertinoPicker, Data: Prefetch","box":{"x":25,"y":2015,"width":362,"height":114}}]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-chromium/attachments/home-draw-header-png-c693e5d88234f171059530ea355e1d4d5737ad93.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-chromium/attachments/home-draw-png-6c8f9ed84cf4af88e0de6146136b342a49d22fa6.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-chromium/attachments/source-tool-header-png-7473f56e7af42399aae28fcf8b08ae11c2ae7739.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-chromium/attachments/source-tool-png-12ed35d66717da799e4c3ad065973fce8c7a0a77.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-chromium/attachments/door-menu-png-e48655bc8faea112ff5f5223a5a1d7a50503bf89.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-chromium/attachments/discovered-screen-header-png-6df7c1d508c16d655d3adfd4c1571790addf3ce9.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-chromium/attachments/discovered-screen-png-dc353ef966b632efe3a277787c41158be620e821.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-chromium/attachments/route-audit-json-9dfe39e271d2ea0ac96ff4b308e1d785e0ce4dbe.json]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-chromium/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-chromium/error-context.md]]
+
+</system-out>
+<failure message="Canvas header pixels must identify returned-home" type="expect.toBe">
+  [mobile-chromium] › home_discovery_journeys.spec.ts:182:7 › Home discovery journeys › Home draw → stable tool Door → drawn screen with screenshot evidence @portable 
+
+    Error: Canvas header pixels must identify returned-home
+
+    Canvas header pixels must identify returned-home
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      200 |         const hash = createHash('sha256').update(png).digest('hex');
+      201 |         return !reference || (different ? hash !== pixelGuards[reference].sha256 : hash === pixelGuards[reference].sha256);
+    &gt; 202 |       }, { timeout: 5_000, message: `Canvas header pixels must identify ${stage}` }).toBe(true);
+          |                                                                                      ^
+      203 |       const file = `${stage}-header.png`;
+      204 |       const path = testInfo.outputPath(file);
+      205 |       writeFileSync(path, png!);
+        at headerPixels (&lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:202:86)
+        at capture (&lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:217:44)
+        at &lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:277:7
+
+    attachment #1: home-draw-header.png (image/png) ────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-chromium/attachments/home-draw-header-png-c693e5d88234f171059530ea355e1d4d5737ad93.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: home-draw.png (image/png) ───────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-chromium/attachments/home-draw-png-6c8f9ed84cf4af88e0de6146136b342a49d22fa6.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: source-tool-header.png (image/png) ──────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-chromium/attachments/source-tool-header-png-7473f56e7af42399aae28fcf8b08ae11c2ae7739.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: source-tool.png (image/png) ─────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-chromium/attachments/source-tool-png-12ed35d66717da799e4c3ad065973fce8c7a0a77.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #5: door-menu.png (image/png) ───────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-chromium/attachments/door-menu-png-e48655bc8faea112ff5f5223a5a1d7a50503bf89.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #6: discovered-screen-header.png (image/png) ────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-chromium/attachments/discovered-screen-header-png-6df7c1d508c16d655d3adfd4c1571790addf3ce9.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #7: discovered-screen.png (image/png) ───────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-chromium/attachments/discovered-screen-png-dc353ef966b632efe3a277787c41158be620e821.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #8: route-audit.json (application/json) ─────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-chromium/attachments/route-audit-json-9dfe39e271d2ea0ac96ff4b308e1d785e0ce4dbe.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #9: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #11: video (video/webm) ─────────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-chromium/error-context.md
+
+</failure>
+</testcase></testsuite><testsuite name="home_discovery_journeys.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="3" failures="1" skipped="0" time="37.944" errors="0"><testcase name="Home discovery journeys › Home draw → stable tool Door → drawn screen with screenshot evidence @portable" classname="home_discovery_journeys.spec.ts" time="16.731"><system-out>
+::notice title=route-audit mobile-webkit::stage=failed last=discovered-screen failed_step=return-home ids=198,161,79 route= menu=[] door=[{"via":"button-press","opened":true,"record":{"schema":"pointer-press/1","input":"touch","input_source":"explicit","x":195,"y":532,"visible_ratio":1,"box":{"x":44,"y":512,"width":302,"height":40},"hit":{"tag":"flt-semantics","self":false}}}]
+::notice title=journey mobile-webkit::Home draw → stable tool Door → drawn screen with screenshot evidence @portable :: Error: Canvas header pixels must identify returned-home
+journey-semantics mobile-webkit [{"role":null,"id":"shared-header-home","name":null,"text":"Home","box":{"x":270,"y":8,"width":40,"height":40}},{"role":null,"id":"shared-header-favorite","name":null,"text":"Favorite this page","box":{"x":310,"y":8,"width":40,"height":40}},{"role":null,"id":"shared-header-menu","name":null,"text":"Menu","box":{"x":350,"y":8,"width":40,"height":40}},{"role":null,"id":"shared-header-secondary","name":null,"text":"Refresh","box":{"x":0,"y":56,"width":390,"height":48}},{"role":"button","id":null,"name":null,"text":"Photo Studio\nPlace frames and marks on photos.","box":{"x":25,"y":1011,"width":340,"height":80}},{"role":"button","id":null,"name":null,"text":"Screen104 · 復旧手順ナビ\nNavigation: HomeToRoot, API: YamlWrite, Theme: Sepia, Data: TypeCoercion","box":{"x":25,"y":1891,"width":340,"height":98}},{"role":"button","id":null,"name":null,"text":"Screen57 · ライブイベント検索\nNavigation: DeepLinkHash, API: CertPin, Theme: PlatformDetect, Data: CalendarView","box":{"x":25,"y":2003,"width":340,"height":114}},{"role":"button","id":null,"name":null,"text":"Screen169 · 送信中の状態\nNavigation: ContextMenu, API: NoCacheHeader, Theme: MouseRegion, Data: CleanArch","box":{"x":25,"y":2131,"width":340,"height":114}}]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/attachments/home-draw-header-png-ea4440c0db31e5520b9a069c3f44757a66fe88e7.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/attachments/home-draw-png-69d6ba1433f4254ba942d60161ddaf9e1bd321f5.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/attachments/source-tool-header-png-37c10fd0d3cabad4130596c7cacae1f8fb71765b.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/attachments/source-tool-png-c9561e65667b3a8f3a903a3087946157d646e2fe.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/attachments/door-menu-png-91afc72cfe0c35459206ed08fbc33d7bfcaa0ba3.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/attachments/discovered-screen-header-png-6f454ccb104ff3547858f26fd9633d23407eeaf3.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/attachments/discovered-screen-png-25580ba7f4fbd21cdc3346bc3c4f1c5452182037.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/attachments/route-audit-json-6e189da6c8d4b5f976317c9ffd1ac244ed5988a8.json]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/error-context.md]]
+
+</system-out>
+<failure message="Canvas header pixels must identify returned-home" type="expect.toBe">
+  [mobile-webkit] › home_discovery_journeys.spec.ts:182:7 › Home discovery journeys › Home draw → stable tool Door → drawn screen with screenshot evidence @portable 
+
+    Error: Canvas header pixels must identify returned-home
+
+    Canvas header pixels must identify returned-home
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      200 |         const hash = createHash('sha256').update(png).digest('hex');
+      201 |         return !reference || (different ? hash !== pixelGuards[reference].sha256 : hash === pixelGuards[reference].sha256);
+    &gt; 202 |       }, { timeout: 5_000, message: `Canvas header pixels must identify ${stage}` }).toBe(true);
+          |                                                                                      ^
+      203 |       const file = `${stage}-header.png`;
+      204 |       const path = testInfo.outputPath(file);
+      205 |       writeFileSync(path, png!);
+        at headerPixels (&lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:202:86)
+        at capture (&lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:217:44)
+        at &lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:277:7
+
+    attachment #1: home-draw-header.png (image/png) ────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/attachments/home-draw-header-png-ea4440c0db31e5520b9a069c3f44757a66fe88e7.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: home-draw.png (image/png) ───────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/attachments/home-draw-png-69d6ba1433f4254ba942d60161ddaf9e1bd321f5.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: source-tool-header.png (image/png) ──────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/attachments/source-tool-header-png-37c10fd0d3cabad4130596c7cacae1f8fb71765b.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: source-tool.png (image/png) ─────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/attachments/source-tool-png-c9561e65667b3a8f3a903a3087946157d646e2fe.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #5: door-menu.png (image/png) ───────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/attachments/door-menu-png-91afc72cfe0c35459206ed08fbc33d7bfcaa0ba3.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #6: discovered-screen-header.png (image/png) ────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/attachments/discovered-screen-header-png-6f454ccb104ff3547858f26fd9633d23407eeaf3.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #7: discovered-screen.png (image/png) ───────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/attachments/discovered-screen-png-25580ba7f4fbd21cdc3346bc3c4f1c5452182037.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #8: route-audit.json (application/json) ─────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/attachments/route-audit-json-6e189da6c8d4b5f976317c9ffd1ac244ed5988a8.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #9: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #11: video (video/webm) ─────────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/home_discovery_journeys-Ho-aaf97-creenshot-evidence-portable-mobile-webkit/error-context.md
+
+</failure>
+</testcase></testsuite></testsuites>
