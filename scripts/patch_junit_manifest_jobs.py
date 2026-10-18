@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import subprocess
 from pathlib import Path
@@ -19,12 +20,19 @@ PYTHON_VERX_RE = re.compile(r"junit-py(\d+)\.x\b", re.IGNORECASE)
 
 
 def run_jobs(repo: str, run_id: int) -> list[dict]:
-    proc = subprocess.run(
-        ["gh", "run", "view", str(run_id), "--repo", repo, "--json", "jobs"],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    # fetch-guard: no gh prompt, and a stuck call is treated like a failed one (no jobs).
+    try:
+        proc = subprocess.run(
+            ["gh", "run", "view", str(run_id), "--repo", repo, "--json", "jobs"],
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=120,
+            env={**os.environ, "GH_PROMPT_DISABLED": "1", "GH_PAGER": "cat"},
+            stdin=subprocess.DEVNULL,
+        )
+    except subprocess.TimeoutExpired:
+        return []
     if proc.returncode != 0:
         return []
     data = json.loads(proc.stdout)
