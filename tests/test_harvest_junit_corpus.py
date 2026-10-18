@@ -378,3 +378,25 @@ def test_same_repository_partial_and_expired_with_valid_target(monkeypatch):
     assert coverage["repo"]["status"] == "partial"
     assert coverage["repo"]["checked_files"] == 1
     assert failures[0].stage == "artifact_expired"
+
+
+def test_gh_calls_never_prompt_and_time_out_as_stage_failures(tmp_path):
+    """fetch-guard: a stuck gh becomes a recorded failure for that stage; collection goes on."""
+    import subprocess
+
+    mod = _load_harvest_module()
+    seen = []
+
+    def hang(argv, **kwargs):
+        seen.append(kwargs)
+        raise subprocess.TimeoutExpired(argv, kwargs["timeout"])
+
+    failures = []
+    with mock.patch.object(mod.subprocess, "run", hang):
+        assert mod.run_gh(["api", "x"], failures, repo="r", run_id=1, artifact=None, stage="list_runs") is None
+        with mock.patch.object(mod, "_artifact_id", lambda *a: 7):
+            assert mod.download_artifact("r", 1, "junit", tmp_path / "d", failures) is False
+    assert [f.stage for f in failures] == ["list_runs", "download_artifact"]
+    assert all("timed out after" in f.detail for f in failures)
+    assert [k["timeout"] for k in seen] == [mod.GH_TIMEOUT_SECONDS, mod.ARTIFACT_TIMEOUT_SECONDS]
+    assert all(k["env"]["GH_PROMPT_DISABLED"] == "1" and k["stdin"] is subprocess.DEVNULL for k in seen)

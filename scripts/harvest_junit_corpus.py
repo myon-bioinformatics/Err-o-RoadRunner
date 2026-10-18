@@ -23,6 +23,7 @@ import argparse
 import hashlib
 import io
 import json
+import os
 import subprocess
 import zipfile
 import sys
@@ -79,13 +80,31 @@ class HarvestFailure:
         }
 
 
+# fetch-guard: gh never prompts and every call ends within a deadline; a timeout is
+# recorded as that stage's failure like any other gh error, and collection continues.
+GH_TIMEOUT_SECONDS = 120
+ARTIFACT_TIMEOUT_SECONDS = 600
+
+
+def gh_env() -> dict:
+    return {**os.environ, "GH_PROMPT_DISABLED": "1", "GH_PAGER": "cat"}
+
+
 def run_gh(args: list[str], failures: list[HarvestFailure], *, repo: str, run_id: int | None, artifact: str | None, stage: str) -> str | None:
-    proc = subprocess.run(
-        ["gh", *args],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    try:
+        proc = subprocess.run(
+            ["gh", *args],
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=GH_TIMEOUT_SECONDS,
+            env=gh_env(),
+            stdin=subprocess.DEVNULL,
+        )
+    except subprocess.TimeoutExpired:
+        failures.append(HarvestFailure(repo=repo, run_id=run_id, artifact=artifact, stage=stage,
+                                       detail=f"gh timed out after {GH_TIMEOUT_SECONDS}s"))
+        return None
     if proc.returncode != 0:
         detail = (proc.stderr or proc.stdout or "").strip() or f"gh exit {proc.returncode}"
         failures.append(
@@ -243,11 +262,19 @@ def download_artifact(
     if artifact_id is None:
         failures.append(HarvestFailure(repo=repo, run_id=run_id, artifact=name, stage="download_artifact", detail="artifact id not found"))
         return False
-    proc = subprocess.run(
-        ["gh", "api", f"repos/{ORG}/{repo}/actions/artifacts/{artifact_id}/zip"],
-        capture_output=True,
-        check=False,
-    )
+    try:
+        proc = subprocess.run(
+            ["gh", "api", f"repos/{ORG}/{repo}/actions/artifacts/{artifact_id}/zip"],
+            capture_output=True,
+            check=False,
+            timeout=ARTIFACT_TIMEOUT_SECONDS,
+            env=gh_env(),
+            stdin=subprocess.DEVNULL,
+        )
+    except subprocess.TimeoutExpired:
+        failures.append(HarvestFailure(repo=repo, run_id=run_id, artifact=name, stage="download_artifact",
+                                       detail=f"gh timed out after {ARTIFACT_TIMEOUT_SECONDS}s"))
+        return False
     if proc.returncode != 0:
         detail = (proc.stderr or proc.stdout or b"").decode("utf-8", "replace").strip() or f"download exit {proc.returncode}"
         failures.append(HarvestFailure(repo=repo, run_id=run_id, artifact=name, stage="download_artifact", detail=detail[:500]))
