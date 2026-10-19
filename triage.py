@@ -119,6 +119,16 @@ GCC_ERROR_RE = re.compile(
 DART_COMPILER_ERROR_RE = re.compile(
     r"^(?P<file>\S+\.dart):(?P<line>\d+):(?P<col>\d+):\s*Error:\s*(?P<rest>.+)$"
 )
+GO_PANIC_RE = re.compile(r"^panic:\s*(?P<rest>.+)$")
+GO_COMPILER_ERROR_RE = re.compile(
+    r"^(?P<file>\S+\.go):(?P<line>\d+):(?P<col>\d+):\s*(?P<rest>.+)$"
+)
+TYPESCRIPT_COMPILER_ERROR_RE = re.compile(
+    r"^(?P<file>\S+?):(?P<line>\d+):(?P<col>\d+)\s+-\s+error\s+(?P<code>TS\d+):\s*(?P<rest>.+)$"
+)
+TYPESCRIPT_PLAIN_ERROR_RE = re.compile(
+    r"^(?P<file>.+?)\((?P<line>\d+),(?P<col>\d+)\):\s*error\s+(?P<code>TS\d+):\s*(?P<rest>.+)$"
+)
 PYTHON_EXCEPTIONS_WITHOUT_MESSAGE = frozenset(
     {
         "KeyboardInterrupt",
@@ -1350,6 +1360,27 @@ def _hint_best_effort_compilers(text: str, report: Report) -> bool:
             report.add_hint(
                 f"dart error (best effort): {m_dart.group('file')}:"
                 f"{m_dart.group('line')}: {m_dart.group('rest')[:300]}"
+            )
+            structured = True
+            continue
+        m_go_panic = GO_PANIC_RE.match(stripped)
+        if m_go_panic:
+            report.add_hint(f"go panic (best effort): {stripped[:400]}")
+            structured = True
+            continue
+        m_go_comp = GO_COMPILER_ERROR_RE.match(stripped)
+        if m_go_comp:
+            report.add_hint(
+                f"go compiler error (best effort): {m_go_comp.group('file')}:"
+                f"{m_go_comp.group('line')}:{m_go_comp.group('col')}: {m_go_comp.group('rest')[:300]}"
+            )
+            structured = True
+            continue
+        m_tsc = TYPESCRIPT_COMPILER_ERROR_RE.match(stripped) or TYPESCRIPT_PLAIN_ERROR_RE.match(stripped)
+        if m_tsc:
+            report.add_hint(
+                f"typescript error (best effort): {m_tsc.group('file')}:"
+                f"{m_tsc.group('line')}:{m_tsc.group('col')}: {m_tsc.group('code')}: {m_tsc.group('rest')[:300]}"
             )
             structured = True
             continue
