@@ -614,6 +614,16 @@ def test_typescript_compiler_error_structured_hint() -> None:
     assert not any(ln == "NOT FOUND: recognized failure pattern in log/stderr" for ln in lines)
 
 
+@pytest.mark.multi_error
+@pytest.mark.parametrize("path", ["src/index.ts", r"C:\src\index.ts", "src/my project/index.tsx"])
+def test_typescript_plain_compiler_error_structured_hint(path: str) -> None:
+    text = f"{path}(15,3): error TS2322: Type 'string' is not assignable to type 'number'.\n"
+    report = triage(exit_code=1, stderr_text=text, log_text=None, junit_paths=[], project_root=ROOT)
+    lines = _lines(report)
+    assert any(f"typescript error (best effort): {path}:15:3: TS2322:" in line for line in lines)
+    assert not any(line == "NOT FOUND: recognized failure pattern in log/stderr" for line in lines)
+
+
 def test_combo_mutation_script_zero_survivors() -> None:
     proc = subprocess.run(
         [sys.executable, str(ROOT / "scripts" / "combo_mutation.py")],

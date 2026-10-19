@@ -126,6 +126,9 @@ GO_COMPILER_ERROR_RE = re.compile(
 TYPESCRIPT_COMPILER_ERROR_RE = re.compile(
     r"^(?P<file>\S+?):(?P<line>\d+):(?P<col>\d+)\s+-\s+error\s+(?P<code>TS\d+):\s*(?P<rest>.+)$"
 )
+TYPESCRIPT_PLAIN_ERROR_RE = re.compile(
+    r"^(?P<file>.+?)\((?P<line>\d+),(?P<col>\d+)\):\s*error\s+(?P<code>TS\d+):\s*(?P<rest>.+)$"
+)
 PYTHON_EXCEPTIONS_WITHOUT_MESSAGE = frozenset(
     {
         "KeyboardInterrupt",
@@ -1373,7 +1376,7 @@ def _hint_best_effort_compilers(text: str, report: Report) -> bool:
             )
             structured = True
             continue
-        m_tsc = TYPESCRIPT_COMPILER_ERROR_RE.match(stripped)
+        m_tsc = TYPESCRIPT_COMPILER_ERROR_RE.match(stripped) or TYPESCRIPT_PLAIN_ERROR_RE.match(stripped)
         if m_tsc:
             report.add_hint(
                 f"typescript error (best effort): {m_tsc.group('file')}:"
