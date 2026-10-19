@@ -587,6 +587,33 @@ def test_mutation_guard_chain_marker_hint() -> None:
     assert any("chain marker without traceback" in ln for ln in report.lines())
 
 
+@pytest.mark.multi_error
+def test_go_panic_structured_hint() -> None:
+    text = "panic: runtime error: index out of range [2] with length 1\n\ngoroutine 1 [running]:\nmain.main()\n\t/app/main.go:8 +0x1d\n"
+    report = triage(exit_code=1, stderr_text=text, log_text=None, junit_paths=[], project_root=ROOT)
+    lines = _lines(report)
+    assert any("go panic (best effort): panic: runtime error: index out of range" in ln for ln in lines)
+    assert not any(ln == "NOT FOUND: recognized failure pattern in log/stderr" for ln in lines)
+
+
+@pytest.mark.multi_error
+def test_go_compiler_error_structured_hint() -> None:
+    text = "main.go:12:5: undefined: fmt.Printlnn\n"
+    report = triage(exit_code=1, stderr_text=text, log_text=None, junit_paths=[], project_root=ROOT)
+    lines = _lines(report)
+    assert any("go compiler error (best effort): main.go:12:5: undefined: fmt.Printlnn" in ln for ln in lines)
+    assert not any(ln == "NOT FOUND: recognized failure pattern in log/stderr" for ln in lines)
+
+
+@pytest.mark.multi_error
+def test_typescript_compiler_error_structured_hint() -> None:
+    text = "src/index.ts:15:3 - error TS2322: Type 'string' is not assignable to type 'number'.\n"
+    report = triage(exit_code=1, stderr_text=text, log_text=None, junit_paths=[], project_root=ROOT)
+    lines = _lines(report)
+    assert any("typescript error (best effort): src/index.ts:15:3: TS2322: Type 'string' is not assignable" in ln for ln in lines)
+    assert not any(ln == "NOT FOUND: recognized failure pattern in log/stderr" for ln in lines)
+
+
 def test_combo_mutation_script_zero_survivors() -> None:
     proc = subprocess.run(
         [sys.executable, str(ROOT / "scripts" / "combo_mutation.py")],
