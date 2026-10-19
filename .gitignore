@@ -6,3 +6,17 @@ dist/
 build/
 reports/
 tests/fixtures/readme/inputs/secret_link.stderr
+
+# --- common ignores (shared) ---
+*.py[cod]
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+.venv/
+venv/
+node_modules/
+.DS_Store
+Thumbs.db
+# --- end common ignores ---
