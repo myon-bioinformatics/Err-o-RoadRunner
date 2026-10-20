@@ -28,7 +28,7 @@ jobs:
       - uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
-      - uses: actions/setup-python@v7.0.0
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"
       - name: Fetch pinned shared vendor tool
@@ -66,26 +66,27 @@ jobs:
       - uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
-      - uses: actions/setup-python@v7.0.0
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: ${{ matrix.python-version }}
           check-latest: true
           allow-prereleases: true
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
       - run: python -VV
       - name: Install test dependencies
-        run: python -m pip install -e ".[test]"
+        run: uv sync --locked --extra test
       - name: Compile
-        run: python -m compileall -q triage.py actions_log.py junit_redact.py project_version.py
+        run: uv run --locked python -m compileall -q triage.py actions_log.py junit_redact.py project_version.py
       - name: Import smoke
-        run: python -c "import triage, actions_log, junit_redact, project_version"
+        run: uv run --locked python -c "import triage, actions_log, junit_redact, project_version"
       - name: Combo mutation (zero survivors)
-        run: python scripts/combo_mutation.py
+        run: uv run --locked python scripts/combo_mutation.py
       - name: Version mutation (zero survivors)
-        run: python scripts/version_mutation.py
+        run: uv run --locked python scripts/version_mutation.py
       - name: Tests with JUnit
         run: |
           mkdir -p reports
-          python -m pytest -q tests --junitxml=reports/junit.xml
+          uv run --locked pytest -q tests --junitxml=reports/junit.xml
       - name: Preserve JUnit report
         if: always()
         uses: actions/upload-artifact@v7.0.2

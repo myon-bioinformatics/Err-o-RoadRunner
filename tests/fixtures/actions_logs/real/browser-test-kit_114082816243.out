@@ -20,10 +20,10 @@ FOUND: actions log pytest failed (last) (actions-log): FAILED tests/python/test_
 FOUND: python version: <runtime>
 FOUND: node version: <runtime>
 FOUND: gh version: <runtime>
+FOUND: lock files present: uv.lock
 FOUND: environment variable count: <runtime>
 FOUND: environment variable names: <runtime>
 NOT FOUND: actions log ::error:: commands (actions-log)
 NOT FOUND: recognized failure pattern in log/stderr
-NOT FOUND: lock files in project root
 HINT: compiler error line (not node): error: test-results/btk-events.jsonl: no such file
 HINT: actions log search keywords (actions-log): FAILED tests/python/test_repo_overview.py::test_missing_git_keeps_walk_fallback - AttributeError: <module '_btk_git_inspector' from '/home/runner/work/browser-test-kit/browser-test-kit/scripts/git_inspector.py'> has no attribute '_spawn'
