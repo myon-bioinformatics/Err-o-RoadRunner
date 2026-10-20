@@ -14,7 +14,7 @@ license = { text = "MIT" }
 err-o-roadrunner = "triage:main"
 
 [project.optional-dependencies]
-test = ["pytest>=9.1.1"]
+test = ["pytest>=9.1.1", "pip>=25.0"]
 
 [tool.hatch.build.targets.wheel]
 only-include = ["triage.py", "actions_log.py", "junit_redact.py", "project_version.py"]
