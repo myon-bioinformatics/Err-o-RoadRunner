@@ -98,6 +98,11 @@ def test_runner_workspace_redaction_including_pytest_truncated_repr(path: str) -
         assert "&lt;runner-work&gt;/tests/test_cli.py" in redacted
 
 
+def test_truncated_path_does_not_swallow_adjacent_repr_or_url() -> None:
+    text = "PosixPath('/home/runner/work/markdown...'), url=https://example.test/path"
+    assert redact_text(text) == "PosixPath('<runner-work>'), url=https://example.test/path"
+
+
 @pytest.mark.gap
 def test_find_corpus_leaks_clean_after_redact_xml_document() -> None:
     raw = (
