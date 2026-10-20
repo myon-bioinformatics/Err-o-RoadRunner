@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="5" tests="125" time="9.230" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_option_suggestions" name="test_hidden_options_not_suggested_and_positional_not_guessed" time="0.001"><failure message="assert 'did you mean' not in &quot;usage: __ma...-option'?)\n&quot;&#10;  &#10;  'did you mean' is contained here:&#10;    g-option (did you mean '--visible-long-option'?)&#10;  ?           ++++++++++++">tests/test_option_suggestions.py:54: in test_hidden_options_not_suggested_and_positional_not_guessed
+    assert "did you mean" not in capsys.readouterr().err
+E   assert 'did you mean' not in "usage: __ma...-option'?)\n"
+E     
+E     'did you mean' is contained here:
+E       g-option (did you mean '--visible-long-option'?)
+E     ?           ++++++++++++</failure></testcase></testsuite></testsuites>

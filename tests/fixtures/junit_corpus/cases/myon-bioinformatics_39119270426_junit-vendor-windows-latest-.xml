@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="2" tests="412" time="72.938" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_gh_ops_fetch_guard" name="test_real_custom_ssh_hang_is_bounded_and_children_are_killed" time="30.156"><failure message="assert ((565.203 - 535.109) &lt; 5)&#10; +  where 565.203 = &lt;built-in function monotonic&gt;()&#10; +    where &lt;built-in function monotonic&gt; = time.monotonic">git_env = {'ACTIONS_ORCHESTRATION_ID': 'fe944318-64a6-827a-943f-00d18c8c38bb.vendor-portability.windows-latest_3_12', 'ACTIONS_R...he\\', 'ACTIONS_RUNNER_RETURN_JOB_RESULT_FOR_HOSTED': '1', 'AGENT_TOOLSDIRECTORY': 'C:\\hostedtoolcache\\windows', ...}
+tmp_path = WindowsPath('C:&lt;user-home&gt;/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_real_custom_ssh_hang_is_b0')
+
+    def test_real_custom_ssh_hang_is_bounded_and_children_are_killed(git_env, tmp_path):
+        script = tmp_path / "fake-ssh.py"
+        pidfile = tmp_path / "child.pid"
+        survived = tmp_path / "child-survived"
+        child_code = f"import time; time.sleep(2); open({str(survived)!r}, 'w').write('alive')"
+        script.write_text(
+            "import subprocess, sys, time\n"
+            "if '-G' in sys.argv: sys.exit(0)\n"
+            f"p = subprocess.Popen([sys.executable, '-c', {child_code!r}])\n"
+            f"open({str(pidfile)!r}, 'w').write(str(p.pid))\n"
+            "print('transport started', flush=True)\n"
+            "time.sleep(30)\n")
+        env = {**git_env, "GIT_SSH_COMMAND": f'"{sys.executable}" "{script}"', "GIT_SSH_VARIANT": "ssh"}
+        start = time.monotonic()
+        try:
+            with pytest.raises(subprocess.TimeoutExpired):
+                remote_probe("ssh://git@example.invalid/repo.git", env, timeout=1)
+&gt;           assert time.monotonic() - start &lt; 5 and pidfile.exists()
+E           assert ((565.203 - 535.109) &lt; 5)
+E            +  where 565.203 = &lt;built-in function monotonic&gt;()
+E            +    where &lt;built-in function monotonic&gt; = time.monotonic
+
+tests\test_gh_ops_fetch_guard.py:313: AssertionError</failure></testcase></testsuite></testsuites>

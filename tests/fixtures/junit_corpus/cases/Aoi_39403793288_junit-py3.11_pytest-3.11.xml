@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="40" tests="1882" time="369.949" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="sakanalytics.tests.test_proposition_seed_audit" name="test_replay_seed_registry_from_all_2240_plans" time="4.042"><failure message="AssertionError: proposition_seed_audit.py: pending divergence is stale; bytes match the pinned Aoi tree&#10;assert not [{'sidecar': 'cycles/c001-chunichi/outputs/exploratory/proposition-evaluation/source-divergence.json', 'path': 'sakana...field': 'analysis_sha256', 'evidence_sha256': '956044dbb58a9aa6fde60d5e6d47887cc405d8079a9e73a8736bbb584fb0627b', ...}]">def test_replay_seed_registry_from_all_2240_plans():
+        actual=audit.build(CYCLE,OUT/'skill-seed-plans.jsonl.gz')
+        saved=json.loads((OUT/'seed-evaluation.json').read_text())
+        # 証跡の analysis_sha256 は記録のまま。ピンした Aoi との差は source-divergence.json、
+        # このリポジトリがさらに進んでいる差は expected-source-divergence.json。
+        _recorded_source_sha(OUT, 'seed-evaluation.json', 'analysis_sha256', saved['analysis_sha256'],
+                             ROOT/'sakanalytics/proposition_seed_audit.py')
+&gt;       child_sha = _child_source_sha('analysis_sha256', saved['analysis_sha256'], 'proposition_seed_audit.py')
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+sakanalytics/tests/test_proposition_seed_audit.py:138: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+field = 'analysis_sha256'
+recorded = '956044dbb58a9aa6fde60d5e6d47887cc405d8079a9e73a8736bbb584fb0627b'
+name = 'proposition_seed_audit.py'
+
+    def _child_source_sha(field, recorded, name):
+        """実行したソースと、ピンした Aoi のコピーと、証跡の三つを突き合わせる。
+    
+        バイトが同じなら、source-divergence.json の検査だけで終わる。
+        このリポジトリだけが進んでいるときは expected-source-divergence.json の1件と
+        ハッシュが完全に一致しなければならない。宣言のない差、宣言と違う差、
+        もう一致しているのに残った宣言は失敗する。生成物のハッシュは書き換えない。
+        """
+        child = CHILD / name
+        aoi = ROOT / 'sakanalytics' / name
+        child_sha = _sha256(child)
+        aoi_sha = _sha256(aoi)
+        pending = _pending_manifest()
+        rows = []
+        if pending:
+            rows = [row for row in pending['updates'] if row['path'] == f'sakanalytics/{name}' and row['field'] == field]
+        assert len(rows) &lt;= 1
+        if child_sha == aoi_sha:
+&gt;           assert not rows, f'{name}: pending divergence is stale; bytes match the pinned Aoi tree'
+E           AssertionError: proposition_seed_audit.py: pending divergence is stale; bytes match the pinned Aoi tree
+E           assert not [{'sidecar': 'cycles/c001-chunichi/outputs/exploratory/proposition-evaluation/source-divergence.json', 'path': 'sakana...field': 'analysis_sha256', 'evidence_sha256': '956044dbb58a9aa6fde60d5e6d47887cc405d8079a9e73a8736bbb584fb0627b', ...}]
+
+sakanalytics/tests/test_proposition_seed_audit.py:104: AssertionError</failure></testcase><testcase classname="sakanalytics.tests.test_proposition_seed_audit" name="test_pending_source_divergence_covers_only_real_drift" time="0.000"><failure message="AssertionError: assert not True&#10; +  where True = exists()&#10; +    where exists = PosixPath('&lt;runner-work&gt;/sakanalytics/expected-source-divergence.json').exists">def test_pending_source_divergence_covers_only_real_drift():
+        if not _running_as_child():
+&gt;           assert not PENDING_PATH.exists()
+E           AssertionError: assert not True
+E            +  where True = exists()
+E            +    where exists = PosixPath('&lt;runner-work&gt;/sakanalytics/expected-source-divergence.json').exists
+
+sakanalytics/tests/test_proposition_seed_audit.py:222: AssertionError</failure></testcase><testcase classname="pythdragoras.tests.test_littlebit_holdout_drift" name="test_littlebit_committed_provenance_matches_current_sources_and_untouched_evidence" time="0.002"><failure message="Failed: DID NOT RAISE AssertionError">def test_littlebit_committed_provenance_matches_current_sources_and_untouched_evidence():
+        root = _REPO_ROOT
+        manifest = json.loads((root / PROVENANCE_PATH).read_text(encoding="utf-8"))
+        pending = _load_pending_source_divergence()
+        # The pinned Aoi manifest still rejects these bytes. The overlay is the
+        # divergence Aoi has not recorded yet, not a silent bypass.
+        if pending["source_divergence"]:
+&gt;           with pytest.raises(AssertionError, match="SHA-256 drift"):
+E           Failed: DID NOT RAISE AssertionError
+
+pythdragoras/tests/test_littlebit_holdout_drift.py:157: Failed</failure></testcase><testcase classname="pythdragoras.tests.test_littlebit_holdout_drift" name="test_littlebit_change_to_own_source_is_detected_even_if_aoi_copy_is_unchanged" time="0.001"><failure message="AssertionError: pythdragoras/littlebit_approx.py: pending divergence does not match the pinned Aoi provenance; drop it once Aoi records current_sha256&#10;assert 'eabb039943f7...a4eece6d9c06b' == 'f949a625ff19...ee7493600e365'&#10;  &#10;  - f949a625ff195b4cb1d07f86026d47db0c4f52d5b73d42fa93dee7493600e365&#10;  + eabb039943f7688b5bdcede4b3f07a42a26563d18c757c8f483a4eece6d9c06b">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_littlebit_change_to_own_s0')
+
+    def test_littlebit_change_to_own_source_is_detected_even_if_aoi_copy_is_unchanged(tmp_path):
+        root = _REPO_ROOT
+        manifest = json.loads((root / PROVENANCE_PATH).read_text(encoding="utf-8"))
+&gt;       expected = _pending_source_divergence(manifest, _load_pending_source_divergence())
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+pythdragoras/tests/test_littlebit_holdout_drift.py:181: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+manifest = {'artifacts_sha256': {'cycles/c001-chunichi/outputs/exploratory/littlebit-holdout/holdout.json': '02bb8e1b6ae89133b38a...cal years remain a temporal backtest, not independent confirmation on wholly unseen data.', 'posthoc': True, ...}, ...}
+pending = {'schema': 'littlebit-holdout-pending-source-divergence/1', 'aoi_manifest': 'cycles/c001-chunichi/outputs/exploratory/...ed5060581bbcd9ea5098b1c8', 'current_sha256': 'bd76d8a222c919f3673f16203ace2c063203991e79a89b0891655528c2597645', ...}]}
+
+    def _pending_source_divergence(manifest, pending):
+        """Treat reviewed source drift as the divergence Aoi will record on its next subtree pull.
+    
+        Returns a copy. Evidence hashes, inputs, and artifacts stay as the pinned Aoi
+        provenance recorded them. A pending row is accepted only while Aoi still records
+        ``replaces_sha256`` as that source's current hash. Once Aoi records
+        ``current_sha256``, the overlay no longer matches and must be removed.
+        """
+        assert pending["schema"] == "littlebit-holdout-pending-source-divergence/1"
+        assert pending["aoi_manifest"] == PROVENANCE_PATH
+        rows = pending["source_divergence"]
+        assert isinstance(rows, list)
+        recorded = _source_divergence(manifest)
+        updated = dict(recorded)
+        seen = set()
+        for row in rows:
+            path = row["path"]
+            assert path not in seen, path
+            seen.add(path)
+            assert path in SOURCE_PATHS, path
+            evidence = manifest["source_sha256"][path]
+            assert row["evidence_sha256"] == evidence
+            accepted = recorded[path]["current_sha256"] if path in recorded else evidence
+&gt;           assert row["replaces_sha256"] == accepted, (
+                f"{path}: pending divergence does not match the pinned Aoi provenance; "
+                "drop it once Aoi records current_sha256")
+E           AssertionError: pythdragoras/littlebit_approx.py: pending divergence does not match the pinned Aoi provenance; drop it once Aoi records current_sha256
+E           assert 'eabb039943f7...a4eece6d9c06b' == 'f949a625ff19...ee7493600e365'
+E             
+E             - f949a625ff195b4cb1d07f86026d47db0c4f52d5b73d42fa93dee7493600e365
+E             + eabb039943f7688b5bdcede4b3f07a42a26563d18c757c8f483a4eece6d9c06b
+
+pythdragoras/tests/test_littlebit_holdout_drift.py:87: AssertionError</failure></testcase></testsuite></testsuites>

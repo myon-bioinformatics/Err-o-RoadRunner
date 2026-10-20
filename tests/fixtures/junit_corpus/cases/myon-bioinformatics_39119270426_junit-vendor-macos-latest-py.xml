@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="1" tests="412" time="63.168" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_gh_ops_fetch_guard" name="test_real_connection_refusal_is_distinct_from_authentication" time="5.012"><failure message="subprocess.TimeoutExpired: Command '['git', 'ls-remote', 'http://127.0.0.1:49174/repo.git']' timed out after 5 seconds">git_env = {'GITHUB_JOB': 'vendor-portability', 'GITHUB_EVENT_PATH': '&lt;user-home&gt;/work/_temp/_github_workflow/event.json', 'GITHUB_TRIGGERING_ACTOR': 'myon-bioinformatics', 'GOROOT_1_24_ARM64': '&lt;user-home&gt;/hostedtoolcache/go/1.24.13/arm64', ...}
+
+    def test_real_connection_refusal_is_distinct_from_authentication(git_env):
+        with socket.socket() as sock:
+            sock.bind(("127.0.0.1", 0))
+            port = sock.getsockname()[1]
+            # Bound, non-listening port: no service can race to take it.
+&gt;           done = remote_probe(f"http://127.0.0.1:{port}/repo.git", git_env)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_gh_ops_fetch_guard.py:253: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_gh_ops_fetch_guard.py:212: in remote_probe
+    return g._git_network_run(["git", "ls-remote", url], run=subprocess.run, cwd=".", timeout=timeout, env=env)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+gh_ops.py:1483: in _git_network_run
+    raise error
+gh_ops.py:1466: in _git_network_run
+    stdout, stderr = process.communicate(timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/subprocess.py:1209: in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/subprocess.py:2116: in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;Popen: returncode: -9 args: ['git', 'ls-remote', 'http://127.0.0.1:49174/re...&gt;
+endtime = 148.893636458, orig_timeout = 5, stdout_seq = [b'']
+stderr_seq = [b''], skip_check_and_raise = False
+
+    def _check_timeout(self, endtime, orig_timeout, stdout_seq, stderr_seq,
+                       skip_check_and_raise=False):
+        """Convenience for checking if a timeout has expired."""
+        if endtime is None:
+            return
+        if skip_check_and_raise or _time() &gt; endtime:
+&gt;           raise TimeoutExpired(
+                    self.args, orig_timeout,
+                    output=b''.join(stdout_seq) if stdout_seq else None,
+                    stderr=b''.join(stderr_seq) if stderr_seq else None)
+E           subprocess.TimeoutExpired: Command '['git', 'ls-remote', 'http://127.0.0.1:49174/repo.git']' timed out after 5 seconds
+
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/subprocess.py:1253: TimeoutExpired</failure></testcase><testcase classname="tests.test_gh_ops_fetch_guard" name="test_real_openssh_connection_refusal" time="5.017"><failure message="subprocess.TimeoutExpired: Command '['git', 'ls-remote', 'ssh://git@127.0.0.1:49176/repo.git']' timed out after 5 seconds">git_env = {'GITHUB_JOB': 'vendor-portability', 'GITHUB_EVENT_PATH': '&lt;user-home&gt;/work/_temp/_github_workflow/event.json', 'GITHUB_TRIGGERING_ACTOR': 'myon-bioinformatics', 'GOROOT_1_24_ARM64': '&lt;user-home&gt;/hostedtoolcache/go/1.24.13/arm64', ...}
+
+    def test_real_openssh_connection_refusal(git_env):
+        if not shutil.which("ssh"):
+            pytest.skip("OpenSSH unavailable")
+        with socket.socket() as sock:
+            sock.bind(("127.0.0.1", 0))
+            port = sock.getsockname()[1]
+&gt;           done = remote_probe(f"ssh://git@127.0.0.1:{port}/repo.git", git_env)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_gh_ops_fetch_guard.py:264: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_gh_ops_fetch_guard.py:212: in remote_probe
+    return g._git_network_run(["git", "ls-remote", url], run=subprocess.run, cwd=".", timeout=timeout, env=env)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+gh_ops.py:1483: in _git_network_run
+    raise error
+gh_ops.py:1466: in _git_network_run
+    stdout, stderr = process.communicate(timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/subprocess.py:1209: in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/subprocess.py:2116: in _communicate
+    self._check_timeout(endtime, orig_timeout, stdout, stderr)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;Popen: returncode: -9 args: ['git', 'ls-remote', 'ssh://git@127.0.0.1:49176...&gt;
+endtime = 154.086313833, orig_timeout = 5, stdout_seq = [b'']
+stderr_seq = [b''], skip_check_and_raise = False
+
+    def _check_timeout(self, endtime, orig_timeout, stdout_seq, stderr_seq,
+                       skip_check_and_raise=False):
+        """Convenience for checking if a timeout has expired."""
+        if endtime is None:
+            return
+        if skip_check_and_raise or _time() &gt; endtime:
+&gt;           raise TimeoutExpired(
+                    self.args, orig_timeout,
+                    output=b''.join(stdout_seq) if stdout_seq else None,
+                    stderr=b''.join(stderr_seq) if stderr_seq else None)
+E           subprocess.TimeoutExpired: Command '['git', 'ls-remote', 'ssh://git@127.0.0.1:49176/repo.git']' timed out after 5 seconds
+
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/subprocess.py:1253: TimeoutExpired</failure></testcase></testsuite></testsuites>

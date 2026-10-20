@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="464" time="16.476" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_xprobe.IntegrationTests" name="test_stdlib_imports" time="0.002"><failure message="UnicodeDecodeError: 'charmap' codec can't decode byte 0x81 in position 79167: character maps to &lt;undefined&gt;">self = &lt;test_xprobe.IntegrationTests testMethod=test_stdlib_imports&gt;
+
+    @unittest.skipUnless(hasattr(sys, "stdlib_module_names"), "stdlib inventory requires Python 3.10+")
+    def test_stdlib_imports(self):
+&gt;       tree = ast.parse((ROOT / "xprobe.py").read_text())
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_xprobe.py:146: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\pathlib.py:1028: in read_text
+    return f.read()
+           ^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;encodings.cp1252.IncrementalDecoder object at 0x&lt;addr&gt;&gt;
+input = b'"""Stdlib-only search and failure probes; copy this file to vendor it.\r\n\r\nImporting this module performs no I/O....eport["matches"] else 1) if searching else 0\r\n\r\n\r\nif __name__ == "__main__":\r\n    raise SystemExit(main())\r\n'
+final = True
+
+    def decode(self, input, final=False):
+&gt;       return codecs.charmap_decode(input,self.errors,decoding_table)[0]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       UnicodeDecodeError: 'charmap' codec can't decode byte 0x81 in position 79167: character maps to &lt;undefined&gt;
+
+C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\encodings\cp1252.py:23: UnicodeDecodeError</failure></testcase></testsuite></testsuites>

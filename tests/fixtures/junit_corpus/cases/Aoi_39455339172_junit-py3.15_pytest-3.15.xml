@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="41" tests="2031" time="467.187" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_pkgmin_surface" name="test_committed_surface_matches_the_tree" time="3.669"><failure message="AssertionError: assert [{'file': 'bl...e': 119}, ...] == [{'file': 'bl...e': 119}, ...]&#10;  &#10;  At index 6 diff: {'file': 'queryu/conftest.py', 'line': 49} != {'file': 'dragowing/vendor/aoi/scripts/fetch_module.py', 'line': 369}&#10;  Right contains one more item: {'file': 'scripts/fetch_module.py', 'line': 369}&#10;  &#10;  Full diff:&#10;    [&#10;        {&#10;            'file': 'blueprobe/blueprobe.py',&#10;            'line': 65,&#10;        },&#10;        {&#10;            'file': 'dist/blueprobe_min.py',&#10;            'line': 118,&#10;        },&#10;        {&#10;            'file': 'dist/dragowing_min.py',&#10;            'line': 120,&#10;        },&#10;        {&#10;            'file': 'dist/pythdragoras_min.py',&#10;            'line': 120,&#10;        },&#10;        {&#10;            'file': 'dist/queryu_min.py',&#10;            'line': 117,&#10;        },&#10;        {&#10;            'file': 'dist/sakanalytics_min.py',&#10;            'line': 119,&#10;        },&#10;        {&#10;  -         'file': 'dragowing/vendor/aoi/scripts/fetch_module.py',&#10;  -         'line': 369,&#10;  -     },&#10;  -     {&#10;            'file': 'queryu/conftest.py',&#10;            'line': 49,&#10;        },&#10;        {&#10;            'file': 'scripts/fetch_module.py',&#10;            'line': 369,&#10;        },&#10;    ]">def test_committed_surface_matches_the_tree():
+        fresh = survey.scan(ROOT)
+        saved = json.loads(EVIDENCE.read_text(encoding="utf-8"))
+        assert saved["packages"] == fresh["packages"]
+&gt;       assert saved["dynamic_nonliteral"] == fresh["dynamic_nonliteral"]
+E       AssertionError: assert [{'file': 'bl...e': 119}, ...] == [{'file': 'bl...e': 119}, ...]
+E         
+E         At index 6 diff: {'file': 'queryu/conftest.py', 'line': 49} != {'file': 'dragowing/vendor/aoi/scripts/fetch_module.py', 'line': 369}
+E         Right contains one more item: {'file': 'scripts/fetch_module.py', 'line': 369}
+E         
+E         Full diff:
+E           [
+E               {
+E                   'file': 'blueprobe/blueprobe.py',
+E                   'line': 65,
+E               },
+E               {
+E                   'file': 'dist/blueprobe_min.py',
+E                   'line': 118,
+E               },
+E               {
+E                   'file': 'dist/dragowing_min.py',
+E                   'line': 120,
+E               },
+E               {
+E                   'file': 'dist/pythdragoras_min.py',
+E                   'line': 120,
+E               },
+E               {
+E                   'file': 'dist/queryu_min.py',
+E                   'line': 117,
+E               },
+E               {
+E                   'file': 'dist/sakanalytics_min.py',
+E                   'line': 119,
+E               },
+E               {
+E         -         'file': 'dragowing/vendor/aoi/scripts/fetch_module.py',
+E         -         'line': 369,
+E         -     },
+E         -     {
+E                   'file': 'queryu/conftest.py',
+E                   'line': 49,
+E               },
+E               {
+E                   'file': 'scripts/fetch_module.py',
+E                   'line': 369,
+E               },
+E           ]
+
+tests/test_pkgmin_surface.py:51: AssertionError</failure></testcase><testcase classname="tests.test_survey_third_party" name="test_committed_inventory_matches_the_tree" time="4.003"><failure message="AssertionError: &lt;runner-work&gt;/docs/evidence/third-party-survey.json is stale. Re-run with --json &lt;runner-work&gt;/docs/evidence/third-party-survey.json&#10;  &#10;assert 1 == 0&#10; +  where 1 = CompletedProcess(args=['&lt;runner-work&gt;/.venv/bin/python', '&lt;runner-work&gt;/scripts/survey_third_p...hird-party-survey.json is stale. Re-run with --json &lt;runner-work&gt;/docs/evidence/third-party-survey.json\n').returncode">def test_committed_inventory_matches_the_tree():
+        proc = subprocess.run(
+            [sys.executable, str(SURVEY), "--check", str(ROOT / "docs" / "evidence" / "third-party-survey.json")],
+            cwd=ROOT, capture_output=True, text=True,
+        )
+&gt;       assert proc.returncode == 0, proc.stderr
+E       AssertionError: &lt;runner-work&gt;/docs/evidence/third-party-survey.json is stale. Re-run with --json &lt;runner-work&gt;/docs/evidence/third-party-survey.json
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['&lt;runner-work&gt;/.venv/bin/python', '&lt;runner-work&gt;/scripts/survey_third_p...hird-party-survey.json is stale. Re-run with --json &lt;runner-work&gt;/docs/evidence/third-party-survey.json\n').returncode
+
+tests/test_survey_third_party.py:144: AssertionError</failure></testcase></testsuite></testsuites>

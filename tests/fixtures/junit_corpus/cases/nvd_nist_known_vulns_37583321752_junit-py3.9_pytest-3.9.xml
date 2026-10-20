@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="26" time="0.426" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_native_observations" name="test_adapter_provenance" time="0.001"><failure message="AssertionError: assert {'vendor/gh_i...be_pytest.py'} == {'vendor/xpro...be_pytest.py'}&#10;  &#10;  Extra items in the left set:&#10;  'vendor/gh_identity.py'&#10;  'vendor/gh_identity-LICENSE'&#10;  &#10;  Full diff:&#10;    {&#10;  +     'vendor/gh_identity-LICENSE',&#10;  +     'vendor/gh_identity.py',&#10;        'vendor/xprobe-LICENSE',&#10;        'vendor/xprobe_pytest.py',&#10;    }">def test_adapter_provenance():
+        manifest = json.loads((ROOT / 'vendor.lock.json').read_text())
+        assert manifest['schema'] == 'vendor-lock/1'
+&gt;       assert {entry['destination'] for entry in manifest['files']} == {
+            'vendor/xprobe_pytest.py', 'vendor/xprobe-LICENSE'}
+E       AssertionError: assert {'vendor/gh_i...be_pytest.py'} == {'vendor/xpro...be_pytest.py'}
+E         
+E         Extra items in the left set:
+E         'vendor/gh_identity.py'
+E         'vendor/gh_identity-LICENSE'
+E         
+E         Full diff:
+E           {
+E         +     'vendor/gh_identity-LICENSE',
+E         +     'vendor/gh_identity.py',
+E               'vendor/xprobe-LICENSE',
+E               'vendor/xprobe_pytest.py',
+E           }
+
+tests/test_native_observations.py:15: AssertionError</failure></testcase></testsuite></testsuites>

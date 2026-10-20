@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="12" tests="1186" time="36.691" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_ironmate_vendor_registry_sync" name="test_ironmate_registry_matches_reviewed_flow_lock" time="0.003"><failure message="assert False">def test_ironmate_registry_matches_reviewed_flow_lock():
+        registry = load('vendor-consumers.json')
+        lock = load('tests/fixtures/ironmate-flow-b5ae001.lock.json')
+        assert len(lock['files']) == 54
+&gt;       assert vendor_consumers.compare(registry, lock, CONSUMER)['matches']
+E       assert False
+
+tests/test_ironmate_vendor_registry_sync.py:21: AssertionError</failure></testcase><testcase classname="tests.test_vendor_adopted_enrollment" name="test_ironmate_registered_contract_ignores_recommendation_skips" time="0.006"><failure message="ValueError: consumer topology mismatch against parent registry">def test_ironmate_registered_contract_ignores_recommendation_skips():
+        registry = json.loads((ROOT / 'vendor-consumers.json').read_text())
+        catalog = json.loads((ROOT / 'vendor-catalog.json').read_text())
+        lock = json.loads((ROOT / 'tests/fixtures/ironmate-flow-b5ae001.lock.json').read_text())
+        assert not any(t['repository'].lower().endswith('/ironmate') for t in catalog['tools'])
+&gt;       assert sync.verify_child_lock_against_parent(registry, catalog, lock, 'myon-bioinformatics/Ironmate') == sync.validate(lock)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_vendor_adopted_enrollment.py:18: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+registry = {'schema': 'vendor-consumers/1', 'consumers': [{'repository': 'myon-bioinformatics/myon-bioinformatics', 'state': 'loc...ository': 'myon-bioinformatics/gh_identity', 'source': 'LICENSE', 'destination': 'vendor/gh_identity-LICENSE'}]}, ...]}
+catalog = {'schema': 'vendor-catalog/1', 'tools': [{'repository': 'myon-bioinformatics/gh_identity', 'commit': 'c950ed3882f05668...ation-wide single-file coverage; not an automatic promotion.', 'source': 'convert_img_fmt_to_webp(GUI).py', ...}, ...]}
+lock = {'schema': 'vendor-lock/1', 'files': [{'repository': 'myon-bioinformatics/ascii_artist', 'ref': '505858627afc7e24dd6de...4a82bc6e50682d6a79e22a851c4c91', 'commit': 'a3d8f1835e4a82bc6e50682d6a79e22a851c4c91', 'source': 'LICENSE', ...}, ...]}
+consumer = 'myon-bioinformatics/Ironmate'
+
+    def verify_child_lock_against_parent(registry, catalog, lock, consumer):
+        """Validate a child lock against parent registry/catalog without child-heads."""
+        import vendor_catalog
+        import vendor_consumers
+        registry = vendor_consumers.validate(registry)
+        catalog = vendor_catalog.validate(catalog)
+        lock = validate(lock)
+        if not vendor_consumers.compare(registry, lock, consumer)["matches"]:
+&gt;           raise ValueError("consumer topology mismatch against parent registry")
+E           ValueError: consumer topology mismatch against parent registry
+
+vendor_sync.py:903: ValueError</failure></testcase></testsuite></testsuites>

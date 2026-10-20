@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="3" tests="206" time="3.064" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_flow_diagram.FlowDiagramTests" name="test_invalid_specs_fail" time="0.025"><failure message="AssertionError: ValueError not raised">self = &lt;test_flow_diagram.FlowDiagramTests testMethod=test_invalid_specs_fail&gt;
+
+    def test_invalid_specs_fail(self):
+        invalid = [None, {}, {"title": "x", "sources": [], "steps": [{"title": "ok"}]},
+                   {"title": "x", "sources": [{"title": "z", "raw_html": "x"}], "steps": [{"title": "ok"}]},
+                   {"title": "x", "sources": [{"title": "one\\ntwo"}], "steps": [{"title": "ok"}]},
+                   {"title": "x", "sources": [{"title": "ok"}], "steps": [{"title": ""}]},
+                   {"title": "x", "sources": [{"title": "ok"}] * 9, "steps": [{"title": "ok"}]}]
+        for item in invalid:
+&gt;           with self.subTest(item=item), self.assertRaises(ValueError):
+                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: ValueError not raised
+
+tests/test_flow_diagram.py:49: AssertionError</failure></testcase></testsuite></testsuites>

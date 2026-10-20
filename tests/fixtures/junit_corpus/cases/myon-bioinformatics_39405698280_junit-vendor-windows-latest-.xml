@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="6" tests="417" time="80.502" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_gh_ops_fetch_guard" name="test_default_openssh_disables_password_and_hostkey_prompts" time="5.847"><failure message="KeyError: 'env'">argv = ['git', 'ls-remote', 'ssh://git@127.0.0.1:1/absent.git']
+run = &lt;function run at 0x&lt;addr&gt;&gt;, timeout = 4.9529999999999745
+cwd = '.'
+env = {'ACTIONS_ORCHESTRATION_ID': 'c71b494e-95ab-8afc-adfb-a2a61b92c78b.vendor-portability.windows-latest_3_12', 'ACTIONS_R...he\\', 'ACTIONS_RUNNER_RETURN_JOB_RESULT_FOR_HOSTED': '1', 'AGENT_TOOLSDIRECTORY': 'C:\\hostedtoolcache\\windows', ...}
+
+    def _git_network_run(argv: list[str], *, run: Callable[..., Any], timeout: float,
+                         cwd: str, env: dict) -&gt; Any:
+        """Bound network Git and its transport children; keep injectable runners intact."""
+        kwargs = {"cwd": cwd, "capture_output": True, "text": True, "stdin": subprocess.DEVNULL,
+                  "timeout": timeout, "env": env}
+        if run is not subprocess.run:
+            return run(argv, **kwargs)
+        if len(argv) &gt; 1 and argv[0] == "git" and argv[1] in _GIT_NETWORK_COMMANDS and "GIT_SSH_COMMAND" not in env:
+            # Git's priority is GIT_SSH_COMMAND &gt; core.sshCommand &gt; GIT_SSH &gt; ssh.
+            # Resolve config in the command's cwd/env; never replace a configured
+            # identity, port or wrapper. This setup read consumes the communication
+            # budget; standalone/local Git operations gain no new restrictions.
+            started = time.monotonic()
+            config = _git_network_run(["git", "config", "--get", "core.sshCommand"],
+                                      run=run, timeout=timeout, cwd=cwd, env=env)
+            if config.returncode not in (0, 1):
+                return subprocess.CompletedProcess(argv, config.returncode, config.stdout, config.stderr)
+            if config.returncode == 1 and not env.get("GIT_SSH"):
+                kwargs["env"] = {**env, "GIT_SSH_COMMAND": "ssh -o BatchMode=yes"}
+            remaining = timeout - (time.monotonic() - started)
+            if remaining &lt;= 0:
+                raise subprocess.TimeoutExpired(argv, timeout)
+            timeout = remaining
+        # subprocess.run kills only Git on timeout. SSH/credential helpers can retain
+        # output pipes, making communicate() (or Windows reader-thread cleanup) hang.
+        # Regular temporary files let us wait for the process without draining pipes.
+        kwargs.pop("capture_output")
+        kwargs.pop("timeout")
+        with tempfile.TemporaryFile(mode="w+") as stdout, tempfile.TemporaryFile(mode="w+") as stderr, \
+             subprocess.Popen(argv, stdout=stdout, stderr=stderr,
+                              start_new_session=(os.name == "posix"), **kwargs) as process:
+            try:
+&gt;               process.wait(timeout=timeout)
+
+gh_ops.py:1609: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\subprocess.py:1264: in wait
+    return self._wait(timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;Popen: returncode: 128 args: ['git', 'ls-remote', 'ssh://git@127.0.0.1:1/ab...&gt;
+timeout = 4.9529999999999745
+
+    def _wait(self, timeout):
+        """Internal implementation of wait() on Windows."""
+        if timeout is None:
+            timeout_millis = _winapi.INFINITE
+        elif timeout &lt;= 0:
+            timeout_millis = 0
+        else:
+            timeout_millis = int(timeout * 1000)
+        if self.returncode is None:
+            # API note: Returns immediately if timeout_millis == 0.
+            result = _winapi.WaitForSingleObject(self._handle,
+                                                 timeout_millis)
+            if result == _winapi.WAIT_TIMEOUT:
+&gt;               raise TimeoutExpired(self.args, timeout)
+E               subprocess.TimeoutExpired: Command '['git', 'ls-remote', 'ssh://git@127.0.0.1:1/absent.git']' timed out after 4.9529999999999745 seconds
+
+C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\subprocess.py:1593: TimeoutExpired
+
+During handling of the above exception, another exception occurred:
+
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+git_env = {'ACTIONS_ORCHESTRATION_ID': 'c71b494e-95ab-8afc-adfb-a2a61b92c78b.vendor-portability.windows-latest_3_12', 'ACTIONS_R...he\\', 'ACTIONS_RUNNER_RETURN_JOB_RESULT_FOR_HOSTED': '1', 'AGENT_TOOLSDIRECTORY': 'C:\\hostedtoolcache\\windows', ...}
+
+    def test_default_openssh_disables_password_and_hostkey_prompts(monkeypatch, git_env):
+        seen = []
+        popen = subprocess.Popen
+    
+        def record(argv, **kwargs):
+            seen.append((argv, kwargs["env"]))
+            return popen(argv, **kwargs)
+    
+        monkeypatch.setattr(subprocess, "Popen", record)
+&gt;       remote_probe("ssh://git@127.0.0.1:1/absent.git", git_env)
+
+tests\test_gh_ops_fetch_guard.py:159: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_gh_ops_fetch_guard.py:232: in remote_probe
+    return g._git_network_run(["git", "ls-remote", url], run=subprocess.run, cwd=cwd, timeout=timeout, env=env)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+gh_ops.py:1618: in _git_network_run
+    subprocess.run(["taskkill", "/F", "/T", "/PID", str(process.pid)],
+C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\subprocess.py:548: in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+argv = ['taskkill', '/F', '/T', '/PID', '4360']
+kwargs = {'stdout': -3, 'stderr': -3}
+
+    def record(argv, **kwargs):
+&gt;       seen.append((argv, kwargs["env"]))
+                           ^^^^^^^^^^^^^
+E       KeyError: 'env'
+
+tests\test_gh_ops_fetch_guard.py:155: KeyError</failure></testcase></testsuite></testsuites>

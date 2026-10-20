@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="9" skipped="12" tests="1186" time="36.238" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_flutter_vendor_registry_sync" name="test_real_reviewed_workflow_acceptance_and_refresh_rejections[None]" time="0.003"><failure message="AssertionError: assert 'd2fc6753185b...2bb900517ad20' == '65d0618bac06...06d1349580194'&#10;  &#10;  - 65d0618bac062420bf5e2f527a18345f9c0d2e2cb27b8c2f83306d1349580194&#10;  + d2fc6753185bfabbce0da5c5aa9574af10de99ee1e7776a50c52bb900517ad20">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+fault = None
+
+    @pytest.mark.parametrize("fault", [None, "removed", "disabled", "ignored", "command",
+                                      "trigger", "digest", "revision", "missing"])
+    def test_real_reviewed_workflow_acceptance_and_refresh_rejections(monkeypatch, fault):
+        registry = load("vendor-consumers.json")
+        heads = load("child-heads.json")
+        consumer = vendor_consumers.get_consumer(registry, FLUTTER)
+        contract = consumer["locked_ci"]
+        approved = (ROOT / WORKFLOW_FIXTURE).read_bytes()
+&gt;       assert hashlib.sha256(approved).hexdigest() == contract["sha256"]
+E       AssertionError: assert 'd2fc6753185b...2bb900517ad20' == '65d0618bac06...06d1349580194'
+E         
+E         - 65d0618bac062420bf5e2f527a18345f9c0d2e2cb27b8c2f83306d1349580194
+E         + d2fc6753185bfabbce0da5c5aa9574af10de99ee1e7776a50c52bb900517ad20
+
+tests/test_flutter_vendor_registry_sync.py:127: AssertionError</failure></testcase><testcase classname="tests.test_flutter_vendor_registry_sync" name="test_real_reviewed_workflow_acceptance_and_refresh_rejections[removed]" time="0.003"><failure message="AssertionError: assert 'd2fc6753185b...2bb900517ad20' == '65d0618bac06...06d1349580194'&#10;  &#10;  - 65d0618bac062420bf5e2f527a18345f9c0d2e2cb27b8c2f83306d1349580194&#10;  + d2fc6753185bfabbce0da5c5aa9574af10de99ee1e7776a50c52bb900517ad20">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+fault = 'removed'
+
+    @pytest.mark.parametrize("fault", [None, "removed", "disabled", "ignored", "command",
+                                      "trigger", "digest", "revision", "missing"])
+    def test_real_reviewed_workflow_acceptance_and_refresh_rejections(monkeypatch, fault):
+        registry = load("vendor-consumers.json")
+        heads = load("child-heads.json")
+        consumer = vendor_consumers.get_consumer(registry, FLUTTER)
+        contract = consumer["locked_ci"]
+        approved = (ROOT / WORKFLOW_FIXTURE).read_bytes()
+&gt;       assert hashlib.sha256(approved).hexdigest() == contract["sha256"]
+E       AssertionError: assert 'd2fc6753185b...2bb900517ad20' == '65d0618bac06...06d1349580194'
+E         
+E         - 65d0618bac062420bf5e2f527a18345f9c0d2e2cb27b8c2f83306d1349580194
+E         + d2fc6753185bfabbce0da5c5aa9574af10de99ee1e7776a50c52bb900517ad20
+
+tests/test_flutter_vendor_registry_sync.py:127: AssertionError</failure></testcase><testcase classname="tests.test_flutter_vendor_registry_sync" name="test_real_reviewed_workflow_acceptance_and_refresh_rejections[disabled]" time="0.003"><failure message="AssertionError: assert 'd2fc6753185b...2bb900517ad20' == '65d0618bac06...06d1349580194'&#10;  &#10;  - 65d0618bac062420bf5e2f527a18345f9c0d2e2cb27b8c2f83306d1349580194&#10;  + d2fc6753185bfabbce0da5c5aa9574af10de99ee1e7776a50c52bb900517ad20">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+fault = 'disabled'
+
+    @pytest.mark.parametrize("fault", [None, "removed", "disabled", "ignored", "command",
+                                      "trigger", "digest", "revision", "missing"])
+    def test_real_reviewed_workflow_acceptance_and_refresh_rejections(monkeypatch, fault):
+        registry = load("vendor-consumers.json")
+        heads = load("child-heads.json")
+        consumer = vendor_consumers.get_consumer(registry, FLUTTER)
+        contract = consumer["locked_ci"]
+        approved = (ROOT / WORKFLOW_FIXTURE).read_bytes()
+&gt;       assert hashlib.sha256(approved).hexdigest() == contract["sha256"]
+E       AssertionError: assert 'd2fc6753185b...2bb900517ad20' == '65d0618bac06...06d1349580194'
+E         
+E         - 65d0618bac062420bf5e2f527a18345f9c0d2e2cb27b8c2f83306d1349580194
+E         + d2fc6753185bfabbce0da5c5aa9574af10de99ee1e7776a50c52bb900517ad20
+
+tests/test_flutter_vendor_registry_sync.py:127: AssertionError</failure></testcase><testcase classname="tests.test_flutter_vendor_registry_sync" name="test_real_reviewed_workflow_acceptance_and_refresh_rejections[ignored]" time="0.002"><failure message="AssertionError: assert 'd2fc6753185b...2bb900517ad20' == '65d0618bac06...06d1349580194'&#10;  &#10;  - 65d0618bac062420bf5e2f527a18345f9c0d2e2cb27b8c2f83306d1349580194&#10;  + d2fc6753185bfabbce0da5c5aa9574af10de99ee1e7776a50c52bb900517ad20">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+fault = 'ignored'
+
+    @pytest.mark.parametrize("fault", [None, "removed", "disabled", "ignored", "command",
+                                      "trigger", "digest", "revision", "missing"])
+    def test_real_reviewed_workflow_acceptance_and_refresh_rejections(monkeypatch, fault):
+        registry = load("vendor-consumers.json")
+        heads = load("child-heads.json")
+        consumer = vendor_consumers.get_consumer(registry, FLUTTER)
+        contract = consumer["locked_ci"]
+        approved = (ROOT / WORKFLOW_FIXTURE).read_bytes()
+&gt;       assert hashlib.sha256(approved).hexdigest() == contract["sha256"]
+E       AssertionError: assert 'd2fc6753185b...2bb900517ad20' == '65d0618bac06...06d1349580194'
+E         
+E         - 65d0618bac062420bf5e2f527a18345f9c0d2e2cb27b8c2f83306d1349580194
+E         + d2fc6753185bfabbce0da5c5aa9574af10de99ee1e7776a50c52bb900517ad20
+
+tests/test_flutter_vendor_registry_sync.py:127: AssertionError</failure></testcase><testcase classname="tests.test_flutter_vendor_registry_sync" name="test_real_reviewed_workflow_acceptance_and_refresh_rejections[command]" time="0.002"><failure message="AssertionError: assert 'd2fc6753185b...2bb900517ad20' == '65d0618bac06...06d1349580194'&#10;  &#10;  - 65d0618bac062420bf5e2f527a18345f9c0d2e2cb27b8c2f83306d1349580194&#10;  + d2fc6753185bfabbce0da5c5aa9574af10de99ee1e7776a50c52bb900517ad20">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+fault = 'command'
+
+    @pytest.mark.parametrize("fault", [None, "removed", "disabled", "ignored", "command",
+                                      "trigger", "digest", "revision", "missing"])
+    def test_real_reviewed_workflow_acceptance_and_refresh_rejections(monkeypatch, fault):
+        registry = load("vendor-consumers.json")
+        heads = load("child-heads.json")
+        consumer = vendor_consumers.get_consumer(registry, FLUTTER)
+        contract = consumer["locked_ci"]
+        approved = (ROOT / WORKFLOW_FIXTURE).read_bytes()
+&gt;       assert hashlib.sha256(approved).hexdigest() == contract["sha256"]
+E       AssertionError: assert 'd2fc6753185b...2bb900517ad20' == '65d0618bac06...06d1349580194'
+E         
+E         - 65d0618bac062420bf5e2f527a18345f9c0d2e2cb27b8c2f83306d1349580194
+E         + d2fc6753185bfabbce0da5c5aa9574af10de99ee1e7776a50c52bb900517ad20
+
+tests/test_flutter_vendor_registry_sync.py:127: AssertionError</failure></testcase><testcase classname="tests.test_flutter_vendor_registry_sync" name="test_real_reviewed_workflow_acceptance_and_refresh_rejections[trigger]" time="0.002"><failure message="AssertionError: assert 'd2fc6753185b...2bb900517ad20' == '65d0618bac06...06d1349580194'&#10;  &#10;  - 65d0618bac062420bf5e2f527a18345f9c0d2e2cb27b8c2f83306d1349580194&#10;  + d2fc6753185bfabbce0da5c5aa9574af10de99ee1e7776a50c52bb900517ad20">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+fault = 'trigger'
+
+    @pytest.mark.parametrize("fault", [None, "removed", "disabled", "ignored", "command",
+                                      "trigger", "digest", "revision", "missing"])
+    def test_real_reviewed_workflow_acceptance_and_refresh_rejections(monkeypatch, fault):
+        registry = load("vendor-consumers.json")
+        heads = load("child-heads.json")
+        consumer = vendor_consumers.get_consumer(registry, FLUTTER)
+        contract = consumer["locked_ci"]
+        approved = (ROOT / WORKFLOW_FIXTURE).read_bytes()
+&gt;       assert hashlib.sha256(approved).hexdigest() == contract["sha256"]
+E       AssertionError: assert 'd2fc6753185b...2bb900517ad20' == '65d0618bac06...06d1349580194'
+E         
+E         - 65d0618bac062420bf5e2f527a18345f9c0d2e2cb27b8c2f83306d1349580194
+E         + d2fc6753185bfabbce0da5c5aa9574af10de99ee1e7776a50c52bb900517ad20
+
+tests/test_flutter_vendor_registry_sync.py:127: AssertionError</failure></testcase><testcase classname="tests.test_flutter_vendor_registry_sync" name="test_real_reviewed_workflow_acceptance_and_refresh_rejections[digest]" time="0.002"><failure message="AssertionError: assert 'd2fc6753185b...2bb900517ad20' == '65d0618bac06...06d1349580194'&#10;  &#10;  - 65d0618bac062420bf5e2f527a18345f9c0d2e2cb27b8c2f83306d1349580194&#10;  + d2fc6753185bfabbce0da5c5aa9574af10de99ee1e7776a50c52bb900517ad20">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+fault = 'digest'
+
+    @pytest.mark.parametrize("fault", [None, "removed", "disabled", "ignored", "command",
+                                      "trigger", "digest", "revision", "missing"])
+    def test_real_reviewed_workflow_acceptance_and_refresh_rejections(monkeypatch, fault):
+        registry = load("vendor-consumers.json")
+        heads = load("child-heads.json")
+        consumer = vendor_consumers.get_consumer(registry, FLUTTER)
+        contract = consumer["locked_ci"]
+        approved = (ROOT / WORKFLOW_FIXTURE).read_bytes()
+&gt;       assert hashlib.sha256(approved).hexdigest() == contract["sha256"]
+E       AssertionError: assert 'd2fc6753185b...2bb900517ad20' == '65d0618bac06...06d1349580194'
+E         
+E         - 65d0618bac062420bf5e2f527a18345f9c0d2e2cb27b8c2f83306d1349580194
+E         + d2fc6753185bfabbce0da5c5aa9574af10de99ee1e7776a50c52bb900517ad20
+
+tests/test_flutter_vendor_registry_sync.py:127: AssertionError</failure></testcase><testcase classname="tests.test_flutter_vendor_registry_sync" name="test_real_reviewed_workflow_acceptance_and_refresh_rejections[revision]" time="0.002"><failure message="AssertionError: assert 'd2fc6753185b...2bb900517ad20' == '65d0618bac06...06d1349580194'&#10;  &#10;  - 65d0618bac062420bf5e2f527a18345f9c0d2e2cb27b8c2f83306d1349580194&#10;  + d2fc6753185bfabbce0da5c5aa9574af10de99ee1e7776a50c52bb900517ad20">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+fault = 'revision'
+
+    @pytest.mark.parametrize("fault", [None, "removed", "disabled", "ignored", "command",
+                                      "trigger", "digest", "revision", "missing"])
+    def test_real_reviewed_workflow_acceptance_and_refresh_rejections(monkeypatch, fault):
+        registry = load("vendor-consumers.json")
+        heads = load("child-heads.json")
+        consumer = vendor_consumers.get_consumer(registry, FLUTTER)
+        contract = consumer["locked_ci"]
+        approved = (ROOT / WORKFLOW_FIXTURE).read_bytes()
+&gt;       assert hashlib.sha256(approved).hexdigest() == contract["sha256"]
+E       AssertionError: assert 'd2fc6753185b...2bb900517ad20' == '65d0618bac06...06d1349580194'
+E         
+E         - 65d0618bac062420bf5e2f527a18345f9c0d2e2cb27b8c2f83306d1349580194
+E         + d2fc6753185bfabbce0da5c5aa9574af10de99ee1e7776a50c52bb900517ad20
+
+tests/test_flutter_vendor_registry_sync.py:127: AssertionError</failure></testcase><testcase classname="tests.test_flutter_vendor_registry_sync" name="test_real_reviewed_workflow_acceptance_and_refresh_rejections[missing]" time="0.002"><failure message="AssertionError: assert 'd2fc6753185b...2bb900517ad20' == '65d0618bac06...06d1349580194'&#10;  &#10;  - 65d0618bac062420bf5e2f527a18345f9c0d2e2cb27b8c2f83306d1349580194&#10;  + d2fc6753185bfabbce0da5c5aa9574af10de99ee1e7776a50c52bb900517ad20">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+fault = 'missing'
+
+    @pytest.mark.parametrize("fault", [None, "removed", "disabled", "ignored", "command",
+                                      "trigger", "digest", "revision", "missing"])
+    def test_real_reviewed_workflow_acceptance_and_refresh_rejections(monkeypatch, fault):
+        registry = load("vendor-consumers.json")
+        heads = load("child-heads.json")
+        consumer = vendor_consumers.get_consumer(registry, FLUTTER)
+        contract = consumer["locked_ci"]
+        approved = (ROOT / WORKFLOW_FIXTURE).read_bytes()
+&gt;       assert hashlib.sha256(approved).hexdigest() == contract["sha256"]
+E       AssertionError: assert 'd2fc6753185b...2bb900517ad20' == '65d0618bac06...06d1349580194'
+E         
+E         - 65d0618bac062420bf5e2f527a18345f9c0d2e2cb27b8c2f83306d1349580194
+E         + d2fc6753185bfabbce0da5c5aa9574af10de99ee1e7776a50c52bb900517ad20
+
+tests/test_flutter_vendor_registry_sync.py:127: AssertionError</failure></testcase></testsuite></testsuites>
