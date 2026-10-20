@@ -92,6 +92,9 @@ _CREDENTIAL_REDUCTION: list[tuple[re.Pattern[str], str | Callable[[re.Match[str]
 
 _PATH_REDACTION_PATTERNS: list[tuple[re.Pattern[str], str]] = [
     (re.compile(r"/home/runner/work/[^/]+/[^/]+"), "<runner-work>"),
+    # pytest repr truncation can leave only the workspace prefix / repository.
+    # Keep this after the full-path rule so normal relative paths stay intact.
+    (re.compile(r"/home/runner/work/[^/\s<>\"']*"), "<runner-work>"),
     (re.compile(r"/Users/[^/\s]+"), "<user-home>"),
     (re.compile(r"/opt/hostedtoolcache/"), "<toolcache>/"),
     (re.compile(r"/tmp/pytest-of-runner/"), "<pytest-tmp>/"),
