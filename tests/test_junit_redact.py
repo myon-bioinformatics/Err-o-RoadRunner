@@ -78,6 +78,31 @@ def test_find_corpus_leaks_detects_runner_work_path() -> None:
     assert "runner_work_path" in find_corpus_leaks(text)
 
 
+@pytest.mark.parametrize("path", [
+    "/home/runner/work/markdown...",
+    "/home/runner/work/markdown",
+    "/home/runner/work/",
+    "/home/runner/work/markdown/markdown/tests/test_cli.py",
+])
+def test_runner_workspace_redaction_including_pytest_truncated_repr(path: str) -> None:
+    import xml.etree.ElementTree as ET
+
+    root = ET.Element("testsuite", {"file": path})
+    failure = ET.SubElement(root, "failure", {"message": path})
+    failure.text = f"paths = [PosixPath('{path}')]"
+    failure.tail = path
+    redacted = redact_xml_document(ET.tostring(root, encoding="unicode"))
+    assert find_corpus_leaks(redacted) == []
+    assert redact_xml_document(redacted) == redacted
+    if path.endswith("test_cli.py"):
+        assert "&lt;runner-work&gt;/tests/test_cli.py" in redacted
+
+
+def test_truncated_path_does_not_swallow_adjacent_repr_or_url() -> None:
+    text = "PosixPath('/home/runner/work/markdown...'), url=https://example.test/path"
+    assert redact_text(text) == "PosixPath('<runner-work>'), url=https://example.test/path"
+
+
 @pytest.mark.gap
 def test_find_corpus_leaks_clean_after_redact_xml_document() -> None:
     raw = (
