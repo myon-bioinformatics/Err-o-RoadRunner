@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="144" time="10.484" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_option_suggestions" name="test_child_argv_is_not_suggested_rewritten_or_parsed_under_python_S" time="0.120"><failure message="AssertionError: Traceback (most recent call last):&#10;    File &quot;D:\a\cli_args\cli_args\examples\run_cli.py&quot;, line 75, in &lt;module&gt;&#10;      raise SystemExit(main())&#10;                       ^^^^^^&#10;    File &quot;D:\a\cli_args\cli_args\examples\run_cli.py&quot;, line 57, in main&#10;      write_output(result, format=args.format, output=args.output,&#10;    File &quot;D:\a\cli_args\cli_args\cli_args.py&quot;, line 349, in write_output&#10;      (sys.stdout if stream is None else stream).write(text)&#10;    File &quot;C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\encodings\cp1252.py&quot;, line 19, in encode&#10;      return codecs.charmap_encode(input,self.errors,encoding_table)[0]&#10;             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^&#10;  UnicodeEncodeError: 'charmap' codec can't encode characters in position 280-281: character maps to &lt;undefined&gt;&#10;  &#10;assert 1 == 0&#10; +  where 1 = CompletedProcess(args=['C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\python.exe', '-S', 'examples/run_cli.py', ...\nUnicodeEncodeError: \'charmap\' codec can\'t encode characters in position 280-281: character maps to &lt;undefined&gt;\n').returncode">tests\test_option_suggestions.py:220: in test_child_argv_is_not_suggested_rewritten_or_parsed_under_python_S
+    assert run.returncode == 0, run.stderr
+E   AssertionError: Traceback (most recent call last):
+E       File "D:\a\cli_args\cli_args\examples\run_cli.py", line 75, in &lt;module&gt;
+E         raise SystemExit(main())
+E                          ^^^^^^
+E       File "D:\a\cli_args\cli_args\examples\run_cli.py", line 57, in main
+E         write_output(result, format=args.format, output=args.output,
+E       File "D:\a\cli_args\cli_args\cli_args.py", line 349, in write_output
+E         (sys.stdout if stream is None else stream).write(text)
+E       File "C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\encodings\cp1252.py", line 19, in encode
+E         return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+E                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E     UnicodeEncodeError: 'charmap' codec can't encode characters in position 280-281: character maps to &lt;undefined&gt;
+E     
+E   assert 1 == 0
+E    +  where 1 = CompletedProcess(args=['C:\\hostedtoolcache\\windows\\Python\\3.12.10\\x64\\python.exe', '-S', 'examples/run_cli.py', ...\nUnicodeEncodeError: \'charmap\' codec can\'t encode characters in position 280-281: character maps to &lt;undefined&gt;\n').returncode</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites id="" name="" tests="260" failures="1" skipped="13" errors="0" time="1041.289456"><testsuite name="exceptional_chrome.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="8" failures="1" skipped="0" time="102.511" errors="0"><testcase name="exceptional chrome /screen174 retains controls in a short viewport @portable" classname="exceptional_chrome.spec.ts" time="14.176"><system-out>
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-7e7c9-n-a-short-viewport-portable-mobile-chromium/attachments/standard-header-json-4f3820b4ed3a31961c68bc94936e4282fabcb495.json]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-7e7c9-n-a-short-viewport-portable-mobile-chromium/attachments/standard-png-895a57e36662582b397dcebe95aca7294caacb20.png]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-7e7c9-n-a-short-viewport-portable-mobile-chromium/attachments/exception-header-json-47fee32a92053c37d9d13d768ecf696f8e625bc0.json]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-7e7c9-n-a-short-viewport-portable-mobile-chromium/attachments/exception-initial-png-3e2d6d8f7d71ff3acd0a7f72eff9d74131e1bd0b.png]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-7e7c9-n-a-short-viewport-portable-mobile-chromium/attachments/short-header-json-c7fd1c44dcbdd61973903e2319ab8d882d40701a.json]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-7e7c9-n-a-short-viewport-portable-mobile-chromium/attachments/exception-short-after-action-png-81ef11da45021db52510c8e3da7c7af1867e076a.png]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-7e7c9-n-a-short-viewport-portable-mobile-chromium/attachments/chrome-audit-json-14b137227ced1c8ec919eedbce520cade584a2ee.json]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-7e7c9-n-a-short-viewport-portable-mobile-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-7e7c9-n-a-short-viewport-portable-mobile-chromium/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-7e7c9-n-a-short-viewport-portable-mobile-chromium/error-context.md]]
+
+</system-out>
+<failure message="expect(locator).toBeInViewport() failed" type="expect.toBeInViewport">
+  [mobile-chromium] › exceptional_chrome.spec.ts:68:7 › exceptional chrome /screen174 retains controls in a short viewport @portable 
+
+    Error: expect(locator).toBeInViewport() failed
+
+    Locator:  locator('[flt-semantics-identifier="interaction-item-C"]')
+    Expected: in viewport
+    Received: viewport ratio 0
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeInViewport" locator('[flt-semantics-identifier="interaction-item-C"]') with timeout 5000ms
+      - waiting for locator('[flt-semantics-identifier="interaction-item-C"]')
+        14 × locator resolved to &lt;flt-semantics id="flt-semantic-node-82" flt-semantics-identifier="interaction-item-C"&gt;…&lt;/flt-semantics&gt;
+           - unexpected value "viewport ratio 0"
+
+
+      188 |         }
+      189 |         await settle(page);
+    &gt; 190 |         await expect(target).toBeInViewport({ ratio: 1 });
+          |                              ^
+      191 |         receipt.last_item_after = await target.boundingBox();
+      192 |         receipt.captures.push(await capture(page, info, 'exception-short-after-scroll.png'));
+      193 |       }
+        at &lt;runner-work&gt;/e2e/tests/exceptional_chrome.spec.ts:190:30
+
+    attachment #1: standard-header.json (application/json) ─────────────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-7e7c9-n-a-short-viewport-portable-mobile-chromium/attachments/standard-header-json-4f3820b4ed3a31961c68bc94936e4282fabcb495.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: standard.png (image/png) ────────────────────────────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-7e7c9-n-a-short-viewport-portable-mobile-chromium/attachments/standard-png-895a57e36662582b397dcebe95aca7294caacb20.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: exception-header.json (application/json) ────────────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-7e7c9-n-a-short-viewport-portable-mobile-chromium/attachments/exception-header-json-47fee32a92053c37d9d13d768ecf696f8e625bc0.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: exception-initial.png (image/png) ───────────────────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-7e7c9-n-a-short-viewport-portable-mobile-chromium/attachments/exception-initial-png-3e2d6d8f7d71ff3acd0a7f72eff9d74131e1bd0b.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #5: short-header.json (application/json) ────────────────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-7e7c9-n-a-short-viewport-portable-mobile-chromium/attachments/short-header-json-c7fd1c44dcbdd61973903e2319ab8d882d40701a.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #6: exception-short-after-action.png (image/png) ────────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-7e7c9-n-a-short-viewport-portable-mobile-chromium/attachments/exception-short-after-action-png-81ef11da45021db52510c8e3da7c7af1867e076a.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #7: chrome-audit.json (application/json) ────────────────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-7e7c9-n-a-short-viewport-portable-mobile-chromium/attachments/chrome-audit-json-14b137227ced1c8ec919eedbce520cade584a2ee.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #8: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-7e7c9-n-a-short-viewport-portable-mobile-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #9: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-7e7c9-n-a-short-viewport-portable-mobile-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/exceptional_chrome-excepti-7e7c9-n-a-short-viewport-portable-mobile-chromium/error-context.md
+
+</failure>
+</testcase></testsuite></testsuites>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="12" tests="1412" time="72.576" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_constrained_lab.CampaignTests" name="test_stop_or_continue" time="0.051"><failure message="AssertionError: 3 not less than 3">self = &lt;test_constrained_lab.CampaignTests testMethod=test_stop_or_continue&gt;
+
+    def test_stop_or_continue(self):
+        rows = [case(0), case(1, "raise SystemExit(3)", 0), case(2)]
+        stopped = constrained_lab.campaign(rows, rounds=3, seed=7)
+        continued = constrained_lab.campaign(rows, rounds=3, seed=7, keep_going=True)
+&gt;       self.assertLess(stopped["rounds_completed"], 3)
+E       AssertionError: 3 not less than 3
+
+tests/test_constrained_lab.py:26: AssertionError</failure></testcase></testsuite></testsuites>

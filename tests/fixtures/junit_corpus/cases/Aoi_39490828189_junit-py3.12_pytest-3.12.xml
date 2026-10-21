@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="41" tests="2087" time="450.912" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_research_checkpoint" name="test_trusted_canary_bootstrap_is_immutable" time="0.001"><failure message="AssertionError: actions/checkout@v7&#10;assert None&#10; +  where None = &lt;function fullmatch at 0x&lt;addr&gt;&gt;('[^@\\s]+@[0-9a-f]{40}', 'actions/checkout@v7')&#10; +    where &lt;function fullmatch at 0x&lt;addr&gt;&gt; = re.fullmatch">def test_trusted_canary_bootstrap_is_immutable():
+        text = (ROOT / t.WORKFLOW).read_text()
+        # The project lock cannot pin the action/uv code that interprets it.
+        uses = re.findall(r"^\s*(?:-\s*)?uses:\s*(\S+)", text, re.MULTILINE)
+        assert uses
+        for action in uses:
+&gt;           assert re.fullmatch(r"[^@\s]+@[0-9a-f]{40}", action), action
+E           AssertionError: actions/checkout@v7
+E           assert None
+E            +  where None = &lt;function fullmatch at 0x&lt;addr&gt;&gt;('[^@\\s]+@[0-9a-f]{40}', 'actions/checkout@v7')
+E            +    where &lt;function fullmatch at 0x&lt;addr&gt;&gt; = re.fullmatch
+
+tests/test_research_checkpoint.py:283: AssertionError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites id="" name="" tests="205" failures="1" skipped="9" errors="0" time="990.6583149999999"><testsuite name="photo_studio_ingress.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="5" failures="1" skipped="0" time="19.043" errors="0"><testcase name="Clipboard image bridge › Base64 paste, PNG resize, copy and preview round trip @portable @chromium-clipboard" classname="photo_studio_ingress.spec.ts" time="7.677"><system-out>
+
+[[ATTACHMENT|../../e2e/test-results/photo_studio_ingress-Clipb-419d9-portable-chromium-clipboard-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/photo_studio_ingress-Clipb-419d9-portable-chromium-clipboard-chromium/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/photo_studio_ingress-Clipb-419d9-portable-chromium-clipboard-chromium/error-context.md]]
+
+</system-out>
+<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
+  [chromium] › photo_studio_ingress.spec.ts:65:7 › Clipboard image bridge › Base64 paste, PNG resize, copy and preview round trip @portable @chromium-clipboard 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText(/Resized to 2\/3, encoded as PNG Base64/)
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByText(/Resized to 2\/3, encoded as PNG Base64/) with timeout 5000ms
+      - waiting for getByText(/Resized to 2\/3, encoded as PNG Base64/)
+
+
+      73 |     await expect(page.getByRole('button', { name: 'Remove', exact: true })).toBeVisible();
+      74 |     await tapSemantics(page, 'Copy image as Base64 · 2/3');
+    &gt; 75 |     await expect(page.getByText(/Resized to 2\/3, encoded as PNG Base64/)).toBeVisible();
+         |                                                                            ^
+      76 |     const text = await page.evaluate(() =&gt; navigator.clipboard.readText());
+      77 |     expect(text).toMatch(/^data:image\/png;base64,/);
+      78 |     const png = Buffer.from(text.split(',')[1], 'base64');
+        at &lt;runner-work&gt;/e2e/tests/photo_studio_ingress.spec.ts:75:76
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/photo_studio_ingress-Clipb-419d9-portable-chromium-clipboard-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/photo_studio_ingress-Clipb-419d9-portable-chromium-clipboard-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/photo_studio_ingress-Clipb-419d9-portable-chromium-clipboard-chromium/error-context.md
+
+</failure>
+</testcase></testsuite></testsuites>

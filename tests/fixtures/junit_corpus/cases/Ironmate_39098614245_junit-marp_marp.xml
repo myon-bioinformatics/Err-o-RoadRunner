@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="11" time="20.712" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_marp_pptx" name="test_inline_markdown_theme_variants_and_svg_source_when_enabled[flowchart-flowchart LR\n A[Start] --&gt; B[Finish]]" time="0.207"><failure message="RuntimeError: Mermaid SVG conversion failed: Configuration file &quot;%%{init: {&quot;theme&quot;: &quot;base&quot;, &quot;themeVariables&quot;: {&quot;primaryTextColor&quot;: &quot;#000000&quot;, &quot;lineColor&quot;: &quot;#000000&quot;, &quot;textColor&quot;: &quot;#000000&quot;, &quot;primaryColor&quot;: &quot;#FFF4DD&quot;, &quot;secondaryColor&quot;: &quot;#FFF4DD&quot;, &quot;tertiaryColor&quot;: &quot;#FFF4DD&quot;, &quot;mainBkg&quot;: &quot;#FFF4DD&quot;}}}%%&#10;&quot; doesn't exist">tests/test_marp_pptx.py:244: in test_inline_markdown_theme_variants_and_svg_source_when_enabled
+    result = run(text=markdown, output=output, marp=marp, mmdc=mmdc, background=background, svg_foreground=foreground)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pptx_pipeline.py:132: in run
+    prepared, images = render_mermaid(raw, working, mmdc=mmdc, background=background, foreground=svg_foreground)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mermaid_svg.py:60: in render_mermaid
+    raise RuntimeError(f"Mermaid SVG conversion failed: {result.stderr.strip()}")
+E   RuntimeError: Mermaid SVG conversion failed: Configuration file "%%{init: {"theme": "base", "themeVariables": {"primaryTextColor": "#000000", "lineColor": "#000000", "textColor": "#000000", "primaryColor": "#FFF4DD", "secondaryColor": "#FFF4DD", "tertiaryColor": "#FFF4DD", "mainBkg": "#FFF4DD"}}}%%
+E   " doesn't exist</failure></testcase><testcase classname="tests.test_marp_pptx" name="test_inline_markdown_theme_variants_and_svg_source_when_enabled[uml-class-classDiagram\n class Animal\n class Dog\n Animal &lt;|-- Dog]" time="0.206"><failure message="RuntimeError: Mermaid SVG conversion failed: Configuration file &quot;%%{init: {&quot;theme&quot;: &quot;base&quot;, &quot;themeVariables&quot;: {&quot;primaryTextColor&quot;: &quot;#000000&quot;, &quot;lineColor&quot;: &quot;#000000&quot;, &quot;textColor&quot;: &quot;#000000&quot;, &quot;primaryColor&quot;: &quot;#FFF4DD&quot;, &quot;secondaryColor&quot;: &quot;#FFF4DD&quot;, &quot;tertiaryColor&quot;: &quot;#FFF4DD&quot;, &quot;mainBkg&quot;: &quot;#FFF4DD&quot;}}}%%&#10;&quot; doesn't exist">tests/test_marp_pptx.py:244: in test_inline_markdown_theme_variants_and_svg_source_when_enabled
+    result = run(text=markdown, output=output, marp=marp, mmdc=mmdc, background=background, svg_foreground=foreground)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+pptx_pipeline.py:132: in run
+    prepared, images = render_mermaid(raw, working, mmdc=mmdc, background=background, foreground=svg_foreground)
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+mermaid_svg.py:60: in render_mermaid
+    raise RuntimeError(f"Mermaid SVG conversion failed: {result.stderr.strip()}")
+E   RuntimeError: Mermaid SVG conversion failed: Configuration file "%%{init: {"theme": "base", "themeVariables": {"primaryTextColor": "#000000", "lineColor": "#000000", "textColor": "#000000", "primaryColor": "#FFF4DD", "secondaryColor": "#FFF4DD", "tertiaryColor": "#FFF4DD", "mainBkg": "#FFF4DD"}}}%%
+E   " doesn't exist</failure></testcase></testsuite></testsuites>

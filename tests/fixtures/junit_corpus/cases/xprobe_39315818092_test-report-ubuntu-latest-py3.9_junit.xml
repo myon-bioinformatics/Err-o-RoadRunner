@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="4" tests="472" time="11.248" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_xprobe_cjs_review" name="test_unicode_boundaries_positions_emoji_and_controls" time="0.095"><failure message="AssertionError: '\ufdff\ufe00'&#10;assert 0 == 1&#10; +  where 0 = len([])&#10; +  and   1 = len([{'codepoints': ['U+FE00'], 'detail': 'no visible base before the selector', 'end': 2, 'kind': 'variation_selector', ...}])">def test_unicode_boundaries_positions_emoji_and_controls():
+        points = [0, 0x1c, 0x7f, 0x85, 0x9f, 0x300, 0x374, 0x5ff, 0x600,
+                  0x115f, 0x17b4, 0x180e, 0x200b, 0x202a, 0x202e, 0x2066, 0x2069,
+                  0xd7ff, 0xd800, 0xdbff, 0xdc00, 0xdfff, 0xe000, 0xf8ff,
+                  0xfdff, 0xfe00, 0xfe0f, 0xfe10, 0xfeff, 0xffff, 0x10000,
+                  0x1f3f4, 0x1f3fb, 0x1f600, 0xdffff, 0xe0000, 0xe001f, 0xe0020,
+                  0xe007e, 0xe007f, 0xe0080, 0xe00ff, 0xe0100, 0xe01ef, 0xe01f0,
+                  0xeffff, 0xf0000, 0xffffd, 0xffffe, 0xfffff, 0x100000, 0x10fffd, 0x10ffff]
+        texts = [prefix + chr(p) + suffix for p in points
+                 for prefix, suffix in [("", "\ufe00"), ("\U0001f642a", "\u202ex\u202c"), ("\u0430", "a")]]
+        texts += ["a\u0374", "\u0430\u00aa", "\u00aa\u200db", "\u3300\u200db",
+                  "\ud800x\udc00\u202e", "\udc00\ud800x\u200b", "\U00010000\u202e",
+                  "\U0001f469\u200d\U0001f4bb", "\U0001f469\ufe0f\u200d\U0001f4bb",
+                  "\U0001f3f4\U000e0067\U000e0062\U000e0065\U000e006e\U000e0067\U000e007f",
+                  "\U0001f3f4\U000e0067\U000e007f", "\U0001f1ef\U0001f1f5", "1\ufe0f\u20e3"]
+        controls = ["\u202e", "\u202c", "\u2066", "\u2069", "\n", "\r", "\x85", "\u2028", "\u2029", "\u200b", "\ufeff"]
+        texts += ["\U0001f642" + "".join(t) + "x" for t in itertools.product(controls, repeat=2)]
+        texts += ["\u202e\u2066x\u202c\u2069", "\u202e\u2066x\n\u2069", "\u202e\u2066x"]
+&gt;       compare(texts)
+
+tests/test_xprobe_cjs_review.py:65: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+texts = ['\x00︀', '#x1F642a\x00\u202ex\u202c', 'а\x00a', '\x1c︀', '#x1F642a\x1c\u202ex\u202c', 'а\x1ca', ...]
+options = None
+
+    def compare(texts, options=None):
+        script = """
+    const x = require(process.argv[1]);
+    const {texts, options} = JSON.parse(require('node:fs').readFileSync(0, 'utf8'));
+    process.stdout.write(JSON.stringify(texts.map(t =&gt; [x.hiddenText(t, options), x.stripHidden(t, options)])));
+    """
+        run = subprocess.run([NODE, "-e", script, str(ROOT / "xprobe.cjs")],
+                             input=json.dumps({"texts": texts, "options": options or {}}),
+                             text=True, encoding="utf-8", capture_output=True, timeout=120, check=True)
+        results = json.loads(run.stdout)
+        assert len(results) == len(texts)  # zip alone can silently skip missing results
+        py_options = {"min_severity" if k == "minSeverity" else k: v for k, v in (options or {}).items()}
+        for text, (rows, stripped) in zip(texts, results):
+            expected = xprobe.hidden_text(text, **py_options)
+&gt;           assert len(rows) == len(expected), ascii(text)
+E           AssertionError: '\ufdff\ufe00'
+E           assert 0 == 1
+E            +  where 0 = len([])
+E            +  and   1 = len([{'codepoints': ['U+FE00'], 'detail': 'no visible base before the selector', 'end': 2, 'kind': 'variation_selector', ...}])
+
+tests/test_xprobe_cjs_review.py:32: AssertionError</failure></testcase></testsuite></testsuites>

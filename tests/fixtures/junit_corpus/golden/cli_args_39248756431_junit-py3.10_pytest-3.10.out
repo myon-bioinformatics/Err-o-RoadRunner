@@ -1,0 +1,23 @@
+FOUND: exit code: 1
+FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/cli_args_39248756431_junit-py3.10_pytest-3.10.xml): 2
+FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/cli_args_39248756431_junit-py3.10_pytest-3.10.xml): assert 'did you mean' not in "usage: __ma...-option'?)\n"\n  \n  'did you mean' is contained here:\n    g-option (did you mean '--visible-long-option'?)\n  ?           ++++++++++++\ntests/test_option_suggestions.py:54: in test_hidden_options_not_suggested_and_positional_not_guessed\n    assert "did you mean" not in capsys.readouterr().err\nE   assert 'did you mean' not in "usage: __ma...-option'?)
+FOUND: junit failure (last) (<repo>/tests/fixtures/junit_corpus/cases/cli_args_39248756431_junit-py3.10_pytest-3.10.xml): AssertionError: assert 'hello\n' == 'hello\\n'\n  \n  - hello\n\n  ?      ^^\n  + hello\n  ?      ^\ntests/test_option_suggestions.py:87: in test_real_one_liner_still_transports_argv\n    assert json.loads(run.stdout)["stdout"] == "hello\\n"\nE   AssertionError: assert 'hello\n' == 'hello\\n'\nE     \nE     - hello\n\nE     ?      ^^\nE     + hello\nE     ?      ^
+FOUND: junit failure groups (<repo>/tests/fixtures/junit_corpus/cases/cli_args_39248756431_junit-py3.10_pytest-3.10.xml): 2 failures in 2 groups
+FOUND: junit failure group 1/2 (<repo>/tests/fixtures/junit_corpus/cases/cli_args_39248756431_junit-py3.10_pytest-3.10.xml): 1× AssertionError: assert <q> not in <q> — first: tests.test_option_suggestions::test_hidden_options_not_suggested_and_positional_not_guessed — msg: assert 'did you mean' not in "usage: __ma...-option'?)\n"
+FOUND: junit failure group 2/2 (<repo>/tests/fixtures/junit_corpus/cases/cli_args_39248756431_junit-py3.10_pytest-3.10.xml): 1× AssertionError: assert <q> == <q> — first: tests.test_option_suggestions::test_real_one_liner_still_transports_argv — msg: AssertionError: assert 'hello\n' == 'hello\\n'
+FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/cli_args_39248756431_junit-py3.10_pytest-3.10.xml): tests.test_option_suggestions
+FOUND: python version: 3.12.15 (cpython)
+FOUND: node version: v22.23.3
+FOUND: gh version: gh version 2.102.0 (2026-09-30)
+FOUND: environment variable count: 125
+FOUND: environment variable names: ACCEPT_EULA, ACTIONS_ORCHESTRATION_ID, ACTIONS_RUNNER_ACTION_ARCHIVE_CACHE, ACTIONS_RUNNER_RETURN_JOB_RESULT_FOR_HOSTED, AGENT_TOOLSDIRECTORY, ANDROID_HOME, ANDROID_NDK, ANDROID_NDK_HOME, ANDROID_NDK_LATEST_HOME, ANDROID_NDK_ROOT, ANDROID_SDK_ROOT, ANT_HOME, AZURE_EXTENSION_DIR, BOOTSTRAP_HASKELL_NONINTERACTIVE, CHROMEWEBDRIVER, CHROME_BIN, CI, CONDA, DEBIAN_FRONTEND, DOTNET_MULTILEVEL_LOOKUP, DOTNET_NOLOGO, DOTNET_SKIP_FIRST_TIME_EXPERIENCE, EDGEWEBDRIVER, ENABLE_RUNNER_TRACING, GECKOWEBDRIVER, GHCUP_INSTALL_BASE_PREFIX, GITHUB_ACTION, GITHUB_ACTIONS, GITHUB_ACTION_REF, GITHUB_ACTION_REPOSITORY, GITHUB_ACTOR, GITHUB_ACTOR_ID, GITHUB_API_URL, GITHUB_ARTIFACTS, GITHUB_ARTIFACTS_LIST, GITHUB_BASE_REF, GITHUB_ENV, GITHUB_EVENT_NAME, GITHUB_EVENT_PATH, GITHUB_GRAPHQL_URL, ...
+NOT FOUND: junit errors (<repo>/tests/fixtures/junit_corpus/cases/cli_args_39248756431_junit-py3.10_pytest-3.10.xml)
+NOT FOUND: junit skipped (<repo>/tests/fixtures/junit_corpus/cases/cli_args_39248756431_junit-py3.10_pytest-3.10.xml)
+NOT FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/cli_args_39248756431_junit-py3.10_pytest-3.10.xml)
+NOT FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/cli_args_39248756431_junit-py3.10_pytest-3.10.xml)
+NOT FOUND: junit system-err (<repo>/tests/fixtures/junit_corpus/cases/cli_args_39248756431_junit-py3.10_pytest-3.10.xml)
+NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/cli_args_39248756431_junit-py3.10_pytest-3.10.xml)
+NOT FOUND: lock files in project root
+HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/cli_args_39248756431_junit-py3.10_pytest-3.10.xml): pytest/python
+HINT: junit pytest assert line (<repo>/tests/fixtures/junit_corpus/cases/cli_args_39248756431_junit-py3.10_pytest-3.10.xml): E   assert 'did you mean' not in "usage: __ma...-option'?)\n"
+HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/cli_args_39248756431_junit-py3.10_pytest-3.10.xml): assert 'did you mean' not in "usage: __ma...-option'?)\n"\n  \n  'did you mean' is contained here:\n    g-option (did you mean '--visible-long-option'?)\n  ?           ++++++++++++\ntests/test_option_suggestions.py:54: in test_hidden_options_not_suggested_and_positional_not_guessed\n    assert "did you mean" not in capsys.readouterr().err\nE   assert 'did you mean' not in "usage: __ma...-option'?)

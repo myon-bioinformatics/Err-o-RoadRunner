@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="6" tests="417" time="28.892" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_gh_ops_fetch_guard" name="test_default_openssh_disables_password_and_hostkey_prompts" time="2.803"><failure message="ValueError: not enough values to unpack (expected 1, got 0)">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+git_env = {'ACTIONS_ORCHESTRATION_ID': '1688cb21-56c8-8dc6-8560-84ed338e8a8e.vendor-portability.windows-latest_3_12', 'ACTIONS_R...he\\', 'ACTIONS_RUNNER_RETURN_JOB_RESULT_FOR_HOSTED': '1', 'AGENT_TOOLSDIRECTORY': 'C:\\hostedtoolcache\\windows', ...}
+
+    def test_default_openssh_disables_password_and_hostkey_prompts(monkeypatch, git_env):
+        seen = []
+        popen = subprocess.Popen
+    
+        def record(argv, **kwargs):
+            # Windows cleanup may invoke taskkill without an explicit env.\n        # Observe only Git transport calls; do not assume all Popen calls are Git.\n        if len(argv) &gt; 1 and argv[1] == "ls-remote":\n            seen.append((argv, kwargs["env"]))
+            return popen(argv, **kwargs)
+    
+        monkeypatch.setattr(subprocess, "Popen", record)
+        remote_probe("ssh://git@127.0.0.1:1/absent.git", git_env)
+&gt;       (_, env), = [(a, e) for a, e in seen if a[1] == "ls-remote"]
+        ^^^^^^^^^
+E       ValueError: not enough values to unpack (expected 1, got 0)
+
+tests\test_gh_ops_fetch_guard.py:160: ValueError</failure></testcase></testsuite></testsuites>
