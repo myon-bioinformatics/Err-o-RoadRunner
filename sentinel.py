@@ -604,7 +604,10 @@ def _fix_rules() -> tuple[_FixRule, ...]:
     _FixRule(
         "missing_command",
         re.compile(r"exit code: 127"),
-        re.compile(r"FileNotFoundError|command not found|No such file", re.I),
+        re.compile(
+            r"FileNotFoundError|command not found|(?<!\.dart': )No such file",
+            re.I,
+        ),
         "high",
         "Install the missing executable or fix PATH so the command is discoverable.",
         None,
