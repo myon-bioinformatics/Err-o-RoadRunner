@@ -10,6 +10,12 @@ Researching the cause of a Python, Node, Go or TypeScript failure, or a GitHub A
 
 The supplied diagram summarizes the failure-triggered, read-only triage flow. Matching is best effort: hints are not verified root causes, and the tool does not repair code or run a resident monitor. See the current CLI and supported inputs below.
 
+### Challenges, responsibilities and intended outcomes
+
+![Err-o-RoadRunner concept: investigate CI failures through detection, known-pattern matching and FOUND, NOT FOUND or HINT reports](docs/images/concept-overview-v2.png)
+
+This complementary supplied panel shows the challenges, roles and intended outcomes alongside the flow above. Detection relies on failure information passed by the caller or wrapper, not background monitoring. Investigation time savings are a design goal, not a measured guarantee.
+
 ## What it does
 
 - It is woken up only when a test, script or CI job fails, from a runner or a wrapper.
