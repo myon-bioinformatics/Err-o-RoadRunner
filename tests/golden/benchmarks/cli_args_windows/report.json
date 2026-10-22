@@ -1,0 +1,319 @@
+{
+  "capture": {
+    "stderr_tail": "",
+    "stdout_tail": ""
+  },
+  "command": {
+    "argv": [
+      "sh",
+      "-c",
+      "exit 0"
+    ],
+    "cwd": "/workspace",
+    "reproduce_command": "sh -c 'exit 0'"
+  },
+  "environment": {
+    "values_redacted": {
+      "AGENT_TRANSCRIPTS": "/home/ubuntu/.cursor/projects/workspace/agent-transcripts",
+      "CARGO_HOME": "/usr/local/cargo",
+      "CURSOR_AGENT": "1",
+      "CURSOR_AGENT_SOCKET": "/run/cursor/api.sock",
+      "CURSOR_CONVERSATION_ID": "bc-c06a01ab-b6d2-5574-986d-0c38eedac91e",
+      "CURSOR_REQUEST_ID": "ff6c9d17-c937-4ff6-be99-298b639b6955",
+      "CURSOR_RIPGREP_PATH": "/exec-daemon/rg",
+      "CURSOR_SPAWN_CWD_HOP": "1",
+      "CURSOR_WORKLOAD_CGROUP": "/sys/fs/cgroup/system.slice/pod-2h3komhypngdtkioz2nivwd3am-4f41565a/cursor-agent/workload",
+      "DISPLAY": ":1",
+      "EXEC_DAEMON_STARTUP_TRACEPARENT": "00-01a1637900d470f3ac32394de254ef1a-16d3ef0eecafdeb4-01",
+      "FORCE_COLOR": "0",
+      "GH_TELEMETRY": "false",
+      "GIT_DISCOVERY_ACROSS_FILESYSTEM": "0",
+      "GIT_LFS_SKIP_SMUDGE": "1",
+      "HOME": "/home/ubuntu",
+      "LANG": "en_US.UTF-8",
+      "LC_ALL": "en_US.UTF-8",
+      "NO_COLOR": "1",
+      "NVM_BIN": "/home/ubuntu/.nvm/versions/node/v22.23.4/bin",
+      "NVM_CD_FLAGS": "",
+      "NVM_DIR": "/home/ubuntu/.nvm",
+      "NVM_INC": "/home/ubuntu/.nvm/versions/node/v22.23.4/include/node",
+      "OLDPWD": "/workspace",
+      "PATH": "/usr/local/cargo/bin:/exec-daemon:/exec-daemon/tools:/usr/local/cargo/bin:/home/ubuntu/.nvm/versions/node/v22.23.4/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+      "PS1": "\\[\u001b[36m\\]\\W\\[\u001b[0m\\] $ ",
+      "PWD": "/workspace",
+      "RUSTUP_HOME": "/usr/local/rustup",
+      "RUST_VERSION": "1.83.0",
+      "SHELL": "/bin/bash",
+      "SHLVL": "1",
+      "TERM": "dumb",
+      "USER": "ubuntu",
+      "VNC_DPI": "96",
+      "VNC_RESOLUTION": "1920x1200x24",
+      "_": "/usr/bin/python3",
+      "_ZO_DOCTOR": "0",
+      "__CURSOR_SANDBOX_ENV_RESTORE": "builtin unset CURSOR_CONVERSATION_ID CURSOR_REQUEST_ID CURSOR_AGENT_STORE_FILES_DIR CURSOR_AGENT_STORE_SHARED_PATHS 2>/dev/null || true; builtin export CURSOR_CONVERSATION_ID='bc-c06a01ab-b6d2-5574-9…"
+    },
+    "variable_count": 38,
+    "variable_names": [
+      "AGENT_TRANSCRIPTS",
+      "CARGO_HOME",
+      "CURSOR_AGENT",
+      "CURSOR_AGENT_SOCKET",
+      "CURSOR_CONVERSATION_ID",
+      "CURSOR_REQUEST_ID",
+      "CURSOR_RIPGREP_PATH",
+      "CURSOR_SPAWN_CWD_HOP",
+      "CURSOR_WORKLOAD_CGROUP",
+      "DISPLAY",
+      "EXEC_DAEMON_STARTUP_TRACEPARENT",
+      "FORCE_COLOR",
+      "GH_TELEMETRY",
+      "GIT_DISCOVERY_ACROSS_FILESYSTEM",
+      "GIT_LFS_SKIP_SMUDGE",
+      "HOME",
+      "LANG",
+      "LC_ALL",
+      "NO_COLOR",
+      "NVM_BIN",
+      "NVM_CD_FLAGS",
+      "NVM_DIR",
+      "NVM_INC",
+      "OLDPWD",
+      "PATH",
+      "PS1",
+      "PWD",
+      "RUSTUP_HOME",
+      "RUST_VERSION",
+      "SHELL",
+      "SHLVL",
+      "TERM",
+      "USER",
+      "VNC_DPI",
+      "VNC_RESOLUTION",
+      "_",
+      "_ZO_DOCTOR",
+      "__CURSOR_SANDBOX_ENV_RESTORE"
+    ],
+    "variable_names_truncated": false
+  },
+  "escalation_reasons": [
+    "junit_failure"
+  ],
+  "fix_candidates": [
+    {
+      "confidence": "high",
+      "evidence": [
+        "junit failure (first) (5 variants): tests\\test_cli_args.py:304: in test_exclusive_output_never_overwrites_existing_file_or_symlink\\n    with pytest.raises(FileExistsError):\\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\nE   Failed: DID NOT RAISE FileExistsError",
+        "junit failure (first) (5 variants): tests\\test_cli_args.py:311: in test_exclusive_output_never_overwrites_existing_file_or_symlink\\n    with pytest.raises(FileExistsError):\\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\nE   Failed: DID NOT RAISE FileExistsError"
+      ],
+      "id": "F1",
+      "kind": "junit",
+      "location": {
+        "line": "304",
+        "loc": "test_cli_args.py"
+      },
+      "suggestion": "Open the first failing testcase in the JUnit XML and read the message/stack.",
+      "verify_command": "sh -c 'exit 0'"
+    },
+    {
+      "confidence": "low",
+      "evidence": [
+        "exit code: 1"
+      ],
+      "id": "F2",
+      "kind": "generic",
+      "location": {},
+      "suggestion": "Re-run reproduce_command with verbose logging and inspect stderr.",
+      "verify_command": "sh -c 'exit 0'"
+    }
+  ],
+  "groups": {
+    "buckets": [
+      {
+        "count": 1,
+        "errors": [
+          {
+            "error_type": "pytest.Failed.DidNotRaise",
+            "first_seen": 0,
+            "kind": "junit",
+            "language": "python",
+            "location": {
+              "line": "304",
+              "loc": "tests/test_cli_args.py"
+            },
+            "message": "Failed: DID NOT RAISE FileExistsError",
+            "phase": "test",
+            "signature": "Failed: DID NOT RAISE FileExistsError",
+            "source_line": "tests.test_cli_args::test_exclusive_output_never_overwrites_existing_file_or_symlink",
+            "test_id": "tests.test_cli_args::test_exclusive_output_never_overwrites_existing_file_or_symlink",
+            "variant_axes": {
+              "flavor": [
+                "core-windows:38186460415",
+                "core-windows:38186463838",
+                "core-windows:38186482403",
+                "core-windows:38186540275",
+                "core-windows:38186542809"
+              ],
+              "os": [
+                "windows"
+              ]
+            },
+            "variants": [
+              "windows:38186460415",
+              "windows:38186463838",
+              "windows:38186482403",
+              "windows:38186540275",
+              "windows:38186542809"
+            ]
+          }
+        ],
+        "first_seen": 0,
+        "key": {
+          "error_type": "pytest.Failed.DidNotRaise"
+        },
+        "name": "error_type=pytest.Failed.DidNotRaise"
+      }
+    ],
+    "error_count": 1,
+    "group_by": [
+      "error_type"
+    ],
+    "sort": "count"
+  },
+  "human_summary": "## Err-o-RoadRunner sentinel (escalated)\n\n- **Reasons:** junit_failure\n- **Command:** `sh -c 'exit 0'`\n- **Exit code:** 0\n\n### Hints\n- junit framework guess (5 variants): pytest/python\n- web search keywords (5 variants): tests\\test_cli_args.py:304: in test_exclusive_output_never_overwrites_existing_file_or_symlink\\n    with pytest.raises(FileExistsError):\\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\nE   Failed: DID NOT RAISE FileExistsError\n- web search keywords (5 variants): tests\\test_cli_args.py:311: in test_exclusive_output_never_overwrites_existing_file_or_symlink\\n    with pytest.raises(FileExistsError):\\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\nE   Failed: DID NOT RAISE FileExistsError\n\n### Key findings\n- exit code: 1\n- junit failures (5 variants): 1\n- junit failure (first) (5 variants): tests\\test_cli_args.py:304: in test_exclusive_output_never_overwrites_existing_file_or_symlink\\n    with pytest.raises(FileExistsError):\\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\nE   Failed: DID NOT RAISE FileExistsError\n- junit failure groups (5 variants): 1 failure in 1 group\n- junit testcase classname (first) (5 variants): tests.test_cli_args\n- junit failure (first) (5 variants): tests\\test_cli_args.py:311: in test_exclusive_output_never_overwrites_existing_file_or_symlink\\n    with pytest.raises(FileExistsError):\\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\nE   Failed: DID NOT RAISE FileExistsError\n- python version: <masked>\n- node version: <masked>\n- gh version: <masked>\n- lock files present: uv.lock\n- environment variable count: 38\n- environment variable names: AGENT_TRANSCRIPTS, CARGO_HOME, CURSOR_AGENT, CURSOR_AGENT_SOCKET, CURSOR_CONVERSATION_ID, CURSOR_REQUEST_ID, CURSOR_RIPGREP_PATH, CURSOR_SPAWN_CWD_HOP, CURSOR_WORKLOAD_CGROUP, DISPLAY, EXEC_DAEMON_STARTUP_TRACEPARENT, FORCE_COLOR, GH_TELEMETRY, GIT_DISCOVERY_ACROSS_FILESYSTEM, GIT_LFS_SKIP_SMUDGE, HOME, LANG, LC_ALL, NO_COLOR, NVM_BIN, NVM_CD_FLAGS, NVM_DIR, NVM_INC, OLDPWD, PATH, PS1, PWD, RUSTUP_HOME, RUST_VERSION, SHELL, SHLVL, TERM, USER, VNC_DPI, VNC_RESOLUTION, _, _ZO_DOCTOR, __CURSOR_SANDBOX_ENV_RESTORE\n\n### Fix candidates\n- **F1** (junit, high) (`test_cli_args.py`:304): Open the first failing testcase in the JUnit XML and read the message/stack.\n- **F2** (generic, low): Re-run reproduce_command with verbose logging and inspect stderr.",
+  "hypotheses": [
+    {
+      "classification": "invariant",
+      "confidence": "high",
+      "explains": [
+        "tests.test_cli_args::test_exclusive_output_never_overwrites_existing_file_or_symlink"
+      ],
+      "os_coverage": "1/1",
+      "source_squads": [],
+      "summary": "matrix-invariant failure",
+      "variant_count": 5
+    }
+  ],
+  "locations": [],
+  "matrix": {
+    "axes": {
+      "flavor": 5,
+      "os": 1
+    },
+    "failing": 5,
+    "total": 5
+  },
+  "mode": "escalated",
+  "next_investigation_steps": [
+    "Open the JUnit XML and read the first failure or error testcase.",
+    "Reproduce with the same Node version; check package-lock or lockfile.",
+    "Use HINT web search keywords before deeper code archaeology."
+  ],
+  "outcome": {
+    "exit_code": 0,
+    "junit_failure": true,
+    "raw_exit_code": 0,
+    "signal": null,
+    "termination_signal": null,
+    "timed_out": false
+  },
+  "records": [
+    {
+      "artifact": "cli_args_38186460415_junit-core-windows_core-windows.xml",
+      "error_type": "pytest.Failed.DidNotRaise",
+      "expected_exception": "FileExistsError",
+      "language": "python",
+      "line": 304,
+      "message": "Failed: DID NOT RAISE FileExistsError",
+      "signature": "Failed: DID NOT RAISE FileExistsError",
+      "source_file": "tests/test_cli_args.py",
+      "test_id": "tests.test_cli_args::test_exclusive_output_never_overwrites_existing_file_or_symlink",
+      "variant": "windows:38186460415",
+      "variant_axes": {
+        "flavor": [
+          "core-windows:38186460415",
+          "core-windows:38186463838",
+          "core-windows:38186482403",
+          "core-windows:38186540275",
+          "core-windows:38186542809"
+        ],
+        "os": [
+          "windows"
+        ]
+      },
+      "variants": [
+        "windows:38186460415",
+        "windows:38186463838",
+        "windows:38186482403",
+        "windows:38186540275",
+        "windows:38186542809"
+      ]
+    }
+  ],
+  "schema": "sentinel-report/v1",
+  "squads": [],
+  "timing": {
+    "elapsed_seconds": 0.004,
+    "started_monotonic": 1456.856941009
+  },
+  "top_causes": [
+    {
+      "count": 1,
+      "error_type": "pytest.Failed.DidNotRaise",
+      "signature": "Failed: DID NOT RAISE FileExistsError"
+    }
+  ],
+  "triage": {
+    "found": [
+      "exit code: 1",
+      "junit failures (5 variants): 1",
+      "junit failure (first) (5 variants): tests\\test_cli_args.py:304: in test_exclusive_output_never_overwrites_existing_file_or_symlink\\n    with pytest.raises(FileExistsError):\\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\nE   Failed: DID NOT RAISE FileExistsError",
+      "junit failure groups (5 variants): 1 failure in 1 group",
+      "junit testcase classname (first) (5 variants): tests.test_cli_args",
+      "junit failure (first) (5 variants): tests\\test_cli_args.py:311: in test_exclusive_output_never_overwrites_existing_file_or_symlink\\n    with pytest.raises(FileExistsError):\\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\nE   Failed: DID NOT RAISE FileExistsError",
+      "python version: <masked>",
+      "node version: <masked>",
+      "gh version: <masked>",
+      "lock files present: uv.lock",
+      "environment variable count: 38",
+      "environment variable names: AGENT_TRANSCRIPTS, CARGO_HOME, CURSOR_AGENT, CURSOR_AGENT_SOCKET, CURSOR_CONVERSATION_ID, CURSOR_REQUEST_ID, CURSOR_RIPGREP_PATH, CURSOR_SPAWN_CWD_HOP, CURSOR_WORKLOAD_CGROUP, DISPLAY, EXEC_DAEMON_STARTUP_TRACEPARENT, FORCE_COLOR, GH_TELEMETRY, GIT_DISCOVERY_ACROSS_FILESYSTEM, GIT_LFS_SKIP_SMUDGE, HOME, LANG, LC_ALL, NO_COLOR, NVM_BIN, NVM_CD_FLAGS, NVM_DIR, NVM_INC, OLDPWD, PATH, PS1, PWD, RUSTUP_HOME, RUST_VERSION, SHELL, SHLVL, TERM, USER, VNC_DPI, VNC_RESOLUTION, _, _ZO_DOCTOR, __CURSOR_SANDBOX_ENV_RESTORE"
+    ],
+    "hints": [
+      "junit framework guess (5 variants): pytest/python",
+      "web search keywords (5 variants): tests\\test_cli_args.py:304: in test_exclusive_output_never_overwrites_existing_file_or_symlink\\n    with pytest.raises(FileExistsError):\\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\nE   Failed: DID NOT RAISE FileExistsError",
+      "web search keywords (5 variants): tests\\test_cli_args.py:311: in test_exclusive_output_never_overwrites_existing_file_or_symlink\\n    with pytest.raises(FileExistsError):\\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\\nE   Failed: DID NOT RAISE FileExistsError"
+    ],
+    "not_found": [
+      "junit errors (tests/fixtures/junit_corpus/cases/cli_args_38186460415_junit-core-windows_core-windows.xml)",
+      "junit skipped (tests/fixtures/junit_corpus/cases/cli_args_38186460415_junit-core-windows_core-windows.xml)",
+      "junit pytest exception type (tests/fixtures/junit_corpus/cases/cli_args_38186460415_junit-core-windows_core-windows.xml)",
+      "junit dart error (first) (tests/fixtures/junit_corpus/cases/cli_args_38186460415_junit-core-windows_core-windows.xml)",
+      "junit system-err (tests/fixtures/junit_corpus/cases/cli_args_38186460415_junit-core-windows_core-windows.xml)",
+      "junit collection errors (tests/fixtures/junit_corpus/cases/cli_args_38186460415_junit-core-windows_core-windows.xml)",
+      "junit errors (tests/fixtures/junit_corpus/cases/cli_args_38186463838_junit-core-windows_core-windows.xml)",
+      "junit skipped (tests/fixtures/junit_corpus/cases/cli_args_38186463838_junit-core-windows_core-windows.xml)",
+      "junit pytest exception type (tests/fixtures/junit_corpus/cases/cli_args_38186463838_junit-core-windows_core-windows.xml)",
+      "junit dart error (first) (tests/fixtures/junit_corpus/cases/cli_args_38186463838_junit-core-windows_core-windows.xml)",
+      "junit system-err (tests/fixtures/junit_corpus/cases/cli_args_38186463838_junit-core-windows_core-windows.xml)",
+      "junit collection errors (tests/fixtures/junit_corpus/cases/cli_args_38186463838_junit-core-windows_core-windows.xml)",
+      "junit errors (tests/fixtures/junit_corpus/cases/cli_args_38186482403_junit-core-windows_core-windows.xml)",
+      "junit skipped (tests/fixtures/junit_corpus/cases/cli_args_38186482403_junit-core-windows_core-windows.xml)",
+      "junit pytest exception type (tests/fixtures/junit_corpus/cases/cli_args_38186482403_junit-core-windows_core-windows.xml)",
+      "junit dart error (first) (tests/fixtures/junit_corpus/cases/cli_args_38186482403_junit-core-windows_core-windows.xml)",
+      "junit system-err (tests/fixtures/junit_corpus/cases/cli_args_38186482403_junit-core-windows_core-windows.xml)",
+      "junit collection errors (tests/fixtures/junit_corpus/cases/cli_args_38186482403_junit-core-windows_core-windows.xml)",
+      "junit errors (tests/fixtures/junit_corpus/cases/cli_args_38186540275_junit-core-windows_core-windows.xml)",
+      "junit skipped (tests/fixtures/junit_corpus/cases/cli_args_38186540275_junit-core-windows_core-windows.xml)",
+      "junit pytest exception type (tests/fixtures/junit_corpus/cases/cli_args_38186540275_junit-core-windows_core-windows.xml)",
+      "junit dart error (first) (tests/fixtures/junit_corpus/cases/cli_args_38186540275_junit-core-windows_core-windows.xml)",
+      "junit system-err (tests/fixtures/junit_corpus/cases/cli_args_38186540275_junit-core-windows_core-windows.xml)",
+      "junit collection errors (tests/fixtures/junit_corpus/cases/cli_args_38186540275_junit-core-windows_core-windows.xml)",
+      "junit errors (tests/fixtures/junit_corpus/cases/cli_args_38186542809_junit-core-windows_core-windows.xml)",
+      "junit skipped (tests/fixtures/junit_corpus/cases/cli_args_38186542809_junit-core-windows_core-windows.xml)",
+      "junit pytest exception type (tests/fixtures/junit_corpus/cases/cli_args_38186542809_junit-core-windows_core-windows.xml)",
+      "junit dart error (first) (tests/fixtures/junit_corpus/cases/cli_args_38186542809_junit-core-windows_core-windows.xml)",
+      "junit system-err (tests/fixtures/junit_corpus/cases/cli_args_38186542809_junit-core-windows_core-windows.xml)",
+      "junit collection errors (tests/fixtures/junit_corpus/cases/cli_args_38186542809_junit-core-windows_core-windows.xml)"
+    ]
+  }
+}

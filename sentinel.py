@@ -29,6 +29,7 @@ SCHEMA_VERSION = "sentinel-report/v1"
 DEFAULT_RING_BYTES = 64 * 1024
 DEFAULT_HOOK_TIMEOUT = 30
 DEFAULT_MAX_FIXES = 5
+DEFAULT_MAX_RECORDS = 200
 OUTPUT_LINE_MAX = 200
 ENV_VALUE_MAX = 200
 TIMEOUT_EXIT = 124
@@ -702,6 +703,25 @@ def _location_from_evidence(rule: _FixRule, evidence: Sequence[str]) -> dict[str
     return {}
 
 
+def _hint_is_dart_file_read_context(line: str) -> bool:
+    return (
+        "Error when reading" in line
+        or "FileSystemException" in line
+        or "(OS Error: No such file or directory" in line
+    )
+
+
+def _missing_command_hint_evidence(hints: Sequence[str]) -> list[str]:
+    evidence: list[str] = []
+    for line in hints:
+        if not re.search(r"FileNotFoundError|command not found|No such file", line, re.I):
+            continue
+        if _hint_is_dart_file_read_context(line):
+            continue
+        evidence.append(line)
+    return evidence
+
+
 def build_fix_candidates(
     structured: dict[str, list[str]],
     *,
@@ -716,6 +736,13 @@ def build_fix_candidates(
         ev_found = [ln for ln in found if rule.found_re.search(ln)]
         if ev_found:
             raw.append((rule, rule.confidence_found, ev_found))
+            continue
+        if rule.kind == "missing_command":
+            if any(_hint_is_dart_file_read_context(line) for line in hints):
+                continue
+            ev_hint = _missing_command_hint_evidence(hints)
+            if ev_hint:
+                raw.append((rule, "low", ev_hint))
             continue
         if rule.hint_re:
             ev_hint = [ln for ln in hints if rule.hint_re.search(ln)]
@@ -754,6 +781,10 @@ def build_fix_candidates(
                 "verify_command": reproduce_command,
             }
         )
+    if any(cand.get("kind") == "dart_import" for cand in candidates):
+        candidates = [
+            cand for cand in candidates if cand.get("kind") != "missing_command"
+        ]
     return candidates
 
 
@@ -1388,6 +1419,7 @@ def build_escalation_report(
     hooks: Sequence[str],
     hook_timeout: float,
     max_fixes: int = DEFAULT_MAX_FIXES,
+    max_records: int = DEFAULT_MAX_RECORDS,
     group_by: Sequence[str] = DEFAULT_GROUP_BY,
     sort: str = SORT_COUNT,
     squads_enabled: frozenset[str] | None = None,
@@ -1451,10 +1483,18 @@ def build_escalation_report(
     if junit_paths or squads_enabled:
         squad_mod = _squad_module()
     matrix_summary: dict[str, Any] = {}
+    junit_path_objs: list[Path] = []
     if squad_mod is not None and junit_paths:
         failure_records = squad_mod.load_failure_records_for_escalation(junit_paths)
-        paths = squad_mod.collect_junit_paths(junit_paths, ())
-        matrix_summary = squad_mod.build_report_matrix(paths, failure_records)
+        junit_path_objs = squad_mod.collect_junit_paths(junit_paths, ())
+
+    all_failure_records = failure_records
+    records_omitted = 0
+    if max_records >= 0 and len(failure_records) > max_records:
+        records_omitted = len(failure_records) - max_records
+        failure_records = failure_records[:max_records]
+    if squad_mod is not None and junit_path_objs and all_failure_records:
+        matrix_summary = squad_mod.build_report_matrix(junit_path_objs, all_failure_records)
 
     fix_candidates = _redact_fix_candidates(
         build_fix_candidates(
@@ -1463,8 +1503,8 @@ def build_escalation_report(
             max_fixes=max_fixes,
         )
     )
-    if failure_records and squad_mod is not None:
-        normalized_errors = squad_mod.records_to_normalized_errors(failure_records)
+    if all_failure_records and squad_mod is not None:
+        normalized_errors = squad_mod.records_to_normalized_errors(all_failure_records)
     else:
         normalized_errors = extract_normalized_errors(structured, outcome)
     groups = build_groups(
@@ -1477,7 +1517,7 @@ def build_escalation_report(
     if squads_enabled and squad_mod is not None:
         squad_pack = squad_mod.run_error_squads(
             enabled=squads_enabled,
-            records=failure_records,
+            records=all_failure_records,
             project_root=project_root,
             project_root_explicit=project_root_explicit,
             junit_paths=junit_paths,
@@ -1491,11 +1531,11 @@ def build_escalation_report(
         fix_candidates = _redact_fix_candidates(
             squad_mod.enrich_fix_candidates(fix_candidates, squad_pack.get("hypotheses") or [])
         )
-    elif failure_records and squad_mod is not None:
+    elif all_failure_records and squad_mod is not None:
         squad_pack["hypotheses"] = [
             hyp
             for hyp in squad_mod.build_cascade_hypotheses(
-                failure_records,
+                all_failure_records,
                 project_root,
                 [],
             )
@@ -1539,6 +1579,10 @@ def build_escalation_report(
         "hypotheses": squad_pack.get("hypotheses") or [],
         "human_summary": "",
     }
+    if squad_mod is not None and all_failure_records:
+        doc["top_causes"] = squad_mod.summarize_top_causes(all_failure_records)
+    if records_omitted:
+        doc["records_omitted"] = records_omitted
     doc["human_summary"] = _redact_text(
         _human_summary(
             structured,
@@ -1776,6 +1820,13 @@ def build_parser() -> argparse.ArgumentParser:
         help=f"Cap fix_candidates in JSON and stdout (default {DEFAULT_MAX_FIXES}).",
     )
     parser.add_argument(
+        "--max-records",
+        type=int,
+        default=DEFAULT_MAX_RECORDS,
+        metavar="N",
+        help=f"Cap JUnit failure records in JSON; remainder in records_omitted (default {DEFAULT_MAX_RECORDS}).",
+    )
+    parser.add_argument(
         "--group-by",
         default="error_type",
         metavar="KEY[,KEY]",
@@ -1949,6 +2000,7 @@ def run_sentinel(argv: Sequence[str] | None = None) -> int:
 
     try:
         max_fixes = max(0, args.max_fixes)
+        max_records = max(0, args.max_records)
         doc = build_escalation_report(
             state,
             outcome,
@@ -1959,6 +2011,7 @@ def run_sentinel(argv: Sequence[str] | None = None) -> int:
             hooks=args.hook,
             hook_timeout=args.hook_timeout,
             max_fixes=max_fixes,
+            max_records=max_records,
             group_by=group_by,
             sort=args.sort,
             squads_enabled=squads_enabled,

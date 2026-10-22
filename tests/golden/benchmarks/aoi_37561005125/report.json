@@ -19,7 +19,7 @@
       "CURSOR_AGENT": "1",
       "CURSOR_AGENT_SOCKET": "/run/cursor/api.sock",
       "CURSOR_CONVERSATION_ID": "bc-c06a01ab-b6d2-5574-986d-0c38eedac91e",
-      "CURSOR_REQUEST_ID": "3e41427c-9f8d-485c-913d-3113581ead7b",
+      "CURSOR_REQUEST_ID": "ff6c9d17-c937-4ff6-be99-298b639b6955",
       "CURSOR_RIPGREP_PATH": "/exec-daemon/rg",
       "CURSOR_SPAWN_CWD_HOP": "1",
       "CURSOR_WORKLOAD_CGROUP": "/sys/fs/cgroup/system.slice/pod-2h3komhypngdtkioz2nivwd3am-4f41565a/cursor-agent/workload",
@@ -841,7 +841,6 @@
         "nagoyaction.tests.test_inbox::test_worker_reads_comments_only_for_completion",
         "nagoyaction.tests.test_inbox::test_worker_refuses_to_mix_changed_inputs"
       ],
-      "id": "M",
       "python_coverage": "5/5",
       "source_squads": [],
       "summary": "matrix-invariant failure",
@@ -934,6 +933,8 @@
     },
     {
       "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
+      "assert_left": "0",
+      "assert_right": "1",
       "error_type": "AssertionError",
       "language": "python",
       "line": null,
@@ -1054,6 +1055,8 @@
     },
     {
       "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
+      "assert_left": "0",
+      "assert_right": "1",
       "error_type": "AssertionError",
       "language": "python",
       "line": null,
@@ -1144,6 +1147,8 @@
     },
     {
       "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
+      "assert_left": "0",
+      "assert_right": "5",
       "error_type": "AssertionError",
       "language": "python",
       "line": null,
@@ -1174,6 +1179,8 @@
     },
     {
       "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
+      "assert_left": "len(batches) > 2 and len(calls)",
+      "assert_right": "1",
       "error_type": "AssertionError",
       "language": "python",
       "line": null,
@@ -1354,6 +1361,8 @@
     },
     {
       "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
+      "assert_left": "[]",
+      "assert_right": "['<path>']",
       "error_type": "AssertionError",
       "language": "python",
       "line": null,
@@ -1384,6 +1393,8 @@
     },
     {
       "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
+      "assert_left": "0",
+      "assert_right": "20",
       "error_type": "AssertionError",
       "language": "python",
       "line": null,
@@ -1414,6 +1425,8 @@
     },
     {
       "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
+      "assert_left": "registration_status(posthoc)",
+      "assert_right": "\"事後構成\"",
       "error_type": "IndexError",
       "language": "python",
       "line": null,
@@ -1447,8 +1460,25 @@
   "squads": [],
   "timing": {
     "elapsed_seconds": 0.003,
-    "started_monotonic": 224.541782792
+    "started_monotonic": 1418.652281192
   },
+  "top_causes": [
+    {
+      "count": 4,
+      "error_type": "AssertionError",
+      "signature": "assert <n> == <n>"
+    },
+    {
+      "count": 3,
+      "error_type": "SystemExit",
+      "signature": "<n>"
+    },
+    {
+      "count": 2,
+      "error_type": "ModuleNotFoundError",
+      "signature": "No module named 'neighbors'"
+    }
+  ],
   "triage": {
     "found": [
       "exit code: 1",
@@ -1469,9 +1499,9 @@
       "junit failure groups truncated (5 variants): 1 type, 1 failure omitted",
       "junit testcase classname (first) (5 variants): nagoyaction.tests.test_inbox",
       "junit pytest exception type (5 variants): ModuleNotFoundError",
-      "python version: 3.12.3 (cpython)",
-      "node version: v22.23.4",
-      "gh version: gh version 2.102.0 (2026-09-30)",
+      "python version: <masked>",
+      "node version: <masked>",
+      "gh version: <masked>",
       "lock files present: uv.lock",
       "environment variable count: 38",
       "environment variable names: AGENT_TRANSCRIPTS, CARGO_HOME, CURSOR_AGENT, CURSOR_AGENT_SOCKET, CURSOR_CONVERSATION_ID, CURSOR_REQUEST_ID, CURSOR_RIPGREP_PATH, CURSOR_SPAWN_CWD_HOP, CURSOR_WORKLOAD_CGROUP, DISPLAY, EXEC_DAEMON_STARTUP_TRACEPARENT, FORCE_COLOR, GH_TELEMETRY, GIT_DISCOVERY_ACROSS_FILESYSTEM, GIT_LFS_SKIP_SMUDGE, HOME, LANG, LC_ALL, NO_COLOR, NVM_BIN, NVM_CD_FLAGS, NVM_DIR, NVM_INC, OLDPWD, PATH, PS1, PWD, RUSTUP_HOME, RUST_VERSION, SHELL, SHLVL, TERM, USER, VNC_DPI, VNC_RESOLUTION, _, _ZO_DOCTOR, __CURSOR_SANDBOX_ENV_RESTORE"

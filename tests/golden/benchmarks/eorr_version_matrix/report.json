@@ -1,0 +1,3563 @@
+{
+  "capture": {
+    "stderr_tail": "",
+    "stdout_tail": ""
+  },
+  "command": {
+    "argv": [
+      "sh",
+      "-c",
+      "exit 0"
+    ],
+    "cwd": "/workspace",
+    "reproduce_command": "sh -c 'exit 0'"
+  },
+  "environment": {
+    "values_redacted": {
+      "AGENT_TRANSCRIPTS": "/home/ubuntu/.cursor/projects/workspace/agent-transcripts",
+      "CARGO_HOME": "/usr/local/cargo",
+      "CURSOR_AGENT": "1",
+      "CURSOR_AGENT_SOCKET": "/run/cursor/api.sock",
+      "CURSOR_CONVERSATION_ID": "bc-c06a01ab-b6d2-5574-986d-0c38eedac91e",
+      "CURSOR_REQUEST_ID": "ff6c9d17-c937-4ff6-be99-298b639b6955",
+      "CURSOR_RIPGREP_PATH": "/exec-daemon/rg",
+      "CURSOR_SPAWN_CWD_HOP": "1",
+      "CURSOR_WORKLOAD_CGROUP": "/sys/fs/cgroup/system.slice/pod-2h3komhypngdtkioz2nivwd3am-4f41565a/cursor-agent/workload",
+      "DISPLAY": ":1",
+      "EXEC_DAEMON_STARTUP_TRACEPARENT": "00-01a1637900d470f3ac32394de254ef1a-16d3ef0eecafdeb4-01",
+      "FORCE_COLOR": "0",
+      "GH_TELEMETRY": "false",
+      "GIT_DISCOVERY_ACROSS_FILESYSTEM": "0",
+      "GIT_LFS_SKIP_SMUDGE": "1",
+      "HOME": "/home/ubuntu",
+      "LANG": "en_US.UTF-8",
+      "LC_ALL": "en_US.UTF-8",
+      "NO_COLOR": "1",
+      "NVM_BIN": "/home/ubuntu/.nvm/versions/node/v22.23.4/bin",
+      "NVM_CD_FLAGS": "",
+      "NVM_DIR": "/home/ubuntu/.nvm",
+      "NVM_INC": "/home/ubuntu/.nvm/versions/node/v22.23.4/include/node",
+      "OLDPWD": "/workspace",
+      "PATH": "/usr/local/cargo/bin:/exec-daemon:/exec-daemon/tools:/usr/local/cargo/bin:/home/ubuntu/.nvm/versions/node/v22.23.4/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+      "PS1": "\\[\u001b[36m\\]\\W\\[\u001b[0m\\] $ ",
+      "PWD": "/workspace",
+      "RUSTUP_HOME": "/usr/local/rustup",
+      "RUST_VERSION": "1.83.0",
+      "SHELL": "/bin/bash",
+      "SHLVL": "1",
+      "TERM": "dumb",
+      "USER": "ubuntu",
+      "VNC_DPI": "96",
+      "VNC_RESOLUTION": "1920x1200x24",
+      "_": "/usr/bin/python3",
+      "_ZO_DOCTOR": "0",
+      "__CURSOR_SANDBOX_ENV_RESTORE": "builtin unset CURSOR_CONVERSATION_ID CURSOR_REQUEST_ID CURSOR_AGENT_STORE_FILES_DIR CURSOR_AGENT_STORE_SHARED_PATHS 2>/dev/null || true; builtin export CURSOR_CONVERSATION_ID='bc-c06a01ab-b6d2-5574-9…"
+    },
+    "variable_count": 38,
+    "variable_names": [
+      "AGENT_TRANSCRIPTS",
+      "CARGO_HOME",
+      "CURSOR_AGENT",
+      "CURSOR_AGENT_SOCKET",
+      "CURSOR_CONVERSATION_ID",
+      "CURSOR_REQUEST_ID",
+      "CURSOR_RIPGREP_PATH",
+      "CURSOR_SPAWN_CWD_HOP",
+      "CURSOR_WORKLOAD_CGROUP",
+      "DISPLAY",
+      "EXEC_DAEMON_STARTUP_TRACEPARENT",
+      "FORCE_COLOR",
+      "GH_TELEMETRY",
+      "GIT_DISCOVERY_ACROSS_FILESYSTEM",
+      "GIT_LFS_SKIP_SMUDGE",
+      "HOME",
+      "LANG",
+      "LC_ALL",
+      "NO_COLOR",
+      "NVM_BIN",
+      "NVM_CD_FLAGS",
+      "NVM_DIR",
+      "NVM_INC",
+      "OLDPWD",
+      "PATH",
+      "PS1",
+      "PWD",
+      "RUSTUP_HOME",
+      "RUST_VERSION",
+      "SHELL",
+      "SHLVL",
+      "TERM",
+      "USER",
+      "VNC_DPI",
+      "VNC_RESOLUTION",
+      "_",
+      "_ZO_DOCTOR",
+      "__CURSOR_SANDBOX_ENV_RESTORE"
+    ],
+    "variable_names_truncated": false
+  },
+  "escalation_reasons": [
+    "junit_failure"
+  ],
+  "fix_candidates": [
+    {
+      "confidence": "high",
+      "evidence": [
+        "hypothesis H1: stale installed metadata or env override"
+      ],
+      "id": "F4",
+      "kind": "stale_metadata",
+      "location": {},
+      "source_squads": [
+        "code",
+        "history"
+      ],
+      "suggestion": "Reinstall the package in editable mode (`pip install -e .` or `uv sync --reinstall`) and compare `importlib.metadata.version(...)` against the version in pyproject.toml / source.",
+      "verify_command": "sh -c 'exit 0'"
+    },
+    {
+      "confidence": "high",
+      "evidence": [
+        "junit failure (first) (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'\\n  \\n  - err-o-roadrunner 7.7.7\\n  ?                  ^ ^ ^\\n  + err-o-roadrunner 1.2.3\\n  ?                  ^ ^ ^\\npyproject_state = 'valid', metadata_state = 'different'\\nrun_mode = 'checkout_script'\\ntmp_path = PosixPath('<pytest-tmp>/pytest-5/test_version_resolution_matrix4')\\n\\n    @pytest.mark.parametrize(\\n        "
+      ],
+      "id": "F1",
+      "kind": "junit",
+      "location": {},
+      "suggestion": "Open the first failing testcase in the JUnit XML and read the message/stack.",
+      "verify_command": "sh -c 'exit 0'"
+    },
+    {
+      "confidence": "low",
+      "evidence": [
+        "web search keywords (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'\\n  \\n  - err-o-roadrunner 7.7.7\\n  ?                  ^ ^ ^\\n  + err-o-roadrunner 1.2.3\\n  ?                  ^ ^ ^\\npyproject_state = 'valid', metadata_state = 'different'\\nrun_mode = 'checkout_script'\\ntmp_path = PosixPath('<pytest-tmp>/pytest-5/test_version_resolution_matrix4')\\n\\n    @pytest.mark.parametrize(\\n        "
+      ],
+      "id": "F2",
+      "kind": "assertion",
+      "location": {},
+      "suggestion": "Open the failing assertion site and compare expected vs actual values.",
+      "verify_command": "sh -c 'exit 0'"
+    },
+    {
+      "confidence": "low",
+      "evidence": [
+        "exit code: 1"
+      ],
+      "id": "F3",
+      "kind": "generic",
+      "location": {},
+      "suggestion": "Re-run reproduce_command with verbose logging and inspect stderr.",
+      "verify_command": "sh -c 'exit 0'"
+    }
+  ],
+  "groups": {
+    "buckets": [
+      {
+        "count": 64,
+        "errors": [
+          {
+            "error_type": "AssertionError",
+            "first_seen": 0,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|different|checkout_script]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|different|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 1,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|different|module]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|different|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 2,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|different|other_cwd]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|different|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 3,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|absent|checkout_script]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|absent|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 4,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|absent|module]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|absent|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 5,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|absent|other_cwd]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|absent|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 6,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|different|checkout_script]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|different|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 7,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|different|module]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|different|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 8,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|different|other_cwd]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|different|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 9,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|absent|checkout_script]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|absent|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 10,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|absent|module]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|absent|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 11,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|absent|other_cwd]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|absent|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 12,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|different|checkout_script]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|different|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 13,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|different|module]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|different|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 14,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|different|other_cwd]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|different|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 15,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|absent|checkout_script]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|absent|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 16,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|absent|module]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|absent|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 17,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|absent|other_cwd]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|absent|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 18,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|different|checkout_script]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|different|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 19,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|different|module]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|different|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 20,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|different|other_cwd]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|different|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 21,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|absent|checkout_script]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|absent|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 22,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|absent|module]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|absent|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 23,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|absent|other_cwd]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|absent|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 24,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|different|checkout_script]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|different|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 25,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|different|module]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|different|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 26,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|different|other_cwd]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|different|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 27,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|absent|checkout_script]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|absent|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 28,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|absent|module]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|absent|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 29,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|absent|other_cwd]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|absent|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 30,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|different|checkout_script]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|different|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 31,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|different|module]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|different|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 32,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|different|other_cwd]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|different|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 33,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|absent|checkout_script]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|absent|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 34,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|absent|module]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|absent|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 35,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|absent|other_cwd]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|absent|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 36,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|different|checkout_script]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|different|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 37,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|different|module]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|different|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 38,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|different|other_cwd]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|different|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 39,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|absent|checkout_script]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|absent|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 40,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|absent|module]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|absent|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 41,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|absent|other_cwd]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|absent|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 42,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|different|checkout_script]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|different|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 43,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|different|module]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|different|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 44,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|different|other_cwd]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|different|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 45,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|absent|checkout_script]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|absent|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 46,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|absent|module]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|absent|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 47,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|absent|other_cwd]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|absent|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 48,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|different|checkout_script]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|different|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 49,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|different|module]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|different|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 50,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|different|other_cwd]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|different|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 51,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|absent|checkout_script]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|absent|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 52,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|absent|module]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|absent|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 53,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+            "phase": "test",
+            "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+            "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|absent|other_cwd]",
+            "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|absent|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 54,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert '7.7.7' is None",
+            "phase": "test",
+            "signature": "assert '<n>.<n>' is None",
+            "source_line": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[valid]",
+            "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[valid]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 55,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert '7.7.7' is None",
+            "phase": "test",
+            "signature": "assert '<n>.<n>' is None",
+            "source_line": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[single_quoted]",
+            "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[single_quoted]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 56,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert '7.7.7' is None",
+            "phase": "test",
+            "signature": "assert '<n>.<n>' is None",
+            "source_line": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[version_trailing_comment]",
+            "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[version_trailing_comment]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 57,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert '7.7.7' is None",
+            "phase": "test",
+            "signature": "assert '<n>.<n>' is None",
+            "source_line": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[unreadable_oserror]",
+            "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[unreadable_oserror]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 58,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert '7.7.7' is None",
+            "phase": "test",
+            "signature": "assert '<n>.<n>' is None",
+            "source_line": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[version_in_multiline_string]",
+            "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[version_in_multiline_string]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 59,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert '7.7.7' is None",
+            "phase": "test",
+            "signature": "assert '<n>.<n>' is None",
+            "source_line": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[toml_header_comment]",
+            "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[toml_header_comment]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 60,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert '7.7.7' is None",
+            "phase": "test",
+            "signature": "assert '<n>.<n>' is None",
+            "source_line": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[toml_spaced_project_table]",
+            "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[toml_spaced_project_table]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 61,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert '7.7.7' is None",
+            "phase": "test",
+            "signature": "assert '<n>.<n>' is None",
+            "source_line": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[toml_quoted_keys]",
+            "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[toml_quoted_keys]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 62,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert '7.7.7' is None",
+            "phase": "test",
+            "signature": "assert '<n>.<n>' is None",
+            "source_line": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[toml_inline_project_table]",
+            "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[toml_inline_project_table]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 63,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert '7.7.7' is None",
+            "phase": "test",
+            "signature": "assert '<n>.<n>' is None",
+            "source_line": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[toml_version_unicode_escape]",
+            "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[toml_version_unicode_escape]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
+            "variants": [
+              "py3.10"
+            ]
+          }
+        ],
+        "first_seen": 0,
+        "key": {
+          "error_type": "AssertionError"
+        },
+        "name": "error_type=AssertionError"
+      }
+    ],
+    "error_count": 64,
+    "group_by": [
+      "error_type"
+    ],
+    "sort": "count"
+  },
+  "human_summary": "## Err-o-RoadRunner sentinel (escalated)\n\n- **Reasons:** junit_failure\n- **Command:** `sh -c 'exit 0'`\n- **Exit code:** 0\n\n### Hints\n- junit framework guess (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): pytest/python\n- junit assertion diff (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml):   - err-o-roadrunner 7.7.7   + err-o-roadrunner 1.2.3\n- web search keywords (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'\\n  \\n  - err-o-roadrunner 7.7.7\\n  ?                  ^ ^ ^\\n  + err-o-roadrunner 1.2.3\\n  ?                  ^ ^ ^\\npyproject_state = 'valid', metadata_state = 'different'\\nrun_mode = 'checkout_script'\\ntmp_path = PosixPath('<pytest-tmp>/pytest-5/test_version_resolution_matrix4')\\n\\n    @pytest.mark.parametrize(\\n        \n\n### Key findings\n- exit code: 1\n- junit failures (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): 64\n- junit failure (first) (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'\\n  \\n  - err-o-roadrunner 7.7.7\\n  ?                  ^ ^ ^\\n  + err-o-roadrunner 1.2.3\\n  ?                  ^ ^ ^\\npyproject_state = 'valid', metadata_state = 'different'\\nrun_mode = 'checkout_script'\\ntmp_path = PosixPath('<pytest-tmp>/pytest-5/test_version_resolution_matrix4')\\n\\n    @pytest.mark.parametrize(\\n        \n- junit failure (last) (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): pyproject_state = 'toml_version_unicode_escape'\\n\\n    @pytest.mark.parametrize(\"pyproject_state\", PYPROJECT_STATES)\\n    def test_toml_backends_agree_on_matrix_fixtures(pyproject_state: str) -> None:\\n        if pyproject_state in {\"missing\", \"invalid_utf8\"}:\\n            pytest.skip(\"no UTF-8 pyproject fixture text\")\\n        payload = pyproject_bytes(pyproject_state)\\n        assert payload is \n- junit failure groups (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): 64 failures in 3 groups\n- junit failure group 1/3 (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): 27× AssertionError: assert <q> == <q> — first: tests.test_version_matrix::test_version_resolution_matrix_cell[valid|absent|checkout_script] — msg: AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'\n- junit failure group 2/3 (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): 27× AssertionError: assert <q> == <q> — first: tests.test_version_matrix::test_version_resolution_matrix_cell[valid|different|checkout_script] — msg: AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'\n- junit failure group 3/3 (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): 10× AssertionError: assert <q> is None — first: tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[valid] — msg: AssertionError: assert '7.7.7' is None\n- junit testcase classname (first) (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): tests.test_version_matrix\n- junit pytest exception type (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): AssertionError\n- python version: <masked>\n- node version: <masked>\n- … 4 more FOUND lines in JSON\n\n### Fix candidates\n- **F4** (stale_metadata, high): Reinstall the package in editable mode (`pip install -e .` or `uv sync --reinstall`) and compare `importlib.metadata.version(...)` against the version in pyproject.toml / source.\n- **F1** (junit, high): Open the first failing testcase in the JUnit XML and read the message/stack.\n- **F2** (assertion, low): Open the failing assertion site and compare expected vs actual values.\n- **F3** (generic, low): Re-run reproduce_command with verbose logging and inspect stderr.",
+  "hypotheses": [
+    {
+      "confidence": "high",
+      "explains": [
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|different|checkout_script]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|different|module]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|different|other_cwd]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|absent|checkout_script]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|absent|module]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|absent|other_cwd]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|different|checkout_script]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|different|module]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|different|other_cwd]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|absent|checkout_script]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|absent|module]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|absent|other_cwd]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|different|checkout_script]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|different|module]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|different|other_cwd]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|absent|checkout_script]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|absent|module]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|absent|other_cwd]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|different|checkout_script]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|different|module]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|different|other_cwd]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|absent|checkout_script]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|absent|module]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|absent|other_cwd]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|different|checkout_script]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|different|module]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|different|other_cwd]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|absent|checkout_script]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|absent|module]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|absent|other_cwd]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|different|checkout_script]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|different|module]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|different|other_cwd]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|absent|checkout_script]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|absent|module]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|absent|other_cwd]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|different|checkout_script]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|different|module]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|different|other_cwd]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|absent|checkout_script]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|absent|module]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|absent|other_cwd]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|different|checkout_script]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|different|module]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|different|other_cwd]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|absent|checkout_script]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|absent|module]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|absent|other_cwd]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|different|checkout_script]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|different|module]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|different|other_cwd]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|absent|checkout_script]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|absent|module]",
+        "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|absent|other_cwd]"
+      ],
+      "id": "H1",
+      "source_squads": [
+        "code",
+        "history"
+      ],
+      "summary": "stale installed metadata or env override"
+    }
+  ],
+  "locations": [],
+  "matrix": {
+    "axes": {
+      "flavor": 1,
+      "python": 1
+    },
+    "failing": 1,
+    "total": 1
+  },
+  "mode": "escalated",
+  "next_investigation_steps": [
+    "Open the JUnit XML and read the first failure or error testcase.",
+    "Reproduce with the same Node version; check package-lock or lockfile.",
+    "Use HINT web search keywords before deeper code archaeology."
+  ],
+  "outcome": {
+    "exit_code": 0,
+    "junit_failure": true,
+    "raw_exit_code": 0,
+    "signal": null,
+    "termination_signal": null,
+    "timed_out": false
+  },
+  "records": [
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner 1.2.3'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|different|checkout_script]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner 1.2.3'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|different|module]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner 1.2.3'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|different|other_cwd]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner unknown'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|absent|checkout_script]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner unknown'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|absent|module]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner unknown'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|absent|other_cwd]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner 1.2.3'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|different|checkout_script]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner 1.2.3'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|different|module]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner 1.2.3'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|different|other_cwd]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner unknown'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|absent|checkout_script]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner unknown'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|absent|module]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner unknown'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|absent|other_cwd]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner 1.2.3'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|different|checkout_script]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner 1.2.3'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|different|module]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner 1.2.3'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|different|other_cwd]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner unknown'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|absent|checkout_script]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner unknown'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|absent|module]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner unknown'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|absent|other_cwd]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner 1.2.3'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|different|checkout_script]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner 1.2.3'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|different|module]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner 1.2.3'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|different|other_cwd]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner unknown'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|absent|checkout_script]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner unknown'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|absent|module]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner unknown'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|absent|other_cwd]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner 1.2.3'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|different|checkout_script]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner 1.2.3'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|different|module]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner 1.2.3'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|different|other_cwd]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner unknown'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|absent|checkout_script]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner unknown'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|absent|module]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner unknown'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|absent|other_cwd]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner 1.2.3'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|different|checkout_script]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner 1.2.3'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|different|module]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner 1.2.3'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|different|other_cwd]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner unknown'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|absent|checkout_script]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner unknown'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|absent|module]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner unknown'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|absent|other_cwd]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner 1.2.3'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|different|checkout_script]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner 1.2.3'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|different|module]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner 1.2.3'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|different|other_cwd]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner unknown'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|absent|checkout_script]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner unknown'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|absent|module]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner unknown'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|absent|other_cwd]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner 1.2.3'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|different|checkout_script]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner 1.2.3'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|different|module]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner 1.2.3'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|different|other_cwd]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner unknown'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|absent|checkout_script]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner unknown'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|absent|module]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner unknown'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|absent|other_cwd]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner 1.2.3'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|different|checkout_script]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner 1.2.3'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|different|module]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner 1.2.3'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|different|other_cwd]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner unknown'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|absent|checkout_script]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner unknown'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|absent|module]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'err-o-roadrunner unknown'",
+      "assert_right": "'err-o-roadrunner 7.7.7'",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+      "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|absent|other_cwd]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'7.7.7'",
+      "assert_right": "None",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert '7.7.7' is None",
+      "signature": "assert '<n>.<n>' is None",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[valid]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'7.7.7'",
+      "assert_right": "None",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert '7.7.7' is None",
+      "signature": "assert '<n>.<n>' is None",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[single_quoted]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'7.7.7'",
+      "assert_right": "None",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert '7.7.7' is None",
+      "signature": "assert '<n>.<n>' is None",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[version_trailing_comment]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'7.7.7'",
+      "assert_right": "None",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert '7.7.7' is None",
+      "signature": "assert '<n>.<n>' is None",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[unreadable_oserror]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'7.7.7'",
+      "assert_right": "None",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert '7.7.7' is None",
+      "signature": "assert '<n>.<n>' is None",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[version_in_multiline_string]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'7.7.7'",
+      "assert_right": "None",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert '7.7.7' is None",
+      "signature": "assert '<n>.<n>' is None",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[toml_header_comment]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'7.7.7'",
+      "assert_right": "None",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert '7.7.7' is None",
+      "signature": "assert '<n>.<n>' is None",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[toml_spaced_project_table]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'7.7.7'",
+      "assert_right": "None",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert '7.7.7' is None",
+      "signature": "assert '<n>.<n>' is None",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[toml_quoted_keys]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'7.7.7'",
+      "assert_right": "None",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert '7.7.7' is None",
+      "signature": "assert '<n>.<n>' is None",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[toml_inline_project_table]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    },
+    {
+      "artifact": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+      "assert_left": "'7.7.7'",
+      "assert_right": "None",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": null,
+      "message": "assert '7.7.7' is None",
+      "signature": "assert '<n>.<n>' is None",
+      "source_file": "",
+      "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[toml_version_unicode_escape]",
+      "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
+      "variants": [
+        "py3.10"
+      ]
+    }
+  ],
+  "schema": "sentinel-report/v1",
+  "squads": [
+    {
+      "elapsed_ms": 0,
+      "findings": [],
+      "hypotheses": [],
+      "name": "code",
+      "status": "ok"
+    },
+    {
+      "elapsed_ms": 298,
+      "findings": [
+        {
+          "corpus_first": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+          "corpus_last": "Err-o-RoadRunner_38217458149_junit-py3.10_junit.xml",
+          "corpus_run_ids": [
+            "38216257471",
+            "38217458149"
+          ],
+          "flaky_marker": false,
+          "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+          "test_module": "tests.test_version_matrix"
+        },
+        {
+          "corpus_first": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+          "corpus_last": "Err-o-RoadRunner_38217458149_junit-py3.10_junit.xml",
+          "corpus_run_ids": [
+            "38216257471",
+            "38217458149"
+          ],
+          "flaky_marker": false,
+          "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+          "test_module": "tests.test_version_matrix"
+        },
+        {
+          "corpus_first": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+          "corpus_last": "Err-o-RoadRunner_38217458149_junit-py3.10_junit.xml",
+          "corpus_run_ids": [
+            "38216257471",
+            "38217458149"
+          ],
+          "flaky_marker": false,
+          "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+          "test_module": "tests.test_version_matrix"
+        },
+        {
+          "corpus_first": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+          "corpus_last": "Err-o-RoadRunner_38217458149_junit-py3.10_junit.xml",
+          "corpus_run_ids": [
+            "38216257471",
+            "38217458149"
+          ],
+          "flaky_marker": false,
+          "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+          "test_module": "tests.test_version_matrix"
+        },
+        {
+          "corpus_first": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+          "corpus_last": "Err-o-RoadRunner_38217458149_junit-py3.10_junit.xml",
+          "corpus_run_ids": [
+            "38216257471",
+            "38217458149"
+          ],
+          "flaky_marker": false,
+          "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+          "test_module": "tests.test_version_matrix"
+        },
+        {
+          "corpus_first": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+          "corpus_last": "Err-o-RoadRunner_38217458149_junit-py3.10_junit.xml",
+          "corpus_run_ids": [
+            "38216257471",
+            "38217458149"
+          ],
+          "flaky_marker": false,
+          "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+          "test_module": "tests.test_version_matrix"
+        },
+        {
+          "corpus_first": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+          "corpus_last": "Err-o-RoadRunner_38217458149_junit-py3.10_junit.xml",
+          "corpus_run_ids": [
+            "38216257471",
+            "38217458149"
+          ],
+          "flaky_marker": false,
+          "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+          "test_module": "tests.test_version_matrix"
+        },
+        {
+          "corpus_first": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+          "corpus_last": "Err-o-RoadRunner_38217458149_junit-py3.10_junit.xml",
+          "corpus_run_ids": [
+            "38216257471",
+            "38217458149"
+          ],
+          "flaky_marker": false,
+          "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+          "test_module": "tests.test_version_matrix"
+        },
+        {
+          "corpus_first": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+          "corpus_last": "Err-o-RoadRunner_38217458149_junit-py3.10_junit.xml",
+          "corpus_run_ids": [
+            "38216257471",
+            "38217458149"
+          ],
+          "flaky_marker": false,
+          "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+          "test_module": "tests.test_version_matrix"
+        },
+        {
+          "corpus_first": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+          "corpus_last": "Err-o-RoadRunner_38217458149_junit-py3.10_junit.xml",
+          "corpus_run_ids": [
+            "38216257471",
+            "38217458149"
+          ],
+          "flaky_marker": false,
+          "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+          "test_module": "tests.test_version_matrix"
+        },
+        {
+          "corpus_first": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+          "corpus_last": "Err-o-RoadRunner_38217458149_junit-py3.10_junit.xml",
+          "corpus_run_ids": [
+            "38216257471",
+            "38217458149"
+          ],
+          "flaky_marker": false,
+          "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+          "test_module": "tests.test_version_matrix"
+        },
+        {
+          "corpus_first": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+          "corpus_last": "Err-o-RoadRunner_38217458149_junit-py3.10_junit.xml",
+          "corpus_run_ids": [
+            "38216257471",
+            "38217458149"
+          ],
+          "flaky_marker": false,
+          "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+          "test_module": "tests.test_version_matrix"
+        },
+        {
+          "corpus_first": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+          "corpus_last": "Err-o-RoadRunner_38217458149_junit-py3.10_junit.xml",
+          "corpus_run_ids": [
+            "38216257471",
+            "38217458149"
+          ],
+          "flaky_marker": false,
+          "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+          "test_module": "tests.test_version_matrix"
+        },
+        {
+          "corpus_first": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+          "corpus_last": "Err-o-RoadRunner_38217458149_junit-py3.10_junit.xml",
+          "corpus_run_ids": [
+            "38216257471",
+            "38217458149"
+          ],
+          "flaky_marker": false,
+          "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+          "test_module": "tests.test_version_matrix"
+        },
+        {
+          "corpus_first": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+          "corpus_last": "Err-o-RoadRunner_38217458149_junit-py3.10_junit.xml",
+          "corpus_run_ids": [
+            "38216257471",
+            "38217458149"
+          ],
+          "flaky_marker": false,
+          "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+          "test_module": "tests.test_version_matrix"
+        },
+        {
+          "corpus_first": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+          "corpus_last": "Err-o-RoadRunner_38217458149_junit-py3.10_junit.xml",
+          "corpus_run_ids": [
+            "38216257471",
+            "38217458149"
+          ],
+          "flaky_marker": false,
+          "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+          "test_module": "tests.test_version_matrix"
+        },
+        {
+          "corpus_first": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+          "corpus_last": "Err-o-RoadRunner_38217458149_junit-py3.10_junit.xml",
+          "corpus_run_ids": [
+            "38216257471",
+            "38217458149"
+          ],
+          "flaky_marker": false,
+          "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+          "test_module": "tests.test_version_matrix"
+        },
+        {
+          "corpus_first": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+          "corpus_last": "Err-o-RoadRunner_38217458149_junit-py3.10_junit.xml",
+          "corpus_run_ids": [
+            "38216257471",
+            "38217458149"
+          ],
+          "flaky_marker": false,
+          "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
+          "test_module": "tests.test_version_matrix"
+        },
+        {
+          "corpus_first": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+          "corpus_last": "Err-o-RoadRunner_38217458149_junit-py3.10_junit.xml",
+          "corpus_run_ids": [
+            "38216257471",
+            "38217458149"
+          ],
+          "flaky_marker": false,
+          "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+          "test_module": "tests.test_version_matrix"
+        },
+        {
+          "corpus_first": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
+          "corpus_last": "Err-o-RoadRunner_38217458149_junit-py3.10_junit.xml",
+          "corpus_run_ids": [
+            "38216257471",
+            "38217458149"
+          ],
+          "flaky_marker": false,
+          "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
+          "test_module": "tests.test_version_matrix"
+        }
+      ],
+      "hypotheses": [],
+      "name": "history",
+      "status": "ok"
+    }
+  ],
+  "timing": {
+    "elapsed_seconds": 0.004,
+    "started_monotonic": 1474.633714175
+  },
+  "top_causes": [
+    {
+      "count": 27,
+      "error_type": "AssertionError",
+      "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'"
+    },
+    {
+      "count": 27,
+      "error_type": "AssertionError",
+      "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'"
+    },
+    {
+      "count": 10,
+      "error_type": "AssertionError",
+      "signature": "assert '<n>.<n>' is None"
+    }
+  ],
+  "triage": {
+    "found": [
+      "exit code: 1",
+      "junit failures (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): 64",
+      "junit failure (first) (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'\\n  \\n  - err-o-roadrunner 7.7.7\\n  ?                  ^ ^ ^\\n  + err-o-roadrunner 1.2.3\\n  ?                  ^ ^ ^\\npyproject_state = 'valid', metadata_state = 'different'\\nrun_mode = 'checkout_script'\\ntmp_path = PosixPath('<pytest-tmp>/pytest-5/test_version_resolution_matrix4')\\n\\n    @pytest.mark.parametrize(\\n        ",
+      "junit failure (last) (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): pyproject_state = 'toml_version_unicode_escape'\\n\\n    @pytest.mark.parametrize(\"pyproject_state\", PYPROJECT_STATES)\\n    def test_toml_backends_agree_on_matrix_fixtures(pyproject_state: str) -> None:\\n        if pyproject_state in {\"missing\", \"invalid_utf8\"}:\\n            pytest.skip(\"no UTF-8 pyproject fixture text\")\\n        payload = pyproject_bytes(pyproject_state)\\n        assert payload is ",
+      "junit failure groups (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): 64 failures in 3 groups",
+      "junit failure group 1/3 (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): 27× AssertionError: assert <q> == <q> — first: tests.test_version_matrix::test_version_resolution_matrix_cell[valid|absent|checkout_script] — msg: AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'",
+      "junit failure group 2/3 (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): 27× AssertionError: assert <q> == <q> — first: tests.test_version_matrix::test_version_resolution_matrix_cell[valid|different|checkout_script] — msg: AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'",
+      "junit failure group 3/3 (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): 10× AssertionError: assert <q> is None — first: tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[valid] — msg: AssertionError: assert '7.7.7' is None",
+      "junit testcase classname (first) (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): tests.test_version_matrix",
+      "junit pytest exception type (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): AssertionError",
+      "python version: <masked>",
+      "node version: <masked>",
+      "gh version: <masked>",
+      "lock files present: uv.lock",
+      "environment variable count: 38",
+      "environment variable names: AGENT_TRANSCRIPTS, CARGO_HOME, CURSOR_AGENT, CURSOR_AGENT_SOCKET, CURSOR_CONVERSATION_ID, CURSOR_REQUEST_ID, CURSOR_RIPGREP_PATH, CURSOR_SPAWN_CWD_HOP, CURSOR_WORKLOAD_CGROUP, DISPLAY, EXEC_DAEMON_STARTUP_TRACEPARENT, FORCE_COLOR, GH_TELEMETRY, GIT_DISCOVERY_ACROSS_FILESYSTEM, GIT_LFS_SKIP_SMUDGE, HOME, LANG, LC_ALL, NO_COLOR, NVM_BIN, NVM_CD_FLAGS, NVM_DIR, NVM_INC, OLDPWD, PATH, PS1, PWD, RUSTUP_HOME, RUST_VERSION, SHELL, SHLVL, TERM, USER, VNC_DPI, VNC_RESOLUTION, _, _ZO_DOCTOR, __CURSOR_SANDBOX_ENV_RESTORE"
+    ],
+    "hints": [
+      "junit framework guess (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): pytest/python",
+      "junit assertion diff (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml):   - err-o-roadrunner 7.7.7   + err-o-roadrunner 1.2.3",
+      "web search keywords (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'\\n  \\n  - err-o-roadrunner 7.7.7\\n  ?                  ^ ^ ^\\n  + err-o-roadrunner 1.2.3\\n  ?                  ^ ^ ^\\npyproject_state = 'valid', metadata_state = 'different'\\nrun_mode = 'checkout_script'\\ntmp_path = PosixPath('<pytest-tmp>/pytest-5/test_version_resolution_matrix4')\\n\\n    @pytest.mark.parametrize(\\n        "
+    ],
+    "not_found": [
+      "junit errors (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml)",
+      "junit skipped (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml)",
+      "junit dart error (first) (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml)",
+      "junit system-err (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml)",
+      "junit collection errors (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml)"
+    ]
+  }
+}

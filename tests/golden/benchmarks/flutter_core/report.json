@@ -1,0 +1,648 @@
+{
+  "capture": {
+    "stderr_tail": "",
+    "stdout_tail": ""
+  },
+  "command": {
+    "argv": [
+      "sh",
+      "-c",
+      "exit 0"
+    ],
+    "cwd": "/workspace",
+    "reproduce_command": "sh -c 'exit 0'"
+  },
+  "environment": {
+    "values_redacted": {
+      "AGENT_TRANSCRIPTS": "/home/ubuntu/.cursor/projects/workspace/agent-transcripts",
+      "CARGO_HOME": "/usr/local/cargo",
+      "CURSOR_AGENT": "1",
+      "CURSOR_AGENT_SOCKET": "/run/cursor/api.sock",
+      "CURSOR_CONVERSATION_ID": "bc-0f8647a1-bce9-587a-8267-02eb9897732b",
+      "CURSOR_REQUEST_ID": "be3ab99f-b95e-4aad-acf2-2e76ac598a38",
+      "CURSOR_RIPGREP_PATH": "/exec-daemon/rg",
+      "CURSOR_SPAWN_CWD_HOP": "1",
+      "CURSOR_WORKLOAD_CGROUP": "/sys/fs/cgroup/system.slice/pod-ytsvgnr46bguneeveynhwtskhm-373092d1/cursor-agent/workload",
+      "DISPLAY": ":1",
+      "EXEC_DAEMON_STARTUP_TRACEPARENT": "00-01a16378daeb703481d91775d1f51b2a-2ec75b356cb41f60-01",
+      "FORCE_COLOR": "0",
+      "GH_TELEMETRY": "false",
+      "GIT_DISCOVERY_ACROSS_FILESYSTEM": "0",
+      "GIT_LFS_SKIP_SMUDGE": "1",
+      "HOME": "/home/ubuntu",
+      "LANG": "en_US.UTF-8",
+      "LC_ALL": "en_US.UTF-8",
+      "NO_COLOR": "1",
+      "NVM_BIN": "/home/ubuntu/.nvm/versions/node/v22.23.4/bin",
+      "NVM_CD_FLAGS": "",
+      "NVM_DIR": "/home/ubuntu/.nvm",
+      "NVM_INC": "/home/ubuntu/.nvm/versions/node/v22.23.4/include/node",
+      "OLDPWD": "/workspace",
+      "PATH": "/usr/local/cargo/bin:/exec-daemon:/exec-daemon/tools:/usr/local/cargo/bin:/home/ubuntu/.nvm/versions/node/v22.23.4/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+      "PS1": "\\[\u001b[36m\\]\\W\\[\u001b[0m\\] $ ",
+      "PWD": "/workspace",
+      "RUSTUP_HOME": "/usr/local/rustup",
+      "RUST_VERSION": "1.83.0",
+      "SHELL": "/bin/bash",
+      "SHLVL": "1",
+      "TERM": "dumb",
+      "USER": "ubuntu",
+      "VNC_DPI": "96",
+      "VNC_RESOLUTION": "1920x1200x24",
+      "_": "/usr/bin/python3",
+      "_ZO_DOCTOR": "0",
+      "__CURSOR_SANDBOX_ENV_RESTORE": "builtin unset CURSOR_CONVERSATION_ID CURSOR_REQUEST_ID CURSOR_AGENT_STORE_FILES_DIR CURSOR_AGENT_STORE_SHARED_PATHS 2>/dev/null || true; builtin export CURSOR_CONVERSATION_ID='bc-0f8647a1-bce9-587a-8…"
+    },
+    "variable_count": 38,
+    "variable_names": [
+      "AGENT_TRANSCRIPTS",
+      "CARGO_HOME",
+      "CURSOR_AGENT",
+      "CURSOR_AGENT_SOCKET",
+      "CURSOR_CONVERSATION_ID",
+      "CURSOR_REQUEST_ID",
+      "CURSOR_RIPGREP_PATH",
+      "CURSOR_SPAWN_CWD_HOP",
+      "CURSOR_WORKLOAD_CGROUP",
+      "DISPLAY",
+      "EXEC_DAEMON_STARTUP_TRACEPARENT",
+      "FORCE_COLOR",
+      "GH_TELEMETRY",
+      "GIT_DISCOVERY_ACROSS_FILESYSTEM",
+      "GIT_LFS_SKIP_SMUDGE",
+      "HOME",
+      "LANG",
+      "LC_ALL",
+      "NO_COLOR",
+      "NVM_BIN",
+      "NVM_CD_FLAGS",
+      "NVM_DIR",
+      "NVM_INC",
+      "OLDPWD",
+      "PATH",
+      "PS1",
+      "PWD",
+      "RUSTUP_HOME",
+      "RUST_VERSION",
+      "SHELL",
+      "SHLVL",
+      "TERM",
+      "USER",
+      "VNC_DPI",
+      "VNC_RESOLUTION",
+      "_",
+      "_ZO_DOCTOR",
+      "__CURSOR_SANDBOX_ENV_RESTORE"
+    ],
+    "variable_names_truncated": false
+  },
+  "escalation_reasons": [
+    "junit_failure"
+  ],
+  "fix_candidates": [
+    {
+      "confidence": "low",
+      "evidence": [
+        "exit code: 1"
+      ],
+      "id": "F1",
+      "kind": "generic",
+      "location": {},
+      "suggestion": "Re-run reproduce_command with verbose logging and inspect stderr.",
+      "verify_command": "sh -c 'exit 0'"
+    }
+  ],
+  "groups": {
+    "buckets": [
+      {
+        "count": 12,
+        "errors": [
+          {
+            "error_type": "DartMissingImport",
+            "first_seen": 0,
+            "kind": "junit",
+            "language": "dart",
+            "location": {
+              "line": "1",
+              "line_secondary": "7",
+              "loc": "lib/shared/catalog/catalog_search.dart",
+              "loc_secondary": "lib/shared/catalog/catalog_search.dart"
+            },
+            "message": "Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory",
+            "phase": "test",
+            "signature": "Error when reading 'lib<path>': No such file or directory",
+            "source_line": "<runner-work>/test/core/navigation/numbered_routes_observation_test.dart::loading <runner-work>/test/core/navigation/numbered_routes_observation_test.dart",
+            "test_id": "<runner-work>/test/core/navigation/numbered_routes_observation_test.dart::loading <runner-work>/test/core/navigation/numbered_routes_observation_test.dart",
+            "variants": [
+              "flutter-core-0",
+              "flutter-core-1"
+            ]
+          },
+          {
+            "error_type": "DartMissingImport",
+            "first_seen": 1,
+            "kind": "junit",
+            "language": "dart",
+            "location": {
+              "line": "1",
+              "line_secondary": "7",
+              "loc": "lib/shared/catalog/catalog_search.dart",
+              "loc_secondary": "lib/shared/catalog/catalog_search.dart"
+            },
+            "message": "Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory",
+            "phase": "test",
+            "signature": "Error when reading 'lib<path>': No such file or directory",
+            "source_line": "<runner-work>/test/core/navigation/app_route_registry_test.dart::loading <runner-work>/test/core/navigation/app_route_registry_test.dart",
+            "test_id": "<runner-work>/test/core/navigation/app_route_registry_test.dart::loading <runner-work>/test/core/navigation/app_route_registry_test.dart",
+            "variants": [
+              "flutter-core-0",
+              "flutter-core-1"
+            ]
+          },
+          {
+            "error_type": "DartMissingImport",
+            "first_seen": 2,
+            "kind": "junit",
+            "language": "dart",
+            "location": {
+              "line": "1",
+              "line_secondary": "7",
+              "loc": "lib/shared/catalog/catalog_search.dart",
+              "loc_secondary": "lib/shared/catalog/catalog_search.dart"
+            },
+            "message": "Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory",
+            "phase": "test",
+            "signature": "Error when reading 'lib<path>': No such file or directory",
+            "source_line": "<runner-work>/test/screens/home_screen_test.dart::loading <runner-work>/test/screens/home_screen_test.dart",
+            "test_id": "<runner-work>/test/screens/home_screen_test.dart::loading <runner-work>/test/screens/home_screen_test.dart",
+            "variants": [
+              "flutter-core-0",
+              "flutter-core-1"
+            ]
+          },
+          {
+            "error_type": "DartMissingImport",
+            "first_seen": 3,
+            "kind": "junit",
+            "language": "dart",
+            "location": {
+              "line": "1",
+              "line_secondary": "7",
+              "loc": "lib/shared/catalog/catalog_search.dart",
+              "loc_secondary": "lib/shared/catalog/catalog_search.dart"
+            },
+            "message": "Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory",
+            "phase": "test",
+            "signature": "Error when reading 'lib<path>': No such file or directory",
+            "source_line": "<runner-work>/test/screens/ui_showcase_test.dart::loading <runner-work>/test/screens/ui_showcase_test.dart",
+            "test_id": "<runner-work>/test/screens/ui_showcase_test.dart::loading <runner-work>/test/screens/ui_showcase_test.dart",
+            "variants": [
+              "flutter-core-0",
+              "flutter-core-1"
+            ]
+          },
+          {
+            "error_type": "DartMissingImport",
+            "first_seen": 4,
+            "kind": "junit",
+            "language": "dart",
+            "location": {
+              "line": "1",
+              "line_secondary": "7",
+              "loc": "lib/shared/catalog/catalog_search.dart",
+              "loc_secondary": "lib/shared/catalog/catalog_search.dart"
+            },
+            "message": "Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory",
+            "phase": "test",
+            "signature": "Error when reading 'lib<path>': No such file or directory",
+            "source_line": "<runner-work>/test/screens/mini_apps_stage1_test.dart::loading <runner-work>/test/screens/mini_apps_stage1_test.dart",
+            "test_id": "<runner-work>/test/screens/mini_apps_stage1_test.dart::loading <runner-work>/test/screens/mini_apps_stage1_test.dart",
+            "variants": [
+              "flutter-core-0",
+              "flutter-core-1"
+            ]
+          },
+          {
+            "error_type": "DartMissingImport",
+            "first_seen": 5,
+            "kind": "junit",
+            "language": "dart",
+            "location": {
+              "line": "1",
+              "line_secondary": "7",
+              "loc": "lib/shared/catalog/catalog_search.dart",
+              "loc_secondary": "lib/shared/catalog/catalog_search.dart"
+            },
+            "message": "Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory",
+            "phase": "test",
+            "signature": "Error when reading 'lib<path>': No such file or directory",
+            "source_line": "<runner-work>/test/screens/hub_screen_test.dart::loading <runner-work>/test/screens/hub_screen_test.dart",
+            "test_id": "<runner-work>/test/screens/hub_screen_test.dart::loading <runner-work>/test/screens/hub_screen_test.dart",
+            "variants": [
+              "flutter-core-0",
+              "flutter-core-1"
+            ]
+          },
+          {
+            "error_type": "DartMissingImport",
+            "first_seen": 6,
+            "kind": "junit",
+            "language": "dart",
+            "location": {
+              "line": "1",
+              "line_secondary": "7",
+              "loc": "lib/shared/catalog/catalog_search.dart",
+              "loc_secondary": "lib/shared/catalog/catalog_search.dart"
+            },
+            "message": "Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory",
+            "phase": "test",
+            "signature": "Error when reading 'lib<path>': No such file or directory",
+            "source_line": "<runner-work>/test/screens/mini_apps_stage2_test.dart::loading <runner-work>/test/screens/mini_apps_stage2_test.dart",
+            "test_id": "<runner-work>/test/screens/mini_apps_stage2_test.dart::loading <runner-work>/test/screens/mini_apps_stage2_test.dart",
+            "variants": [
+              "flutter-core-0",
+              "flutter-core-1"
+            ]
+          },
+          {
+            "error_type": "DartMissingImport",
+            "first_seen": 7,
+            "kind": "junit",
+            "language": "dart",
+            "location": {
+              "line": "1",
+              "line_secondary": "7",
+              "loc": "lib/shared/catalog/catalog_search.dart",
+              "loc_secondary": "lib/shared/catalog/catalog_search.dart"
+            },
+            "message": "Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory",
+            "phase": "test",
+            "signature": "Error when reading 'lib<path>': No such file or directory",
+            "source_line": "<runner-work>/test/screens/screens_data_test.dart::loading <runner-work>/test/screens/screens_data_test.dart",
+            "test_id": "<runner-work>/test/screens/screens_data_test.dart::loading <runner-work>/test/screens/screens_data_test.dart",
+            "variants": [
+              "flutter-core-0",
+              "flutter-core-1"
+            ]
+          },
+          {
+            "error_type": "DartMissingImport",
+            "first_seen": 8,
+            "kind": "junit",
+            "language": "dart",
+            "location": {
+              "line": "1",
+              "line_secondary": "7",
+              "loc": "lib/shared/catalog/catalog_search.dart",
+              "loc_secondary": "lib/shared/catalog/catalog_search.dart"
+            },
+            "message": "Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory",
+            "phase": "test",
+            "signature": "Error when reading 'lib<path>': No such file or directory",
+            "source_line": "<runner-work>/test/screens/generic_screen_test.dart::loading <runner-work>/test/screens/generic_screen_test.dart",
+            "test_id": "<runner-work>/test/screens/generic_screen_test.dart::loading <runner-work>/test/screens/generic_screen_test.dart",
+            "variants": [
+              "flutter-core-0",
+              "flutter-core-1"
+            ]
+          },
+          {
+            "error_type": "DartMissingImport",
+            "first_seen": 9,
+            "kind": "junit",
+            "language": "dart",
+            "location": {
+              "line": "1",
+              "line_secondary": "7",
+              "loc": "lib/shared/catalog/catalog_search.dart",
+              "loc_secondary": "lib/shared/catalog/catalog_search.dart"
+            },
+            "message": "Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory",
+            "phase": "test",
+            "signature": "Error when reading 'lib<path>': No such file or directory",
+            "source_line": "<runner-work>/test/shared/display/display_german_overflow_test.dart::loading <runner-work>/test/shared/display/display_german_overflow_test.dart",
+            "test_id": "<runner-work>/test/shared/display/display_german_overflow_test.dart::loading <runner-work>/test/shared/display/display_german_overflow_test.dart",
+            "variants": [
+              "flutter-core-0",
+              "flutter-core-1"
+            ]
+          },
+          {
+            "error_type": "DartMissingImport",
+            "first_seen": 10,
+            "kind": "junit",
+            "language": "dart",
+            "location": {
+              "line": "1",
+              "line_secondary": "7",
+              "loc": "lib/shared/catalog/catalog_search.dart",
+              "loc_secondary": "lib/shared/catalog/catalog_search.dart"
+            },
+            "message": "Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory",
+            "phase": "test",
+            "signature": "Error when reading 'lib<path>': No such file or directory",
+            "source_line": "<runner-work>/test/shared/catalog/catalog_search_test.dart::loading <runner-work>/test/shared/catalog/catalog_search_test.dart",
+            "test_id": "<runner-work>/test/shared/catalog/catalog_search_test.dart::loading <runner-work>/test/shared/catalog/catalog_search_test.dart",
+            "variants": [
+              "flutter-core-0",
+              "flutter-core-1"
+            ]
+          },
+          {
+            "error_type": "DartMissingImport",
+            "first_seen": 11,
+            "kind": "junit",
+            "language": "dart",
+            "location": {
+              "line": "1",
+              "line_secondary": "7",
+              "loc": "lib/shared/catalog/catalog_search.dart",
+              "loc_secondary": "lib/shared/catalog/catalog_search.dart"
+            },
+            "message": "Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory",
+            "phase": "test",
+            "signature": "Error when reading 'lib<path>': No such file or directory",
+            "source_line": "<runner-work>/test/features/home/presentation/home_screen_test.dart::loading <runner-work>/test/features/home/presentation/home_screen_test.dart",
+            "test_id": "<runner-work>/test/features/home/presentation/home_screen_test.dart::loading <runner-work>/test/features/home/presentation/home_screen_test.dart",
+            "variants": [
+              "flutter-core-0",
+              "flutter-core-1"
+            ]
+          }
+        ],
+        "first_seen": 0,
+        "key": {
+          "error_type": "DartMissingImport"
+        },
+        "name": "error_type=DartMissingImport"
+      }
+    ],
+    "error_count": 12,
+    "group_by": [
+      "error_type"
+    ],
+    "sort": "count"
+  },
+  "human_summary": "## Err-o-RoadRunner sentinel (escalated)\n\n- **Reasons:** junit_failure\n- **Command:** `sh -c 'exit 0'`\n- **Exit code:** 0\n\n### Hints\n- junit framework guess (2 variants): flutter/dart\n- web search keywords (2 variants): Flutter test error\\nFailed to load \"<runner-work>/test/core/navigation/numbered_routes_observation_test.dart\":\\nCompilation failed for testPath=<runner-work>/test/core/navigation/numbered_routes_observation_test.dart: lib/shared/catalog/catalog_search.dart:1:8: Error: Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory\\nimport '../screens/generic_screen.dart';\\n \n\n### Key findings\n- exit code: 1\n- junit errors (2 variants): 12\n- junit error (first) (2 variants): Flutter test error\\nFailed to load \"<runner-work>/test/core/navigation/numbered_routes_observation_test.dart\":\\nCompilation failed for testPath=<runner-work>/test/core/navigation/numbered_routes_observation_test.dart: lib/shared/catalog/catalog_search.dart:1:8: Error: Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory\\nimport '../screens/generic_screen.dart';\\n \n- junit failure groups (2 variants): 12 failures in 1 group\n- junit failure group 1/1 (2 variants): 12× Error when reading <q>: No such file or directory — first: <runner-work>/test/core/navigation/numbered_routes_observation_test.dart::loading <runner-work>/test/core/navigation/numbered_routes_observation_test.dart — msg: Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory\n- junit testcase classname (first) (2 variants): <runner-work>/test/core/navigation/numbered_routes_observation_test.dart\n- junit dart error (first) (2 variants): lib/shared/catalog/catalog_search.dart:7:6: Error: Type 'ScreenData' not found.\n- python version: 3.12.3 (cpython)\n- node version: v22.23.4\n- gh version: gh version 2.102.0 (2026-09-30)\n- lock files present: uv.lock\n- environment variable count: 38\n- … 1 more FOUND lines in JSON\n\n### Fix candidates\n- **F1** (generic, low): Re-run reproduce_command with verbose logging and inspect stderr.",
+  "hypotheses": [],
+  "locations": [],
+  "mode": "escalated",
+  "next_investigation_steps": [
+    "Open the JUnit XML and read the first failure or error testcase.",
+    "Reproduce with the same Node version; check package-lock or lockfile.",
+    "Use HINT web search keywords before deeper code archaeology."
+  ],
+  "outcome": {
+    "exit_code": 0,
+    "junit_failure": true,
+    "raw_exit_code": 0,
+    "signal": null,
+    "termination_signal": null,
+    "timed_out": false
+  },
+  "records": [
+    {
+      "artifact": "flutter_navigation_basic_38139683688_junit-flutter-core-0_78.xml",
+      "error_type": "DartMissingImport",
+      "language": "dart",
+      "line": 1,
+      "line_secondary": 7,
+      "message": "Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory",
+      "signature": "Error when reading 'lib<path>': No such file or directory",
+      "source_file": "lib/shared/catalog/catalog_search.dart",
+      "source_file_secondary": "lib/shared/catalog/catalog_search.dart",
+      "test_id": "<runner-work>/test/core/navigation/numbered_routes_observation_test.dart::loading <runner-work>/test/core/navigation/numbered_routes_observation_test.dart",
+      "variant": "flutter-core-0",
+      "variants": [
+        "flutter-core-0",
+        "flutter-core-1"
+      ]
+    },
+    {
+      "artifact": "flutter_navigation_basic_38139683688_junit-flutter-core-0_78.xml",
+      "error_type": "DartMissingImport",
+      "language": "dart",
+      "line": 1,
+      "line_secondary": 7,
+      "message": "Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory",
+      "signature": "Error when reading 'lib<path>': No such file or directory",
+      "source_file": "lib/shared/catalog/catalog_search.dart",
+      "source_file_secondary": "lib/shared/catalog/catalog_search.dart",
+      "test_id": "<runner-work>/test/core/navigation/app_route_registry_test.dart::loading <runner-work>/test/core/navigation/app_route_registry_test.dart",
+      "variant": "flutter-core-0",
+      "variants": [
+        "flutter-core-0",
+        "flutter-core-1"
+      ]
+    },
+    {
+      "artifact": "flutter_navigation_basic_38139683688_junit-flutter-core-0_78.xml",
+      "error_type": "DartMissingImport",
+      "language": "dart",
+      "line": 1,
+      "line_secondary": 7,
+      "message": "Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory",
+      "signature": "Error when reading 'lib<path>': No such file or directory",
+      "source_file": "lib/shared/catalog/catalog_search.dart",
+      "source_file_secondary": "lib/shared/catalog/catalog_search.dart",
+      "test_id": "<runner-work>/test/screens/home_screen_test.dart::loading <runner-work>/test/screens/home_screen_test.dart",
+      "variant": "flutter-core-0",
+      "variants": [
+        "flutter-core-0",
+        "flutter-core-1"
+      ]
+    },
+    {
+      "artifact": "flutter_navigation_basic_38139683688_junit-flutter-core-0_78.xml",
+      "error_type": "DartMissingImport",
+      "language": "dart",
+      "line": 1,
+      "line_secondary": 7,
+      "message": "Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory",
+      "signature": "Error when reading 'lib<path>': No such file or directory",
+      "source_file": "lib/shared/catalog/catalog_search.dart",
+      "source_file_secondary": "lib/shared/catalog/catalog_search.dart",
+      "test_id": "<runner-work>/test/screens/ui_showcase_test.dart::loading <runner-work>/test/screens/ui_showcase_test.dart",
+      "variant": "flutter-core-0",
+      "variants": [
+        "flutter-core-0",
+        "flutter-core-1"
+      ]
+    },
+    {
+      "artifact": "flutter_navigation_basic_38139683688_junit-flutter-core-0_78.xml",
+      "error_type": "DartMissingImport",
+      "language": "dart",
+      "line": 1,
+      "line_secondary": 7,
+      "message": "Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory",
+      "signature": "Error when reading 'lib<path>': No such file or directory",
+      "source_file": "lib/shared/catalog/catalog_search.dart",
+      "source_file_secondary": "lib/shared/catalog/catalog_search.dart",
+      "test_id": "<runner-work>/test/screens/mini_apps_stage1_test.dart::loading <runner-work>/test/screens/mini_apps_stage1_test.dart",
+      "variant": "flutter-core-0",
+      "variants": [
+        "flutter-core-0",
+        "flutter-core-1"
+      ]
+    },
+    {
+      "artifact": "flutter_navigation_basic_38139683688_junit-flutter-core-0_78.xml",
+      "error_type": "DartMissingImport",
+      "language": "dart",
+      "line": 1,
+      "line_secondary": 7,
+      "message": "Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory",
+      "signature": "Error when reading 'lib<path>': No such file or directory",
+      "source_file": "lib/shared/catalog/catalog_search.dart",
+      "source_file_secondary": "lib/shared/catalog/catalog_search.dart",
+      "test_id": "<runner-work>/test/screens/hub_screen_test.dart::loading <runner-work>/test/screens/hub_screen_test.dart",
+      "variant": "flutter-core-0",
+      "variants": [
+        "flutter-core-0",
+        "flutter-core-1"
+      ]
+    },
+    {
+      "artifact": "flutter_navigation_basic_38139683688_junit-flutter-core-0_78.xml",
+      "error_type": "DartMissingImport",
+      "language": "dart",
+      "line": 1,
+      "line_secondary": 7,
+      "message": "Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory",
+      "signature": "Error when reading 'lib<path>': No such file or directory",
+      "source_file": "lib/shared/catalog/catalog_search.dart",
+      "source_file_secondary": "lib/shared/catalog/catalog_search.dart",
+      "test_id": "<runner-work>/test/screens/mini_apps_stage2_test.dart::loading <runner-work>/test/screens/mini_apps_stage2_test.dart",
+      "variant": "flutter-core-0",
+      "variants": [
+        "flutter-core-0",
+        "flutter-core-1"
+      ]
+    },
+    {
+      "artifact": "flutter_navigation_basic_38139683688_junit-flutter-core-0_78.xml",
+      "error_type": "DartMissingImport",
+      "language": "dart",
+      "line": 1,
+      "line_secondary": 7,
+      "message": "Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory",
+      "signature": "Error when reading 'lib<path>': No such file or directory",
+      "source_file": "lib/shared/catalog/catalog_search.dart",
+      "source_file_secondary": "lib/shared/catalog/catalog_search.dart",
+      "test_id": "<runner-work>/test/screens/screens_data_test.dart::loading <runner-work>/test/screens/screens_data_test.dart",
+      "variant": "flutter-core-0",
+      "variants": [
+        "flutter-core-0",
+        "flutter-core-1"
+      ]
+    },
+    {
+      "artifact": "flutter_navigation_basic_38139683688_junit-flutter-core-0_78.xml",
+      "error_type": "DartMissingImport",
+      "language": "dart",
+      "line": 1,
+      "line_secondary": 7,
+      "message": "Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory",
+      "signature": "Error when reading 'lib<path>': No such file or directory",
+      "source_file": "lib/shared/catalog/catalog_search.dart",
+      "source_file_secondary": "lib/shared/catalog/catalog_search.dart",
+      "test_id": "<runner-work>/test/screens/generic_screen_test.dart::loading <runner-work>/test/screens/generic_screen_test.dart",
+      "variant": "flutter-core-0",
+      "variants": [
+        "flutter-core-0",
+        "flutter-core-1"
+      ]
+    },
+    {
+      "artifact": "flutter_navigation_basic_38139683688_junit-flutter-core-0_78.xml",
+      "error_type": "DartMissingImport",
+      "language": "dart",
+      "line": 1,
+      "line_secondary": 7,
+      "message": "Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory",
+      "signature": "Error when reading 'lib<path>': No such file or directory",
+      "source_file": "lib/shared/catalog/catalog_search.dart",
+      "source_file_secondary": "lib/shared/catalog/catalog_search.dart",
+      "test_id": "<runner-work>/test/shared/display/display_german_overflow_test.dart::loading <runner-work>/test/shared/display/display_german_overflow_test.dart",
+      "variant": "flutter-core-0",
+      "variants": [
+        "flutter-core-0",
+        "flutter-core-1"
+      ]
+    },
+    {
+      "artifact": "flutter_navigation_basic_38139683688_junit-flutter-core-0_78.xml",
+      "error_type": "DartMissingImport",
+      "language": "dart",
+      "line": 1,
+      "line_secondary": 7,
+      "message": "Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory",
+      "signature": "Error when reading 'lib<path>': No such file or directory",
+      "source_file": "lib/shared/catalog/catalog_search.dart",
+      "source_file_secondary": "lib/shared/catalog/catalog_search.dart",
+      "test_id": "<runner-work>/test/shared/catalog/catalog_search_test.dart::loading <runner-work>/test/shared/catalog/catalog_search_test.dart",
+      "variant": "flutter-core-0",
+      "variants": [
+        "flutter-core-0",
+        "flutter-core-1"
+      ]
+    },
+    {
+      "artifact": "flutter_navigation_basic_38139683688_junit-flutter-core-0_78.xml",
+      "error_type": "DartMissingImport",
+      "language": "dart",
+      "line": 1,
+      "line_secondary": 7,
+      "message": "Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory",
+      "signature": "Error when reading 'lib<path>': No such file or directory",
+      "source_file": "lib/shared/catalog/catalog_search.dart",
+      "source_file_secondary": "lib/shared/catalog/catalog_search.dart",
+      "test_id": "<runner-work>/test/features/home/presentation/home_screen_test.dart::loading <runner-work>/test/features/home/presentation/home_screen_test.dart",
+      "variant": "flutter-core-0",
+      "variants": [
+        "flutter-core-0",
+        "flutter-core-1"
+      ]
+    }
+  ],
+  "schema": "sentinel-report/v1",
+  "squads": [],
+  "timing": {
+    "elapsed_seconds": 0.004,
+    "started_monotonic": 1090.499350603
+  },
+  "triage": {
+    "found": [
+      "exit code: 1",
+      "junit errors (2 variants): 12",
+      "junit error (first) (2 variants): Flutter test error\\nFailed to load \"<runner-work>/test/core/navigation/numbered_routes_observation_test.dart\":\\nCompilation failed for testPath=<runner-work>/test/core/navigation/numbered_routes_observation_test.dart: lib/shared/catalog/catalog_search.dart:1:8: Error: Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory\\nimport '../screens/generic_screen.dart';\\n ",
+      "junit failure groups (2 variants): 12 failures in 1 group",
+      "junit failure group 1/1 (2 variants): 12× Error when reading <q>: No such file or directory — first: <runner-work>/test/core/navigation/numbered_routes_observation_test.dart::loading <runner-work>/test/core/navigation/numbered_routes_observation_test.dart — msg: Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory",
+      "junit testcase classname (first) (2 variants): <runner-work>/test/core/navigation/numbered_routes_observation_test.dart",
+      "junit dart error (first) (2 variants): lib/shared/catalog/catalog_search.dart:7:6: Error: Type 'ScreenData' not found.",
+      "python version: 3.12.3 (cpython)",
+      "node version: v22.23.4",
+      "gh version: gh version 2.102.0 (2026-09-30)",
+      "lock files present: uv.lock",
+      "environment variable count: 38",
+      "environment variable names: AGENT_TRANSCRIPTS, CARGO_HOME, CURSOR_AGENT, CURSOR_AGENT_SOCKET, CURSOR_CONVERSATION_ID, CURSOR_REQUEST_ID, CURSOR_RIPGREP_PATH, CURSOR_SPAWN_CWD_HOP, CURSOR_WORKLOAD_CGROUP, DISPLAY, EXEC_DAEMON_STARTUP_TRACEPARENT, FORCE_COLOR, GH_TELEMETRY, GIT_DISCOVERY_ACROSS_FILESYSTEM, GIT_LFS_SKIP_SMUDGE, HOME, LANG, LC_ALL, NO_COLOR, NVM_BIN, NVM_CD_FLAGS, NVM_DIR, NVM_INC, OLDPWD, PATH, PS1, PWD, RUSTUP_HOME, RUST_VERSION, SHELL, SHLVL, TERM, USER, VNC_DPI, VNC_RESOLUTION, _, _ZO_DOCTOR, __CURSOR_SANDBOX_ENV_RESTORE"
+    ],
+    "hints": [
+      "junit framework guess (2 variants): flutter/dart",
+      "web search keywords (2 variants): Flutter test error\\nFailed to load \"<runner-work>/test/core/navigation/numbered_routes_observation_test.dart\":\\nCompilation failed for testPath=<runner-work>/test/core/navigation/numbered_routes_observation_test.dart: lib/shared/catalog/catalog_search.dart:1:8: Error: Error when reading 'lib/shared/screens/generic_screen.dart': No such file or directory\\nimport '../screens/generic_screen.dart';\\n "
+    ],
+    "not_found": [
+      "junit failures (tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38139683688_junit-flutter-core-0_78.xml)",
+      "junit skipped (tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38139683688_junit-flutter-core-0_78.xml)",
+      "junit pytest exception type (tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38139683688_junit-flutter-core-0_78.xml)",
+      "junit system-err (tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38139683688_junit-flutter-core-0_78.xml)",
+      "junit collection errors (tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38139683688_junit-flutter-core-0_78.xml)",
+      "junit failures (tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38139683688_junit-flutter-core-1_77.xml)",
+      "junit skipped (tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38139683688_junit-flutter-core-1_77.xml)",
+      "junit pytest exception type (tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38139683688_junit-flutter-core-1_77.xml)",
+      "junit system-err (tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38139683688_junit-flutter-core-1_77.xml)",
+      "junit collection errors (tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38139683688_junit-flutter-core-1_77.xml)"
+    ]
+  }
+}

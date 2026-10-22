@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 
 from squad import parse_matrix_variant
-from tests.benchmark_util import normalize_short_timing, run_benchmark
+from tests.benchmark_util import normalize_report_benchmark, normalize_short_benchmark, run_benchmark
 
 ROOT = Path(__file__).resolve().parents[1]
 YOURSELF_GLOB = "yourself_37583297348_test-report-*_junit.xml"
@@ -48,8 +48,10 @@ def test_parse_matrix_variant(artifact: str, expected: dict[str, str]) -> None:
 @pytest.mark.sentinel
 def test_yourself_matrix_benchmark_short_stdout_matches_golden() -> None:
     short_text, _report = run_benchmark(_yourself_paths())
-    golden = normalize_short_timing((GOLDEN_DIR / "short.txt").read_text(encoding="utf-8"))
-    assert normalize_short_timing(short_text) == golden
+    golden = normalize_short_benchmark(
+        (GOLDEN_DIR / "short.txt").read_text(encoding="utf-8")
+    )
+    assert normalize_short_benchmark(short_text) == golden
 
 
 @pytest.mark.sentinel
@@ -73,5 +75,6 @@ def test_yourself_matrix_report_has_invariant_hypothesis_and_matrix() -> None:
     assert invariant[0].get("classification") == "invariant"
     assert "M fails on all 7 variants (os: 3/3, python: 5/5)" in short_text
     golden_doc = json.loads((GOLDEN_DIR / "report.json").read_text(encoding="utf-8"))
-    assert report.get("matrix") == golden_doc.get("matrix")
-    assert report.get("hypotheses") == golden_doc.get("hypotheses")
+    normalized = normalize_report_benchmark(report)
+    assert normalized.get("matrix") == golden_doc.get("matrix")
+    assert normalized.get("hypotheses") == golden_doc.get("hypotheses")

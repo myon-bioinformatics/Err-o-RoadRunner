@@ -30,12 +30,27 @@ DEFAULT_SQUADS = (SQUAD_CODE, SQUAD_HISTORY)
 GITHUB_SEARCH_API = "https://api.github.com/search/issues"
 
 _PYTEST_VARIANT_RE = re.compile(r"junit-(py3\.\d+)", re.I)
-_TEST_REPORT_MATRIX_RE = re.compile(
-    r"test-report-(?P<os>[\w-]+)-(py3\.\d+)",
+_FLUTTER_CORE_VARIANT_RE = re.compile(r"junit-flutter-core-(\d+)", re.I)
+_FLUTTER_REFACTOR_VARIANT_RE = re.compile(r"junit-flutter-refactor", re.I)
+_PLAYWRIGHT_E2E_VARIANT_RE = re.compile(r"junit-playwright-e2e", re.I)
+_DART_COMPILER_ERROR_RE = re.compile(
+    r"^(?P<file>\S+\.dart):(?P<line>\d+):(?P<col>\d+):\s*Error:\s*(?P<rest>.+)$"
+)
+_DART_READ_ERROR_RE = re.compile(
+    r"Error when reading ['\"](?P<path>[^'\"]+)['\"]\s*:\s*No such file or directory",
     re.I,
 )
-_JUNIT_CONTROLLED_MATRIX_RE = re.compile(
-    r"junit-controlled(?:-(py3\.\d+))?",
+_DART_IMPORT_SITE_RE = re.compile(
+    r"(?P<file>(?:lib|test)/\S+\.dart):(?P<line>\d+):(?P<col>\d+):"
+    r"\s*Error:\s*Error when reading",
+    re.I,
+)
+_DART_TYPE_NOT_FOUND_RE = re.compile(
+    r"Type ['\"](?P<type>[^'\"]+)['\"] not found",
+    re.I,
+)
+_DART_COMPILATION_FAILED_RE = re.compile(
+    r"Compilation failed for testPath=",
     re.I,
 )
 _PYTHON_FRAME_RE = re.compile(
@@ -58,6 +73,16 @@ _SIGNATURE_UUID_RE = re.compile(
     re.I,
 )
 _SIGNATURE_HEX_RE = re.compile(r"\b0x[0-9a-f]+\b", re.I)
+_ASSERT_EQ_RE = re.compile(
+    r"(?:AssertionError:\s*)?assert\s+(.+?)\s+==\s+(.+?)\s*$",
+    re.I,
+)
+_ASSERT_IS_NONE_RE = re.compile(
+    r"(?:AssertionError:\s*)?assert\s+(.+?)\s+is\s+(None|not\s+None)\s*$",
+    re.I,
+)
+_METADATA_HINT_RE = re.compile(r"(version|metadata|pyproject)", re.I)
+_OPERAND_MAX_LEN = 80
 _DID_YOU_MEAN_SUFFIX_RE = re.compile(
     r"\.\s*Did you mean:\s*(?:'[^']*'|\"[^\"]*\"|\S.*)?$",
     re.I,
@@ -97,6 +122,49 @@ def parse_squads_flag(value: str) -> frozenset[str]:
     return frozenset(names)
 
 
+def _cap_redacted_operand(fragment: str) -> str:
+    text = redact_text(fragment.strip())
+    text = _SIGNATURE_PATH_RE.sub("<path>", text)
+    if len(text) > _OPERAND_MAX_LEN:
+        return text[: _OPERAND_MAX_LEN - 1] + "…"
+    return text
+
+
+def _assert_line_candidates(message: str, blob: str, first_line: str) -> list[str]:
+    lines: list[str] = []
+    if first_line.strip():
+        lines.append(first_line.strip())
+    msg = (message or "").strip()
+    if msg:
+        for part in msg.splitlines()[:3]:
+            part = part.strip()
+            if part and part not in lines:
+                lines.append(part)
+    for raw in blob.splitlines():
+        stripped = raw.strip()
+        if "assert " not in stripped:
+            continue
+        if stripped.startswith("E "):
+            stripped = stripped[2:].strip()
+        if stripped.startswith("AssertionError:"):
+            stripped = stripped.split(":", 1)[1].strip()
+        if stripped and stripped not in lines:
+            lines.append(stripped)
+    return lines
+
+
+def extract_assert_operands(message: str, blob: str, first_line: str) -> tuple[str | None, str | None]:
+    """Parse pytest assert left/right operands (redacted, capped) from failure text."""
+    for line in _assert_line_candidates(message, blob, first_line):
+        match = _ASSERT_EQ_RE.search(line)
+        if match:
+            return _cap_redacted_operand(match.group(1)), _cap_redacted_operand(match.group(2))
+        match = _ASSERT_IS_NONE_RE.search(line)
+        if match:
+            return _cap_redacted_operand(match.group(1)), _cap_redacted_operand(match.group(2))
+    return None, None
+
+
 def normalize_signature(message: str) -> str:
     text = message.strip()
     text = _DID_YOU_MEAN_SUFFIX_RE.sub("", text).strip()
@@ -117,33 +185,22 @@ def _variant_from_pytest_junit(path: str) -> str | None:
     return None
 
 
-def parse_matrix_variant(path: str) -> dict[str, str] | None:
-    """Parse CI matrix axes from a JUnit artifact filename."""
-    name = path.rsplit("/", 1)[-1]
-    match = _TEST_REPORT_MATRIX_RE.search(name)
+def _variant_from_flutter_core(path: str) -> str | None:
+    match = _FLUTTER_CORE_VARIANT_RE.search(path)
     if match:
-        return {
-            "os": match.group("os").lower(),
-            "python": match.group(2).lower(),
-            "flavor": "test-report",
-        }
-    match = _JUNIT_CONTROLLED_MATRIX_RE.search(name)
-    if match:
-        py = match.group(1)
-        axes: dict[str, str] = {"flavor": "controlled"}
-        if py:
-            axes["python"] = py.lower()
-        return axes
-    match = _PYTEST_VARIANT_RE.search(name)
-    if match:
-        return {"python": match.group(1).lower(), "flavor": "junit"}
+        return f"flutter-core-{match.group(1)}"
     return None
 
 
-def _variant_from_matrix_axes(path: str) -> str | None:
-    axes = parse_matrix_variant(path)
-    if axes and axes.get("python"):
-        return axes["python"]
+def _variant_from_flutter_refactor(path: str) -> str | None:
+    if _FLUTTER_REFACTOR_VARIANT_RE.search(path):
+        return "flutter-refactor"
+    return None
+
+
+def _variant_from_playwright_e2e(path: str) -> str | None:
+    if _PLAYWRIGHT_E2E_VARIANT_RE.search(path):
+        return "playwright-e2e"
     return None
 
 
@@ -151,7 +208,9 @@ VariantParser = Callable[[str], str | None]
 
 VARIANT_PARSERS: list[VariantParser] = [
     _variant_from_pytest_junit,
-    _variant_from_matrix_axes,
+    _variant_from_flutter_core,
+    _variant_from_flutter_refactor,
+    _variant_from_playwright_e2e,
 ]
 
 
@@ -161,79 +220,6 @@ def variant_from_artifact(path: str) -> str:
         if variant:
             return variant
     return "unknown"
-
-
-def _matrix_context_from_paths(paths: Sequence[Path]) -> dict[str, Any]:
-    axis_sets: dict[str, set[str]] = {"os": set(), "python": set(), "flavor": set()}
-    for path in paths:
-        axes = parse_matrix_variant(path.name)
-        if not axes:
-            continue
-        for key, value in axes.items():
-            if key in axis_sets and value:
-                axis_sets[key].add(value)
-    axis_counts = {key: len(values) for key, values in axis_sets.items() if values}
-    if not axis_counts and not paths:
-        return {}
-    return {"total": len(paths), "axes": axis_counts}
-
-
-def _merge_variant_axes(entry: dict[str, Any], axes: Mapping[str, str]) -> None:
-    if not axes:
-        return
-    merged_axes: dict[str, list[str]] = entry.setdefault(
-        "variant_axes",
-        {"os": [], "python": [], "flavor": []},
-    )
-    for key in ("os", "python", "flavor"):
-        value = axes.get(key)
-        if not value:
-            continue
-        bucket = merged_axes.setdefault(key, [])
-        if value not in bucket:
-            bucket.append(value)
-    cells: list[dict[str, str]] = entry.setdefault("matrix_cells", [])
-    cell = {k: axes[k] for k in ("os", "python", "flavor") if axes.get(k)}
-    if cell and cell not in cells:
-        cells.append(cell)
-
-
-def build_report_matrix(
-    paths: Sequence[Path],
-    records: Sequence[Mapping[str, Any]],
-) -> dict[str, Any]:
-    ctx = _matrix_context_from_paths(paths)
-    if not ctx:
-        return {}
-    failing_cells: set[str] = set()
-    for rec in records:
-        for cell in rec.get("matrix_cells") or []:
-            failing_cells.add(json.dumps(cell, sort_keys=True))
-    return {
-        "axes": ctx["axes"],
-        "failing": len(failing_cells),
-        "total": ctx["total"],
-    }
-
-
-def _classify_matrix_record(
-    cells: Sequence[Mapping[str, str]],
-    matrix_total: int,
-    matrix_axes: Mapping[str, int],
-) -> str | None:
-    if not cells or matrix_total <= 0:
-        return None
-    if len(cells) >= matrix_total:
-        return "invariant"
-    os_seen = {c.get("os") for c in cells if c.get("os")}
-    py_seen = {c.get("python") for c in cells if c.get("python")}
-    os_n = int(matrix_axes.get("os") or 0)
-    py_n = int(matrix_axes.get("python") or 0)
-    if os_n and len(os_seen) < os_n and (not py_n or len(py_seen) >= py_n):
-        return "os-specific"
-    if py_n and len(py_seen) < py_n and (not os_n or len(os_seen) >= os_n):
-        return "python-specific"
-    return None
 
 
 def _local_tag(elem: ET.Element) -> str:
@@ -318,12 +304,31 @@ def _exc_from_first_line(message: str, blob: str, first_line: str) -> str | None
     return None
 
 
+def parse_dart_error(message: str, blob: str, first_line: str) -> str | None:
+    text = "\n".join(part for part in (message, blob, first_line) if part)
+    if _DART_READ_ERROR_RE.search(text):
+        return "DartMissingImport"
+    if _DART_TYPE_NOT_FOUND_RE.search(text):
+        return "DartCompileError"
+    if _DART_COMPILATION_FAILED_RE.search(text):
+        return "DartCompileError"
+    for line in text.splitlines():
+        if _DART_COMPILER_ERROR_RE.match(line.strip()):
+            return "DartCompileError"
+    return None
+
+
 EXCEPTION_PARSERS: list[ExceptionParser] = [
     _exc_from_pytest_e_lines,
     _exc_from_assert_prefix,
     _exc_from_message_attr,
     _exc_from_first_line,
+    parse_dart_error,
 ]
+
+RecordFieldParser = Callable[[str, str, str], dict[str, Any] | None]
+
+RECORD_FIELD_PARSERS: list[RecordFieldParser] = []
 
 
 def _exception_type(message: str, blob: str, first_line: str) -> str:
@@ -356,7 +361,26 @@ def _detect_language_python(record: Mapping[str, Any]) -> str | None:
     return None
 
 
-LANGUAGE_DETECTORS: list[LanguageDetector] = [_detect_language_python]
+def detect_language_dart(record: Mapping[str, Any]) -> str | None:
+    error_type = str(record.get("error_type") or "")
+    if error_type.startswith("Dart"):
+        return "dart"
+    variant = str(record.get("variant") or "")
+    if variant.startswith("flutter-core-") or variant in (
+        "flutter-refactor",
+        "playwright-e2e",
+    ):
+        return "dart"
+    artifact = str(record.get("artifact") or "").lower()
+    if "flutter" in artifact or "playwright-e2e" in artifact:
+        return "dart"
+    return None
+
+
+LANGUAGE_DETECTORS: list[LanguageDetector] = [
+    _detect_language_python,
+    detect_language_dart,
+]
 
 
 def _record_language(record: Mapping[str, Any]) -> str | None:
@@ -367,15 +391,94 @@ def _record_language(record: Mapping[str, Any]) -> str | None:
     return None
 
 
-def _traceback_location(blob: str) -> tuple[str, int | None]:
+TracebackLocationParser = Callable[[str], tuple[str, int | None] | None]
+
+
+def _dart_error_locations(
+    blob: str,
+) -> tuple[tuple[str, int | None], tuple[str, int | None]]:
+    primary: tuple[str, int | None] = ("", None)
+    secondary: tuple[str, int | None] = ("", None)
+    for line in blob.splitlines():
+        site = _DART_IMPORT_SITE_RE.search(line)
+        if site and not primary[0]:
+            primary = (site.group("file"), int(site.group("line")))
+    for line in blob.splitlines():
+        stripped = line.strip()
+        match = _DART_COMPILER_ERROR_RE.match(stripped) or _DART_COMPILER_ERROR_RE.search(
+            stripped
+        )
+        if not match:
+            continue
+        loc = (match.group("file"), int(match.group("line")))
+        if primary[0] and loc == primary:
+            continue
+        if not secondary[0]:
+            secondary = loc
+            break
+    if not primary[0]:
+        for line in blob.splitlines():
+            stripped = line.strip()
+            match = _DART_COMPILER_ERROR_RE.match(stripped) or _DART_COMPILER_ERROR_RE.search(
+                stripped
+            )
+            if match:
+                primary = (match.group("file"), int(match.group("line")))
+                break
+    if primary[0] and secondary[0] and primary == secondary:
+        secondary = ("", None)
+    return primary, secondary
+
+
+def _dart_record_message(blob: str) -> str:
+    match = _DART_READ_ERROR_RE.search(blob)
+    if match:
+        return (
+            f"Error when reading '{match.group('path')}': No such file or directory"
+        )
+    for line in blob.splitlines():
+        stripped = line.strip()
+        if _DART_COMPILER_ERROR_RE.match(stripped):
+            return stripped[:500]
+    return ""
+
+
+def _tb_from_python_frame(blob: str) -> tuple[str, int | None] | None:
     for line in blob.splitlines():
         match = _PYTHON_FRAME_RE.match(line)
         if match:
             return match.group("file"), int(match.group("line"))
+    return None
+
+
+def _tb_from_pytest_file_line(blob: str) -> tuple[str, int | None] | None:
+    for line in blob.splitlines():
         match = _PYTEST_FILE_LINE_RE.match(line.strip())
         if match:
             return match.group("file"), int(match.group("line"))
+    return None
+
+
+TRACEBACK_LOCATION_PARSERS: list[TracebackLocationParser] = [
+    _tb_from_python_frame,
+    _tb_from_pytest_file_line,
+]
+
+
+def _traceback_location_from_parsers(blob: str) -> tuple[str, int | None]:
+    for parser in TRACEBACK_LOCATION_PARSERS:
+        found = parser(blob)
+        if found and found[0]:
+            return found
     return "", None
+
+
+def _traceback_location(blob: str) -> tuple[str, int | None, str, int | None]:
+    (dart_file, dart_line), (dart_file2, dart_line2) = _dart_error_locations(blob)
+    if dart_file:
+        return dart_file, dart_line, dart_file2, dart_line2
+    py_file, py_line = _traceback_location_from_parsers(blob)
+    return py_file, py_line, "", None
 
 
 def parse_junit_failure_records(path: Path) -> list[dict[str, Any]]:
@@ -387,9 +490,6 @@ def parse_junit_failure_records(path: Path) -> list[dict[str, Any]]:
 
     artifact = path.name
     variant = variant_from_artifact(artifact)
-    matrix_axes = parse_matrix_variant(artifact) or {}
-    if matrix_axes.get("python"):
-        variant = matrix_axes["python"]
     records: list[dict[str, Any]] = []
 
     for testcase in root.iter():
@@ -402,8 +502,20 @@ def parse_junit_failure_records(path: Path) -> list[dict[str, Any]]:
             blob = _failure_blob(testcase, child)
             message_attr = (child.attrib.get("message") or "").strip()
             first_line = _message_first_line(message_attr, blob)
-            error_type = _exception_type(message_attr, blob, first_line)
+            record_fields: dict[str, Any] = {}
+            for field_parser in RECORD_FIELD_PARSERS:
+                chunk = field_parser(message_attr, blob, first_line)
+                if chunk:
+                    record_fields.update(chunk)
+            error_type = str(
+                record_fields.pop("error_type", None)
+                or _exception_type(message_attr, blob, first_line)
+            )
             message = _parse_message_text(message_attr, blob)
+            if error_type.startswith("Dart"):
+                dart_message = _dart_record_message(blob)
+                if dart_message:
+                    message = dart_message
             if not message and message_attr:
                 match = _JUNIT_MSG_EXCEPTION_RE.match(message_attr.splitlines()[0])
                 message = (
@@ -411,9 +523,12 @@ def parse_junit_failure_records(path: Path) -> list[dict[str, Any]]:
                     if match and ":" in message_attr
                     else message_attr
                 )
-            source_file, line_no = _traceback_location(blob)
-            test_id = _case_test_id(testcase)
             signature = normalize_signature(message or error_type)
+            assert_left, assert_right = extract_assert_operands(message_attr, blob, first_line)
+            source_file, line_no, source_file_secondary, line_no_secondary = (
+                _traceback_location(blob)
+            )
+            test_id = _case_test_id(testcase)
             draft = {
                 "error_type": error_type,
                 "message": message[:500],
@@ -423,20 +538,19 @@ def parse_junit_failure_records(path: Path) -> list[dict[str, Any]]:
                 "line": line_no,
                 "variant": variant,
                 "artifact": artifact,
+                **record_fields,
             }
-            if matrix_axes:
-                draft["variant_axes"] = {
-                    key: [matrix_axes[key]]
-                    for key in ("os", "python", "flavor")
-                    if matrix_axes.get(key)
-                }
-                draft["matrix_cells"] = [
-                    {
-                        key: matrix_axes[key]
-                        for key in ("os", "python", "flavor")
-                        if matrix_axes.get(key)
-                    }
-                ]
+            if assert_left is not None:
+                draft["assert_left"] = assert_left
+            if assert_right is not None:
+                draft["assert_right"] = assert_right
+            if source_file_secondary:
+                draft["source_file_secondary"] = source_file_secondary
+            if line_no_secondary is not None:
+                draft["line_secondary"] = line_no_secondary
+            axes = _variant_axes_from_artifact(artifact)
+            if axes:
+                _attach_variant_axes_to_draft(draft, axes)
             draft["language"] = _record_language(draft)
             records.append(draft)
     return records
@@ -472,7 +586,7 @@ def merge_failure_records(
     merged: dict[str, dict[str, Any]] = {}
     matrix_ctx = _matrix_context_from_paths(paths)
     for path in paths:
-        path_axes = parse_matrix_variant(path.name) or {}
+        path_axes = _variant_axes_from_artifact(path.name) or {}
         for rec in parse_junit_failure_records(path):
             key = str(rec["test_id"])
             variant = rec.get("variant") or "unknown"
@@ -518,6 +632,10 @@ def records_to_normalized_errors(
             location["loc"] = str(rec["source_file"])
         if rec.get("line") is not None:
             location["line"] = str(rec["line"])
+        if rec.get("source_file_secondary"):
+            location["loc_secondary"] = str(rec["source_file_secondary"])
+        if rec.get("line_secondary") is not None:
+            location["line_secondary"] = str(rec["line_secondary"])
         error_type = str(rec.get("error_type") or "generic")
         kind = "python_import" if error_type in ("ModuleNotFoundError", "ImportError") else "junit"
         if error_type == "AssertionError":
@@ -648,13 +766,170 @@ def rule_import_cascade(
         return []
     return [
         {
-            "id": "H1",
             "summary": "import-path contamination",
             "confidence": confidence,
             "explains": explained,
             "source_squads": list(squad_names),
         }
     ]
+
+
+def _dart_missing_import_path(record: Mapping[str, Any]) -> str | None:
+    text = str(record.get("message") or "")
+    match = _DART_READ_ERROR_RE.search(text)
+    if match:
+        return match.group("path")
+    return None
+
+
+def rule_dart_compile_cascade(
+    records: Sequence[Mapping[str, Any]],
+    project_root: Path | None,
+    squad_names: Sequence[str],
+) -> list[dict[str, Any]]:
+    if not records:
+        return []
+    by_path: dict[str, list[str]] = {}
+    for rec in records:
+        missing = _dart_missing_import_path(rec)
+        if not missing:
+            continue
+        test_id = str(rec.get("test_id") or rec.get("signature") or "")
+        if not test_id:
+            continue
+        by_path.setdefault(missing, [])
+        if test_id not in by_path[missing]:
+            by_path[missing].append(test_id)
+    if not by_path:
+        return []
+    _path, explained = max(by_path.items(), key=lambda item: len(item[1]))
+    if len(explained) < 2:
+        return []
+    total = len(records)
+    confidence = "high" if len(explained) >= total else "medium"
+    return [
+        {
+            "summary": "dart-compile-cascade",
+            "confidence": confidence,
+            "explains": explained,
+            "source_squads": list(squad_names),
+        }
+    ]
+
+
+def _base_test_id(test_id: str) -> str:
+    if "[" in test_id:
+        return test_id.split("[", 1)[0]
+    return test_id
+
+
+def rule_stale_package_metadata(
+    records: Sequence[Mapping[str, Any]],
+    project_root: Path | None,
+    squad_names: Sequence[str],
+) -> list[dict[str, Any]]:
+    by_base: dict[str, list[Mapping[str, Any]]] = {}
+    for rec in records:
+        if str(rec.get("error_type") or "") != "AssertionError":
+            continue
+        left = rec.get("assert_left")
+        if left is None:
+            continue
+        base = _base_test_id(str(rec.get("test_id") or ""))
+        if not base:
+            continue
+        by_base.setdefault(base, []).append(rec)
+
+    explained: list[str] = []
+    for group in by_base.values():
+        if len(group) < 2:
+            continue
+        left_values = {str(item.get("assert_left") or "") for item in group}
+        if len(left_values) < 2:
+            continue
+        combined = " ".join(
+            " ".join(
+                (
+                    str(item.get("test_id") or ""),
+                    str(item.get("message") or ""),
+                    str(item.get("assert_left") or ""),
+                    str(item.get("assert_right") or ""),
+                )
+            )
+            for item in group
+        )
+        if not _METADATA_HINT_RE.search(combined):
+            continue
+        for item in group:
+            test_id = str(item.get("test_id") or "")
+            if test_id and test_id not in explained:
+                explained.append(test_id)
+
+    if len(explained) < 2:
+        return []
+    confidence = "high" if len(explained) >= 6 else "medium"
+    return [
+        {
+            "summary": "stale installed metadata or env override",
+            "confidence": confidence,
+            "explains": explained,
+            "source_squads": list(squad_names),
+        }
+    ]
+
+
+HYPOTHESIS_RULES: list[HypothesisRule] = [
+    rule_import_cascade,
+    rule_dart_compile_cascade,
+    rule_stale_package_metadata,
+]
+
+
+def summarize_top_causes(
+    records: Sequence[Mapping[str, Any]],
+    *,
+    limit: int = 3,
+) -> list[dict[str, Any]]:
+    """Rank dominant failure signatures for large JUnit runs (report JSON)."""
+    if not records:
+        return []
+    buckets: dict[str, dict[str, Any]] = {}
+    for rec in records:
+        signature = str(rec.get("signature") or "generic")
+        entry = buckets.setdefault(
+            signature,
+            {
+                "signature": signature,
+                "count": 0,
+                "error_type": str(rec.get("error_type") or "generic"),
+            },
+        )
+        entry["count"] = int(entry["count"]) + 1
+    ranked = sorted(
+        buckets.values(),
+        key=lambda item: (-int(item["count"]), str(item["signature"])),
+    )
+    return ranked[: max(0, limit)]
+
+
+def _classify_matrix_record(
+    cells: Sequence[Mapping[str, str]],
+    matrix_total: int,
+    matrix_axes: Mapping[str, int],
+) -> str | None:
+    if not cells or matrix_total <= 0:
+        return None
+    if len(cells) >= matrix_total:
+        return "invariant"
+    os_seen = {c.get("os") for c in cells if c.get("os")}
+    py_seen = {c.get("python") for c in cells if c.get("python")}
+    os_n = int(matrix_axes.get("os") or 0)
+    py_n = int(matrix_axes.get("python") or 0)
+    if os_n and len(os_seen) < os_n and (not py_n or len(py_seen) >= py_n):
+        return "os-specific"
+    if py_n and len(py_seen) < py_n and (not os_n or len(os_seen) >= os_n):
+        return "python-specific"
+    return None
 
 
 def rule_matrix_invariance(
@@ -665,9 +940,9 @@ def rule_matrix_invariance(
     if not records:
         return []
     matrix_total = max(int(rec.get("matrix_total") or 0) for rec in records)
-    if matrix_total <= 0:
+    if matrix_total <= 1:
         return []
-    matrix_axes = {}
+    matrix_axes: dict[str, int] = {}
     for rec in records:
         matrix_axes = rec.get("matrix_axes") or matrix_axes
     buckets: dict[str, list[str]] = {
@@ -700,7 +975,6 @@ def rule_matrix_invariance(
             "source_squads": list(squad_names),
         }
         if classification == "invariant":
-            hyp["id"] = "M"
             os_n = int(matrix_axes.get("os") or 0)
             py_n = int(matrix_axes.get("python") or 0)
             if os_n:
@@ -710,9 +984,6 @@ def rule_matrix_invariance(
             hyp["variant_count"] = matrix_total
         hypotheses.append(hyp)
     return hypotheses
-
-
-HYPOTHESIS_RULES: list[HypothesisRule] = [rule_import_cascade, rule_matrix_invariance]
 
 
 def build_cascade_hypotheses(
@@ -1321,8 +1592,7 @@ def merge_squad_hypotheses(
         ),
     )
     for idx, hyp in enumerate(ordered, start=1):
-        if not hyp.get("id"):
-            hyp["id"] = f"H{idx}"
+        hyp["id"] = f"H{idx}"
     return ordered
 
 
@@ -1356,7 +1626,415 @@ def rule_fix_import_cascade(
     return None
 
 
-FIX_RULES: list[FixRule] = [rule_fix_import_cascade]
+def rule_fix_dart_missing_import(
+    candidates: list[dict[str, Any]],
+    hypotheses: Sequence[Mapping[str, Any]],
+) -> list[dict[str, Any]] | None:
+    for hyp in hypotheses:
+        if hyp.get("summary") != "dart-compile-cascade":
+            continue
+        out = list(candidates)
+        squads = list(hyp.get("source_squads") or [])
+        entry = {
+            "id": f"F{len(out) + 1}",
+            "kind": "dart_import",
+            "confidence": hyp.get("confidence", "medium"),
+            "evidence": [f"hypothesis {hyp.get('id')}: dart-compile-cascade"],
+            "location": {},
+            "suggestion": (
+                "Restore or rename the missing Dart import target, then run "
+                "flutter analyze to confirm the project compiles."
+            ),
+            "verify_command": "flutter analyze",
+            "source_squads": squads,
+        }
+        out.insert(0, entry)
+        return out
+    return None
+
+
+def rule_fix_reinstall_editable(
+    candidates: list[dict[str, Any]],
+    hypotheses: Sequence[Mapping[str, Any]],
+) -> list[dict[str, Any]] | None:
+    for hyp in hypotheses:
+        if hyp.get("summary") != "stale installed metadata or env override":
+            continue
+        out = list(candidates)
+        squads = list(hyp.get("source_squads") or [])
+        entry = {
+            "id": f"F{len(out) + 1}",
+            "kind": "stale_metadata",
+            "confidence": hyp.get("confidence", "medium"),
+            "evidence": [
+                f"hypothesis {hyp.get('id')}: stale installed metadata or env override"
+            ],
+            "location": {},
+            "suggestion": (
+                "Reinstall the package in editable mode (`pip install -e .` or "
+                "`uv sync --reinstall`) and compare `importlib.metadata.version(...)` "
+                "against the version in pyproject.toml / source."
+            ),
+            "verify_command": out[0].get("verify_command", "") if out else "",
+            "source_squads": squads,
+        }
+        out.insert(0, entry)
+        return out
+    return None
+
+
+FIX_RULES: list[FixRule] = [
+    rule_fix_import_cascade,
+    rule_fix_dart_missing_import,
+    rule_fix_reinstall_editable,
+]
+
+
+_DID_NOT_RAISE_RE = re.compile(
+    r"Failed:\s+DID NOT RAISE\s+(?P<exc>[A-Za-z_][\w.]*)",
+    re.I,
+)
+_PYTEST_FAILED_PREFIX_RE = re.compile(r"^Failed:\s*", re.I)
+_XPASS_STRICT_RE = re.compile(r"XPASS\s*\(\s*strict\s*\)", re.I)
+_PYTEST_SKIPPED_RE = re.compile(r"^Skipped(?:\s*:|$)", re.I)
+_OS_VARIANT_RE = re.compile(r"junit-(?:core-)?(windows|macos|ubuntu)", re.I)
+_CLI_ARGS_RUN_RE = re.compile(r"cli_args_(\d+)_", re.I)
+_PLATFORM_MSG_RE = re.compile(
+    r"symlink|exclusive|x-mode|permissions|\bpaths?\b|line endings?",
+    re.I,
+)
+_WINDOWS_COMPACT_TB_RE = re.compile(
+    r"^(?P<file>(?:[A-Za-z]:)?(?:[^:\r\n]*\\)?[^:\r\n]+\.py):(?P<line>\d+):"
+)
+_WINDOWS_FRAME_FILE_RE = re.compile(
+    r'^  File "(?P<file>(?:[A-Za-z]:)?[^"]+)", line (?P<line>\d+)'
+)
+
+
+def parse_pytest_outcome(message: str, blob: str, first_line: str) -> dict[str, Any] | None:
+    for line in (first_line, message.splitlines()[0] if message else "", blob):
+        text = (line or "").strip()
+        if not text:
+            continue
+        match = _DID_NOT_RAISE_RE.search(text)
+        if match:
+            return {
+                "error_type": "pytest.Failed.DidNotRaise",
+                "expected_exception": match.group("exc"),
+            }
+        if _XPASS_STRICT_RE.search(text):
+            return {"error_type": "pytest.XPass.Strict"}
+        if _PYTEST_SKIPPED_RE.match(text):
+            return {"error_type": "pytest.Skipped"}
+        if _PYTEST_FAILED_PREFIX_RE.match(text):
+            return {"error_type": "pytest.Failed"}
+    return None
+
+
+def _exc_from_pytest_outcome(message: str, blob: str, first_line: str) -> str | None:
+    fields = parse_pytest_outcome(message, blob, first_line)
+    if not fields:
+        return None
+    return str(fields.get("error_type") or "")
+
+
+EXCEPTION_PARSERS.append(_exc_from_pytest_outcome)
+RECORD_FIELD_PARSERS.append(parse_pytest_outcome)
+
+
+def _normalize_windows_path(path: str) -> str:
+    normalized = path.replace("\\", "/")
+    if len(normalized) >= 2 and normalized[1] == ":":
+        normalized = normalized[2:]
+    return normalized.lstrip("/")
+
+
+def parse_windows_traceback_location(blob: str) -> tuple[str, int | None] | None:
+    for line in blob.splitlines():
+        if "\\" not in line and not re.search(r"[A-Za-z]:[\\/]", line):
+            continue
+        stripped = line.strip()
+        match = _WINDOWS_COMPACT_TB_RE.match(stripped)
+        if not match:
+            match = _WINDOWS_FRAME_FILE_RE.match(stripped)
+        if match:
+            return (
+                _normalize_windows_path(match.group("file")),
+                int(match.group("line")),
+            )
+    return None
+
+
+TRACEBACK_LOCATION_PARSERS.append(parse_windows_traceback_location)
+
+
+VariantAxesParser = Callable[[str], dict[str, str] | None]
+
+VARIANT_AXES_PARSERS: list[VariantAxesParser] = []
+
+
+def _variant_axes_from_artifact(artifact: str) -> dict[str, str] | None:
+    for parser in VARIANT_AXES_PARSERS:
+        axes = parser(artifact)
+        if axes:
+            return axes
+    return None
+
+
+def _merge_variant_axes(entry: dict[str, Any], axes: Mapping[str, str]) -> None:
+    if not axes:
+        return
+    merged_axes: dict[str, list[str]] = entry.setdefault(
+        "variant_axes",
+        {"os": [], "python": [], "flavor": []},
+    )
+    for key in ("os", "python", "flavor"):
+        value = axes.get(key)
+        if not value:
+            continue
+        bucket = merged_axes.setdefault(key, [])
+        if value not in bucket:
+            bucket.append(value)
+    cells: list[dict[str, str]] = entry.setdefault("matrix_cells", [])
+    cell = {k: axes[k] for k in ("os", "python", "flavor") if axes.get(k)}
+    if cell and cell not in cells:
+        cells.append(cell)
+
+
+def _attach_variant_axes_to_draft(draft: dict[str, Any], axes: Mapping[str, str]) -> None:
+    draft["variant_axes"] = {
+        key: [axes[key]] for key in ("os", "python", "flavor") if axes.get(key)
+    }
+    draft["matrix_cells"] = [
+        {key: axes[key] for key in ("os", "python", "flavor") if axes.get(key)}
+    ]
+
+
+def parse_os_junit_variant_axes(path: str) -> dict[str, str] | None:
+    """Matrix axes for OS-tagged JUnit artifacts (S3 ``parse_matrix_variant`` compatible)."""
+    name = path.rsplit("/", 1)[-1]
+    match = _OS_VARIANT_RE.search(name)
+    if not match:
+        return None
+    os_tag = match.group(1).lower()
+    flavor = "core-windows" if "core-windows" in name.lower() else "os-junit"
+    run_match = _CLI_ARGS_RUN_RE.search(name)
+    if run_match:
+        flavor = f"{flavor}:{run_match.group(1)}"
+    return {"os": os_tag, "flavor": flavor}
+
+
+VARIANT_AXES_PARSERS.append(parse_os_junit_variant_axes)
+
+_TEST_REPORT_MATRIX_RE = re.compile(
+    r"test-report-(?P<os>[\w-]+)-(py3\.\d+)",
+    re.I,
+)
+_JUNIT_CONTROLLED_MATRIX_RE = re.compile(
+    r"junit-controlled(?:-(py3\.\d+))?",
+    re.I,
+)
+
+
+def parse_test_report_variant_axes(path: str) -> dict[str, str] | None:
+    name = path.rsplit("/", 1)[-1]
+    match = _TEST_REPORT_MATRIX_RE.search(name)
+    if not match:
+        return None
+    return {
+        "os": match.group("os").lower(),
+        "python": match.group(2).lower(),
+        "flavor": "test-report",
+    }
+
+
+def parse_junit_controlled_variant_axes(path: str) -> dict[str, str] | None:
+    name = path.rsplit("/", 1)[-1]
+    match = _JUNIT_CONTROLLED_MATRIX_RE.search(name)
+    if not match:
+        return None
+    axes: dict[str, str] = {"flavor": "controlled"}
+    py = match.group(1)
+    if py:
+        axes["python"] = py.lower()
+    return axes
+
+
+def parse_junit_py_variant_axes(path: str) -> dict[str, str] | None:
+    name = path.rsplit("/", 1)[-1]
+    match = _PYTEST_VARIANT_RE.search(name)
+    if not match:
+        return None
+    return {"python": match.group(1).lower(), "flavor": "junit"}
+
+
+VARIANT_AXES_PARSERS.append(parse_test_report_variant_axes)
+VARIANT_AXES_PARSERS.append(parse_junit_controlled_variant_axes)
+VARIANT_AXES_PARSERS.append(parse_junit_py_variant_axes)
+
+
+def parse_matrix_variant(path: str) -> dict[str, str] | None:
+    """Parse CI matrix axes from ``test-report``, ``junit-py``, or ``junit-controlled`` artifacts."""
+    for parser in (
+        parse_test_report_variant_axes,
+        parse_junit_controlled_variant_axes,
+        parse_junit_py_variant_axes,
+    ):
+        axes = parser(path)
+        if axes:
+            return axes
+    return None
+
+
+def _matrix_context_from_paths(paths: Sequence[Path]) -> dict[str, Any]:
+    axis_sets: dict[str, set[str]] = {"os": set(), "python": set(), "flavor": set()}
+    for path in paths:
+        axes = _variant_axes_from_artifact(path.name)
+        if not axes:
+            continue
+        for key, value in axes.items():
+            if key in axis_sets and value:
+                axis_sets[key].add(value)
+    axis_counts = {key: len(values) for key, values in axis_sets.items() if values}
+    if not axis_counts and not paths:
+        return {}
+    return {"total": len(paths), "axes": axis_counts}
+
+
+def build_report_matrix(
+    paths: Sequence[Path],
+    records: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    ctx = _matrix_context_from_paths(paths)
+    if not ctx:
+        return {}
+    failing_cells: set[str] = set()
+    for rec in records:
+        for cell in rec.get("matrix_cells") or []:
+            failing_cells.add(json.dumps(cell, sort_keys=True))
+    return {
+        "axes": ctx["axes"],
+        "failing": len(failing_cells),
+        "total": ctx["total"],
+    }
+
+
+def _variant_from_test_report_python(path: str) -> str | None:
+    axes = parse_test_report_variant_axes(path)
+    if axes and axes.get("python"):
+        return axes["python"]
+    return None
+
+
+VARIANT_PARSERS.append(_variant_from_test_report_python)
+
+
+def _variant_os_run_from_artifact(path: str) -> str | None:
+    axes = parse_os_junit_variant_axes(path)
+    if not axes:
+        return None
+    os_tag = axes["os"]
+    run_match = _CLI_ARGS_RUN_RE.search(path)
+    if run_match:
+        return f"{os_tag}:{run_match.group(1)}"
+    return os_tag
+
+
+VARIANT_PARSERS.append(_variant_os_run_from_artifact)
+
+
+def _detect_language_os_pytest_junit(record: Mapping[str, Any]) -> str | None:
+    artifact = str(record.get("artifact") or "")
+    if _OS_VARIANT_RE.search(artifact):
+        return "python"
+    return None
+
+
+LANGUAGE_DETECTORS.append(_detect_language_os_pytest_junit)
+
+
+def _record_is_windows_variant(record: Mapping[str, Any]) -> bool:
+    axes = record.get("variant_axes")
+    if isinstance(axes, dict):
+        for value in axes.get("os") or []:
+            if str(value).lower() == "windows":
+                return True
+    for item in (record.get("variant"), *(record.get("variants") or [])):
+        text = str(item or "").lower()
+        if text == "windows" or text.startswith("windows:"):
+            return True
+    artifact = str(record.get("artifact") or "").lower()
+    return "windows" in artifact or "core-windows" in artifact
+
+
+def rule_platform_specific(
+    records: Sequence[Mapping[str, Any]],
+    project_root: Path | None,
+    squad_names: Sequence[str],
+) -> list[dict[str, Any]]:
+    if not records:
+        return []
+    if not all(_record_is_windows_variant(rec) for rec in records):
+        return []
+    explained: list[str] = []
+    for rec in records:
+        haystack = " ".join(
+            [
+                str(rec.get("message") or ""),
+                str(rec.get("test_id") or ""),
+                str(rec.get("signature") or ""),
+            ]
+        )
+        if not _PLATFORM_MSG_RE.search(haystack):
+            continue
+        test_id = str(rec.get("test_id") or "")
+        if test_id and test_id not in explained:
+            explained.append(test_id)
+    if not explained:
+        return []
+    return [
+        {
+            "summary": "platform-specific failure",
+            "confidence": "medium",
+            "explains": explained,
+            "source_squads": list(squad_names),
+        }
+    ]
+
+
+HYPOTHESIS_RULES.append(rule_platform_specific)
+HYPOTHESIS_RULES.append(rule_matrix_invariance)
+
+
+def rule_fix_platform_specific(
+    candidates: list[dict[str, Any]],
+    hypotheses: Sequence[Mapping[str, Any]],
+) -> list[dict[str, Any]] | None:
+    for hyp in hypotheses:
+        if hyp.get("summary") != "platform-specific failure":
+            continue
+        out = list(candidates)
+        squads = list(hyp.get("source_squads") or [])
+        entry = {
+            "id": f"F{len(out) + 1}",
+            "kind": "platform_specific",
+            "confidence": hyp.get("confidence", "medium"),
+            "evidence": [f"hypothesis {hyp.get('id')}: platform-specific failure"],
+            "location": {},
+            "suggestion": (
+                "Treat as OS-specific behaviour on Windows: check symlink handling, "
+                "exclusive file creation, x-mode permissions, path separators, and "
+                "line-ending assumptions before changing shared logic."
+            ),
+            "verify_command": out[0].get("verify_command", "") if out else "",
+            "source_squads": squads,
+        }
+        out.insert(0, entry)
+        return out
+    return None
+
+
+FIX_RULES.append(rule_fix_platform_specific)
 
 
 def enrich_fix_candidates(
@@ -1370,6 +2048,8 @@ def enrich_fix_candidates(
         updated = rule(out, hypotheses)
         if updated is not None:
             out = updated
+    if any(cand.get("kind") == "dart_import" for cand in out):
+        out = [cand for cand in out if cand.get("kind") != "missing_command"]
     return out
 
 
