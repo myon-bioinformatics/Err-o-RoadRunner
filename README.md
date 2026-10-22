@@ -1,8 +1,20 @@
+<p align="center">
+  <img src="docs/assets/icon.png" alt="Err-o-RoadRunner アプリアイコン（ロードランナーと警告マーク）" width="160">
+</p>
+
 # Err-o-RoadRunner
 
 Err-o-RoadRunner is a tool that does nothing in normal times. It starts working only after an error has happened. The name combines "Error" and "Road Runner".
 
 Researching the cause of a Python, Node, Go or TypeScript failure, or a GitHub Actions CI failure, currently takes a lot of time. Most error messages are well known, and a web search often turns up hints. This project automates that first investigation **without depending on an AI agent**. It lists what it found and what it did not find on stdout, as a plain report.
+
+<p align="center">
+  <img src="docs/assets/concept.png" alt="Err-o-RoadRunner の概念図：エラー発生からトリアージ、stdout レポート、次のアクションまでの流れと対応入力・設計原則" width="900">
+</p>
+
+*The diagram shows the core `triage` flow; `sentinel` adds always-on monitoring and escalation on top. The “single module triage.py” label reflects the diagram’s original scope.*
+
+*Icon and concept artwork were generated with Microsoft 365 Copilot.*
 
 ## Concept overview
 
