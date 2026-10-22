@@ -101,16 +101,21 @@ The default triage mode always exits `0` after printing a report. The `digest` s
 
 Triage does not re-raise the original failure; it always aims to print a report instead of crashing.
 
-### Sentinel wrapper (light watch, escalate on failure)
+### Sentinel wrapper (stop on exit 0, go otherwise)
 
-Run a command under a ring-buffered wrapper. On success, overhead is small and no report file is written. On failure (non-zero exit, timeout, signal, JUnit failure/error, etc.), the same triage engine runs and an optional JSON report is emitted. The wrapped command's exit code is always preserved; sentinel bugs during escalation cannot change it.
+Logic is **inverted** from “treat non-zero as failure”:
+
+- **stop:** wrapped command exits `0` with no timeout, signal, or JUnit failure — sentinel returns immediately. The classifier and JSON report **do not run** (minimal normal-path cost).
+- **go:** anything else (non-zero exit, timeout, signal, JUnit failure/error, wrapper error) — full triage runs and an optional JSON report is emitted.
+
+By default (`--exit-mode child`), the process exit code is still the **wrapped command’s** code (CI-safe). For agents, `--exit-mode signal` uses RoadRunner codes: `0` = stop (no investigation), `1` = go (investigation ran). See **`docs/sentinel-exit-codes.md`**.
 
 ```bash
 err-o-roadrunner sentinel --report-json /tmp/sentinel.json --print-triage --summary -- \
   pytest -q tests/test_example.py
 ```
 
-See **`docs/sentinel-report-schema.md`** for the stable `sentinel-report/v1` JSON fields.
+See **`docs/sentinel-report-schema.md`** for the stable `sentinel-report/v1` JSON fields (written only on **go**).
 
 **Example (Python failure, trimmed JSON)**
 

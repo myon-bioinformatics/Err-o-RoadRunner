@@ -2,7 +2,11 @@
 
 Stable schema id: **`sentinel-report/v1`**
 
-The `err-o-roadrunner sentinel` wrapper keeps a low-cost ring buffer while a command runs. When it detects a failure (non-zero exit, timeout, signal, JUnit failure/error, or wrapper error), it runs the same read-only triage pipeline as `triage.py` and writes a single JSON document.
+The `err-o-roadrunner sentinel` wrapper keeps a low-cost ring buffer while a command runs.
+
+**Stop / go (inverted logic):** wrapped exit `0` with no timeout, signal, or JUnit failure is a **stop** signal — triage and this JSON are **not** produced. Any other outcome is **go** — the read-only `triage.py` pipeline runs and an optional JSON document is written.
+
+Process exit codes: see **`docs/sentinel-exit-codes.md`** (`--exit-mode child` vs `signal`).
 
 ## Top-level fields
 
@@ -47,5 +51,6 @@ err-o-roadrunner sentinel --timeout 600 --junit reports/junit.xml --summary -- \
 | `--summary` | Append `human_summary` to `GITHUB_STEP_SUMMARY` when set. |
 | `--hook SHELL` | Repeatable diagnostic command on escalation. |
 | `--print-triage` | Emit FOUND/NOT FOUND/HINT lines to stdout on escalation. |
+| `--exit-mode child\|signal` | `child` (default): wrapped exit code. `signal`: `0`=stop, `1`=go. |
 
-Exit code is always the wrapped command's exit code (or 124 after timeout). Sentinel failures during escalation never override that code.
+With `--exit-mode child` (default), the process exit code is the wrapped command's (or `124` after timeout). Escalation failures never override it. With `--exit-mode signal`, see `docs/sentinel-exit-codes.md`.

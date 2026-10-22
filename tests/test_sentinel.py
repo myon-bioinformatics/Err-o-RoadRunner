@@ -14,12 +14,14 @@ import pytest
 
 from junit_redact import find_corpus_leaks
 from sentinel import (
+    EXIT_GO,
+    EXIT_STOP,
     SCHEMA_VERSION,
     RingBuffer,
     build_escalation_report,
+    is_go_signal,
+    is_stop_signal,
     run_sentinel,
-    run_wrapped_command,
-    should_escalate,
 )
 from sentinel import RunOutcome, WatchState
 
@@ -58,6 +60,30 @@ def test_success_does_not_write_report_json(tmp_path: Path) -> None:
     proc = _run_sentinel("true", report_json=str(report_path))
     assert proc.returncode == 0
     assert not report_path.exists()
+
+
+@pytest.mark.sentinel
+def test_exit_zero_does_not_invoke_triage_classifier() -> None:
+    with mock.patch("sentinel.triage") as triage_mock:
+        code = run_sentinel(["--", "true"])
+    assert code == 0
+    triage_mock.assert_not_called()
+
+
+@pytest.mark.sentinel
+def test_junit_not_scanned_on_exit_zero_without_junit_flag() -> None:
+    with mock.patch("sentinel.junit_has_failures") as junit_mock:
+        assert run_sentinel(["--", "true"]) == 0
+    junit_mock.assert_not_called()
+
+
+@pytest.mark.sentinel
+def test_exit_mode_signal_stop_and_go() -> None:
+    assert run_sentinel(["--exit-mode", "signal", "--", "true"]) == EXIT_STOP
+    assert (
+        run_sentinel(["--exit-mode", "signal", "--", "sh", "-c", "exit 3"])
+        == EXIT_GO
+    )
 
 
 @pytest.mark.sentinel
@@ -249,13 +275,8 @@ def test_signal_escalation(tmp_path: Path) -> None:
 
 
 @pytest.mark.sentinel
-def test_should_escalate_matrix() -> None:
-    assert should_escalate(RunOutcome(exit_code=1), junit_paths=[], treat_junit_as_failure=True)
-    assert not should_escalate(
-        RunOutcome(exit_code=0), junit_paths=[], treat_junit_as_failure=True
-    )
-    assert should_escalate(
-        RunOutcome(exit_code=0, timed_out=True),
-        junit_paths=[],
-        treat_junit_as_failure=True,
-    )
+def test_stop_and_go_signal_matrix() -> None:
+    assert is_go_signal(RunOutcome(exit_code=1), junit_failure=False)
+    assert is_stop_signal(RunOutcome(exit_code=0), junit_failure=False)
+    assert is_go_signal(RunOutcome(exit_code=0, timed_out=True), junit_failure=False)
+    assert is_go_signal(RunOutcome(exit_code=0), junit_failure=True)

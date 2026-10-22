@@ -29,6 +29,13 @@ DEFAULT_RING_BYTES = 64 * 1024
 DEFAULT_HOOK_TIMEOUT = 30
 ENV_VALUE_MAX = 200
 
+# Exit-mode: child (default) keeps the wrapped exit code; signal uses RoadRunner codes.
+EXIT_MODE_CHILD = "child"
+EXIT_MODE_SIGNAL = "signal"
+EXIT_STOP = 0  # signal mode: investigation not run (stop)
+EXIT_GO = 1  # signal mode: investigation path ran (go)
+EXIT_USAGE = 2
+
 _SENSITIVE_ENV_RE = re.compile(
     r"(?i)(secret|token|password|passwd|credential|api[_-]?key|private[_-]?key|authorization)"
 )
@@ -411,22 +418,38 @@ def _human_summary(
     return "\n".join(lines)
 
 
-def should_escalate(
-    outcome: RunOutcome,
-    *,
-    junit_paths: Sequence[str],
-    treat_junit_as_failure: bool,
-) -> bool:
+def is_stop_signal(outcome: RunOutcome, *, junit_failure: bool) -> bool:
+    """Early-stop path: wrapped exit 0 and no go triggers (no triage, no report)."""
     if outcome.exception_type:
-        return True
+        return False
     if outcome.timed_out or outcome.signal_name:
-        return True
-    if outcome.exit_code not in (None, 0):
-        return True
-    if treat_junit_as_failure:
-        for raw in junit_paths:
-            if junit_has_failures(Path(raw)):
-                return True
+        return False
+    if outcome.exit_code != 0:
+        return False
+    if junit_failure:
+        return False
+    return True
+
+
+def is_go_signal(outcome: RunOutcome, *, junit_failure: bool) -> bool:
+    return not is_stop_signal(outcome, junit_failure=junit_failure)
+
+
+def resolve_sentinel_exit(
+    *,
+    child_exit: int,
+    investigated: bool,
+    exit_mode: str,
+) -> int:
+    if exit_mode == EXIT_MODE_SIGNAL:
+        return EXIT_GO if investigated else EXIT_STOP
+    return child_exit
+
+
+def detect_junit_failure(junit_paths: Sequence[str]) -> bool:
+    for raw in junit_paths:
+        if junit_has_failures(Path(raw)):
+            return True
     return False
 
 
@@ -515,6 +538,15 @@ def build_parser() -> argparse.ArgumentParser:
         help="Print FOUND/NOT FOUND/HINT lines to stdout on escalation.",
     )
     parser.add_argument(
+        "--exit-mode",
+        choices=(EXIT_MODE_CHILD, EXIT_MODE_SIGNAL),
+        default=EXIT_MODE_CHILD,
+        help=(
+            "child: return wrapped exit code (default, CI-safe). "
+            "signal: 0=stop (no investigation), 1=go (investigation ran)."
+        ),
+    )
+    parser.add_argument(
         "--version",
         action="version",
         version=f"%(prog)s {__version__}",
@@ -559,47 +591,52 @@ def run_sentinel(argv: Sequence[str] | None = None) -> int:
         env=None,
         ring_bytes=ring_bytes,
     )
-    junit_fail = False
-    for raw in args.junit:
-        if junit_has_failures(Path(raw)):
-            junit_fail = True
-            break
-    outcome.junit_failure = junit_fail
 
     child_exit = outcome.exit_code if outcome.exit_code is not None else 1
     if outcome.timed_out and child_exit == 0:
         child_exit = 124
 
-    if should_escalate(
-        outcome,
-        junit_paths=args.junit,
-        treat_junit_as_failure=True,
-    ):
-        try:
-            doc = build_escalation_report(
-                state,
-                outcome,
-                project_root=project_root,
-                junit_paths=args.junit,
-                actions_log_path=args.actions_log,
-                hooks=args.hook,
-                hook_timeout=args.hook_timeout,
-            )
-            if args.report_json:
-                write_report_json(Path(args.report_json), doc)
-            if args.summary:
-                append_step_summary(doc.get("human_summary", ""))
-            if args.print_triage:
-                tri = doc.get("triage") or {}
-                for item in tri.get("found", []):
-                    print(f"FOUND: {item}")
-                for item in tri.get("not_found", []):
-                    print(f"NOT FOUND: {item}")
-                for item in tri.get("hints", []):
-                    print(f"HINT: {item}")
-        except BaseException:
-            pass
-    return child_exit
+    # JUnit is consulted only when needed for the stop/go decision (exit 0 may still be go).
+    junit_fail = detect_junit_failure(args.junit) if args.junit else False
+    outcome.junit_failure = junit_fail
+
+    if is_stop_signal(outcome, junit_failure=junit_fail):
+        return resolve_sentinel_exit(
+            child_exit=child_exit,
+            investigated=False,
+            exit_mode=args.exit_mode,
+        )
+
+    try:
+        doc = build_escalation_report(
+            state,
+            outcome,
+            project_root=project_root,
+            junit_paths=args.junit,
+            actions_log_path=args.actions_log,
+            hooks=args.hook,
+            hook_timeout=args.hook_timeout,
+        )
+        if args.report_json:
+            write_report_json(Path(args.report_json), doc)
+        if args.summary:
+            append_step_summary(doc.get("human_summary", ""))
+        if args.print_triage:
+            tri = doc.get("triage") or {}
+            for item in tri.get("found", []):
+                print(f"FOUND: {item}")
+            for item in tri.get("not_found", []):
+                print(f"NOT FOUND: {item}")
+            for item in tri.get("hints", []):
+                print(f"HINT: {item}")
+    except BaseException:
+        pass
+
+    return resolve_sentinel_exit(
+        child_exit=child_exit,
+        investigated=True,
+        exit_mode=args.exit_mode,
+    )
 
 
 def main(argv: Sequence[str] | None = None) -> int:
