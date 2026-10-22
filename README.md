@@ -115,7 +115,7 @@ err-o-roadrunner sentinel --report-json /tmp/sentinel.json --print-triage --summ
   pytest -q tests/test_example.py
 ```
 
-See **`docs/sentinel-report-schema.md`** for the stable `sentinel-report/v1` JSON fields (written only on **go**).
+See **`docs/sentinel-report-schema.md`** for the stable `sentinel-report/v1` JSON fields (written only on **go**), including optional `fix_candidates`, `groups`, and stdout `--format` / `--tb` / `--group-by` options. Pytest option alignment is documented in **`docs/pytest-options-survey.md`** (Japanese).
 
 **Example (Python failure, trimmed JSON)**
 

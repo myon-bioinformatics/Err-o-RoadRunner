@@ -1,0 +1,8 @@
+F pytest -q
+  exit code: 1
+  python exception type: ValidationError
+  python exception message: 1 validation error for UserModel\nemail\n  value is not a valid email address
+  python traceback frame (first): app/models.py:42 in validate_user
+fix: [F1] Re-run reproduce_command with verbose logging and inspect stderr.
+G 1× error_type=ValidationError
+== 1 failed, 1 fixes in 0.00s ==

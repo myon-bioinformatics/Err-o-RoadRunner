@@ -1,0 +1,10 @@
+{
+  "found": [
+    "exit code: 1",
+    "python exception type: ValidationError",
+    "python exception message: 1 validation error for UserModel\\nemail\\n  value is not a valid email address",
+    "python traceback frame (first): app/models.py:42 in validate_user"
+  ],
+  "not_found": [],
+  "hints": []
+}
