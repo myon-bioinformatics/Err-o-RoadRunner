@@ -2,7 +2,7 @@
 
 Err-o-RoadRunner is a tool that does nothing in normal times. It starts working only after an error has happened. The name combines "Error" and "Road Runner".
 
-Researching the cause of a Python, Node or GitHub Actions CI failure currently takes a lot of time. Most error messages are well known, and a web search often turns up hints. This project automates that first investigation **without depending on an AI agent**. It lists what it found and what it did not find on stdout, as a plain report.
+Researching the cause of a Python, Node, Go or TypeScript failure, or a GitHub Actions CI failure, currently takes a lot of time. Most error messages are well known, and a web search often turns up hints. This project automates that first investigation **without depending on an AI agent**. It lists what it found and what it did not find on stdout, as a plain report.
 
 ## What it does
 
@@ -31,7 +31,7 @@ Researching the cause of a Python, Node or GitHub Actions CI failure currently t
 
 ## Status
 
-**Current slice:** read-only triage for Python tracebacks, Node stacks, JUnit XML, and downloaded GitHub Actions job logs (`--actions-log`). Summarize a downloaded CI artifact zip (or directory / single XML or JSON) in place with `digest` (JUnit counts and failing cases, receipt JSON fields, extension counts for everything else).
+**Current slice:** read-only triage for Python tracebacks, Node stacks, Go panics and compiler errors, TypeScript compiler diagnostics, JUnit XML, and downloaded GitHub Actions job logs (`--actions-log`). Go and TypeScript detection is best effort and reported as `HINT`. Summarize a downloaded CI artifact zip (or directory / single XML or JSON) in place with `digest` (JUnit counts and failing cases, receipt JSON fields, extension counts for everything else).
 
 ## CLI usage
 
@@ -410,6 +410,17 @@ HINT: web search keywords: ERR_MODULE_NOT_FOUND
 More captured scenarios (JUnit mix, hostile symlink refusal, additional Node errors) live under `tests/fixtures/readme/` and are checked by `tests/test_readme_golden.py`.
 
 ## Development
+
+Requires Python 3.11 or later.
+
+With uv (the lockfile is `uv.lock`, and CI runs the same commands):
+
+```bash
+uv sync --locked --extra test
+uv run --locked python -m pytest -q tests
+```
+
+With pip:
 
 ```bash
 python -m pip install -e ".[test]"
