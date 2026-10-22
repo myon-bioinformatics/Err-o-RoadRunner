@@ -9,50 +9,10 @@
       "-c",
       "exit 0"
     ],
-    "cwd": "/workspace",
+    "cwd": "<repo>",
     "reproduce_command": "sh -c 'exit 0'"
   },
   "environment": {
-    "values_redacted": {
-      "AGENT_TRANSCRIPTS": "/home/ubuntu/.cursor/projects/workspace/agent-transcripts",
-      "CARGO_HOME": "/usr/local/cargo",
-      "CURSOR_AGENT": "1",
-      "CURSOR_AGENT_SOCKET": "/run/cursor/api.sock",
-      "CURSOR_CONVERSATION_ID": "bc-0f8647a1-bce9-587a-8267-02eb9897732b",
-      "CURSOR_REQUEST_ID": "be3ab99f-b95e-4aad-acf2-2e76ac598a38",
-      "CURSOR_RIPGREP_PATH": "/exec-daemon/rg",
-      "CURSOR_SPAWN_CWD_HOP": "1",
-      "CURSOR_WORKLOAD_CGROUP": "/sys/fs/cgroup/system.slice/pod-ytsvgnr46bguneeveynhwtskhm-373092d1/cursor-agent/workload",
-      "DISPLAY": ":1",
-      "EXEC_DAEMON_STARTUP_TRACEPARENT": "00-01a16378daeb703481d91775d1f51b2a-2ec75b356cb41f60-01",
-      "FORCE_COLOR": "0",
-      "GH_TELEMETRY": "false",
-      "GIT_DISCOVERY_ACROSS_FILESYSTEM": "0",
-      "GIT_LFS_SKIP_SMUDGE": "1",
-      "HOME": "/home/ubuntu",
-      "LANG": "en_US.UTF-8",
-      "LC_ALL": "en_US.UTF-8",
-      "NO_COLOR": "1",
-      "NVM_BIN": "/home/ubuntu/.nvm/versions/node/v22.23.4/bin",
-      "NVM_CD_FLAGS": "",
-      "NVM_DIR": "/home/ubuntu/.nvm",
-      "NVM_INC": "/home/ubuntu/.nvm/versions/node/v22.23.4/include/node",
-      "OLDPWD": "/workspace",
-      "PATH": "/usr/local/cargo/bin:/exec-daemon:/exec-daemon/tools:/usr/local/cargo/bin:/home/ubuntu/.nvm/versions/node/v22.23.4/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
-      "PS1": "\\[\u001b[36m\\]\\W\\[\u001b[0m\\] $ ",
-      "PWD": "/workspace",
-      "RUSTUP_HOME": "/usr/local/rustup",
-      "RUST_VERSION": "1.83.0",
-      "SHELL": "/bin/bash",
-      "SHLVL": "1",
-      "TERM": "dumb",
-      "USER": "ubuntu",
-      "VNC_DPI": "96",
-      "VNC_RESOLUTION": "1920x1200x24",
-      "_": "/usr/bin/python3",
-      "_ZO_DOCTOR": "0",
-      "__CURSOR_SANDBOX_ENV_RESTORE": "builtin unset CURSOR_CONVERSATION_ID CURSOR_REQUEST_ID CURSOR_AGENT_STORE_FILES_DIR CURSOR_AGENT_STORE_SHARED_PATHS 2>/dev/null || true; builtin export CURSOR_CONVERSATION_ID='bc-0f8647a1-bce9-587a-8…"
-    },
     "variable_count": 38,
     "variable_names": [
       "AGENT_TRANSCRIPTS",
@@ -94,7 +54,8 @@
       "_ZO_DOCTOR",
       "__CURSOR_SANDBOX_ENV_RESTORE"
     ],
-    "variable_names_truncated": false
+    "variable_names_truncated": false,
+    "values_redacted": {}
   },
   "escalation_reasons": [
     "junit_failure"
@@ -609,9 +570,16 @@
   "schema": "sentinel-report/v1",
   "squads": [],
   "timing": {
-    "elapsed_seconds": 0.004,
-    "started_monotonic": 1090.499350603
+    "elapsed_seconds": 0.003,
+    "started_monotonic": 5162.458728447
   },
+  "top_causes": [
+    {
+      "count": 12,
+      "error_type": "DartMissingImport",
+      "signature": "Error when reading 'lib<path>': No such file or directory"
+    }
+  ],
   "triage": {
     "found": [
       "exit code: 1",
