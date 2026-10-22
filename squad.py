@@ -273,6 +273,10 @@ EXCEPTION_PARSERS: list[ExceptionParser] = [
     parse_dart_error,
 ]
 
+RecordFieldParser = Callable[[str, str, str], dict[str, Any] | None]
+
+RECORD_FIELD_PARSERS: list[RecordFieldParser] = []
+
 
 def _exception_type(message: str, blob: str, first_line: str) -> str:
     for parser in EXCEPTION_PARSERS:
@@ -334,6 +338,9 @@ def _record_language(record: Mapping[str, Any]) -> str | None:
     return None
 
 
+TracebackLocationParser = Callable[[str], tuple[str, int | None] | None]
+
+
 def _dart_error_locations(
     blob: str,
 ) -> tuple[tuple[str, int | None], tuple[str, int | None]]:
@@ -383,18 +390,42 @@ def _dart_record_message(blob: str) -> str:
     return ""
 
 
+def _tb_from_python_frame(blob: str) -> tuple[str, int | None] | None:
+    for line in blob.splitlines():
+        match = _PYTHON_FRAME_RE.match(line)
+        if match:
+            return match.group("file"), int(match.group("line"))
+    return None
+
+
+def _tb_from_pytest_file_line(blob: str) -> tuple[str, int | None] | None:
+    for line in blob.splitlines():
+        match = _PYTEST_FILE_LINE_RE.match(line.strip())
+        if match:
+            return match.group("file"), int(match.group("line"))
+    return None
+
+
+TRACEBACK_LOCATION_PARSERS: list[TracebackLocationParser] = [
+    _tb_from_python_frame,
+    _tb_from_pytest_file_line,
+]
+
+
+def _traceback_location_from_parsers(blob: str) -> tuple[str, int | None]:
+    for parser in TRACEBACK_LOCATION_PARSERS:
+        found = parser(blob)
+        if found and found[0]:
+            return found
+    return "", None
+
+
 def _traceback_location(blob: str) -> tuple[str, int | None, str, int | None]:
     (dart_file, dart_line), (dart_file2, dart_line2) = _dart_error_locations(blob)
     if dart_file:
         return dart_file, dart_line, dart_file2, dart_line2
-    for line in blob.splitlines():
-        match = _PYTHON_FRAME_RE.match(line)
-        if match:
-            return match.group("file"), int(match.group("line")), "", None
-        match = _PYTEST_FILE_LINE_RE.match(line.strip())
-        if match:
-            return match.group("file"), int(match.group("line")), "", None
-    return "", None, "", None
+    py_file, py_line = _traceback_location_from_parsers(blob)
+    return py_file, py_line, "", None
 
 
 def parse_junit_failure_records(path: Path) -> list[dict[str, Any]]:
@@ -418,7 +449,15 @@ def parse_junit_failure_records(path: Path) -> list[dict[str, Any]]:
             blob = _failure_blob(testcase, child)
             message_attr = (child.attrib.get("message") or "").strip()
             first_line = _message_first_line(message_attr, blob)
-            error_type = _exception_type(message_attr, blob, first_line)
+            record_fields: dict[str, Any] = {}
+            for field_parser in RECORD_FIELD_PARSERS:
+                chunk = field_parser(message_attr, blob, first_line)
+                if chunk:
+                    record_fields.update(chunk)
+            error_type = str(
+                record_fields.pop("error_type", None)
+                or _exception_type(message_attr, blob, first_line)
+            )
             message = _parse_message_text(message_attr, blob)
             if error_type.startswith("Dart"):
                 dart_message = _dart_record_message(blob)
@@ -445,11 +484,15 @@ def parse_junit_failure_records(path: Path) -> list[dict[str, Any]]:
                 "line": line_no,
                 "variant": variant,
                 "artifact": artifact,
+                **record_fields,
             }
             if source_file_secondary:
                 draft["source_file_secondary"] = source_file_secondary
             if line_no_secondary is not None:
                 draft["line_secondary"] = line_no_secondary
+            axes = _variant_axes_from_artifact(artifact)
+            if axes:
+                _attach_variant_axes_to_draft(draft, axes)
             draft["language"] = _record_language(draft)
             records.append(draft)
     return records
@@ -484,6 +527,7 @@ def merge_failure_records(
 ) -> list[dict[str, Any]]:
     merged: dict[str, dict[str, Any]] = {}
     for path in paths:
+        path_axes = _variant_axes_from_artifact(path.name) or {}
         for rec in parse_junit_failure_records(path):
             key = str(rec["test_id"])
             variant = rec.get("variant") or "unknown"
@@ -492,15 +536,27 @@ def merge_failure_records(
                 variants = entry.setdefault("variants", [])
                 if variant != "unknown" and variant not in variants:
                     variants.append(variant)
+                _merge_variant_axes(entry, path_axes)
+                for cell in rec.get("matrix_cells") or []:
+                    _merge_variant_axes(entry, cell)
                 if not entry.get("source_file") and rec.get("source_file"):
                     entry["source_file"] = rec["source_file"]
                     entry["line"] = rec.get("line")
             else:
                 copy = dict(rec)
                 copy["variants"] = [variant] if variant != "unknown" else []
+                if path_axes:
+                    _merge_variant_axes(copy, path_axes)
                 merged[key] = copy
     for entry in merged.values():
         entry["variants"] = sorted(set(entry.get("variants") or []))
+        axes = entry.get("variant_axes")
+        if isinstance(axes, dict):
+            entry["variant_axes"] = {
+                key: sorted(set(axes.get(key) or []))
+                for key in ("os", "python", "flavor")
+                if axes.get(key)
+            }
     return list(merged.values())
 
 
@@ -1362,6 +1418,250 @@ FIX_RULES: list[FixRule] = [
     rule_fix_import_cascade,
     rule_fix_dart_missing_import,
 ]
+
+
+_DID_NOT_RAISE_RE = re.compile(
+    r"Failed:\s+DID NOT RAISE\s+(?P<exc>[A-Za-z_][\w.]*)",
+    re.I,
+)
+_PYTEST_FAILED_PREFIX_RE = re.compile(r"^Failed:\s*", re.I)
+_XPASS_STRICT_RE = re.compile(r"XPASS\s*\(\s*strict\s*\)", re.I)
+_PYTEST_SKIPPED_RE = re.compile(r"^Skipped(?:\s*:|$)", re.I)
+_OS_VARIANT_RE = re.compile(r"junit-(?:core-)?(windows|macos|ubuntu)", re.I)
+_CLI_ARGS_RUN_RE = re.compile(r"cli_args_(\d+)_", re.I)
+_PLATFORM_MSG_RE = re.compile(
+    r"symlink|exclusive|x-mode|permissions|\bpaths?\b|line endings?",
+    re.I,
+)
+_WINDOWS_COMPACT_TB_RE = re.compile(
+    r"^(?P<file>(?:[A-Za-z]:)?(?:[^:\r\n]*\\)?[^:\r\n]+\.py):(?P<line>\d+):"
+)
+_WINDOWS_FRAME_FILE_RE = re.compile(
+    r'^  File "(?P<file>(?:[A-Za-z]:)?[^"]+)", line (?P<line>\d+)'
+)
+
+
+def parse_pytest_outcome(message: str, blob: str, first_line: str) -> dict[str, Any] | None:
+    for line in (first_line, message.splitlines()[0] if message else "", blob):
+        text = (line or "").strip()
+        if not text:
+            continue
+        match = _DID_NOT_RAISE_RE.search(text)
+        if match:
+            return {
+                "error_type": "pytest.Failed.DidNotRaise",
+                "expected_exception": match.group("exc"),
+            }
+        if _XPASS_STRICT_RE.search(text):
+            return {"error_type": "pytest.XPass.Strict"}
+        if _PYTEST_SKIPPED_RE.match(text):
+            return {"error_type": "pytest.Skipped"}
+        if _PYTEST_FAILED_PREFIX_RE.match(text):
+            return {"error_type": "pytest.Failed"}
+    return None
+
+
+def _exc_from_pytest_outcome(message: str, blob: str, first_line: str) -> str | None:
+    fields = parse_pytest_outcome(message, blob, first_line)
+    if not fields:
+        return None
+    return str(fields.get("error_type") or "")
+
+
+EXCEPTION_PARSERS.append(_exc_from_pytest_outcome)
+RECORD_FIELD_PARSERS.append(parse_pytest_outcome)
+
+
+def _normalize_windows_path(path: str) -> str:
+    normalized = path.replace("\\", "/")
+    if len(normalized) >= 2 and normalized[1] == ":":
+        normalized = normalized[2:]
+    return normalized.lstrip("/")
+
+
+def parse_windows_traceback_location(blob: str) -> tuple[str, int | None] | None:
+    for line in blob.splitlines():
+        if "\\" not in line and not re.search(r"[A-Za-z]:[\\/]", line):
+            continue
+        stripped = line.strip()
+        match = _WINDOWS_COMPACT_TB_RE.match(stripped)
+        if not match:
+            match = _WINDOWS_FRAME_FILE_RE.match(stripped)
+        if match:
+            return (
+                _normalize_windows_path(match.group("file")),
+                int(match.group("line")),
+            )
+    return None
+
+
+TRACEBACK_LOCATION_PARSERS.append(parse_windows_traceback_location)
+
+
+VariantAxesParser = Callable[[str], dict[str, str] | None]
+
+VARIANT_AXES_PARSERS: list[VariantAxesParser] = []
+
+
+def _variant_axes_from_artifact(artifact: str) -> dict[str, str] | None:
+    for parser in VARIANT_AXES_PARSERS:
+        axes = parser(artifact)
+        if axes:
+            return axes
+    return None
+
+
+def _merge_variant_axes(entry: dict[str, Any], axes: Mapping[str, str]) -> None:
+    if not axes:
+        return
+    merged_axes: dict[str, list[str]] = entry.setdefault(
+        "variant_axes",
+        {"os": [], "python": [], "flavor": []},
+    )
+    for key in ("os", "python", "flavor"):
+        value = axes.get(key)
+        if not value:
+            continue
+        bucket = merged_axes.setdefault(key, [])
+        if value not in bucket:
+            bucket.append(value)
+    cells: list[dict[str, str]] = entry.setdefault("matrix_cells", [])
+    cell = {k: axes[k] for k in ("os", "python", "flavor") if axes.get(k)}
+    if cell and cell not in cells:
+        cells.append(cell)
+
+
+def _attach_variant_axes_to_draft(draft: dict[str, Any], axes: Mapping[str, str]) -> None:
+    draft["variant_axes"] = {
+        key: [axes[key]] for key in ("os", "python", "flavor") if axes.get(key)
+    }
+    draft["matrix_cells"] = [
+        {key: axes[key] for key in ("os", "python", "flavor") if axes.get(key)}
+    ]
+
+
+def parse_os_junit_variant_axes(path: str) -> dict[str, str] | None:
+    """Matrix axes for OS-tagged JUnit artifacts (S3 ``parse_matrix_variant`` compatible)."""
+    name = path.rsplit("/", 1)[-1]
+    match = _OS_VARIANT_RE.search(name)
+    if not match:
+        return None
+    os_tag = match.group(1).lower()
+    flavor = "core-windows" if "core-windows" in name.lower() else "os-junit"
+    run_match = _CLI_ARGS_RUN_RE.search(name)
+    if run_match:
+        flavor = f"{flavor}:{run_match.group(1)}"
+    return {"os": os_tag, "flavor": flavor}
+
+
+VARIANT_AXES_PARSERS.append(parse_os_junit_variant_axes)
+
+
+def _variant_os_run_from_artifact(path: str) -> str | None:
+    axes = parse_os_junit_variant_axes(path)
+    if not axes:
+        return None
+    os_tag = axes["os"]
+    run_match = _CLI_ARGS_RUN_RE.search(path)
+    if run_match:
+        return f"{os_tag}:{run_match.group(1)}"
+    return os_tag
+
+
+VARIANT_PARSERS.append(_variant_os_run_from_artifact)
+
+
+def _detect_language_os_pytest_junit(record: Mapping[str, Any]) -> str | None:
+    artifact = str(record.get("artifact") or "")
+    if _OS_VARIANT_RE.search(artifact):
+        return "python"
+    return None
+
+
+LANGUAGE_DETECTORS.append(_detect_language_os_pytest_junit)
+
+
+def _record_is_windows_variant(record: Mapping[str, Any]) -> bool:
+    axes = record.get("variant_axes")
+    if isinstance(axes, dict):
+        for value in axes.get("os") or []:
+            if str(value).lower() == "windows":
+                return True
+    for item in (record.get("variant"), *(record.get("variants") or [])):
+        text = str(item or "").lower()
+        if text == "windows" or text.startswith("windows:"):
+            return True
+    artifact = str(record.get("artifact") or "").lower()
+    return "windows" in artifact or "core-windows" in artifact
+
+
+def rule_platform_specific(
+    records: Sequence[Mapping[str, Any]],
+    project_root: Path | None,
+    squad_names: Sequence[str],
+) -> list[dict[str, Any]]:
+    if not records:
+        return []
+    if not all(_record_is_windows_variant(rec) for rec in records):
+        return []
+    explained: list[str] = []
+    for rec in records:
+        haystack = " ".join(
+            [
+                str(rec.get("message") or ""),
+                str(rec.get("test_id") or ""),
+                str(rec.get("signature") or ""),
+            ]
+        )
+        if not _PLATFORM_MSG_RE.search(haystack):
+            continue
+        test_id = str(rec.get("test_id") or "")
+        if test_id and test_id not in explained:
+            explained.append(test_id)
+    if not explained:
+        return []
+    return [
+        {
+            "summary": "platform-specific failure",
+            "confidence": "medium",
+            "explains": explained,
+            "source_squads": list(squad_names),
+        }
+    ]
+
+
+HYPOTHESIS_RULES.append(rule_platform_specific)
+
+
+def rule_fix_platform_specific(
+    candidates: list[dict[str, Any]],
+    hypotheses: Sequence[Mapping[str, Any]],
+) -> list[dict[str, Any]] | None:
+    for hyp in hypotheses:
+        if hyp.get("summary") != "platform-specific failure":
+            continue
+        out = list(candidates)
+        squads = list(hyp.get("source_squads") or [])
+        entry = {
+            "id": f"F{len(out) + 1}",
+            "kind": "platform_specific",
+            "confidence": hyp.get("confidence", "medium"),
+            "evidence": [f"hypothesis {hyp.get('id')}: platform-specific failure"],
+            "location": {},
+            "suggestion": (
+                "Treat as OS-specific behaviour on Windows: check symlink handling, "
+                "exclusive file creation, x-mode permissions, path separators, and "
+                "line-ending assumptions before changing shared logic."
+            ),
+            "verify_command": out[0].get("verify_command", "") if out else "",
+            "source_squads": squads,
+        }
+        out.insert(0, entry)
+        return out
+    return None
+
+
+FIX_RULES.append(rule_fix_platform_specific)
 
 
 def enrich_fix_candidates(
