@@ -1021,6 +1021,36 @@ def build_groups(
     }
 
 
+def _format_matrix_short_lines(doc: dict[str, Any]) -> list[str]:
+    matrix = doc.get("matrix") or {}
+    if not matrix:
+        return []
+    lines: list[str] = []
+    for hyp in doc.get("hypotheses") or []:
+        if hyp.get("summary") != "matrix-invariant failure":
+            continue
+        variant_n = int(hyp.get("variant_count") or matrix.get("total") or 0)
+        if variant_n <= 0:
+            continue
+        parts: list[str] = []
+        if hyp.get("os_coverage"):
+            parts.append(f"os: {hyp['os_coverage']}")
+        elif matrix.get("axes", {}).get("os"):
+            os_n = matrix["axes"]["os"]
+            parts.append(f"os: {os_n}/{os_n}")
+        if hyp.get("python_coverage"):
+            parts.append(f"python: {hyp['python_coverage']}")
+        elif matrix.get("axes", {}).get("python"):
+            py_n = matrix["axes"]["python"]
+            parts.append(f"python: {py_n}/{py_n}")
+        detail = ", ".join(parts)
+        if detail:
+            lines.append(f"M fails on all {variant_n} variants ({detail})")
+        else:
+            lines.append(f"M fails on all {variant_n} variants")
+    return lines
+
+
 def _format_groups_short(groups: dict[str, Any], limit: int = 8) -> list[str]:
     lines: list[str] = []
     for bucket in (groups.get("buckets") or [])[:limit]:
@@ -1160,6 +1190,8 @@ def _render_short(
         lines.append(_cap_output_line(f"S {name} {status} {ms}ms {n_find} findings"))
 
     for hyp in doc.get("hypotheses") or []:
+        if hyp.get("summary") == "matrix-invariant failure":
+            continue
         explains = hyp.get("explains") or []
         total = len(doc.get("records") or []) or len(explains)
         lines.append(
@@ -1168,6 +1200,9 @@ def _render_short(
                 f"(explains {len(explains)}/{total})"
             )
         )
+
+    for line in _format_matrix_short_lines(doc):
+        lines.append(_cap_output_line(line))
 
     if verbose:
         for item in structured.get("not_found") or []:
@@ -1447,14 +1482,19 @@ def build_escalation_report(
     squad_mod = None
     if junit_paths or squads_enabled:
         squad_mod = _squad_module()
+    matrix_summary: dict[str, Any] = {}
+    junit_path_objs: list[Path] = []
     if squad_mod is not None and junit_paths:
         failure_records = squad_mod.load_failure_records_for_escalation(junit_paths)
+        junit_path_objs = squad_mod.collect_junit_paths(junit_paths, ())
 
     all_failure_records = failure_records
     records_omitted = 0
     if max_records >= 0 and len(failure_records) > max_records:
         records_omitted = len(failure_records) - max_records
         failure_records = failure_records[:max_records]
+    if squad_mod is not None and junit_path_objs and all_failure_records:
+        matrix_summary = squad_mod.build_report_matrix(junit_path_objs, all_failure_records)
 
     fix_candidates = _redact_fix_candidates(
         build_fix_candidates(
@@ -1491,6 +1531,16 @@ def build_escalation_report(
         fix_candidates = _redact_fix_candidates(
             squad_mod.enrich_fix_candidates(fix_candidates, squad_pack.get("hypotheses") or [])
         )
+    elif all_failure_records and squad_mod is not None:
+        squad_pack["hypotheses"] = [
+            hyp
+            for hyp in squad_mod.build_cascade_hypotheses(
+                all_failure_records,
+                project_root,
+                [],
+            )
+            if str(hyp.get("summary") or "").startswith("matrix-")
+        ]
 
     doc: dict[str, Any] = {
         "schema": SCHEMA_VERSION,
@@ -1519,7 +1569,12 @@ def build_escalation_report(
         "next_investigation_steps": _next_investigation_steps(report, outcome),
         "fix_candidates": fix_candidates,
         "groups": groups,
-        "records": failure_records,
+        "records": (
+            squad_mod.records_for_report(failure_records)
+            if squad_mod is not None
+            else failure_records
+        ),
+        "matrix": matrix_summary,
         "squads": squad_pack.get("squads") or [],
         "hypotheses": squad_pack.get("hypotheses") or [],
         "human_summary": "",

@@ -15,44 +15,7 @@
   "environment": {
     "variable_count": 38,
     "variable_names": [
-      "AGENT_TRANSCRIPTS",
-      "CARGO_HOME",
-      "CURSOR_AGENT",
-      "CURSOR_AGENT_SOCKET",
-      "CURSOR_CONVERSATION_ID",
-      "CURSOR_REQUEST_ID",
-      "CURSOR_RIPGREP_PATH",
-      "CURSOR_SPAWN_CWD_HOP",
-      "CURSOR_WORKLOAD_CGROUP",
-      "DISPLAY",
-      "EXEC_DAEMON_STARTUP_TRACEPARENT",
-      "FORCE_COLOR",
-      "GH_TELEMETRY",
-      "GIT_DISCOVERY_ACROSS_FILESYSTEM",
-      "GIT_LFS_SKIP_SMUDGE",
-      "HOME",
-      "LANG",
-      "LC_ALL",
-      "NO_COLOR",
-      "NVM_BIN",
-      "NVM_CD_FLAGS",
-      "NVM_DIR",
-      "NVM_INC",
-      "OLDPWD",
-      "PATH",
-      "PS1",
-      "PWD",
-      "RUSTUP_HOME",
-      "RUST_VERSION",
-      "SHELL",
-      "SHLVL",
-      "TERM",
-      "USER",
-      "VNC_DPI",
-      "VNC_RESOLUTION",
-      "_",
-      "_ZO_DOCTOR",
-      "__CURSOR_SANDBOX_ENV_RESTORE"
+      "<masked>"
     ],
     "variable_names_truncated": false,
     "values_redacted": {}
@@ -100,6 +63,18 @@
             "signature": "assert <n> == <n>",
             "source_line": "nagoyaction.tests.test_inbox::test_bot_intake_worker_completion_and_retry",
             "test_id": "nagoyaction.tests.test_inbox::test_bot_intake_worker_completion_and_retry",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.11",
+                "py3.12",
+                "py3.13",
+                "py3.14",
+                "py3.15"
+              ]
+            },
             "variants": [
               "py3.11",
               "py3.12",
@@ -119,6 +94,18 @@
             "signature": "assert <n> == <n>",
             "source_line": "nagoyaction.tests.test_inbox::test_worker_bundled_completion_recovers_lost_response",
             "test_id": "nagoyaction.tests.test_inbox::test_worker_bundled_completion_recovers_lost_response",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.11",
+                "py3.12",
+                "py3.13",
+                "py3.14",
+                "py3.15"
+              ]
+            },
             "variants": [
               "py3.11",
               "py3.12",
@@ -138,6 +125,18 @@
             "signature": "assert <n> == <n>",
             "source_line": "nagoyaction.tests.test_inbox::test_trusted_exploration_has_five_pending_requests_per_author",
             "test_id": "nagoyaction.tests.test_inbox::test_trusted_exploration_has_five_pending_requests_per_author",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.11",
+                "py3.12",
+                "py3.13",
+                "py3.14",
+                "py3.15"
+              ]
+            },
             "variants": [
               "py3.11",
               "py3.12",
@@ -157,6 +156,18 @@
             "signature": "assert (<n> > <n>)",
             "source_line": "nagoyaction.tests.test_inbox::test_worker_reads_comments_only_for_completion",
             "test_id": "nagoyaction.tests.test_inbox::test_worker_reads_comments_only_for_completion",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.11",
+                "py3.12",
+                "py3.13",
+                "py3.14",
+                "py3.15"
+              ]
+            },
             "variants": [
               "py3.11",
               "py3.12",
@@ -176,6 +187,18 @@
             "signature": "assert 'すでに終了' in '判定不能 / 入力を確認してください: その探索依頼はありません\\n\\n対象サイクル: `` / 結果SHA: `` / 対象コード: `sha` / 元コメント: <n>'",
             "source_line": "nagoyaction.tests.test_inbox::test_finished_stop_does_not_create_stop_record",
             "test_id": "nagoyaction.tests.test_inbox::test_finished_stop_does_not_create_stop_record",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.11",
+                "py3.12",
+                "py3.13",
+                "py3.14",
+                "py3.15"
+              ]
+            },
             "variants": [
               "py3.11",
               "py3.12",
@@ -195,6 +218,18 @@
             "signature": "assert [] == ['<path>']",
             "source_line": "nagoyaction.tests.test_inbox::test_completion_bundles_use_run_id_without_run_api",
             "test_id": "nagoyaction.tests.test_inbox::test_completion_bundles_use_run_id_without_run_api",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.11",
+                "py3.12",
+                "py3.13",
+                "py3.14",
+                "py3.15"
+              ]
+            },
             "variants": [
               "py3.11",
               "py3.12",
@@ -214,6 +249,18 @@
             "signature": "assert <n> == <n>",
             "source_line": "nagoyaction.tests.test_inbox::test_total_pending_limit_still_applies_to_trusted_users",
             "test_id": "nagoyaction.tests.test_inbox::test_total_pending_limit_still_applies_to_trusted_users",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.11",
+                "py3.12",
+                "py3.13",
+                "py3.14",
+                "py3.15"
+              ]
+            },
             "variants": [
               "py3.11",
               "py3.12",
@@ -246,6 +293,18 @@
             "signature": "No module named 'sets'",
             "source_line": "nagoyaction.tests.test_inbox::test_real_exploration_resume_matches_uninterrupted",
             "test_id": "nagoyaction.tests.test_inbox::test_real_exploration_resume_matches_uninterrupted",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.11",
+                "py3.12",
+                "py3.13",
+                "py3.14",
+                "py3.15"
+              ]
+            },
             "variants": [
               "py3.11",
               "py3.12",
@@ -268,6 +327,18 @@
             "signature": "No module named 'sets'",
             "source_line": "nagoyaction.tests.test_inbox::test_exploration_deadline_and_candidate_bound",
             "test_id": "nagoyaction.tests.test_inbox::test_exploration_deadline_and_candidate_bound",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.11",
+                "py3.12",
+                "py3.13",
+                "py3.14",
+                "py3.15"
+              ]
+            },
             "variants": [
               "py3.11",
               "py3.12",
@@ -290,6 +361,18 @@
             "signature": "No module named 'neighbors'",
             "source_line": "nagoyaction.tests.test_inbox::test_automatic_worker_without_comments_prepares_and_finishes",
             "test_id": "nagoyaction.tests.test_inbox::test_automatic_worker_without_comments_prepares_and_finishes",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.11",
+                "py3.12",
+                "py3.13",
+                "py3.14",
+                "py3.15"
+              ]
+            },
             "variants": [
               "py3.11",
               "py3.12",
@@ -312,6 +395,18 @@
             "signature": "No module named 'neighbors'",
             "source_line": "nagoyaction.tests.test_inbox::test_neighbor_feedback_html_roundtrip_and_restart",
             "test_id": "nagoyaction.tests.test_inbox::test_neighbor_feedback_html_roundtrip_and_restart",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.11",
+                "py3.12",
+                "py3.13",
+                "py3.14",
+                "py3.15"
+              ]
+            },
             "variants": [
               "py3.11",
               "py3.12",
@@ -344,6 +439,18 @@
             "signature": "<n>",
             "source_line": "nagoyaction.tests.test_inbox::test_inbox_configuration_does_not_enable_automatic_research[]",
             "test_id": "nagoyaction.tests.test_inbox::test_inbox_configuration_does_not_enable_automatic_research[]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.11",
+                "py3.12",
+                "py3.13",
+                "py3.14",
+                "py3.15"
+              ]
+            },
             "variants": [
               "py3.11",
               "py3.12",
@@ -366,6 +473,18 @@
             "signature": "<n>",
             "source_line": "nagoyaction.tests.test_inbox::test_inbox_configuration_does_not_enable_automatic_research[0]",
             "test_id": "nagoyaction.tests.test_inbox::test_inbox_configuration_does_not_enable_automatic_research[0]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.11",
+                "py3.12",
+                "py3.13",
+                "py3.14",
+                "py3.15"
+              ]
+            },
             "variants": [
               "py3.11",
               "py3.12",
@@ -388,6 +507,18 @@
             "signature": "<n>",
             "source_line": "nagoyaction.tests.test_inbox::test_inbox_configuration_does_not_enable_automatic_research[1]",
             "test_id": "nagoyaction.tests.test_inbox::test_inbox_configuration_does_not_enable_automatic_research[1]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.11",
+                "py3.12",
+                "py3.13",
+                "py3.14",
+                "py3.15"
+              ]
+            },
             "variants": [
               "py3.11",
               "py3.12",
@@ -417,6 +548,18 @@
             "signature": "StopIteration",
             "source_line": "nagoyaction.tests.test_inbox::test_worker_refuses_to_mix_changed_inputs",
             "test_id": "nagoyaction.tests.test_inbox::test_worker_refuses_to_mix_changed_inputs",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.11",
+                "py3.12",
+                "py3.13",
+                "py3.14",
+                "py3.15"
+              ]
+            },
             "variants": [
               "py3.11",
               "py3.12",
@@ -436,6 +579,18 @@
             "signature": "StopIteration",
             "source_line": "nagoyaction.tests.test_inbox::test_worker_comment_get_failure_does_not_interrupt_evaluation",
             "test_id": "nagoyaction.tests.test_inbox::test_worker_comment_get_failure_does_not_interrupt_evaluation",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.11",
+                "py3.12",
+                "py3.13",
+                "py3.14",
+                "py3.15"
+              ]
+            },
             "variants": [
               "py3.11",
               "py3.12",
@@ -468,6 +623,18 @@
             "signature": "[Errno <n>] No such file or directory: '<pytest-tmp><path>'",
             "source_line": "nagoyaction.tests.test_inbox::test_stopped_manual_job_is_not_selected_automatically",
             "test_id": "nagoyaction.tests.test_inbox::test_stopped_manual_job_is_not_selected_automatically",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.11",
+                "py3.12",
+                "py3.13",
+                "py3.14",
+                "py3.15"
+              ]
+            },
             "variants": [
               "py3.11",
               "py3.12",
@@ -497,6 +664,18 @@
             "signature": "<module 'inbox' from '<runner-work><path>'> has no attribute 'observe_report'",
             "source_line": "nagoyaction.tests.test_inbox::test_html_observation_failure_keeps_previous_and_worker_continues",
             "test_id": "nagoyaction.tests.test_inbox::test_html_observation_failure_keeps_previous_and_worker_continues",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.11",
+                "py3.12",
+                "py3.13",
+                "py3.14",
+                "py3.15"
+              ]
+            },
             "variants": [
               "py3.11",
               "py3.12",
@@ -526,6 +705,18 @@
             "signature": "list index out of range",
             "source_line": "nagoyaction.tests.test_inbox::test_registration_status_is_conservative_and_rendered",
             "test_id": "nagoyaction.tests.test_inbox::test_registration_status_is_conservative_and_rendered",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.11",
+                "py3.12",
+                "py3.13",
+                "py3.14",
+                "py3.15"
+              ]
+            },
             "variants": [
               "py3.11",
               "py3.12",
@@ -549,8 +740,46 @@
     "sort": "count"
   },
   "human_summary": "## Err-o-RoadRunner sentinel (escalated)\n\n- **Reasons:** junit_failure\n- **Command:** `sh -c 'exit 0'`\n- **Exit code:** 0\n\n### Hints\n- junit framework guess (5 variants): pytest/python\n- web search keywords (5 variants): cycle = PosixPath('<pytest-tmp>/pytest-0/test_real_exploration_resume_m0/cycle')\\ntmp_path = PosixPath('<pytest-tmp>/pytest-0/test_real_exploration_resume_m0')\\n\\n    def test_real_exploration_resume_matches_uninterrupted(cycle, tmp_path):\\n        spec = plan('{\"sets\":[\"A\",\"B\"],\"max_depth\":2}', cycle)\\n>       ex = Explorer(cycle, spec)\\n             ^^^^^^^^^^^^^^^^^^^^^\\n\\nnagoyaction/tests/tes\n\n### Key findings\n- exit code: 1\n- junit failures (5 variants): 19\n- junit failure (first) (5 variants): cycle = PosixPath('<pytest-tmp>/pytest-0/test_real_exploration_resume_m0/cycle')\\ntmp_path = PosixPath('<pytest-tmp>/pytest-0/test_real_exploration_resume_m0')\\n\\n    def test_real_exploration_resume_matches_uninterrupted(cycle, tmp_path):\\n        spec = plan('{\"sets\":[\"A\",\"B\"],\"max_depth\":2}', cycle)\\n>       ex = Explorer(cycle, spec)\\n             ^^^^^^^^^^^^^^^^^^^^^\\n\\nnagoyaction/tests/tes\n- junit failure (last) (5 variants): def test_registration_status_is_conservative_and_rendered():\\n        from ask import registration_status, render\\n        posthoc = item()\\n        posthoc[\"posthoc\"] = True\\n        unknown = item()\\n        unknown[\"id\"] = \"E2\"\\n        prereg = item()\\n        prereg[\"id\"] = \"E3\"\\n        prereg[\"preregistered\"] = True\\n        assert registration_status(posthoc) == \"事後構成\"\\n        assert regi\n- junit failure groups (5 variants): 19 failures in 11 groups\n- junit failure group 1/11 (5 variants): 4× AssertionError: assert N == N — first: nagoyaction.tests.test_inbox::test_bot_intake_worker_completion_and_retry — msg: AssertionError: assert 0 == 1\n- junit failure group 2/11 (5 variants): 3× SystemExit: N — first: nagoyaction.tests.test_inbox::test_inbox_configuration_does_not_enable_automatic_research[] — msg: SystemExit: 2\n- junit failure group 3/11 (5 variants): 2× ModuleNotFoundError: No module named <q> — first: nagoyaction.tests.test_inbox::test_automatic_worker_without_comments_prepares_and_finishes — msg: ModuleNotFoundError: No module named 'neighbors'\n- junit failure group 4/11 (5 variants): 2× ModuleNotFoundError: No module named <q> — first: nagoyaction.tests.test_inbox::test_real_exploration_resume_matches_uninterrupted — msg: ModuleNotFoundError: No module named 'sets'\n- junit failure group 5/11 (5 variants): 2× StopIteration — first: nagoyaction.tests.test_inbox::test_worker_refuses_to_mix_changed_inputs — msg: StopIteration\n- junit failure group 6/11 (5 variants): 1× AssertionError: assert [] == [<q>] — first: nagoyaction.tests.test_inbox::test_completion_bundles_use_run_id_without_run_api — msg: AssertionError: assert [] == ['/issues/1/comments']\n- junit failure group 7/11 (5 variants): 1× AssertionError: assert <q> in <q> — first: nagoyaction.tests.test_inbox::test_finished_stop_does_not_create_stop_record — msg: AssertionError: assert 'すでに終了' in '判定不能 / 入力を確認してください: その探索依頼はありません\\n\\n対象サイクル: `` / 結果SHA: `` / 対象コード: `sha` / 元コメント: 532'\n- … 12 more FOUND lines in JSON\n\n### Fix candidates\n- **F1** (junit, high): Open the first failing testcase in the JUnit XML and read the message/stack.\n- **F2** (generic, low): Re-run reproduce_command with verbose logging and inspect stderr.",
-  "hypotheses": [],
+  "hypotheses": [
+    {
+      "classification": "invariant",
+      "confidence": "high",
+      "explains": [
+        "nagoyaction.tests.test_inbox::test_automatic_worker_without_comments_prepares_and_finishes",
+        "nagoyaction.tests.test_inbox::test_bot_intake_worker_completion_and_retry",
+        "nagoyaction.tests.test_inbox::test_completion_bundles_use_run_id_without_run_api",
+        "nagoyaction.tests.test_inbox::test_exploration_deadline_and_candidate_bound",
+        "nagoyaction.tests.test_inbox::test_finished_stop_does_not_create_stop_record",
+        "nagoyaction.tests.test_inbox::test_html_observation_failure_keeps_previous_and_worker_continues",
+        "nagoyaction.tests.test_inbox::test_inbox_configuration_does_not_enable_automatic_research[0]",
+        "nagoyaction.tests.test_inbox::test_inbox_configuration_does_not_enable_automatic_research[1]",
+        "nagoyaction.tests.test_inbox::test_inbox_configuration_does_not_enable_automatic_research[]",
+        "nagoyaction.tests.test_inbox::test_neighbor_feedback_html_roundtrip_and_restart",
+        "nagoyaction.tests.test_inbox::test_real_exploration_resume_matches_uninterrupted",
+        "nagoyaction.tests.test_inbox::test_registration_status_is_conservative_and_rendered",
+        "nagoyaction.tests.test_inbox::test_stopped_manual_job_is_not_selected_automatically",
+        "nagoyaction.tests.test_inbox::test_total_pending_limit_still_applies_to_trusted_users",
+        "nagoyaction.tests.test_inbox::test_trusted_exploration_has_five_pending_requests_per_author",
+        "nagoyaction.tests.test_inbox::test_worker_bundled_completion_recovers_lost_response",
+        "nagoyaction.tests.test_inbox::test_worker_comment_get_failure_does_not_interrupt_evaluation",
+        "nagoyaction.tests.test_inbox::test_worker_reads_comments_only_for_completion",
+        "nagoyaction.tests.test_inbox::test_worker_refuses_to_mix_changed_inputs"
+      ],
+      "python_coverage": "5/5",
+      "source_squads": [],
+      "summary": "matrix-invariant failure",
+      "variant_count": 5
+    }
+  ],
   "locations": [],
+  "matrix": {
+    "axes": {
+      "flavor": 1,
+      "python": 5
+    },
+    "failing": 5,
+    "total": 5
+  },
   "mode": "escalated",
   "next_investigation_steps": [
     "Open the JUnit XML and read the first failure or error testcase.",
@@ -576,6 +805,18 @@
       "source_file": "nagoyaction/tests/test_inbox.py",
       "test_id": "nagoyaction.tests.test_inbox::test_real_exploration_resume_matches_uninterrupted",
       "variant": "py3.11",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.11",
+          "py3.12",
+          "py3.13",
+          "py3.14",
+          "py3.15"
+        ]
+      },
       "variants": [
         "py3.11",
         "py3.12",
@@ -594,6 +835,18 @@
       "source_file": "nagoyaction/tests/test_inbox.py",
       "test_id": "nagoyaction.tests.test_inbox::test_exploration_deadline_and_candidate_bound",
       "variant": "py3.11",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.11",
+          "py3.12",
+          "py3.13",
+          "py3.14",
+          "py3.15"
+        ]
+      },
       "variants": [
         "py3.11",
         "py3.12",
@@ -614,6 +867,18 @@
       "source_file": "",
       "test_id": "nagoyaction.tests.test_inbox::test_bot_intake_worker_completion_and_retry",
       "variant": "py3.11",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.11",
+          "py3.12",
+          "py3.13",
+          "py3.14",
+          "py3.15"
+        ]
+      },
       "variants": [
         "py3.11",
         "py3.12",
@@ -632,6 +897,18 @@
       "source_file": "",
       "test_id": "nagoyaction.tests.test_inbox::test_worker_refuses_to_mix_changed_inputs",
       "variant": "py3.11",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.11",
+          "py3.12",
+          "py3.13",
+          "py3.14",
+          "py3.15"
+        ]
+      },
       "variants": [
         "py3.11",
         "py3.12",
@@ -650,6 +927,18 @@
       "source_file": "nagoyaction/tests/test_inbox.py",
       "test_id": "nagoyaction.tests.test_inbox::test_automatic_worker_without_comments_prepares_and_finishes",
       "variant": "py3.11",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.11",
+          "py3.12",
+          "py3.13",
+          "py3.14",
+          "py3.15"
+        ]
+      },
       "variants": [
         "py3.11",
         "py3.12",
@@ -668,6 +957,18 @@
       "source_file": "nagoyaction/tests/test_inbox.py",
       "test_id": "nagoyaction.tests.test_inbox::test_neighbor_feedback_html_roundtrip_and_restart",
       "variant": "py3.11",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.11",
+          "py3.12",
+          "py3.13",
+          "py3.14",
+          "py3.15"
+        ]
+      },
       "variants": [
         "py3.11",
         "py3.12",
@@ -688,6 +989,18 @@
       "source_file": "",
       "test_id": "nagoyaction.tests.test_inbox::test_worker_bundled_completion_recovers_lost_response",
       "variant": "py3.11",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.11",
+          "py3.12",
+          "py3.13",
+          "py3.14",
+          "py3.15"
+        ]
+      },
       "variants": [
         "py3.11",
         "py3.12",
@@ -706,6 +1019,18 @@
       "source_file": "",
       "test_id": "nagoyaction.tests.test_inbox::test_worker_comment_get_failure_does_not_interrupt_evaluation",
       "variant": "py3.11",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.11",
+          "py3.12",
+          "py3.13",
+          "py3.14",
+          "py3.15"
+        ]
+      },
       "variants": [
         "py3.11",
         "py3.12",
@@ -724,6 +1049,18 @@
       "source_file": "nagoyaction/tests/test_inbox.py",
       "test_id": "nagoyaction.tests.test_inbox::test_stopped_manual_job_is_not_selected_automatically",
       "variant": "py3.11",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.11",
+          "py3.12",
+          "py3.13",
+          "py3.14",
+          "py3.15"
+        ]
+      },
       "variants": [
         "py3.11",
         "py3.12",
@@ -744,6 +1081,18 @@
       "source_file": "",
       "test_id": "nagoyaction.tests.test_inbox::test_trusted_exploration_has_five_pending_requests_per_author",
       "variant": "py3.11",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.11",
+          "py3.12",
+          "py3.13",
+          "py3.14",
+          "py3.15"
+        ]
+      },
       "variants": [
         "py3.11",
         "py3.12",
@@ -764,6 +1113,18 @@
       "source_file": "",
       "test_id": "nagoyaction.tests.test_inbox::test_worker_reads_comments_only_for_completion",
       "variant": "py3.11",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.11",
+          "py3.12",
+          "py3.13",
+          "py3.14",
+          "py3.15"
+        ]
+      },
       "variants": [
         "py3.11",
         "py3.12",
@@ -782,6 +1143,18 @@
       "source_file": "",
       "test_id": "nagoyaction.tests.test_inbox::test_finished_stop_does_not_create_stop_record",
       "variant": "py3.11",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.11",
+          "py3.12",
+          "py3.13",
+          "py3.14",
+          "py3.15"
+        ]
+      },
       "variants": [
         "py3.11",
         "py3.12",
@@ -800,6 +1173,18 @@
       "source_file": "",
       "test_id": "nagoyaction.tests.test_inbox::test_html_observation_failure_keeps_previous_and_worker_continues",
       "variant": "py3.11",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.11",
+          "py3.12",
+          "py3.13",
+          "py3.14",
+          "py3.15"
+        ]
+      },
       "variants": [
         "py3.11",
         "py3.12",
@@ -818,6 +1203,18 @@
       "source_file": "nagoyaction/tests/test_inbox.py",
       "test_id": "nagoyaction.tests.test_inbox::test_inbox_configuration_does_not_enable_automatic_research[]",
       "variant": "py3.11",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.11",
+          "py3.12",
+          "py3.13",
+          "py3.14",
+          "py3.15"
+        ]
+      },
       "variants": [
         "py3.11",
         "py3.12",
@@ -836,6 +1233,18 @@
       "source_file": "nagoyaction/tests/test_inbox.py",
       "test_id": "nagoyaction.tests.test_inbox::test_inbox_configuration_does_not_enable_automatic_research[0]",
       "variant": "py3.11",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.11",
+          "py3.12",
+          "py3.13",
+          "py3.14",
+          "py3.15"
+        ]
+      },
       "variants": [
         "py3.11",
         "py3.12",
@@ -854,6 +1263,18 @@
       "source_file": "nagoyaction/tests/test_inbox.py",
       "test_id": "nagoyaction.tests.test_inbox::test_inbox_configuration_does_not_enable_automatic_research[1]",
       "variant": "py3.11",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.11",
+          "py3.12",
+          "py3.13",
+          "py3.14",
+          "py3.15"
+        ]
+      },
       "variants": [
         "py3.11",
         "py3.12",
@@ -874,6 +1295,18 @@
       "source_file": "",
       "test_id": "nagoyaction.tests.test_inbox::test_completion_bundles_use_run_id_without_run_api",
       "variant": "py3.11",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.11",
+          "py3.12",
+          "py3.13",
+          "py3.14",
+          "py3.15"
+        ]
+      },
       "variants": [
         "py3.11",
         "py3.12",
@@ -894,6 +1327,18 @@
       "source_file": "",
       "test_id": "nagoyaction.tests.test_inbox::test_total_pending_limit_still_applies_to_trusted_users",
       "variant": "py3.11",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.11",
+          "py3.12",
+          "py3.13",
+          "py3.14",
+          "py3.15"
+        ]
+      },
       "variants": [
         "py3.11",
         "py3.12",
@@ -914,6 +1359,18 @@
       "source_file": "",
       "test_id": "nagoyaction.tests.test_inbox::test_registration_status_is_conservative_and_rendered",
       "variant": "py3.11",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.11",
+          "py3.12",
+          "py3.13",
+          "py3.14",
+          "py3.15"
+        ]
+      },
       "variants": [
         "py3.11",
         "py3.12",
@@ -926,8 +1383,8 @@
   "schema": "sentinel-report/v1",
   "squads": [],
   "timing": {
-    "elapsed_seconds": 0.003,
-    "started_monotonic": 5162.281937343
+    "elapsed_seconds": 0.007,
+    "started_monotonic": 2259.167936932
   },
   "top_causes": [
     {
@@ -966,12 +1423,12 @@
       "junit failure groups truncated (5 variants): 1 type, 1 failure omitted",
       "junit testcase classname (first) (5 variants): nagoyaction.tests.test_inbox",
       "junit pytest exception type (5 variants): ModuleNotFoundError",
-      "python version: 3.12.3 (cpython)",
-      "node version: v22.23.4",
-      "gh version: gh version 2.102.0 (2026-09-30)",
+      "python version: <masked>",
+      "node version: <masked>",
+      "gh version: <masked>",
       "lock files present: uv.lock",
       "environment variable count: 38",
-      "environment variable names: AGENT_TRANSCRIPTS, CARGO_HOME, CURSOR_AGENT, CURSOR_AGENT_SOCKET, CURSOR_CONVERSATION_ID, CURSOR_REQUEST_ID, CURSOR_RIPGREP_PATH, CURSOR_SPAWN_CWD_HOP, CURSOR_WORKLOAD_CGROUP, DISPLAY, EXEC_DAEMON_STARTUP_TRACEPARENT, FORCE_COLOR, GH_TELEMETRY, GIT_DISCOVERY_ACROSS_FILESYSTEM, GIT_LFS_SKIP_SMUDGE, HOME, LANG, LC_ALL, NO_COLOR, NVM_BIN, NVM_CD_FLAGS, NVM_DIR, NVM_INC, OLDPWD, PATH, PS1, PWD, RUSTUP_HOME, RUST_VERSION, SHELL, SHLVL, TERM, USER, VNC_DPI, VNC_RESOLUTION, _, _ZO_DOCTOR, __CURSOR_SANDBOX_ENV_RESTORE"
+      "environment variable names: <masked>"
     ],
     "hints": [
       "junit framework guess (5 variants): pytest/python",

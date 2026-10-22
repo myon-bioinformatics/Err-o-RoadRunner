@@ -15,44 +15,7 @@
   "environment": {
     "variable_count": 38,
     "variable_names": [
-      "AGENT_TRANSCRIPTS",
-      "CARGO_HOME",
-      "CURSOR_AGENT",
-      "CURSOR_AGENT_SOCKET",
-      "CURSOR_CONVERSATION_ID",
-      "CURSOR_REQUEST_ID",
-      "CURSOR_RIPGREP_PATH",
-      "CURSOR_SPAWN_CWD_HOP",
-      "CURSOR_WORKLOAD_CGROUP",
-      "DISPLAY",
-      "EXEC_DAEMON_STARTUP_TRACEPARENT",
-      "FORCE_COLOR",
-      "GH_TELEMETRY",
-      "GIT_DISCOVERY_ACROSS_FILESYSTEM",
-      "GIT_LFS_SKIP_SMUDGE",
-      "HOME",
-      "LANG",
-      "LC_ALL",
-      "NO_COLOR",
-      "NVM_BIN",
-      "NVM_CD_FLAGS",
-      "NVM_DIR",
-      "NVM_INC",
-      "OLDPWD",
-      "PATH",
-      "PS1",
-      "PWD",
-      "RUSTUP_HOME",
-      "RUST_VERSION",
-      "SHELL",
-      "SHLVL",
-      "TERM",
-      "USER",
-      "VNC_DPI",
-      "VNC_RESOLUTION",
-      "_",
-      "_ZO_DOCTOR",
-      "__CURSOR_SANDBOX_ENV_RESTORE"
+      "<masked>"
     ],
     "variable_names_truncated": false,
     "values_redacted": {}
@@ -126,6 +89,14 @@
             "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|different|checkout_script]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|different|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -141,6 +112,14 @@
             "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|different|module]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|different|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -156,6 +135,14 @@
             "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|different|other_cwd]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|different|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -171,6 +158,14 @@
             "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|absent|checkout_script]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|absent|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -186,6 +181,14 @@
             "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|absent|module]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|absent|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -201,6 +204,14 @@
             "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|absent|other_cwd]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|absent|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -216,6 +227,14 @@
             "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|different|checkout_script]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|different|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -231,6 +250,14 @@
             "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|different|module]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|different|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -246,6 +273,14 @@
             "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|different|other_cwd]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|different|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -261,6 +296,14 @@
             "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|absent|checkout_script]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|absent|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -276,6 +319,14 @@
             "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|absent|module]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|absent|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -291,6 +342,14 @@
             "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|absent|other_cwd]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|absent|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -306,6 +365,14 @@
             "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|different|checkout_script]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|different|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -321,6 +388,14 @@
             "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|different|module]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|different|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -336,6 +411,14 @@
             "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|different|other_cwd]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|different|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -351,6 +434,14 @@
             "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|absent|checkout_script]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|absent|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -366,6 +457,14 @@
             "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|absent|module]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|absent|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -381,6 +480,14 @@
             "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|absent|other_cwd]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|absent|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -396,6 +503,14 @@
             "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|different|checkout_script]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|different|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -411,6 +526,14 @@
             "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|different|module]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|different|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -426,6 +549,14 @@
             "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|different|other_cwd]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|different|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -441,6 +572,14 @@
             "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|absent|checkout_script]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|absent|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -456,6 +595,14 @@
             "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|absent|module]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|absent|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -471,6 +618,14 @@
             "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|absent|other_cwd]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|absent|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -486,6 +641,14 @@
             "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|different|checkout_script]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|different|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -501,6 +664,14 @@
             "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|different|module]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|different|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -516,6 +687,14 @@
             "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|different|other_cwd]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|different|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -531,6 +710,14 @@
             "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|absent|checkout_script]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|absent|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -546,6 +733,14 @@
             "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|absent|module]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|absent|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -561,6 +756,14 @@
             "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|absent|other_cwd]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|absent|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -576,6 +779,14 @@
             "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|different|checkout_script]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|different|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -591,6 +802,14 @@
             "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|different|module]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|different|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -606,6 +825,14 @@
             "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|different|other_cwd]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|different|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -621,6 +848,14 @@
             "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|absent|checkout_script]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|absent|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -636,6 +871,14 @@
             "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|absent|module]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|absent|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -651,6 +894,14 @@
             "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|absent|other_cwd]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|absent|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -666,6 +917,14 @@
             "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|different|checkout_script]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|different|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -681,6 +940,14 @@
             "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|different|module]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|different|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -696,6 +963,14 @@
             "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|different|other_cwd]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|different|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -711,6 +986,14 @@
             "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|absent|checkout_script]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|absent|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -726,6 +1009,14 @@
             "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|absent|module]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|absent|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -741,6 +1032,14 @@
             "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|absent|other_cwd]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|absent|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -756,6 +1055,14 @@
             "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|different|checkout_script]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|different|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -771,6 +1078,14 @@
             "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|different|module]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|different|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -786,6 +1101,14 @@
             "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|different|other_cwd]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|different|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -801,6 +1124,14 @@
             "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|absent|checkout_script]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|absent|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -816,6 +1147,14 @@
             "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|absent|module]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|absent|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -831,6 +1170,14 @@
             "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|absent|other_cwd]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|absent|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -846,6 +1193,14 @@
             "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|different|checkout_script]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|different|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -861,6 +1216,14 @@
             "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|different|module]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|different|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -876,6 +1239,14 @@
             "signature": "assert 'err-o-roadrunner <n>.<n>' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|different|other_cwd]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|different|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -891,6 +1262,14 @@
             "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|absent|checkout_script]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|absent|checkout_script]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -906,6 +1285,14 @@
             "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|absent|module]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|absent|module]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -921,6 +1308,14 @@
             "signature": "assert 'err-o-roadrunner unknown' == 'err-o-roadrunner <n>.<n>'",
             "source_line": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|absent|other_cwd]",
             "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|absent|other_cwd]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -936,6 +1331,14 @@
             "signature": "assert '<n>.<n>' is None",
             "source_line": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[valid]",
             "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[valid]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -951,6 +1354,14 @@
             "signature": "assert '<n>.<n>' is None",
             "source_line": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[single_quoted]",
             "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[single_quoted]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -966,6 +1377,14 @@
             "signature": "assert '<n>.<n>' is None",
             "source_line": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[version_trailing_comment]",
             "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[version_trailing_comment]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -981,6 +1400,14 @@
             "signature": "assert '<n>.<n>' is None",
             "source_line": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[unreadable_oserror]",
             "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[unreadable_oserror]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -996,6 +1423,14 @@
             "signature": "assert '<n>.<n>' is None",
             "source_line": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[version_in_multiline_string]",
             "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[version_in_multiline_string]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -1011,6 +1446,14 @@
             "signature": "assert '<n>.<n>' is None",
             "source_line": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[toml_header_comment]",
             "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[toml_header_comment]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -1026,6 +1469,14 @@
             "signature": "assert '<n>.<n>' is None",
             "source_line": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[toml_spaced_project_table]",
             "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[toml_spaced_project_table]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -1041,6 +1492,14 @@
             "signature": "assert '<n>.<n>' is None",
             "source_line": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[toml_quoted_keys]",
             "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[toml_quoted_keys]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -1056,6 +1515,14 @@
             "signature": "assert '<n>.<n>' is None",
             "source_line": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[toml_inline_project_table]",
             "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[toml_inline_project_table]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -1071,6 +1538,14 @@
             "signature": "assert '<n>.<n>' is None",
             "source_line": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[toml_version_unicode_escape]",
             "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[toml_version_unicode_escape]",
+            "variant_axes": {
+              "flavor": [
+                "junit"
+              ],
+              "python": [
+                "py3.10"
+              ]
+            },
             "variants": [
               "py3.10"
             ]
@@ -1089,7 +1564,7 @@
     ],
     "sort": "count"
   },
-  "human_summary": "## Err-o-RoadRunner sentinel (escalated)\n\n- **Reasons:** junit_failure\n- **Command:** `sh -c 'exit 0'`\n- **Exit code:** 0\n\n### Hints\n- junit framework guess (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): pytest/python\n- junit assertion diff (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml):   - err-o-roadrunner 7.7.7   + err-o-roadrunner 1.2.3\n- web search keywords (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'\\n  \\n  - err-o-roadrunner 7.7.7\\n  ?                  ^ ^ ^\\n  + err-o-roadrunner 1.2.3\\n  ?                  ^ ^ ^\\npyproject_state = 'valid', metadata_state = 'different'\\nrun_mode = 'checkout_script'\\ntmp_path = PosixPath('<pytest-tmp>/pytest-5/test_version_resolution_matrix4')\\n\\n    @pytest.mark.parametrize(\\n        \n\n### Key findings\n- exit code: 1\n- junit failures (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): 64\n- junit failure (first) (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'\\n  \\n  - err-o-roadrunner 7.7.7\\n  ?                  ^ ^ ^\\n  + err-o-roadrunner 1.2.3\\n  ?                  ^ ^ ^\\npyproject_state = 'valid', metadata_state = 'different'\\nrun_mode = 'checkout_script'\\ntmp_path = PosixPath('<pytest-tmp>/pytest-5/test_version_resolution_matrix4')\\n\\n    @pytest.mark.parametrize(\\n        \n- junit failure (last) (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): pyproject_state = 'toml_version_unicode_escape'\\n\\n    @pytest.mark.parametrize(\"pyproject_state\", PYPROJECT_STATES)\\n    def test_toml_backends_agree_on_matrix_fixtures(pyproject_state: str) -> None:\\n        if pyproject_state in {\"missing\", \"invalid_utf8\"}:\\n            pytest.skip(\"no UTF-8 pyproject fixture text\")\\n        payload = pyproject_bytes(pyproject_state)\\n        assert payload is \n- junit failure groups (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): 64 failures in 3 groups\n- junit failure group 1/3 (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): 27× AssertionError: assert <q> == <q> — first: tests.test_version_matrix::test_version_resolution_matrix_cell[valid|absent|checkout_script] — msg: AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'\n- junit failure group 2/3 (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): 27× AssertionError: assert <q> == <q> — first: tests.test_version_matrix::test_version_resolution_matrix_cell[valid|different|checkout_script] — msg: AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'\n- junit failure group 3/3 (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): 10× AssertionError: assert <q> is None — first: tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[valid] — msg: AssertionError: assert '7.7.7' is None\n- junit testcase classname (first) (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): tests.test_version_matrix\n- junit pytest exception type (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): AssertionError\n- python version: 3.12.3 (cpython)\n- node version: v22.23.4\n- … 4 more FOUND lines in JSON\n\n### Fix candidates\n- **F4** (stale_metadata, high): Reinstall the package in editable mode (`pip install -e .` or `uv sync --reinstall`) and compare `importlib.metadata.version(...)` against the version in pyproject.toml / source.\n- **F1** (junit, high): Open the first failing testcase in the JUnit XML and read the message/stack.\n- **F2** (assertion, low): Open the failing assertion site and compare expected vs actual values.\n- **F3** (generic, low): Re-run reproduce_command with verbose logging and inspect stderr.",
+  "human_summary": "## Err-o-RoadRunner sentinel (escalated)\n\n- **Reasons:** junit_failure\n- **Command:** `sh -c 'exit 0'`\n- **Exit code:** 0\n\n### Hints\n- junit framework guess (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): pytest/python\n- junit assertion diff (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml):   - err-o-roadrunner 7.7.7   + err-o-roadrunner 1.2.3\n- web search keywords (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'\\n  \\n  - err-o-roadrunner 7.7.7\\n  ?                  ^ ^ ^\\n  + err-o-roadrunner 1.2.3\\n  ?                  ^ ^ ^\\npyproject_state = 'valid', metadata_state = 'different'\\nrun_mode = 'checkout_script'\\ntmp_path = PosixPath('<pytest-tmp>/pytest-5/test_version_resolution_matrix4')\\n\\n    @pytest.mark.parametrize(\\n        \n\n### Key findings\n- exit code: 1\n- junit failures (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): 64\n- junit failure (first) (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'\\n  \\n  - err-o-roadrunner 7.7.7\\n  ?                  ^ ^ ^\\n  + err-o-roadrunner 1.2.3\\n  ?                  ^ ^ ^\\npyproject_state = 'valid', metadata_state = 'different'\\nrun_mode = 'checkout_script'\\ntmp_path = PosixPath('<pytest-tmp>/pytest-5/test_version_resolution_matrix4')\\n\\n    @pytest.mark.parametrize(\\n        \n- junit failure (last) (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): pyproject_state = 'toml_version_unicode_escape'\\n\\n    @pytest.mark.parametrize(\"pyproject_state\", PYPROJECT_STATES)\\n    def test_toml_backends_agree_on_matrix_fixtures(pyproject_state: str) -> None:\\n        if pyproject_state in {\"missing\", \"invalid_utf8\"}:\\n            pytest.skip(\"no UTF-8 pyproject fixture text\")\\n        payload = pyproject_bytes(pyproject_state)\\n        assert payload is \n- junit failure groups (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): 64 failures in 3 groups\n- junit failure group 1/3 (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): 27× AssertionError: assert <q> == <q> — first: tests.test_version_matrix::test_version_resolution_matrix_cell[valid|absent|checkout_script] — msg: AssertionError: assert 'err-o-roadrunner unknown' == 'err-o-roadrunner 7.7.7'\n- junit failure group 2/3 (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): 27× AssertionError: assert <q> == <q> — first: tests.test_version_matrix::test_version_resolution_matrix_cell[valid|different|checkout_script] — msg: AssertionError: assert 'err-o-roadrunner 1.2.3' == 'err-o-roadrunner 7.7.7'\n- junit failure group 3/3 (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): 10× AssertionError: assert <q> is None — first: tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[valid] — msg: AssertionError: assert '7.7.7' is None\n- junit testcase classname (first) (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): tests.test_version_matrix\n- junit pytest exception type (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): AssertionError\n- python version: <masked>\n- node version: <masked>\n- … 4 more FOUND lines in JSON\n\n### Fix candidates\n- **F4** (stale_metadata, high): Reinstall the package in editable mode (`pip install -e .` or `uv sync --reinstall`) and compare `importlib.metadata.version(...)` against the version in pyproject.toml / source.\n- **F1** (junit, high): Open the first failing testcase in the JUnit XML and read the message/stack.\n- **F2** (assertion, low): Open the failing assertion site and compare expected vs actual values.\n- **F3** (generic, low): Re-run reproduce_command with verbose logging and inspect stderr.",
   "hypotheses": [
     {
       "confidence": "high",
@@ -1158,6 +1633,14 @@
     }
   ],
   "locations": [],
+  "matrix": {
+    "axes": {
+      "flavor": 1,
+      "python": 1
+    },
+    "failing": 1,
+    "total": 1
+  },
   "mode": "escalated",
   "next_investigation_steps": [
     "Open the JUnit XML and read the first failure or error testcase.",
@@ -1185,6 +1668,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|different|checkout_script]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1201,6 +1692,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|different|module]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1217,6 +1716,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|different|other_cwd]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1233,6 +1740,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|absent|checkout_script]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1249,6 +1764,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|absent|module]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1265,6 +1788,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[valid|absent|other_cwd]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1281,6 +1812,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|different|checkout_script]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1297,6 +1836,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|different|module]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1313,6 +1860,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|different|other_cwd]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1329,6 +1884,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|absent|checkout_script]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1345,6 +1908,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|absent|module]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1361,6 +1932,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[single_quoted|absent|other_cwd]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1377,6 +1956,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|different|checkout_script]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1393,6 +1980,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|different|module]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1409,6 +2004,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|different|other_cwd]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1425,6 +2028,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|absent|checkout_script]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1441,6 +2052,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|absent|module]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1457,6 +2076,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_trailing_comment|absent|other_cwd]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1473,6 +2100,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|different|checkout_script]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1489,6 +2124,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|different|module]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1505,6 +2148,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|different|other_cwd]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1521,6 +2172,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|absent|checkout_script]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1537,6 +2196,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|absent|module]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1553,6 +2220,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[version_in_multiline_string|absent|other_cwd]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1569,6 +2244,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|different|checkout_script]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1585,6 +2268,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|different|module]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1601,6 +2292,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|different|other_cwd]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1617,6 +2316,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|absent|checkout_script]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1633,6 +2340,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|absent|module]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1649,6 +2364,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_header_comment|absent|other_cwd]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1665,6 +2388,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|different|checkout_script]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1681,6 +2412,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|different|module]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1697,6 +2436,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|different|other_cwd]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1713,6 +2460,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|absent|checkout_script]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1729,6 +2484,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|absent|module]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1745,6 +2508,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_spaced_project_table|absent|other_cwd]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1761,6 +2532,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|different|checkout_script]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1777,6 +2556,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|different|module]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1793,6 +2580,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|different|other_cwd]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1809,6 +2604,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|absent|checkout_script]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1825,6 +2628,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|absent|module]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1841,6 +2652,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_quoted_keys|absent|other_cwd]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1857,6 +2676,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|different|checkout_script]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1873,6 +2700,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|different|module]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1889,6 +2724,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|different|other_cwd]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1905,6 +2748,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|absent|checkout_script]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1921,6 +2772,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|absent|module]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1937,6 +2796,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_inline_project_table|absent|other_cwd]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1953,6 +2820,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|different|checkout_script]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1969,6 +2844,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|different|module]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -1985,6 +2868,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|different|other_cwd]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -2001,6 +2892,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|absent|checkout_script]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -2017,6 +2916,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|absent|module]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -2033,6 +2940,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_version_resolution_matrix_cell[toml_version_unicode_escape|absent|other_cwd]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -2049,6 +2964,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[valid]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -2065,6 +2988,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[single_quoted]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -2081,6 +3012,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[version_trailing_comment]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -2097,6 +3036,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[unreadable_oserror]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -2113,6 +3060,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[version_in_multiline_string]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -2129,6 +3084,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[toml_header_comment]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -2145,6 +3108,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[toml_spaced_project_table]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -2161,6 +3132,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[toml_quoted_keys]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -2177,6 +3156,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[toml_inline_project_table]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -2193,6 +3180,14 @@
       "source_file": "",
       "test_id": "tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[toml_version_unicode_escape]",
       "variant": "py3.10",
+      "variant_axes": {
+        "flavor": [
+          "junit"
+        ],
+        "python": [
+          "py3.10"
+        ]
+      },
       "variants": [
         "py3.10"
       ]
@@ -2208,7 +3203,7 @@
       "status": "ok"
     },
     {
-      "elapsed_ms": 292,
+      "elapsed_ms": 298,
       "findings": [
         {
           "corpus_first": "Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml",
@@ -2437,8 +3432,8 @@
     }
   ],
   "timing": {
-    "elapsed_seconds": 0.004,
-    "started_monotonic": 5162.613840233
+    "elapsed_seconds": 0.006,
+    "started_monotonic": 2259.417166376
   },
   "top_causes": [
     {
@@ -2469,12 +3464,12 @@
       "junit failure group 3/3 (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): 10× AssertionError: assert <q> is None — first: tests.test_version_matrix::test_toml_backends_agree_on_matrix_fixtures[valid] — msg: AssertionError: assert '7.7.7' is None",
       "junit testcase classname (first) (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): tests.test_version_matrix",
       "junit pytest exception type (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): AssertionError",
-      "python version: 3.12.3 (cpython)",
-      "node version: v22.23.4",
-      "gh version: gh version 2.102.0 (2026-09-30)",
+      "python version: <masked>",
+      "node version: <masked>",
+      "gh version: <masked>",
       "lock files present: uv.lock",
       "environment variable count: 38",
-      "environment variable names: AGENT_TRANSCRIPTS, CARGO_HOME, CURSOR_AGENT, CURSOR_AGENT_SOCKET, CURSOR_CONVERSATION_ID, CURSOR_REQUEST_ID, CURSOR_RIPGREP_PATH, CURSOR_SPAWN_CWD_HOP, CURSOR_WORKLOAD_CGROUP, DISPLAY, EXEC_DAEMON_STARTUP_TRACEPARENT, FORCE_COLOR, GH_TELEMETRY, GIT_DISCOVERY_ACROSS_FILESYSTEM, GIT_LFS_SKIP_SMUDGE, HOME, LANG, LC_ALL, NO_COLOR, NVM_BIN, NVM_CD_FLAGS, NVM_DIR, NVM_INC, OLDPWD, PATH, PS1, PWD, RUSTUP_HOME, RUST_VERSION, SHELL, SHLVL, TERM, USER, VNC_DPI, VNC_RESOLUTION, _, _ZO_DOCTOR, __CURSOR_SANDBOX_ENV_RESTORE"
+      "environment variable names: <masked>"
     ],
     "hints": [
       "junit framework guess (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): pytest/python",

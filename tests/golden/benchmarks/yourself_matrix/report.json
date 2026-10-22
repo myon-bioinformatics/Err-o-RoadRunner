@@ -1,0 +1,274 @@
+{
+  "capture": {
+    "stderr_tail": "",
+    "stdout_tail": ""
+  },
+  "command": {
+    "argv": [
+      "sh",
+      "-c",
+      "exit 0"
+    ],
+    "cwd": "<repo>",
+    "reproduce_command": "sh -c 'exit 0'"
+  },
+  "environment": {
+    "variable_count": 38,
+    "variable_names": [
+      "<masked>"
+    ],
+    "variable_names_truncated": false,
+    "values_redacted": {}
+  },
+  "escalation_reasons": [
+    "junit_failure"
+  ],
+  "fix_candidates": [
+    {
+      "confidence": "high",
+      "evidence": [
+        "junit failure (first) (7 variants): AssertionError: assert {('LICENSE', ...r/xprobe.py')} == {('LICENSE', ...r/xprobe.py')}\\n  \\n  Extra items in the left set:\\n  ('LICENSE', 'vendor/gh_identity-LICENSE')\\n  ('gh_identity.py', 'vendor/gh_identity.py')\\n  \\n  Full diff:\\n    {\\n        (\\n            'LICENSE',\\n  +         'vendor/gh_identity-LICENSE',\\n  +     ),\\n  +     (\\n  +         'LICENSE',\\n            'vendor/xprobe-LICENS",
+        "junit failure (first) (7 variants): AssertionError: assert {('LICENSE', ...r/xprobe.py')} == {('LICENSE', ...r/xprobe.py')}\\n  \\n  Extra items in the left set:\\n  ('gh_identity.py', 'vendor/gh_identity.py')\\n  ('LICENSE', 'vendor/gh_identity-LICENSE')\\n  \\n  Full diff:\\n    {\\n        (\\n            'LICENSE',\\n  +         'vendor/gh_identity-LICENSE',\\n  +     ),\\n  +     (\\n  +         'LICENSE',\\n            'vendor/xprobe-LICENS"
+      ],
+      "id": "F1",
+      "kind": "junit",
+      "location": {
+        "loc": "...r/xprobe.py"
+      },
+      "suggestion": "Open the first failing testcase in the JUnit XML and read the message/stack.",
+      "verify_command": "sh -c 'exit 0'"
+    },
+    {
+      "confidence": "low",
+      "evidence": [
+        "web search keywords (7 variants): AssertionError: assert {('LICENSE', ...r/xprobe.py')} == {('LICENSE', ...r/xprobe.py')}\\n  \\n  Extra items in the left set:\\n  ('LICENSE', 'vendor/gh_identity-LICENSE')\\n  ('gh_identity.py', 'vendor/gh_identity.py')\\n  \\n  Full diff:\\n    {\\n        (\\n            'LICENSE',\\n  +         'vendor/gh_identity-LICENSE',\\n  +     ),\\n  +     (\\n  +         'LICENSE',\\n            'vendor/xprobe-LICENS",
+        "web search keywords (7 variants): AssertionError: assert {('LICENSE', ...r/xprobe.py')} == {('LICENSE', ...r/xprobe.py')}\\n  \\n  Extra items in the left set:\\n  ('gh_identity.py', 'vendor/gh_identity.py')\\n  ('LICENSE', 'vendor/gh_identity-LICENSE')\\n  \\n  Full diff:\\n    {\\n        (\\n            'LICENSE',\\n  +         'vendor/gh_identity-LICENSE',\\n  +     ),\\n  +     (\\n  +         'LICENSE',\\n            'vendor/xprobe-LICENS"
+      ],
+      "id": "F2",
+      "kind": "assertion",
+      "location": {},
+      "suggestion": "Open the failing assertion site and compare expected vs actual values.",
+      "verify_command": "sh -c 'exit 0'"
+    },
+    {
+      "confidence": "low",
+      "evidence": [
+        "exit code: 1"
+      ],
+      "id": "F3",
+      "kind": "generic",
+      "location": {},
+      "suggestion": "Re-run reproduce_command with verbose logging and inspect stderr.",
+      "verify_command": "sh -c 'exit 0'"
+    }
+  ],
+  "groups": {
+    "buckets": [
+      {
+        "count": 1,
+        "errors": [
+          {
+            "error_type": "AssertionError",
+            "first_seen": 0,
+            "kind": "assertion",
+            "language": "python",
+            "location": {
+              "line": "20",
+              "loc": "tests/test_native_observations.py"
+            },
+            "message": "assert {('LICENSE', ...r/xprobe.py')} == {('LICENSE', ...r/xprobe.py')}",
+            "phase": "test",
+            "signature": "assert {('LICENSE', ...r<path>')} == {('LICENSE', ...r<path>')}",
+            "source_line": "tests.test_native_observations::test_vendor_lock_provenance",
+            "test_id": "tests.test_native_observations::test_vendor_lock_provenance",
+            "variant_axes": {
+              "flavor": [
+                "test-report"
+              ],
+              "os": [
+                "macos-latest",
+                "ubuntu-latest",
+                "windows-latest"
+              ],
+              "python": [
+                "py3.10",
+                "py3.11",
+                "py3.12",
+                "py3.13",
+                "py3.14"
+              ]
+            },
+            "variants": [
+              "py3.10",
+              "py3.11",
+              "py3.12",
+              "py3.13",
+              "py3.14"
+            ]
+          }
+        ],
+        "first_seen": 0,
+        "key": {
+          "error_type": "AssertionError"
+        },
+        "name": "error_type=AssertionError"
+      }
+    ],
+    "error_count": 1,
+    "group_by": [
+      "error_type"
+    ],
+    "sort": "count"
+  },
+  "human_summary": "## Err-o-RoadRunner sentinel (escalated)\n\n- **Reasons:** junit_failure\n- **Command:** `sh -c 'exit 0'`\n- **Exit code:** 0\n\n### Hints\n- junit framework guess (7 variants): pytest/python\n- junit assertion diff (7 variants):   +         'vendor/gh_identity-LICENSE',   +     ),   +     (   +         'LICENSE',   +     ),   +     (\n- web search keywords (7 variants): AssertionError: assert {('LICENSE', ...r/xprobe.py')} == {('LICENSE', ...r/xprobe.py')}\\n  \\n  Extra items in the left set:\\n  ('LICENSE', 'vendor/gh_identity-LICENSE')\\n  ('gh_identity.py', 'vendor/gh_identity.py')\\n  \\n  Full diff:\\n    {\\n        (\\n            'LICENSE',\\n  +         'vendor/gh_identity-LICENSE',\\n  +     ),\\n  +     (\\n  +         'LICENSE',\\n            'vendor/xprobe-LICENS\n- web search keywords (7 variants): AssertionError: assert {('LICENSE', ...r/xprobe.py')} == {('LICENSE', ...r/xprobe.py')}\\n  \\n  Extra items in the left set:\\n  ('gh_identity.py', 'vendor/gh_identity.py')\\n  ('LICENSE', 'vendor/gh_identity-LICENSE')\\n  \\n  Full diff:\\n    {\\n        (\\n            'LICENSE',\\n  +         'vendor/gh_identity-LICENSE',\\n  +     ),\\n  +     (\\n  +         'LICENSE',\\n            'vendor/xprobe-LICENS\n\n### Key findings\n- exit code: 1\n- junit failures (7 variants): 1\n- junit failure (first) (7 variants): AssertionError: assert {('LICENSE', ...r/xprobe.py')} == {('LICENSE', ...r/xprobe.py')}\\n  \\n  Extra items in the left set:\\n  ('LICENSE', 'vendor/gh_identity-LICENSE')\\n  ('gh_identity.py', 'vendor/gh_identity.py')\\n  \\n  Full diff:\\n    {\\n        (\\n            'LICENSE',\\n  +         'vendor/gh_identity-LICENSE',\\n  +     ),\\n  +     (\\n  +         'LICENSE',\\n            'vendor/xprobe-LICENS\n- junit failure groups (7 variants): 1 failure in 1 group\n- junit testcase classname (first) (7 variants): tests.test_native_observations\n- junit pytest exception type (7 variants): AssertionError\n- junit failure (first) (7 variants): AssertionError: assert {('LICENSE', ...r/xprobe.py')} == {('LICENSE', ...r/xprobe.py')}\\n  \\n  Extra items in the left set:\\n  ('gh_identity.py', 'vendor/gh_identity.py')\\n  ('LICENSE', 'vendor/gh_identity-LICENSE')\\n  \\n  Full diff:\\n    {\\n        (\\n            'LICENSE',\\n  +         'vendor/gh_identity-LICENSE',\\n  +     ),\\n  +     (\\n  +         'LICENSE',\\n            'vendor/xprobe-LICENS\n- python version: <masked>\n- node version: <masked>\n- gh version: <masked>\n- lock files present: uv.lock\n- environment variable count: 38\n- … 1 more FOUND lines in JSON\n\n### Fix candidates\n- **F1** (junit, high) (`...r/xprobe.py`): Open the first failing testcase in the JUnit XML and read the message/stack.\n- **F2** (assertion, low): Open the failing assertion site and compare expected vs actual values.\n- **F3** (generic, low): Re-run reproduce_command with verbose logging and inspect stderr.",
+  "hypotheses": [
+    {
+      "classification": "invariant",
+      "confidence": "high",
+      "explains": [
+        "tests.test_native_observations::test_vendor_lock_provenance"
+      ],
+      "os_coverage": "3/3",
+      "python_coverage": "5/5",
+      "source_squads": [],
+      "summary": "matrix-invariant failure",
+      "variant_count": 7
+    }
+  ],
+  "locations": [],
+  "matrix": {
+    "axes": {
+      "flavor": 1,
+      "os": 3,
+      "python": 5
+    },
+    "failing": 7,
+    "total": 7
+  },
+  "mode": "escalated",
+  "next_investigation_steps": [
+    "Open the JUnit XML and read the first failure or error testcase.",
+    "Reproduce with the same Node version; check package-lock or lockfile.",
+    "Use HINT web search keywords before deeper code archaeology."
+  ],
+  "outcome": {
+    "exit_code": 0,
+    "junit_failure": true,
+    "raw_exit_code": 0,
+    "signal": null,
+    "termination_signal": null,
+    "timed_out": false
+  },
+  "records": [
+    {
+      "artifact": "yourself_37583297348_test-report-macos-latest-py3.12_junit.xml",
+      "assert_left": "{('LICENSE', ...r<path>')}",
+      "assert_right": "{('LICENSE', ...r<path>')}",
+      "error_type": "AssertionError",
+      "language": "python",
+      "line": 20,
+      "message": "assert {('LICENSE', ...r/xprobe.py')} == {('LICENSE', ...r/xprobe.py')}",
+      "signature": "assert {('LICENSE', ...r<path>')} == {('LICENSE', ...r<path>')}",
+      "source_file": "tests/test_native_observations.py",
+      "test_id": "tests.test_native_observations::test_vendor_lock_provenance",
+      "variant": "py3.12",
+      "variant_axes": {
+        "flavor": [
+          "test-report"
+        ],
+        "os": [
+          "macos-latest",
+          "ubuntu-latest",
+          "windows-latest"
+        ],
+        "python": [
+          "py3.10",
+          "py3.11",
+          "py3.12",
+          "py3.13",
+          "py3.14"
+        ]
+      },
+      "variants": [
+        "py3.10",
+        "py3.11",
+        "py3.12",
+        "py3.13",
+        "py3.14"
+      ]
+    }
+  ],
+  "schema": "sentinel-report/v1",
+  "squads": [],
+  "timing": {
+    "elapsed_seconds": 0.003,
+    "started_monotonic": 2259.00908951
+  },
+  "top_causes": [
+    {
+      "count": 1,
+      "error_type": "AssertionError",
+      "signature": "assert {('LICENSE', ...r<path>')} == {('LICENSE', ...r<path>')}"
+    }
+  ],
+  "triage": {
+    "found": [
+      "exit code: 1",
+      "junit failures (7 variants): 1",
+      "junit failure (first) (7 variants): AssertionError: assert {('LICENSE', ...r/xprobe.py')} == {('LICENSE', ...r/xprobe.py')}\\n  \\n  Extra items in the left set:\\n  ('LICENSE', 'vendor/gh_identity-LICENSE')\\n  ('gh_identity.py', 'vendor/gh_identity.py')\\n  \\n  Full diff:\\n    {\\n        (\\n            'LICENSE',\\n  +         'vendor/gh_identity-LICENSE',\\n  +     ),\\n  +     (\\n  +         'LICENSE',\\n            'vendor/xprobe-LICENS",
+      "junit failure groups (7 variants): 1 failure in 1 group",
+      "junit testcase classname (first) (7 variants): tests.test_native_observations",
+      "junit pytest exception type (7 variants): AssertionError",
+      "junit failure (first) (7 variants): AssertionError: assert {('LICENSE', ...r/xprobe.py')} == {('LICENSE', ...r/xprobe.py')}\\n  \\n  Extra items in the left set:\\n  ('gh_identity.py', 'vendor/gh_identity.py')\\n  ('LICENSE', 'vendor/gh_identity-LICENSE')\\n  \\n  Full diff:\\n    {\\n        (\\n            'LICENSE',\\n  +         'vendor/gh_identity-LICENSE',\\n  +     ),\\n  +     (\\n  +         'LICENSE',\\n            'vendor/xprobe-LICENS",
+      "python version: <masked>",
+      "node version: <masked>",
+      "gh version: <masked>",
+      "lock files present: uv.lock",
+      "environment variable count: 38",
+      "environment variable names: <masked>"
+    ],
+    "hints": [
+      "junit framework guess (7 variants): pytest/python",
+      "junit assertion diff (7 variants):   +         'vendor/gh_identity-LICENSE',   +     ),   +     (   +         'LICENSE',   +     ),   +     (",
+      "web search keywords (7 variants): AssertionError: assert {('LICENSE', ...r/xprobe.py')} == {('LICENSE', ...r/xprobe.py')}\\n  \\n  Extra items in the left set:\\n  ('LICENSE', 'vendor/gh_identity-LICENSE')\\n  ('gh_identity.py', 'vendor/gh_identity.py')\\n  \\n  Full diff:\\n    {\\n        (\\n            'LICENSE',\\n  +         'vendor/gh_identity-LICENSE',\\n  +     ),\\n  +     (\\n  +         'LICENSE',\\n            'vendor/xprobe-LICENS",
+      "web search keywords (7 variants): AssertionError: assert {('LICENSE', ...r/xprobe.py')} == {('LICENSE', ...r/xprobe.py')}\\n  \\n  Extra items in the left set:\\n  ('gh_identity.py', 'vendor/gh_identity.py')\\n  ('LICENSE', 'vendor/gh_identity-LICENSE')\\n  \\n  Full diff:\\n    {\\n        (\\n            'LICENSE',\\n  +         'vendor/gh_identity-LICENSE',\\n  +     ),\\n  +     (\\n  +         'LICENSE',\\n            'vendor/xprobe-LICENS"
+    ],
+    "not_found": [
+      "junit errors (tests/fixtures/junit_corpus/cases/yourself_37583297348_test-report-macos-latest-py3.12_junit.xml)",
+      "junit skipped (tests/fixtures/junit_corpus/cases/yourself_37583297348_test-report-macos-latest-py3.12_junit.xml)",
+      "junit dart error (first) (tests/fixtures/junit_corpus/cases/yourself_37583297348_test-report-macos-latest-py3.12_junit.xml)",
+      "junit system-err (tests/fixtures/junit_corpus/cases/yourself_37583297348_test-report-macos-latest-py3.12_junit.xml)",
+      "junit collection errors (tests/fixtures/junit_corpus/cases/yourself_37583297348_test-report-macos-latest-py3.12_junit.xml)",
+      "junit errors (tests/fixtures/junit_corpus/cases/yourself_37583297348_test-report-ubuntu-latest-py3.10_junit.xml)",
+      "junit skipped (tests/fixtures/junit_corpus/cases/yourself_37583297348_test-report-ubuntu-latest-py3.10_junit.xml)",
+      "junit dart error (first) (tests/fixtures/junit_corpus/cases/yourself_37583297348_test-report-ubuntu-latest-py3.10_junit.xml)",
+      "junit system-err (tests/fixtures/junit_corpus/cases/yourself_37583297348_test-report-ubuntu-latest-py3.10_junit.xml)",
+      "junit collection errors (tests/fixtures/junit_corpus/cases/yourself_37583297348_test-report-ubuntu-latest-py3.10_junit.xml)",
+      "junit errors (tests/fixtures/junit_corpus/cases/yourself_37583297348_test-report-ubuntu-latest-py3.11_junit.xml)",
+      "junit skipped (tests/fixtures/junit_corpus/cases/yourself_37583297348_test-report-ubuntu-latest-py3.11_junit.xml)",
+      "junit dart error (first) (tests/fixtures/junit_corpus/cases/yourself_37583297348_test-report-ubuntu-latest-py3.11_junit.xml)",
+      "junit system-err (tests/fixtures/junit_corpus/cases/yourself_37583297348_test-report-ubuntu-latest-py3.11_junit.xml)",
+      "junit collection errors (tests/fixtures/junit_corpus/cases/yourself_37583297348_test-report-ubuntu-latest-py3.11_junit.xml)",
+      "junit errors (tests/fixtures/junit_corpus/cases/yourself_37583297348_test-report-ubuntu-latest-py3.12_junit.xml)",
+      "junit skipped (tests/fixtures/junit_corpus/cases/yourself_37583297348_test-report-ubuntu-latest-py3.12_junit.xml)",
+      "junit dart error (first) (tests/fixtures/junit_corpus/cases/yourself_37583297348_test-report-ubuntu-latest-py3.12_junit.xml)",
+      "junit system-err (tests/fixtures/junit_corpus/cases/yourself_37583297348_test-report-ubuntu-latest-py3.12_junit.xml)",
+      "junit collection errors (tests/fixtures/junit_corpus/cases/yourself_37583297348_test-report-ubuntu-latest-py3.12_junit.xml)",
+      "junit errors (tests/fixtures/junit_corpus/cases/yourself_37583297348_test-report-ubuntu-latest-py3.13_junit.xml)",
+      "junit skipped (tests/fixtures/junit_corpus/cases/yourself_37583297348_test-report-ubuntu-latest-py3.13_junit.xml)",
+      "junit dart error (first) (tests/fixtures/junit_corpus/cases/yourself_37583297348_test-report-ubuntu-latest-py3.13_junit.xml)",
+      "junit system-err (tests/fixtures/junit_corpus/cases/yourself_37583297348_test-report-ubuntu-latest-py3.13_junit.xml)",
+      "junit collection errors (tests/fixtures/junit_corpus/cases/yourself_37583297348_test-report-ubuntu-latest-py3.13_junit.xml)",
+      "junit errors (tests/fixtures/junit_corpus/cases/yourself_37583297348_test-report-ubuntu-latest-py3.14_junit.xml)",
+      "junit skipped (tests/fixtures/junit_corpus/cases/yourself_37583297348_test-report-ubuntu-latest-py3.14_junit.xml)",
+      "junit dart error (first) (tests/fixtures/junit_corpus/cases/yourself_37583297348_test-report-ubuntu-latest-py3.14_junit.xml)",
+      "junit system-err (tests/fixtures/junit_corpus/cases/yourself_37583297348_test-report-ubuntu-latest-py3.14_junit.xml)",
+      "junit collection errors (tests/fixtures/junit_corpus/cases/yourself_37583297348_test-report-ubuntu-latest-py3.14_junit.xml)",
+      "junit errors (tests/fixtures/junit_corpus/cases/yourself_37583297348_test-report-windows-latest-py3.12_junit.xml)",
+      "junit skipped (tests/fixtures/junit_corpus/cases/yourself_37583297348_test-report-windows-latest-py3.12_junit.xml)",
+      "junit dart error (first) (tests/fixtures/junit_corpus/cases/yourself_37583297348_test-report-windows-latest-py3.12_junit.xml)",
+      "junit system-err (tests/fixtures/junit_corpus/cases/yourself_37583297348_test-report-windows-latest-py3.12_junit.xml)",
+      "junit collection errors (tests/fixtures/junit_corpus/cases/yourself_37583297348_test-report-windows-latest-py3.12_junit.xml)"
+    ]
+  }
+}

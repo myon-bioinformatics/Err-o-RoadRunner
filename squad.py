@@ -584,6 +584,7 @@ def merge_failure_records(
     paths: Sequence[Path],
 ) -> list[dict[str, Any]]:
     merged: dict[str, dict[str, Any]] = {}
+    matrix_ctx = _matrix_context_from_paths(paths)
     for path in paths:
         path_axes = _variant_axes_from_artifact(path.name) or {}
         for rec in parse_junit_failure_records(path):
@@ -615,6 +616,9 @@ def merge_failure_records(
                 for key in ("os", "python", "flavor")
                 if axes.get(key)
             }
+        if matrix_ctx:
+            entry["matrix_total"] = matrix_ctx["total"]
+            entry["matrix_axes"] = matrix_ctx["axes"]
     return list(merged.values())
 
 
@@ -652,9 +656,23 @@ def records_to_normalized_errors(
                 "source_line": str(rec.get("test_id") or ""),
                 "test_id": str(rec.get("test_id") or ""),
                 "variants": list(rec.get("variants") or []),
+                "variant_axes": dict(rec.get("variant_axes") or {}),
             }
         )
     return errors
+
+
+def records_for_report(records: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
+    public: list[dict[str, Any]] = []
+    for rec in records:
+        public.append(
+            {
+                key: value
+                for key, value in rec.items()
+                if key not in ("matrix_cells", "matrix_total", "matrix_axes")
+            }
+        )
+    return public
 
 
 def _repo_module_exists(project_root: Path | None, mod: str) -> bool:
@@ -892,6 +910,80 @@ def summarize_top_causes(
         key=lambda item: (-int(item["count"]), str(item["signature"])),
     )
     return ranked[: max(0, limit)]
+
+
+def _classify_matrix_record(
+    cells: Sequence[Mapping[str, str]],
+    matrix_total: int,
+    matrix_axes: Mapping[str, int],
+) -> str | None:
+    if not cells or matrix_total <= 0:
+        return None
+    if len(cells) >= matrix_total:
+        return "invariant"
+    os_seen = {c.get("os") for c in cells if c.get("os")}
+    py_seen = {c.get("python") for c in cells if c.get("python")}
+    os_n = int(matrix_axes.get("os") or 0)
+    py_n = int(matrix_axes.get("python") or 0)
+    if os_n and len(os_seen) < os_n and (not py_n or len(py_seen) >= py_n):
+        return "os-specific"
+    if py_n and len(py_seen) < py_n and (not os_n or len(os_seen) >= os_n):
+        return "python-specific"
+    return None
+
+
+def rule_matrix_invariance(
+    records: Sequence[Mapping[str, Any]],
+    project_root: Path | None,
+    squad_names: Sequence[str],
+) -> list[dict[str, Any]]:
+    if not records:
+        return []
+    matrix_total = max(int(rec.get("matrix_total") or 0) for rec in records)
+    if matrix_total <= 1:
+        return []
+    matrix_axes: dict[str, int] = {}
+    for rec in records:
+        matrix_axes = rec.get("matrix_axes") or matrix_axes
+    buckets: dict[str, list[str]] = {
+        "invariant": [],
+        "os-specific": [],
+        "python-specific": [],
+    }
+    for rec in records:
+        test_id = str(rec.get("test_id") or "")
+        if not test_id:
+            continue
+        cells = rec.get("matrix_cells") or []
+        classification = _classify_matrix_record(cells, matrix_total, matrix_axes)
+        if classification and classification in buckets:
+            buckets[classification].append(test_id)
+    hypotheses: list[dict[str, Any]] = []
+    summary_map = {
+        "invariant": "matrix-invariant failure",
+        "os-specific": "matrix os-specific failure",
+        "python-specific": "matrix python-specific failure",
+    }
+    for classification, test_ids in buckets.items():
+        if not test_ids:
+            continue
+        hyp: dict[str, Any] = {
+            "summary": summary_map[classification],
+            "classification": classification,
+            "confidence": "high" if classification == "invariant" else "medium",
+            "explains": sorted(dict.fromkeys(test_ids)),
+            "source_squads": list(squad_names),
+        }
+        if classification == "invariant":
+            os_n = int(matrix_axes.get("os") or 0)
+            py_n = int(matrix_axes.get("python") or 0)
+            if os_n:
+                hyp["os_coverage"] = f"{os_n}/{os_n}"
+            if py_n:
+                hyp["python_coverage"] = f"{py_n}/{py_n}"
+            hyp["variant_count"] = matrix_total
+        hypotheses.append(hyp)
+    return hypotheses
 
 
 def build_cascade_hypotheses(
@@ -1734,6 +1826,108 @@ def parse_os_junit_variant_axes(path: str) -> dict[str, str] | None:
 
 VARIANT_AXES_PARSERS.append(parse_os_junit_variant_axes)
 
+_TEST_REPORT_MATRIX_RE = re.compile(
+    r"test-report-(?P<os>[\w-]+)-(py3\.\d+)",
+    re.I,
+)
+_JUNIT_CONTROLLED_MATRIX_RE = re.compile(
+    r"junit-controlled(?:-(py3\.\d+))?",
+    re.I,
+)
+
+
+def parse_test_report_variant_axes(path: str) -> dict[str, str] | None:
+    name = path.rsplit("/", 1)[-1]
+    match = _TEST_REPORT_MATRIX_RE.search(name)
+    if not match:
+        return None
+    return {
+        "os": match.group("os").lower(),
+        "python": match.group(2).lower(),
+        "flavor": "test-report",
+    }
+
+
+def parse_junit_controlled_variant_axes(path: str) -> dict[str, str] | None:
+    name = path.rsplit("/", 1)[-1]
+    match = _JUNIT_CONTROLLED_MATRIX_RE.search(name)
+    if not match:
+        return None
+    axes: dict[str, str] = {"flavor": "controlled"}
+    py = match.group(1)
+    if py:
+        axes["python"] = py.lower()
+    return axes
+
+
+def parse_junit_py_variant_axes(path: str) -> dict[str, str] | None:
+    name = path.rsplit("/", 1)[-1]
+    match = _PYTEST_VARIANT_RE.search(name)
+    if not match:
+        return None
+    return {"python": match.group(1).lower(), "flavor": "junit"}
+
+
+VARIANT_AXES_PARSERS.append(parse_test_report_variant_axes)
+VARIANT_AXES_PARSERS.append(parse_junit_controlled_variant_axes)
+VARIANT_AXES_PARSERS.append(parse_junit_py_variant_axes)
+
+
+def parse_matrix_variant(path: str) -> dict[str, str] | None:
+    """Parse CI matrix axes from ``test-report``, ``junit-py``, or ``junit-controlled`` artifacts."""
+    for parser in (
+        parse_test_report_variant_axes,
+        parse_junit_controlled_variant_axes,
+        parse_junit_py_variant_axes,
+    ):
+        axes = parser(path)
+        if axes:
+            return axes
+    return None
+
+
+def _matrix_context_from_paths(paths: Sequence[Path]) -> dict[str, Any]:
+    axis_sets: dict[str, set[str]] = {"os": set(), "python": set(), "flavor": set()}
+    for path in paths:
+        axes = _variant_axes_from_artifact(path.name)
+        if not axes:
+            continue
+        for key, value in axes.items():
+            if key in axis_sets and value:
+                axis_sets[key].add(value)
+    axis_counts = {key: len(values) for key, values in axis_sets.items() if values}
+    if not axis_counts and not paths:
+        return {}
+    return {"total": len(paths), "axes": axis_counts}
+
+
+def build_report_matrix(
+    paths: Sequence[Path],
+    records: Sequence[Mapping[str, Any]],
+) -> dict[str, Any]:
+    ctx = _matrix_context_from_paths(paths)
+    if not ctx:
+        return {}
+    failing_cells: set[str] = set()
+    for rec in records:
+        for cell in rec.get("matrix_cells") or []:
+            failing_cells.add(json.dumps(cell, sort_keys=True))
+    return {
+        "axes": ctx["axes"],
+        "failing": len(failing_cells),
+        "total": ctx["total"],
+    }
+
+
+def _variant_from_test_report_python(path: str) -> str | None:
+    axes = parse_test_report_variant_axes(path)
+    if axes and axes.get("python"):
+        return axes["python"]
+    return None
+
+
+VARIANT_PARSERS.append(_variant_from_test_report_python)
+
 
 def _variant_os_run_from_artifact(path: str) -> str | None:
     axes = parse_os_junit_variant_axes(path)
@@ -1809,6 +2003,7 @@ def rule_platform_specific(
 
 
 HYPOTHESIS_RULES.append(rule_platform_specific)
+HYPOTHESIS_RULES.append(rule_matrix_invariance)
 
 
 def rule_fix_platform_specific(

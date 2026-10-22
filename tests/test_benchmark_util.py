@@ -43,7 +43,7 @@ def test_normalize_report_benchmark_clears_environment_values() -> None:
     }
     out = normalize_report_benchmark(doc)
     assert out["environment"]["values_redacted"] == {}
-    assert out["environment"]["variable_names"] == ["HOME", "PATH"]
+    assert out["environment"]["variable_names"] == ["<masked>"]
 
 
 @pytest.mark.sentinel

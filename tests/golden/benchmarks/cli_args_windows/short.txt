@@ -9,4 +9,5 @@ F sh -c 'exit 0'
   node version: <masked>
 fix: [F1] Open the first failing testcase in the JUnit XML and read the message/stack.
 G 1× error_type=pytest.Failed.DidNotRaise
+M fails on all 5 variants (os: 1/1)
 == 1 failed, 3 hint, 2 fixes in <t>s ==

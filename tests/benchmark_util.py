@@ -8,8 +8,8 @@ import re
 import subprocess
 import sys
 import tempfile
-from pathlib import Path
 from copy import deepcopy
+from pathlib import Path
 from typing import Any, Mapping, Sequence
 
 _STABLE_ENV_KEYS = ("variable_count", "variable_names", "variable_names_truncated")
@@ -22,13 +22,37 @@ _SHORT_ENV_LINE_RES = (
     re.compile(r"^  node version: .*$"),
     re.compile(r"^  gh version: .*$"),
 )
+_SUMMARY_MASK_PREFIXES = (
+    "python version:",
+    "node version:",
+    "gh version:",
+    "environment variable names:",
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 SENTINEL_CLI = [sys.executable, str(ROOT / "sentinel.py")]
 
 
+def _mask_triage_line(line: str) -> str:
+    for prefix in _SUMMARY_MASK_PREFIXES:
+        if line.startswith(prefix):
+            return f"{prefix} <masked>"
+    return line
+
+
+def _mask_human_summary(text: str) -> str:
+    masked = text
+    for prefix in _SUMMARY_MASK_PREFIXES:
+        masked = re.sub(
+            rf"{re.escape(prefix)}[^\n]*",
+            f"{prefix} <masked>",
+            masked,
+        )
+    return masked
+
+
 def normalize_report_benchmark(doc: Mapping[str, Any]) -> dict[str, Any]:
-    """Drop volatile environment values before writing or comparing benchmark report JSON."""
+    """Drop volatile environment values and mask env/tool lines for benchmark goldens."""
     out = deepcopy(dict(doc))
     env = out.get("environment")
     if isinstance(env, dict):
@@ -36,9 +60,21 @@ def normalize_report_benchmark(doc: Mapping[str, Any]) -> dict[str, Any]:
             key: env[key] for key in _STABLE_ENV_KEYS if key in env
         }
         out["environment"]["values_redacted"] = {}
+        if "variable_names" in out["environment"]:
+            out["environment"]["variable_names"] = ["<masked>"]
     command = out.get("command")
     if isinstance(command, dict) and command.get("cwd"):
         command["cwd"] = "<repo>"
+    triage = out.get("triage")
+    if isinstance(triage, dict):
+        for field in ("found", "hints", "not_found"):
+            lines = triage.get(field)
+            if not isinstance(lines, list):
+                continue
+            triage[field] = [_mask_triage_line(str(line)) for line in lines]
+    summary = out.get("human_summary")
+    if isinstance(summary, str):
+        out["human_summary"] = _mask_human_summary(summary)
     return out
 
 
