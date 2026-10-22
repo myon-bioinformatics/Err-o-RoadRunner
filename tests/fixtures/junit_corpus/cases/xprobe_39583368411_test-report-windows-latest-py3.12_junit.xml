@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="513" time="74.967" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_xprobe_mojibake" name="test_cli_mojibake_modes" time="0.015"><failure message="AssertionError: assert 'Status: こんにちは OK\r\n' == 'Status: こんにちは OK\n'&#10;  &#10;  - Status: こんにちは OK&#10;  + Status: こんにちは OK&#10;  ?                 +">tmp_path = WindowsPath('C:&lt;user-home&gt;/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_cli_mojibake_modes0')
+capsys = &lt;_pytest.capture.CaptureFixture object at 0x&lt;addr&gt;&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+
+    def test_cli_mojibake_modes(tmp_path, capsys, monkeypatch):
+        p = tmp_path / "data.txt"
+        p.write_text("Status: 縺薙ｓ縺ｫ縺｡縺ｯ OK\n", encoding="utf-8")
+    
+        # Mode 1: --mojibake
+        code1 = xprobe.main(["--mojibake", "--root", str(tmp_path)])
+        assert code1 == 1
+        out1 = capsys.readouterr().out
+        data1 = json.loads(out1)
+        assert len(data1["findings"]) == 1
+        assert data1["findings"][0]["restored"] == "こんにちは"
+    
+        # Mode 2: --mojibake --brief
+        code2 = xprobe.main(["--mojibake", "--brief", "--root", str(tmp_path)])
+        assert code2 == 1
+        out2 = capsys.readouterr().out
+        assert "utf8_as_cp932 (hiragana)" in out2
+    
+        # Mode 3: --restore-mojibake file
+        code3 = xprobe.main(["--restore-mojibake", str(p)])
+        assert code3 == 0
+        out3 = capsys.readouterr().out
+&gt;       assert out3 == "Status: こんにちは OK\n"
+E       AssertionError: assert 'Status: こんにちは OK\r\n' == 'Status: こんにちは OK\n'
+E         
+E         - Status: こんにちは OK
+E         + Status: こんにちは OK
+E         ?                 +
+
+tests\test_xprobe_mojibake.py:129: AssertionError</failure></testcase></testsuite></testsuites>

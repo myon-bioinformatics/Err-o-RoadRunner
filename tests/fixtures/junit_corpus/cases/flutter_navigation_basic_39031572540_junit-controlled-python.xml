@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="1" failures="1" skipped="1" tests="4" time="0.059" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="test_oracle" name="test_filter_invalid_input_is_not_success[PARAMETER_SENTINEL]" time="0.032"><failure message="AssertionError: ASSERTION_SENTINEL&#10;assert 2 == 0&#10; +  where 2 = CompletedProcess(args=['&lt;toolcache&gt;/Python/3.12.15/x64/bin/python', '-S', '&lt;runner-work&gt;'], returncode=2, stdout='', stderr='list-selection: non-finite JSON number is not supported\n').returncode">label = 'PARAMETER_SENTINEL'
+
+    @pytest.mark.parametrize("label", ["PARAMETER_SENTINEL"], ids=["PARAMETER_SENTINEL"])
+    def test_filter_invalid_input_is_not_success(label):
+        print("STDOUT_SENTINEL")
+        result = subprocess.run(
+            [sys.executable, "-S", os.environ["LIST_SELECTION_CLI"]],
+            input='{"values":[1e999],"equals":0}',
+            capture_output=True, text=True, encoding="utf-8", timeout=5,
+        )
+        Path(os.environ["LIST_SELECTION_EXIT"]).write_text(json.dumps({"exit_code": result.returncode}))
+        # Intentionally wrong: reject overflow even when filtering would select nothing.
+&gt;       assert result.returncode == 0, "ASSERTION_SENTINEL"
+E       AssertionError: ASSERTION_SENTINEL
+E       assert 2 == 0
+E        +  where 2 = CompletedProcess(args=['&lt;toolcache&gt;/Python/3.12.15/x64/bin/python', '-S', '&lt;runner-work&gt;'], returncode=2, stdout='', stderr='list-selection: non-finite JSON number is not supported\n').returncode
+
+&lt;pytest-tmp&gt;/pytest-0/test_oracle_wrapper_junit_pres0/test_oracle.py:23: AssertionError</failure><system-out>--------------------------------- Captured Log ---------------------------------
+
+--------------------------------- Captured Out ---------------------------------
+STDOUT_SENTINEL
+
+</system-out><system-err>--------------------------------- Captured Err ---------------------------------
+
+</system-err></testcase><testcase classname="test_oracle" name="test_oracle_setup_error" time="0.000"><error message="failed on setup with &quot;RuntimeError: SETUP_SENTINEL&quot;">@pytest.fixture
+    def broken_oracle():
+&gt;       raise RuntimeError("SETUP_SENTINEL")
+E       RuntimeError: SETUP_SENTINEL
+
+&lt;pytest-tmp&gt;/pytest-0/test_oracle_wrapper_junit_pres0/test_oracle.py:27: RuntimeError</error><system-out>--------------------------------- Captured Log ---------------------------------
+
+--------------------------------- Captured Out ---------------------------------
+
+</system-out><system-err>--------------------------------- Captured Err ---------------------------------
+
+</system-err></testcase></testsuite></testsuites>

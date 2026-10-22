@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="12" tests="1568" time="61.316" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_flutter_vendor_registry_sync" name="test_retired_git_inspector_is_explicit_skip_not_new_registration" time="0.002"><failure message="assert 31 == 30">def test_retired_git_inspector_is_explicit_skip_not_new_registration():
+        catalog = load("vendor-catalog.json")
+        registry = load("vendor-consumers.json")
+        result = vendor_fleet_plan.plan(catalog, registry, active_consumers=[FLUTTER])
+        retired = [x for x in result["rows"]
+                   if x["tool_repository"] == "myon-bioinformatics/myon-bioinformatics"
+                   and x["source"] == "git_inspector.py"]
+        assert len(retired) == 1
+        assert retired[0]["action"] == "skipped"
+        assert retired[0]["reason"] == "retired_after_gh_identity_migration"
+        assert result["counts"]["needs_registration"] == 6
+&gt;       assert result["counts"]["skipped"] == 30
+E       assert 31 == 30
+
+tests/test_flutter_vendor_registry_sync.py:53: AssertionError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="1" tests="46" time="28.564" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="dragowing.tests.test_render" name="test_stalled_dbus_does_not_block_browser_get_version" time="9.881"><failure message="TimeoutError: Chrome did not answer within the timeout; the browser process is still running and has not answered&#10;s: Failed to connect to socket /tmp/chrome-pipe-xwf8txql/no-bus.sock: No such file or directory&#10;[2425:2450:1021/052043.255616:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /tmp/chrome-pipe-xwf8txql/no-bus.sock: No such file or directory&#10;[2425:2450:1021/052043.255635:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /tmp/chrome-pipe-xwf8txql/no-bus.sock: No such file or directory&#10;[2425:2450:1021/052043.255653:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /tmp/chrome-pipe-xwf8txql/no-bus.sock: No such file or directory&#10;[2425:2450:1021/052044.382000:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /tmp/chrome-pipe-xwf8txql/no-bus.sock: No such file or directory">self = &lt;dragowing.chrome_pipe.Chrome object at 0x&lt;addr&gt;&gt;
+deadline = 54.356135112
+
+    def _recv(self, deadline: float) -&gt; dict:
+        if self._failure:
+            raise RuntimeError(self._failure)
+        remaining = deadline - time.monotonic()
+        if remaining &lt;= 0:
+            raise self._timeout_error("Chrome did not answer within the timeout")
+        try:
+&gt;           message = self._inbox.get(timeout=remaining)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+dragowing/chrome_pipe.py:350: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;queue.Queue object at 0x&lt;addr&gt;&gt;, block = True
+timeout = 7.999967008999995
+
+    def get(self, block=True, timeout=None):
+        '''Remove and return an item from the queue.
+    
+        If optional args 'block' is true and 'timeout' is None (the default),
+        block if necessary until an item is available. If 'timeout' is
+        a non-negative number, it blocks at most 'timeout' seconds and raises
+        the Empty exception if no item was available within that time.
+        Otherwise ('block' is false), return an item if one is immediately
+        available, else raise the Empty exception ('timeout' is ignored
+        in that case).
+    
+        Raises ShutDown if the queue has been shut down and is empty,
+        or if the queue has been shut down immediately.
+        '''
+        with self.not_empty:
+            if self.is_shutdown and not self._qsize():
+                raise ShutDown
+            if not block:
+                if not self._qsize():
+                    raise Empty
+            elif timeout is None:
+                while not self._qsize():
+                    self.not_empty.wait()
+                    if self.is_shutdown and not self._qsize():
+                        raise ShutDown
+            elif timeout &lt; 0:
+                raise ValueError("'timeout' must be a non-negative number")
+            else:
+                endtime = time() + timeout
+                while not self._qsize():
+                    remaining = endtime - time()
+                    if remaining &lt;= 0.0:
+&gt;                       raise Empty
+E                       _queue.Empty
+
+&lt;toolcache&gt;/Python/3.14.8/x64/lib/python3.14/queue.py:209: Empty
+
+The above exception was the direct cause of the following exception:
+
+chrome_executable = '/usr/bin/google-chrome'
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+
+    def test_stalled_dbus_does_not_block_browser_get_version(chrome_executable, monkeypatch):
+        # A bus that accepts and never replies used to swallow the whole launch
+        # budget before Browser.getVersion. The browser must ignore that bus.
+        sock_path = "/tmp/dragowing-stalled-bus-%d.sock" % os.getpid()
+        try:
+            os.unlink(sock_path)
+        except FileNotFoundError:
+            pass
+        server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        server.bind(sock_path)
+        server.listen(8)
+        stop = threading.Event()
+    
+        def accept():
+            server.settimeout(0.2)
+            while not stop.is_set():
+                try:
+                    conn, _ = server.accept()
+                except socket.timeout:
+                    continue
+                except OSError:
+                    return
+    
+                def hold(client=conn):
+                    try:
+                        while not stop.is_set():
+                            time.sleep(0.1)
+                    finally:
+                        try:
+                            client.close()
+                        except OSError:
+                            pass
+    
+                threading.Thread(target=hold, daemon=True).start()
+    
+        threading.Thread(target=accept, daemon=True).start()
+        address = "unix:path=" + sock_path
+        monkeypatch.setenv("DBUS_SESSION_BUS_ADDRESS", address)
+        monkeypatch.setenv("DBUS_SYSTEM_BUS_ADDRESS", address)
+        started = time.monotonic()
+        try:
+&gt;           with RenderSession(chrome=chrome_executable, timeouts=Timeouts(launch=8)) as session:
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+dragowing/tests/test_render.py:111: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+dragowing/render.py:109: in __enter__
+    self.start()
+dragowing/render.py:121: in start
+    self.browser.start()
+dragowing/chrome_pipe.py:136: in start
+    self.call("Browser.getVersion", timeout=self.timeout)
+dragowing/chrome_pipe.py:146: in call
+    message = self._recv(deadline)
+              ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;dragowing.chrome_pipe.Chrome object at 0x&lt;addr&gt;&gt;
+deadline = 54.356135112
+
+    def _recv(self, deadline: float) -&gt; dict:
+        if self._failure:
+            raise RuntimeError(self._failure)
+        remaining = deadline - time.monotonic()
+        if remaining &lt;= 0:
+            raise self._timeout_error("Chrome did not answer within the timeout")
+        try:
+            message = self._inbox.get(timeout=remaining)
+        except queue.Empty as exc:
+&gt;           raise self._timeout_error("Chrome did not answer within the timeout") from exc
+E           TimeoutError: Chrome did not answer within the timeout; the browser process is still running and has not answered
+E           s: Failed to connect to socket /tmp/chrome-pipe-xwf8txql/no-bus.sock: No such file or directory
+E           [2425:2450:1021/052043.255616:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /tmp/chrome-pipe-xwf8txql/no-bus.sock: No such file or directory
+E           [2425:2450:1021/052043.255635:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /tmp/chrome-pipe-xwf8txql/no-bus.sock: No such file or directory
+E           [2425:2450:1021/052043.255653:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /tmp/chrome-pipe-xwf8txql/no-bus.sock: No such file or directory
+E           [2425:2450:1021/052044.382000:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /tmp/chrome-pipe-xwf8txql/no-bus.sock: No such file or directory
+
+dragowing/chrome_pipe.py:352: TimeoutError</failure></testcase></testsuite></testsuites>

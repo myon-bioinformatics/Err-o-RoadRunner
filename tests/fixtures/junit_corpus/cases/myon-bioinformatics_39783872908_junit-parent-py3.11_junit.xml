@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="12" tests="1573" time="72.042" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_constrained_lab_exec_audit.AuditTests" name="test_trace_pid_and_failures" time="0.001"><failure message="AssertionError: Lists differ: [100] != [100, 101]&#10;&#10;Second list contains 1 additional elements.&#10;First extra element 1:&#10;101&#10;&#10;- [100]&#10;+ [100, 101]">self = &lt;test_constrained_lab_exec_audit.AuditTests testMethod=test_trace_pid_and_failures&gt;
+
+    def test_trace_pid_and_failures(self):
+        raw = '[pid 100] execve("/usr/bin/git", ["git", "status"], 0x0) = 0\\n' \
+              '[pid 101] execve("/bin/sh", ["sh"], 0x0) = -1 ENOENT\\n'
+        events = audit.parse_trace(raw)
+&gt;       self.assertEqual([e["pid"] for e in events], [100, 101])
+E       AssertionError: Lists differ: [100] != [100, 101]
+E       
+E       Second list contains 1 additional elements.
+E       First extra element 1:
+E       101
+E       
+E       - [100]
+E       + [100, 101]
+
+tests/test_constrained_lab_exec_audit.py:18: AssertionError</failure></testcase></testsuite></testsuites>

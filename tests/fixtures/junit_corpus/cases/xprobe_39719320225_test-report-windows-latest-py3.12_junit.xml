@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="597" time="57.026" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_portable_output.PortableOutputTests" name="test_stderr_not_starved_by_stdout" time="0.002"><failure message="AssertionError: Lists differ: ['1 passed\\n2 passed', 'Error: root cause'] != ['1 passed', 'Error: root cause']&#10;&#10;First differing element 0:&#10;'1 passed\\n2 passed'&#10;'1 passed'&#10;&#10;- ['1 passed\\n2 passed', 'Error: root cause']&#10;?    -----------&#10;&#10;+ ['1 passed', 'Error: root cause']">self = &lt;test_portable_output.PortableOutputTests testMethod=test_stderr_not_starved_by_stdout&gt;
+
+    def test_stderr_not_starved_by_stdout(self):
+&gt;       self.assertEqual(module.select_lines("1 passed\\n2 passed", "Error: root cause", limit=2),
+                         ["1 passed", "Error: root cause"])
+E       AssertionError: Lists differ: ['1 passed\\n2 passed', 'Error: root cause'] != ['1 passed', 'Error: root cause']
+E       
+E       First differing element 0:
+E       '1 passed\\n2 passed'
+E       '1 passed'
+E       
+E       - ['1 passed\\n2 passed', 'Error: root cause']
+E       ?    -----------
+E       
+E       + ['1 passed', 'Error: root cause']
+
+tests\test_portable_output.py:16: AssertionError</failure></testcase></testsuite></testsuites>

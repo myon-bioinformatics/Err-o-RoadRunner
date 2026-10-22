@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="6" tests="417" time="44.784" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_gh_ops_fetch_guard" name="test_default_openssh_disables_password_and_hostkey_prompts" time="5.221"><failure message="subprocess.TimeoutExpired: Command '['git', 'ls-remote', 'ssh://git@127.0.0.1:1/absent.git']' timed out after 4.968000000000018 seconds">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+git_env = {'ACTIONS_ORCHESTRATION_ID': '9f729d20-0606-827c-b8c9-2a4c177f2333.vendor-portability.windows-latest_3_12', 'ACTIONS_R...he\\', 'ACTIONS_RUNNER_RETURN_JOB_RESULT_FOR_HOSTED': '1', 'AGENT_TOOLSDIRECTORY': 'C:\\hostedtoolcache\\windows', ...}
+
+    def test_default_openssh_disables_password_and_hostkey_prompts(monkeypatch, git_env):
+        seen = []
+        popen = subprocess.Popen
+    
+        def record(argv, **kwargs):
+            # Windows cleanup may invoke taskkill without an explicit env.
+            # Observe only Git transport calls; do not assume all Popen calls are Git.
+            if len(argv) &gt; 1 and argv[0] == "git" and argv[1] == "ls-remote":
+                seen.append((argv, kwargs["env"]))
+            return popen(argv, **kwargs)
+    
+        monkeypatch.setattr(subprocess, "Popen", record)
+&gt;       remote_probe("ssh://git@127.0.0.1:1/absent.git", git_env)
+
+tests\test_gh_ops_fetch_guard.py:162: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+tests\test_gh_ops_fetch_guard.py:235: in remote_probe
+    return g._git_network_run(["git", "ls-remote", url], run=subprocess.run, cwd=cwd, timeout=timeout, env=env)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+gh_ops.py:2029: in _git_network_run
+    raise error
+gh_ops.py:2016: in _git_network_run
+    process.wait(timeout=timeout)
+C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\subprocess.py:1264: in wait
+    return self._wait(timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;Popen: returncode: 1 args: ['git', 'ls-remote', 'ssh://git@127.0.0.1:1/abse...&gt;
+timeout = 4.968000000000018
+
+    def _wait(self, timeout):
+        """Internal implementation of wait() on Windows."""
+        if timeout is None:
+            timeout_millis = _winapi.INFINITE
+        elif timeout &lt;= 0:
+            timeout_millis = 0
+        else:
+            timeout_millis = int(timeout * 1000)
+        if self.returncode is None:
+            # API note: Returns immediately if timeout_millis == 0.
+            result = _winapi.WaitForSingleObject(self._handle,
+                                                 timeout_millis)
+            if result == _winapi.WAIT_TIMEOUT:
+&gt;               raise TimeoutExpired(self.args, timeout)
+E               subprocess.TimeoutExpired: Command '['git', 'ls-remote', 'ssh://git@127.0.0.1:1/absent.git']' timed out after 4.968000000000018 seconds
+
+C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\subprocess.py:1593: TimeoutExpired</failure></testcase></testsuite></testsuites>

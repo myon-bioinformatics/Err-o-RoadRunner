@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="14" tests="884" time="138.383" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_vendor_enrollment_audit" name="test_workflow_compares_adopted_lock_before_candidate_enrollment" time="0.083"><failure message="AssertionError: {&#10;    &quot;schema&quot;: &quot;vendor-consumer-comparison/1&quot;,&#10;    &quot;consumer&quot;: &quot;myon-bioinformatics/Ironmate&quot;,&#10;    &quot;lock&quot;: &quot;vendor.lock.json&quot;,&#10;    &quot;matches&quot;: false,&#10;    &quot;missing&quot;: [],&#10;    &quot;unexpected&quot;: [&#10;      {&#10;        &quot;repository&quot;: &quot;myon-bioinformatics/web-ui&quot;,&#10;        &quot;source&quot;: &quot;LICENSE&quot;,&#10;        &quot;destination&quot;: &quot;vendor/web-ui-LICENSE&quot;&#10;      },&#10;      {&#10;        &quot;repository&quot;: &quot;myon-bioinformatics/web-ui&quot;,&#10;        &quot;source&quot;: &quot;examples/pr-flow.json&quot;,&#10;        &quot;destination&quot;: &quot;examples/flow.json&quot;&#10;      },&#10;      {&#10;        &quot;repository&quot;: &quot;myon-bioinformatics/web-ui&quot;,&#10;        &quot;source&quot;: &quot;tool/flow_diagram.py&quot;,&#10;        &quot;destination&quot;: &quot;vendor/web_ui_flow.py&quot;&#10;      }&#10;    ],&#10;    &quot;bundle_mismatch&quot;: []&#10;  }&#10;  &#10;assert 1 == 0&#10; +  where 1 = CompletedProcess(args=['&lt;toolcache&gt;/Python/3.12.15/x64/bin/python', '-S', '&lt;runner-work&gt;&quot;,\n      &quot;destination&quot;: &quot;vendor/web_ui_flow.py&quot;\n    }\n  ],\n  &quot;bundle_mismatch&quot;: []\n}\n', stderr='').returncode">tests/test_vendor_enrollment_audit.py:93: in test_workflow_compares_adopted_lock_before_candidate_enrollment
+    assert result.returncode == 0, result.stdout + result.stderr
+E   AssertionError: {
+E       "schema": "vendor-consumer-comparison/1",
+E       "consumer": "myon-bioinformatics/Ironmate",
+E       "lock": "vendor.lock.json",
+E       "matches": false,
+E       "missing": [],
+E       "unexpected": [
+E         {
+E           "repository": "myon-bioinformatics/web-ui",
+E           "source": "LICENSE",
+E           "destination": "vendor/web-ui-LICENSE"
+E         },
+E         {
+E           "repository": "myon-bioinformatics/web-ui",
+E           "source": "examples/pr-flow.json",
+E           "destination": "examples/flow.json"
+E         },
+E         {
+E           "repository": "myon-bioinformatics/web-ui",
+E           "source": "tool/flow_diagram.py",
+E           "destination": "vendor/web_ui_flow.py"
+E         }
+E       ],
+E       "bundle_mismatch": []
+E     }
+E     
+E   assert 1 == 0
+E    +  where 1 = CompletedProcess(args=['&lt;toolcache&gt;/Python/3.12.15/x64/bin/python', '-S', '&lt;runner-work&gt;",\n      "destination": "vendor/web_ui_flow.py"\n    }\n  ],\n  "bundle_mismatch": []\n}\n', stderr='').returncode</failure></testcase></testsuite></testsuites>

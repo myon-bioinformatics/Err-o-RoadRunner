@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="11" tests="741" time="7.435" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_mirror_js" name="test_markdown_facts_agree_with_js_renderers[headings-markdown-it]" time="0.659"><failure message="AssertionError: .vendor-sync-tools/README.md: only markdown.py [] only markdown-it [(1, '🐍 myon-bioinformatics 🎸')]&#10;assert not [&quot;.vendor-sync-tools/README.md: only markdown.py [] only markdown-it [(1, '🐍 myon-bioinformatics 🎸')]&quot;]">readers = ([PosixPath('&lt;runner-work&gt;/.vendor-sync-tools/AGENTS.md'), PosixPath('&lt;runner-work&gt; tests/test_gh_workflow.py --junitxml=reports/workflow-wrapper.xml']]}, ...], 'string-width': [3, 6, 4, 6, 1, 6, ...]})
+key = 'headings', reader = 'markdown-it'
+
+    @pytest.mark.parametrize("key,reader", [("headings", "markdown-it"), ("headings", "marked"),
+                                            ("links", "markdown-it"), ("images", "markdown-it"),
+                                            ("images", "marked"), ("code", "markdown-it"), ("code", "marked")])
+    def test_markdown_facts_agree_with_js_renderers(readers, key, reader):
+        files, texts, facts = readers
+        mismatches = []
+        for path, text, theirs in zip(files, texts, facts[reader]):
+            a, b = normalized(key, ours(text)[key]), normalized(key, theirs[key])
+            if a != b:
+                mismatches.append(f"{path.relative_to(ROOT)}: only markdown.py {list((a - b).elements())[:2]}"
+                                  f" only {reader} {list((b - a).elements())[:2]}")
+&gt;       assert not mismatches, "\n".join(mismatches)
+E       AssertionError: .vendor-sync-tools/README.md: only markdown.py [] only markdown-it [(1, '🐍 myon-bioinformatics 🎸')]
+E       assert not [".vendor-sync-tools/README.md: only markdown.py [] only markdown-it [(1, '🐍 myon-bioinformatics 🎸')]"]
+
+tests/test_mirror_js.py:81: AssertionError</failure></testcase><testcase classname="tests.test_mirror_js" name="test_markdown_facts_agree_with_js_renderers[headings-marked]" time="0.136"><failure message="AssertionError: .vendor-sync-tools/README.md: only markdown.py [] only marked [(1, '🐍 myon-bioinformatics 🎸')]&#10;assert not [&quot;.vendor-sync-tools/README.md: only markdown.py [] only marked [(1, '🐍 myon-bioinformatics 🎸')]&quot;]">readers = ([PosixPath('&lt;runner-work&gt;/.vendor-sync-tools/AGENTS.md'), PosixPath('&lt;runner-work&gt; tests/test_gh_workflow.py --junitxml=reports/workflow-wrapper.xml']]}, ...], 'string-width': [3, 6, 4, 6, 1, 6, ...]})
+key = 'headings', reader = 'marked'
+
+    @pytest.mark.parametrize("key,reader", [("headings", "markdown-it"), ("headings", "marked"),
+                                            ("links", "markdown-it"), ("images", "markdown-it"),
+                                            ("images", "marked"), ("code", "markdown-it"), ("code", "marked")])
+    def test_markdown_facts_agree_with_js_renderers(readers, key, reader):
+        files, texts, facts = readers
+        mismatches = []
+        for path, text, theirs in zip(files, texts, facts[reader]):
+            a, b = normalized(key, ours(text)[key]), normalized(key, theirs[key])
+            if a != b:
+                mismatches.append(f"{path.relative_to(ROOT)}: only markdown.py {list((a - b).elements())[:2]}"
+                                  f" only {reader} {list((b - a).elements())[:2]}")
+&gt;       assert not mismatches, "\n".join(mismatches)
+E       AssertionError: .vendor-sync-tools/README.md: only markdown.py [] only marked [(1, '🐍 myon-bioinformatics 🎸')]
+E       assert not [".vendor-sync-tools/README.md: only markdown.py [] only marked [(1, '🐍 myon-bioinformatics 🎸')]"]
+
+tests/test_mirror_js.py:81: AssertionError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="12" tests="1408" time="53.213" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_vendor_adopted_enrollment" name="test_ironmate_registered_contract_ignores_recommendation_skips" time="0.001"><failure message="assert not True&#10; +  where True = any(&lt;generator object test_ironmate_registered_contract_ignores_recommendation_skips.&lt;locals&gt;.&lt;genexpr&gt; at 0x&lt;addr&gt;&gt;)">def test_ironmate_registered_contract_ignores_recommendation_skips():
+        registry = json.loads((ROOT / 'vendor-consumers.json').read_text())
+        catalog = json.loads((ROOT / 'vendor-catalog.json').read_text())
+        lock = json.loads((ROOT / 'tests/fixtures/ironmate-flow-workspace.lock.json').read_text())
+&gt;       assert not any(t['repository'].lower().endswith('/ironmate') for t in catalog['tools'])
+E       assert not True
+E        +  where True = any(&lt;generator object test_ironmate_registered_contract_ignores_recommendation_skips.&lt;locals&gt;.&lt;genexpr&gt; at 0x&lt;addr&gt;&gt;)
+
+tests/test_vendor_adopted_enrollment.py:17: AssertionError</failure></testcase></testsuite></testsuites>
