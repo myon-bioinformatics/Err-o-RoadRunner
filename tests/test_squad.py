@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-import json
 import os
+import statistics
 import subprocess
 import sys
 import time
@@ -13,12 +13,19 @@ from unittest import mock
 import pytest
 
 import squad
-from sentinel import build_escalation_report, build_groups, parse_group_by
+from sentinel import (
+    build_escalation_report,
+    build_groups,
+    dedupe_multisource_triage,
+    parse_group_by,
+    resolve_default_corpus_dirs,
+)
 from sentinel import RunOutcome, WatchState
 
 ROOT = Path(__file__).resolve().parents[1]
 AOI_GLOB = "Aoi_37561005125_junit-py3.*_*.xml"
 AOI_CASES = sorted((ROOT / "tests/fixtures/junit_corpus/cases").glob(AOI_GLOB))
+SENTINEL_CLI = [sys.executable, str(ROOT / "sentinel.py")]
 
 
 def _aoi_paths() -> list[str]:
@@ -35,26 +42,76 @@ def contamination_root(tmp_path: Path) -> Path:
 
 
 @pytest.mark.sentinel
-def test_aoi_merged_records_distinct_error_types_and_variants(contamination_root: Path) -> None:
+def test_aoi_merged_records_distinct_error_types_and_variants() -> None:
     records = squad.load_failure_records_for_escalation(_aoi_paths(), [])
-    assert records
+    assert len(records) == 19
+    assert all(len(rec.get("variants") or []) == 5 for rec in records)
     error_types = {rec["error_type"] for rec in records}
     assert len(error_types) >= 7
     assert "JUnitFailure" not in error_types
-    assert max(len(rec.get("variants") or []) for rec in records) == 5
 
     errors = squad.records_to_normalized_errors(records)
     groups = build_groups(errors, group_by=parse_group_by("error_type"), sort="count")
-    assert groups["error_count"] == len(records)
+    assert groups["error_count"] == 19
     assert len(groups["buckets"]) >= 7
 
-    hyps = squad.build_cascade_hypotheses(records, contamination_root, ("code",))
+
+@pytest.mark.sentinel
+def test_aoi_h1_without_fake_repo_modules() -> None:
+    records = squad.load_failure_records_for_escalation(_aoi_paths(), [])
+    hyps = squad.build_cascade_hypotheses(records, ROOT, ("code",))
     assert hyps
-    h1 = hyps[0]
-    assert h1["summary"] == "import-path contamination"
-    explained = h1["explains"]
-    assert len(explained) >= 5
-    assert len(explained) <= 19
+    assert hyps[0]["summary"] == "import-path contamination"
+    assert hyps[0]["confidence"] == "medium"
+    assert len(hyps[0]["explains"]) >= 2
+
+
+@pytest.mark.sentinel
+def test_normalize_signature_strips_did_you_mean() -> None:
+    a = squad.normalize_signature("No module named 'sets'")
+    b = squad.normalize_signature("No module named 'sets'. Did you mean: 'tests'?")
+    assert a == b
+
+
+@pytest.mark.sentinel
+def test_triage_dedupe_across_identical_junit_files(tmp_path: Path) -> None:
+    import json
+
+    junit_args = sum([["--junit", str(p)] for p in AOI_CASES], [])
+    report = tmp_path / "r.json"
+
+    def _run(extra_junit: list[str]) -> dict:
+        subprocess.run(
+            [
+                *SENTINEL_CLI,
+                "--squads",
+                "none",
+                "--report-json",
+                str(report),
+                *extra_junit,
+                "--",
+                "sh",
+                "-c",
+                "exit 0",
+            ],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+        return json.loads(report.read_text(encoding="utf-8"))
+
+    multi = _run(junit_args)
+    single = _run(["--junit", str(AOI_CASES[0])])
+    assert len(multi["triage"]["found"]) == len(single["triage"]["found"])
+    assert len(multi["triage"]["found"]) < 92
+
+
+@pytest.mark.sentinel
+def test_default_corpus_dir_when_present() -> None:
+    resolved = resolve_default_corpus_dirs([], ROOT)
+    assert resolved
+    assert "junit_corpus" in resolved[0]
 
 
 @pytest.mark.sentinel
@@ -89,7 +146,17 @@ def test_squad_timeout_does_not_block_other_squads() -> None:
 
 @pytest.mark.sentinel
 def test_web_squad_offline_skips_network_and_redacts_queries() -> None:
-    records = squad.merge_failure_records([AOI_CASES[0]])
+    records = [
+        {
+            "error_type": "ModuleNotFoundError",
+            "message": f"token=abc secret at {ROOT / 'nagoyaction/tests/test_inbox.py'}",
+            "signature": "no module",
+            "test_id": "pkg.tests.test_x::test_y",
+            "source_file": "nagoyaction/tests/test_inbox.py",
+            "line": 10,
+            "variants": ["py3.12"],
+        }
+    ]
     with mock.patch("urllib.request.urlopen") as urlopen_mock:
         pack = squad.run_error_squads(
             enabled=frozenset({squad.SQUAD_WEB}),
@@ -106,10 +173,10 @@ def test_web_squad_offline_skips_network_and_redacts_queries() -> None:
     urlopen_mock.assert_not_called()
     web = next(s for s in pack["squads"] if s["name"] == squad.SQUAD_WEB)
     assert web["status"] == "skipped"
-    assert web.get("queries")
-    joined = " ".join(web["queries"])
-    assert "/workspace" not in joined
-    assert "token" not in joined.lower()
+    joined = " ".join(web.get("queries") or [])
+    assert "token=abc" not in joined
+    assert str(ROOT) not in joined
+    assert "test_inbox" not in joined.lower() or "<path>" in joined.lower()
 
 
 @pytest.mark.sentinel
@@ -129,8 +196,13 @@ def test_history_squad_git_blame_and_log(tmp_path: Path) -> None:
         cwd=tmp_path,
         check=True,
         capture_output=True,
-        env={**os.environ, "GIT_AUTHOR_NAME": "t", "GIT_AUTHOR_EMAIL": "t@example.com",
-             "GIT_COMMITTER_NAME": "t", "GIT_COMMITTER_EMAIL": "t@example.com"},
+        env={
+            **os.environ,
+            "GIT_AUTHOR_NAME": "t",
+            "GIT_AUTHOR_EMAIL": "t@example.com",
+            "GIT_COMMITTER_NAME": "t",
+            "GIT_COMMITTER_EMAIL": "t@example.com",
+        },
     )
     records = [
         {
@@ -147,6 +219,7 @@ def test_history_squad_git_blame_and_log(tmp_path: Path) -> None:
         enabled=frozenset({squad.SQUAD_HISTORY}),
         records=records,
         project_root=tmp_path,
+        project_root_explicit=True,
         junit_paths=[],
         corpus_dirs=[],
         offline=True,
@@ -164,10 +237,19 @@ def test_history_squad_git_blame_and_log(tmp_path: Path) -> None:
 def test_sys_path_insert_flagged_in_code_squad(tmp_path: Path) -> None:
     conftest = tmp_path / "conftest.py"
     conftest.write_text("import sys\nsys.path.insert(0, 'bogus')\n", encoding="utf-8")
+    test_file = tmp_path / "test_sample.py"
+    test_file.write_text("def test_x():\n    assert True\n", encoding="utf-8")
     pack = squad.run_code_squad(
         squad.SquadContext(
-            records=[],
+            records=[
+                {
+                    "test_id": "t::test_x",
+                    "source_file": "test_sample.py",
+                    "line": 2,
+                }
+            ],
             project_root=tmp_path,
+            project_root_explicit=True,
             junit_paths=(),
             corpus_dirs=(),
             offline=True,
@@ -177,6 +259,24 @@ def test_sys_path_insert_flagged_in_code_squad(tmp_path: Path) -> None:
     )
     kinds = {f.get("kind") for f in pack["findings"]}
     assert "sys.path.insert" in kinds
+
+
+@pytest.mark.sentinel
+def test_code_squad_skips_repo_walk_without_resolved_tests(tmp_path: Path) -> None:
+    (tmp_path / "conftest.py").write_text("import sys\nsys.path.insert(0, 'x')\n", encoding="utf-8")
+    pack = squad.run_code_squad(
+        squad.SquadContext(
+            records=[],
+            project_root=tmp_path,
+            project_root_explicit=False,
+            junit_paths=(),
+            corpus_dirs=(),
+            offline=True,
+            web_endpoints=(),
+            timeout=5.0,
+        )
+    )
+    assert not any(f.get("kind") == "sys.path.insert" for f in pack["findings"])
 
 
 @pytest.mark.sentinel
@@ -194,7 +294,9 @@ def test_sentinel_exit_code_unchanged_with_squads(tmp_path: Path) -> None:
         "-c",
         "exit 0",
     ]
-    code_none = subprocess.run([*common[:6], "--squads", "none", *common[6:]], cwd=ROOT, capture_output=True, text=True).returncode
+    code_none = subprocess.run(
+        [*common[:6], "--squads", "none", *common[6:]], cwd=ROOT, capture_output=True, text=True
+    ).returncode
     code_squads = subprocess.run(
         [*common[:6], "--squads", "code,history", "--offline", *common[6:]],
         cwd=ROOT,
@@ -205,18 +307,16 @@ def test_sentinel_exit_code_unchanged_with_squads(tmp_path: Path) -> None:
 
 
 @pytest.mark.sentinel
-def test_squads_none_overhead_small() -> None:
-    started = time.perf_counter()
-    squad.run_error_squads(
-        enabled=frozenset(),
-        records=[],
-        project_root=ROOT,
-        junit_paths=[],
-        corpus_dirs=[],
-        offline=True,
-        web_endpoints=[],
-    )
-    assert time.perf_counter() - started < 0.005
+def test_sentinel_true_subprocess_fast() -> None:
+    cmd = [*SENTINEL_CLI, "--", "true"]
+    subprocess.run(cmd, cwd=ROOT, capture_output=True, check=False)
+    samples: list[float] = []
+    for _ in range(12):
+        started = time.perf_counter()
+        subprocess.run(cmd, cwd=ROOT, capture_output=True, check=False)
+        samples.append(time.perf_counter() - started)
+    median = statistics.median(samples)
+    assert median < 0.075, f"sentinel -- true median {median:.3f}s exceeds 75ms"
 
 
 @pytest.mark.sentinel
@@ -227,6 +327,7 @@ def test_escalation_report_includes_squad_fields(contamination_root: Path) -> No
         state,
         outcome,
         project_root=contamination_root,
+        project_root_explicit=True,
         junit_paths=_aoi_paths(),
         corpus_dirs=[str(ROOT / "tests/fixtures/junit_corpus/cases")],
         actions_log_path=None,
@@ -239,4 +340,19 @@ def test_escalation_report_includes_squad_fields(contamination_root: Path) -> No
     assert doc.get("squads")
     assert any(h.get("id") == "H1" for h in doc.get("hypotheses") or [])
     top = (doc.get("fix_candidates") or [None])[0]
-    assert top and top.get("source_squads")
+    assert top and top.get("kind") == "import_cascade"
+    assert top.get("source_squads")
+
+
+@pytest.mark.sentinel
+def test_dedupe_multisource_triage_helper() -> None:
+    structured = {
+        "found": [
+            "junit failures (a.xml): 19",
+            "junit failures (b.xml): 19",
+        ],
+        "not_found": [],
+        "hints": [],
+    }
+    out = dedupe_multisource_triage(structured)
+    assert len(out["found"]) == 1

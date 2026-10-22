@@ -9,9 +9,6 @@ import re
 import subprocess
 import threading
 import time
-import urllib.error
-import urllib.parse
-import urllib.request
 import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass, field
@@ -53,6 +50,10 @@ _SIGNATURE_UUID_RE = re.compile(
     re.I,
 )
 _SIGNATURE_HEX_RE = re.compile(r"\b0x[0-9a-f]+\b", re.I)
+_DID_YOU_MEAN_SUFFIX_RE = re.compile(
+    r"\.\s*Did you mean:\s*(?:'[^']*'|\"[^\"]*\"|\S.*)?$",
+    re.I,
+)
 _MODULE_NOT_FOUND_RE = re.compile(
     r"No module named ['\"](?P<mod>[^'\"]+)['\"]", re.I
 )
@@ -72,6 +73,7 @@ class SquadContext:
     offline: bool
     web_endpoints: tuple[str, ...]
     timeout: float
+    project_root_explicit: bool = False
 
 
 def parse_squads_flag(value: str) -> frozenset[str]:
@@ -89,6 +91,7 @@ def parse_squads_flag(value: str) -> frozenset[str]:
 
 def normalize_signature(message: str) -> str:
     text = message.strip()
+    text = _DID_YOU_MEAN_SUFFIX_RE.sub("", text).strip()
     text = _SIGNATURE_PATH_RE.sub("<path>", text)
     text = _SIGNATURE_UUID_RE.sub("<id>", text)
     text = _SIGNATURE_HEX_RE.sub("<id>", text)
@@ -267,15 +270,15 @@ def collect_junit_paths(
 def merge_failure_records(
     paths: Sequence[Path],
 ) -> list[dict[str, Any]]:
-    merged: dict[tuple[str, str], dict[str, Any]] = {}
+    merged: dict[str, dict[str, Any]] = {}
     for path in paths:
         for rec in parse_junit_failure_records(path):
-            key = (rec["signature"], rec["test_id"])
+            key = str(rec["test_id"])
             variant = rec.get("variant") or "unknown"
             if key in merged:
                 entry = merged[key]
                 variants = entry.setdefault("variants", [])
-                if variant not in variants:
+                if variant != "unknown" and variant not in variants:
                     variants.append(variant)
                 if not entry.get("source_file") and rec.get("source_file"):
                     entry["source_file"] = rec["source_file"]
@@ -283,8 +286,6 @@ def merge_failure_records(
             else:
                 copy = dict(rec)
                 copy["variants"] = [variant] if variant != "unknown" else []
-                if variant == "unknown":
-                    copy["variants"] = []
                 merged[key] = copy
     for entry in merged.values():
         entry["variants"] = sorted(set(entry.get("variants") or []))
@@ -353,6 +354,20 @@ def _import_contamination_module(record: Mapping[str, Any]) -> str | None:
     return None
 
 
+def _test_module_from_test_id(test_id: str) -> str:
+    if "::" in test_id:
+        return test_id.split("::", 1)[0]
+    return test_id
+
+
+def _import_related_error(record: Mapping[str, Any]) -> bool:
+    return str(record.get("error_type") or "") in (
+        "ModuleNotFoundError",
+        "AttributeError",
+        "ImportError",
+    )
+
+
 def build_cascade_hypotheses(
     records: Sequence[Mapping[str, Any]],
     project_root: Path | None,
@@ -361,16 +376,37 @@ def build_cascade_hypotheses(
     if not records:
         return []
     explained: list[str] = []
+    confidence = "medium"
     for rec in records:
         mod = _import_contamination_module(rec)
+        if not mod:
+            continue
+        test_id = str(rec.get("test_id") or rec.get("signature"))
         if mod and _repo_module_exists(project_root, mod):
-            test_id = str(rec.get("test_id") or rec.get("signature"))
             if test_id not in explained:
                 explained.append(test_id)
+    if len(explained) >= 2:
+        total = len(records)
+        confidence = "high" if len(explained) >= total // 2 else "medium"
+    else:
+        explained = []
+        by_module: dict[str, list[str]] = {}
+        for rec in records:
+            if not _import_related_error(rec) or not _import_contamination_module(rec):
+                continue
+            test_id = str(rec.get("test_id") or "")
+            module = _test_module_from_test_id(test_id)
+            by_module.setdefault(module, [])
+            if test_id and test_id not in by_module[module]:
+                by_module[module].append(test_id)
+        for test_ids in by_module.values():
+            if len(test_ids) >= 2:
+                for test_id in test_ids:
+                    if test_id not in explained:
+                        explained.append(test_id)
+        confidence = "medium"
     if len(explained) < 2:
         return []
-    total = len(records)
-    confidence = "high" if len(explained) >= total // 2 else "medium"
     return [
         {
             "id": "H1",
@@ -432,29 +468,45 @@ def _find_call_sites(root: Path, symbol: str, limit: int = 8) -> list[str]:
     return hits
 
 
-def _scan_path_contamination(root: Path) -> list[dict[str, str]]:
+def _scan_path_contamination(paths: Sequence[Path]) -> list[dict[str, str]]:
     findings: list[dict[str, str]] = []
     patterns = (
         ("sys.path.insert", re.compile(r"sys\.path\.(insert|append)\s*\(")),
         ("sys.modules", re.compile(r"sys\.modules\s*\[")),
     )
-    for dirpath, dirnames, filenames in os.walk(root):
-        dirnames[:] = [d for d in dirnames if d not in (".git", ".venv", "node_modules")]
-        for name in filenames:
-            if not name.endswith(".py"):
+    seen_files: set[Path] = set()
+    for anchor in paths:
+        for directory in (anchor.parent, anchor):
+            if not directory.is_dir():
                 continue
-            if "conftest" not in name and not name.startswith("test_"):
-                continue
-            path = Path(dirpath) / name
-            try:
-                text = path.read_text(encoding="utf-8", errors="replace")
-            except OSError:
-                continue
-            for label, pattern in patterns:
-                if pattern.search(text):
-                    rel = path.relative_to(root) if path.is_relative_to(root) else path
-                    findings.append({"kind": label, "file": str(rel)})
+            for name in sorted(os.listdir(directory)):
+                if not name.endswith(".py"):
+                    continue
+                if "conftest" not in name and not name.startswith("test_"):
+                    continue
+                path = (directory / name).resolve()
+                if path in seen_files:
+                    continue
+                seen_files.add(path)
+                try:
+                    text = path.read_text(encoding="utf-8", errors="replace")
+                except OSError:
+                    continue
+                for label, pattern in patterns:
+                    if pattern.search(text):
+                        findings.append({"kind": label, "file": str(path)})
     return findings
+
+
+def _resolve_record_test_file(root: Path, source: str) -> Path | None:
+    if not source:
+        return None
+    candidate = (root / source).resolve()
+    try:
+        candidate.relative_to(root.resolve())
+    except ValueError:
+        return None
+    return candidate if candidate.is_file() else None
 
 
 def run_code_squad(ctx: SquadContext) -> dict[str, Any]:
@@ -467,15 +519,11 @@ def run_code_squad(ctx: SquadContext) -> dict[str, Any]:
         for rec in ctx.records:
             test_id = str(rec.get("test_id") or "")
             source = str(rec.get("source_file") or "")
-            if source:
-                candidate = root / source
-                if candidate.is_file():
-                    test_files[test_id] = candidate
-                else:
-                    alt = root / Path(source).name
-                    if alt.is_file():
-                        test_files[test_id] = alt
+            resolved = _resolve_record_test_file(root, source)
+            if resolved is not None:
+                test_files[test_id] = resolved
 
+    scan_allowed = bool(test_files) or ctx.project_root_explicit
     locations: list[dict[str, Any]] = []
     related_files: set[str] = set()
     unresolved_imports: set[str] = set()
@@ -493,15 +541,16 @@ def run_code_squad(ctx: SquadContext) -> dict[str, Any]:
             resolved, unresolved = _resolve_imports(tree, path)
             for mod in unresolved:
                 unresolved_imports.add(mod)
-            for mod in resolved[:6]:
-                hits = _find_call_sites(root, mod.split(".")[-1], limit=3) if root else []
-                for hit in hits:
-                    related_files.add(hit)
+            if root and ctx.project_root_explicit:
+                for mod in resolved[:6]:
+                    hits = _find_call_sites(root, mod.split(".")[-1], limit=3)
+                    for hit in hits:
+                        related_files.add(hit)
         except SyntaxError:
             unresolved_imports.add(f"syntax_error:{path.name}")
 
-    if root:
-        for item in _scan_path_contamination(root):
+    if scan_allowed and test_files:
+        for item in _scan_path_contamination(list(test_files.values())):
             findings.append(item)
 
     findings.extend({"location": loc} for loc in locations[:8])
@@ -696,6 +745,10 @@ def _web_queries(records: Sequence[Mapping[str, Any]]) -> list[str]:
 
 
 def run_web_squad(ctx: SquadContext) -> dict[str, Any]:
+    import urllib.error
+    import urllib.parse
+    import urllib.request
+
     started = time.monotonic()
     queries = _web_queries(ctx.records)
     allowlist = tuple(ctx.web_endpoints) if ctx.web_endpoints else (GITHUB_SEARCH_API,)
@@ -736,9 +789,10 @@ def run_web_squad(ctx: SquadContext) -> dict[str, Any]:
             continue
 
     elapsed_ms = int((time.monotonic() - started) * 1000)
+    status = "ok_empty" if not results else "ok"
     return {
         "name": SQUAD_WEB,
-        "status": "ok" if results else "ok",
+        "status": status,
         "elapsed_ms": elapsed_ms,
         "findings": results[:5],
         "hypotheses": [],
@@ -858,12 +912,13 @@ def enrich_fix_candidates(
         squads = list(hyp.get("source_squads") or [])
         entry = {
             "id": f"F{len(out) + 1}",
-            "kind": "python_import",
+            "kind": "import_cascade",
             "confidence": hyp.get("confidence", "medium"),
             "evidence": [f"hypothesis {hyp.get('id')}: import-path contamination"],
             "location": {},
             "suggestion": (
-                "Inspect test/conftest sys.path or sys.modules mutations; restore isolated imports."
+                "Treat as import-path cascade: isolate the failing test module imports and "
+                "remove sys.path / sys.modules side effects in tests or conftest."
             ),
             "verify_command": out[0].get("verify_command", "") if out else "",
             "source_squads": squads,
@@ -878,6 +933,7 @@ def run_error_squads(
     enabled: frozenset[str],
     records: Sequence[Mapping[str, Any]],
     project_root: Path | None,
+    project_root_explicit: bool = False,
     junit_paths: Sequence[str],
     corpus_dirs: Sequence[str],
     offline: bool,
@@ -892,6 +948,7 @@ def run_error_squads(
     ctx = SquadContext(
         records=[dict(r) for r in records],
         project_root=project_root,
+        project_root_explicit=project_root_explicit,
         junit_paths=tuple(junit_paths),
         corpus_dirs=tuple(corpus_dirs),
         offline=offline,
@@ -907,6 +964,18 @@ def run_error_squads(
     with ThreadPoolExecutor(max_workers=workers) as pool:
         futures = {}
         for name in names:
+            if time.monotonic() >= deadline:
+                results.append(
+                    {
+                        "name": name,
+                        "status": "skipped",
+                        "elapsed_ms": 0,
+                        "findings": [],
+                        "hypotheses": [],
+                        "skip_reason": "budget",
+                    }
+                )
+                continue
             remaining = max(0.05, deadline - time.monotonic())
             per_timeout = min(squad_timeout, remaining)
             futures[pool.submit(_run_one_squad, name, ctx, per_timeout)] = name
