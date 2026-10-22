@@ -124,7 +124,7 @@ By default (`--exit-mode child`), the process exit code is still the **wrapped c
 
 ```bash
 err-o-roadrunner sentinel --report-json /tmp/sentinel.json --print-triage --summary -- \
-  pytest -q tests/test_example.py
+  pytest -q tests/test_triage.py
 ```
 
 See **`docs/sentinel-report-schema.md`** for the stable `sentinel-report/v1` JSON fields (written only on **go**).
