@@ -42,7 +42,8 @@ def _triage_group_lines(doc: dict) -> list[str]:
 def test_eorr_benchmark_short_stdout_matches_golden() -> None:
     short_text, _report = run_benchmark([_eorr_path()], squads="code,history")
     golden = normalize_short_benchmark(
-        (GOLDEN_DIR / "short.txt").read_text(encoding="utf-8"), ROOT
+        (GOLDEN_DIR / "short.txt").read_text(encoding="utf-8"),
+        ROOT,
     )
     assert normalize_short_benchmark(short_text, ROOT) == golden
 

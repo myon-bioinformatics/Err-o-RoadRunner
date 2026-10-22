@@ -13,6 +13,7 @@ from typing import Any, Sequence
 
 _SHORT_ELAPSED_RE = re.compile(r"( in )\d+\.\d+(s ==)")
 _SHORT_SQUAD_MS_RE = re.compile(r"^S (\S+ \S+ )\d+ms")
+_JUNIT_PAREN_RUNNER_RE = re.compile(r"\(<runner-work>/")
 _SHORT_ENV_LINE_RES = (
     re.compile(r"^  python version: .*$"),
     re.compile(r"^  node version: .*$"),
@@ -35,6 +36,7 @@ def normalize_short_benchmark(short_text: str, root: Path | None = None) -> str:
         root_text = str(root.resolve())
         text = text.replace(root_text + os.sep, "")
         text = text.replace(root_text + "/", "")
+    text = _JUNIT_PAREN_RUNNER_RE.sub("(", text)
     lines: list[str] = []
     for line in text.splitlines():
         if _SHORT_ENV_LINE_RES[0].match(line):
