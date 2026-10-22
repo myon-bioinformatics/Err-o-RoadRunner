@@ -1,0 +1,57 @@
+{
+  "records": [
+    {
+      "artifact": "cli_args_38186460415_junit-core-windows_core-windows.xml",
+      "error_type": "pytest.Failed.DidNotRaise",
+      "expected_exception": "FileExistsError",
+      "language": "python",
+      "line": 304,
+      "message": "Failed: DID NOT RAISE FileExistsError",
+      "signature": "Failed: DID NOT RAISE FileExistsError",
+      "source_file": "tests/test_cli_args.py",
+      "test_id": "tests.test_cli_args::test_exclusive_output_never_overwrites_existing_file_or_symlink",
+      "variant": "windows",
+      "variants": [
+        "windows"
+      ]
+    }
+  ],
+  "hypotheses": [],
+  "groups": {
+    "buckets": [
+      {
+        "count": 1,
+        "errors": [
+          {
+            "error_type": "pytest.Failed.DidNotRaise",
+            "first_seen": 0,
+            "kind": "junit",
+            "language": "python",
+            "location": {
+              "line": "304",
+              "loc": "tests/test_cli_args.py"
+            },
+            "message": "Failed: DID NOT RAISE FileExistsError",
+            "phase": "test",
+            "signature": "Failed: DID NOT RAISE FileExistsError",
+            "source_line": "tests.test_cli_args::test_exclusive_output_never_overwrites_existing_file_or_symlink",
+            "test_id": "tests.test_cli_args::test_exclusive_output_never_overwrites_existing_file_or_symlink",
+            "variants": [
+              "windows"
+            ]
+          }
+        ],
+        "first_seen": 0,
+        "key": {
+          "error_type": "pytest.Failed.DidNotRaise"
+        },
+        "name": "error_type=pytest.Failed.DidNotRaise"
+      }
+    ],
+    "error_count": 1,
+    "group_by": [
+      "error_type"
+    ],
+    "sort": "count"
+  }
+}

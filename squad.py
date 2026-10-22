@@ -211,6 +211,10 @@ EXCEPTION_PARSERS: list[ExceptionParser] = [
     _exc_from_first_line,
 ]
 
+RecordFieldParser = Callable[[str, str, str], dict[str, Any] | None]
+
+RECORD_FIELD_PARSERS: list[RecordFieldParser] = []
+
 
 def _exception_type(message: str, blob: str, first_line: str) -> str:
     for parser in EXCEPTION_PARSERS:
@@ -253,14 +257,36 @@ def _record_language(record: Mapping[str, Any]) -> str | None:
     return None
 
 
-def _traceback_location(blob: str) -> tuple[str, int | None]:
+TracebackLocationParser = Callable[[str], tuple[str, int | None] | None]
+
+
+def _tb_from_python_frame(blob: str) -> tuple[str, int | None] | None:
     for line in blob.splitlines():
         match = _PYTHON_FRAME_RE.match(line)
         if match:
             return match.group("file"), int(match.group("line"))
+    return None
+
+
+def _tb_from_pytest_file_line(blob: str) -> tuple[str, int | None] | None:
+    for line in blob.splitlines():
         match = _PYTEST_FILE_LINE_RE.match(line.strip())
         if match:
             return match.group("file"), int(match.group("line"))
+    return None
+
+
+TRACEBACK_LOCATION_PARSERS: list[TracebackLocationParser] = [
+    _tb_from_python_frame,
+    _tb_from_pytest_file_line,
+]
+
+
+def _traceback_location(blob: str) -> tuple[str, int | None]:
+    for parser in TRACEBACK_LOCATION_PARSERS:
+        found = parser(blob)
+        if found and found[0]:
+            return found
     return "", None
 
 
@@ -285,7 +311,15 @@ def parse_junit_failure_records(path: Path) -> list[dict[str, Any]]:
             blob = _failure_blob(testcase, child)
             message_attr = (child.attrib.get("message") or "").strip()
             first_line = _message_first_line(message_attr, blob)
-            error_type = _exception_type(message_attr, blob, first_line)
+            record_fields: dict[str, Any] = {}
+            for field_parser in RECORD_FIELD_PARSERS:
+                chunk = field_parser(message_attr, blob, first_line)
+                if chunk:
+                    record_fields.update(chunk)
+            error_type = str(
+                record_fields.pop("error_type", None)
+                or _exception_type(message_attr, blob, first_line)
+            )
             message = _parse_message_text(message_attr, blob)
             if not message and message_attr:
                 match = _JUNIT_MSG_EXCEPTION_RE.match(message_attr.splitlines()[0])
@@ -306,6 +340,7 @@ def parse_junit_failure_records(path: Path) -> list[dict[str, Any]]:
                 "line": line_no,
                 "variant": variant,
                 "artifact": artifact,
+                **record_fields,
             }
             draft["language"] = _record_language(draft)
             records.append(draft)
@@ -1141,6 +1176,183 @@ def rule_fix_import_cascade(
 
 
 FIX_RULES: list[FixRule] = [rule_fix_import_cascade]
+
+
+_DID_NOT_RAISE_RE = re.compile(
+    r"Failed:\s+DID NOT RAISE\s+(?P<exc>[A-Za-z_][\w.]*)",
+    re.I,
+)
+_PYTEST_FAILED_PREFIX_RE = re.compile(r"^Failed:\s*", re.I)
+_XPASS_STRICT_RE = re.compile(r"XPASS\s*\(\s*strict\s*\)", re.I)
+_PYTEST_SKIPPED_RE = re.compile(r"^Skipped(?:\s*:|$)", re.I)
+_OS_VARIANT_RE = re.compile(r"junit-(?:core-)?(windows|macos|ubuntu)", re.I)
+_PLATFORM_MSG_RE = re.compile(
+    r"symlink|exclusive|x-mode|permissions|\bpaths?\b|line endings?",
+    re.I,
+)
+_WINDOWS_COMPACT_TB_RE = re.compile(
+    r"^(?P<file>(?:[A-Za-z]:)?(?:[^:\r\n]*\\)?[^:\r\n]+\.py):(?P<line>\d+):"
+)
+_WINDOWS_FRAME_FILE_RE = re.compile(
+    r'^  File "(?P<file>(?:[A-Za-z]:)?[^"]+)", line (?P<line>\d+)'
+)
+
+
+def parse_pytest_outcome(message: str, blob: str, first_line: str) -> dict[str, Any] | None:
+    for line in (first_line, message.splitlines()[0] if message else "", blob):
+        text = (line or "").strip()
+        if not text:
+            continue
+        match = _DID_NOT_RAISE_RE.search(text)
+        if match:
+            return {
+                "error_type": "pytest.Failed.DidNotRaise",
+                "expected_exception": match.group("exc"),
+            }
+        if _XPASS_STRICT_RE.search(text):
+            return {"error_type": "pytest.XPass.Strict"}
+        if _PYTEST_SKIPPED_RE.match(text):
+            return {"error_type": "pytest.Skipped"}
+        if _PYTEST_FAILED_PREFIX_RE.match(text):
+            return {"error_type": "pytest.Failed"}
+    return None
+
+
+def _exc_from_pytest_outcome(message: str, blob: str, first_line: str) -> str | None:
+    fields = parse_pytest_outcome(message, blob, first_line)
+    if not fields:
+        return None
+    return str(fields.get("error_type") or "")
+
+
+EXCEPTION_PARSERS.append(_exc_from_pytest_outcome)
+RECORD_FIELD_PARSERS.append(parse_pytest_outcome)
+
+
+def _normalize_windows_path(path: str) -> str:
+    normalized = path.replace("\\", "/")
+    if len(normalized) >= 2 and normalized[1] == ":":
+        normalized = normalized[2:]
+    return normalized.lstrip("/")
+
+
+def parse_windows_traceback_location(blob: str) -> tuple[str, int | None] | None:
+    for line in blob.splitlines():
+        if "\\" not in line and not re.search(r"[A-Za-z]:[\\/]", line):
+            continue
+        stripped = line.strip()
+        match = _WINDOWS_COMPACT_TB_RE.match(stripped)
+        if not match:
+            match = _WINDOWS_FRAME_FILE_RE.match(stripped)
+        if match:
+            return (
+                _normalize_windows_path(match.group("file")),
+                int(match.group("line")),
+            )
+    return None
+
+
+TRACEBACK_LOCATION_PARSERS.append(parse_windows_traceback_location)
+
+
+def _variant_os_from_artifact(path: str) -> str | None:
+    match = _OS_VARIANT_RE.search(path)
+    if match:
+        return match.group(1).lower()
+    return None
+
+
+VARIANT_PARSERS.append(_variant_os_from_artifact)
+
+
+def _detect_language_os_pytest_junit(record: Mapping[str, Any]) -> str | None:
+    artifact = str(record.get("artifact") or "")
+    if _OS_VARIANT_RE.search(artifact):
+        return "python"
+    return None
+
+
+LANGUAGE_DETECTORS.append(_detect_language_os_pytest_junit)
+
+
+def _record_is_windows_variant(record: Mapping[str, Any]) -> bool:
+    variant = str(record.get("variant") or "").lower()
+    if variant == "windows":
+        return True
+    for item in record.get("variants") or []:
+        if str(item).lower() == "windows":
+            return True
+    artifact = str(record.get("artifact") or "").lower()
+    return "windows" in artifact or "core-windows" in artifact
+
+
+def rule_platform_specific(
+    records: Sequence[Mapping[str, Any]],
+    project_root: Path | None,
+    squad_names: Sequence[str],
+) -> list[dict[str, Any]]:
+    if not records:
+        return []
+    if not all(_record_is_windows_variant(rec) for rec in records):
+        return []
+    explained: list[str] = []
+    for rec in records:
+        haystack = " ".join(
+            [
+                str(rec.get("message") or ""),
+                str(rec.get("test_id") or ""),
+                str(rec.get("signature") or ""),
+            ]
+        )
+        if not _PLATFORM_MSG_RE.search(haystack):
+            continue
+        test_id = str(rec.get("test_id") or "")
+        if test_id and test_id not in explained:
+            explained.append(test_id)
+    if not explained:
+        return []
+    return [
+        {
+            "summary": "platform-specific failure",
+            "confidence": "medium",
+            "explains": explained,
+            "source_squads": list(squad_names),
+        }
+    ]
+
+
+HYPOTHESIS_RULES.append(rule_platform_specific)
+
+
+def rule_fix_platform_specific(
+    candidates: list[dict[str, Any]],
+    hypotheses: Sequence[Mapping[str, Any]],
+) -> list[dict[str, Any]] | None:
+    for hyp in hypotheses:
+        if hyp.get("summary") != "platform-specific failure":
+            continue
+        out = list(candidates)
+        squads = list(hyp.get("source_squads") or [])
+        entry = {
+            "id": f"F{len(out) + 1}",
+            "kind": "platform_specific",
+            "confidence": hyp.get("confidence", "medium"),
+            "evidence": [f"hypothesis {hyp.get('id')}: platform-specific failure"],
+            "location": {},
+            "suggestion": (
+                "Treat as OS-specific behaviour on Windows: check symlink handling, "
+                "exclusive file creation, x-mode permissions, path separators, and "
+                "line-ending assumptions before changing shared logic."
+            ),
+            "verify_command": out[0].get("verify_command", "") if out else "",
+            "source_squads": squads,
+        }
+        out.insert(0, entry)
+        return out
+    return None
+
+
+FIX_RULES.append(rule_fix_platform_specific)
 
 
 def enrich_fix_candidates(
