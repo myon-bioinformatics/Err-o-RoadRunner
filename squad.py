@@ -1,0 +1,939 @@
+"""Parallel error squads for sentinel GO escalation (stdlib only)."""
+
+from __future__ import annotations
+
+import ast
+import json
+import os
+import re
+import subprocess
+import threading
+import time
+import urllib.error
+import urllib.parse
+import urllib.request
+import xml.etree.ElementTree as ET
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any, Callable, Mapping, Sequence
+
+from junit_redact import redact_text
+
+DEFAULT_SQUAD_TIMEOUT = 10.0
+DEFAULT_SQUAD_BUDGET = 30.0
+DEFAULT_SQUAD_WORKERS = 3
+
+SQUAD_CODE = "code"
+SQUAD_HISTORY = "history"
+SQUAD_WEB = "web"
+ALL_SQUADS = (SQUAD_CODE, SQUAD_HISTORY, SQUAD_WEB)
+DEFAULT_SQUADS = (SQUAD_CODE, SQUAD_HISTORY)
+
+GITHUB_SEARCH_API = "https://api.github.com/search/issues"
+
+_PYTEST_VARIANT_RE = re.compile(r"junit-(py3\.\d+)", re.I)
+_PYTHON_FRAME_RE = re.compile(
+    r'^  File "(?P<file>[^"]+)", line (?P<line>\d+)(?:, in (?P<func>.*))?$'
+)
+_PYTEST_FILE_LINE_RE = re.compile(r"^(?P<file>[^\s:]+\.py):(?P<line>\d+):\s*$")
+_PYTEST_E_EXC_LINE_RE = re.compile(
+    r"^\s*E\s+(?P<exc>[A-Za-z_][\w.]*(?:Error|Exception|Failed|Timeout|Exit))(?:\s*:|$)"
+)
+_JUNIT_MSG_EXCEPTION_RE = re.compile(
+    r"^([A-Za-z_][\w.]*(?:Error|Exception|Failed|Timeout|Exit))(?:\s*:\s*|$)"
+)
+_JUNIT_BARE_EXCEPTION_RE = re.compile(r"^[A-Za-z_][\w.]+$")
+_SIGNATURE_PATH_RE = re.compile(
+    r"(?:/[\w.~$-]+)+|(?:[A-Za-z]:\\[\w.~$-\\]+)+|<repo>[\w./-]*"
+)
+_SIGNATURE_NUMBER_RE = re.compile(r"\b\d+(?:\.\d+)?\b")
+_SIGNATURE_UUID_RE = re.compile(
+    r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
+    re.I,
+)
+_SIGNATURE_HEX_RE = re.compile(r"\b0x[0-9a-f]+\b", re.I)
+_MODULE_NOT_FOUND_RE = re.compile(
+    r"No module named ['\"](?P<mod>[^'\"]+)['\"]", re.I
+)
+_ATTRIBUTE_ERROR_MOD_RE = re.compile(
+    r"(?:AttributeError:\s*)?<module ['\"](?P<mod>[^'\"]+)['\"]", re.I
+)
+
+SquadRunner = Callable[..., dict[str, Any]]
+
+
+@dataclass
+class SquadContext:
+    records: list[dict[str, Any]]
+    project_root: Path | None
+    junit_paths: tuple[str, ...]
+    corpus_dirs: tuple[str, ...]
+    offline: bool
+    web_endpoints: tuple[str, ...]
+    timeout: float
+
+
+def parse_squads_flag(value: str) -> frozenset[str]:
+    raw = (value or "").strip().lower()
+    if not raw or raw == "none":
+        return frozenset()
+    if raw == "all":
+        return frozenset(ALL_SQUADS)
+    names = {part.strip().lower() for part in raw.split(",") if part.strip()}
+    unknown = names - set(ALL_SQUADS)
+    if unknown:
+        raise ValueError(f"invalid --squads names: {', '.join(sorted(unknown))}")
+    return frozenset(names)
+
+
+def normalize_signature(message: str) -> str:
+    text = message.strip()
+    text = _SIGNATURE_PATH_RE.sub("<path>", text)
+    text = _SIGNATURE_UUID_RE.sub("<id>", text)
+    text = _SIGNATURE_HEX_RE.sub("<id>", text)
+    text = _SIGNATURE_NUMBER_RE.sub("<n>", text)
+    text = " ".join(text.split())
+    if len(text) > 160:
+        text = text[:159] + "…"
+    return text or "generic"
+
+
+def variant_from_artifact(path: str) -> str:
+    match = _PYTEST_VARIANT_RE.search(path)
+    if match:
+        return match.group(1).lower()
+    return "unknown"
+
+
+def _local_tag(elem: ET.Element) -> str:
+    return elem.tag.split("}")[-1]
+
+
+def _failure_blob(testcase: ET.Element, elem: ET.Element) -> str:
+    parts: list[str] = []
+    msg = (elem.attrib.get("message") or "").strip()
+    body = (elem.text or "").strip()
+    if msg and body:
+        if body == msg or msg in body:
+            parts.append(body)
+        elif body in msg:
+            parts.append(msg)
+        else:
+            parts.extend([msg, body])
+    elif msg:
+        parts.append(msg)
+    elif body:
+        parts.append(body)
+    for extra in ("system-out", "system-err"):
+        for child in testcase:
+            if _local_tag(child) == extra and (child.text or "").strip():
+                parts.append((child.text or "").strip())
+    return "\n".join(parts)
+
+
+def _case_test_id(testcase: ET.Element) -> str:
+    classname = (testcase.attrib.get("classname") or "").strip()
+    name = (testcase.attrib.get("name") or "").strip()
+    if classname and name:
+        return f"{classname}::{name}"
+    return name or classname or "testcase"
+
+
+def _message_first_line(message: str, blob: str) -> str:
+    msg = (message or "").strip()
+    first = msg.splitlines()[0].strip() if msg else ""
+    if first:
+        return first
+    for line in blob.splitlines():
+        if line.strip():
+            return line.strip()
+    return ""
+
+
+def _exception_type(message: str, blob: str, first_line: str) -> str:
+    for line in blob.splitlines():
+        match = _PYTEST_E_EXC_LINE_RE.match(line)
+        if match:
+            return match.group("exc")
+    if first_line.startswith("assert "):
+        return "AssertionError"
+    msg = (message or "").strip()
+    if msg:
+        head = msg.splitlines()[0]
+        match = _JUNIT_MSG_EXCEPTION_RE.match(head)
+        if match:
+            return match.group(1)
+        if _JUNIT_BARE_EXCEPTION_RE.match(head.strip()) and head.strip()[0].isupper():
+            return head.strip()
+    match = _JUNIT_MSG_EXCEPTION_RE.match(first_line)
+    if match:
+        return match.group(1)
+    return "Unknown"
+
+
+def _parse_message_text(message: str, blob: str) -> str:
+    first = _message_first_line(message, blob)
+    match = _JUNIT_MSG_EXCEPTION_RE.match(first)
+    if match and first.startswith(f"{match.group(1)}:"):
+        rest = first[match.end() :].strip()
+        return rest or first
+    return first or blob.splitlines()[0].strip() if blob else ""
+
+
+def _traceback_location(blob: str) -> tuple[str, int | None]:
+    for line in blob.splitlines():
+        match = _PYTHON_FRAME_RE.match(line)
+        if match:
+            return match.group("file"), int(match.group("line"))
+        match = _PYTEST_FILE_LINE_RE.match(line.strip())
+        if match:
+            return match.group("file"), int(match.group("line"))
+    return "", None
+
+
+def parse_junit_failure_records(path: Path) -> list[dict[str, Any]]:
+    try:
+        text = path.read_text(encoding="utf-8", errors="replace")
+        root = ET.fromstring(text)
+    except (OSError, ET.ParseError):
+        return []
+
+    artifact = path.name
+    variant = variant_from_artifact(artifact)
+    records: list[dict[str, Any]] = []
+
+    for testcase in root.iter():
+        if _local_tag(testcase) != "testcase":
+            continue
+        for child in testcase:
+            tag = _local_tag(child)
+            if tag not in ("failure", "error"):
+                continue
+            blob = _failure_blob(testcase, child)
+            message_attr = (child.attrib.get("message") or "").strip()
+            first_line = _message_first_line(message_attr, blob)
+            error_type = _exception_type(message_attr, blob, first_line)
+            message = _parse_message_text(message_attr, blob)
+            if not message and message_attr:
+                match = _JUNIT_MSG_EXCEPTION_RE.match(message_attr.splitlines()[0])
+                message = (
+                    message_attr.split(":", 1)[1].strip()
+                    if match and ":" in message_attr
+                    else message_attr
+                )
+            source_file, line_no = _traceback_location(blob)
+            test_id = _case_test_id(testcase)
+            signature = normalize_signature(message or error_type)
+            records.append(
+                {
+                    "error_type": error_type,
+                    "message": message[:500],
+                    "signature": signature,
+                    "test_id": test_id,
+                    "source_file": source_file,
+                    "line": line_no,
+                    "variant": variant,
+                    "artifact": artifact,
+                }
+            )
+    return records
+
+
+def collect_junit_paths(
+    junit_paths: Sequence[str],
+    corpus_dirs: Sequence[str],
+) -> list[Path]:
+    paths: list[Path] = []
+    seen: set[str] = set()
+    for raw in junit_paths:
+        p = Path(raw)
+        key = str(p.resolve()) if p.exists() else raw
+        if key not in seen:
+            seen.add(key)
+            paths.append(p)
+    for raw_dir in corpus_dirs:
+        base = Path(raw_dir)
+        if not base.is_dir():
+            continue
+        for xml in sorted(base.glob("*.xml")):
+            key = str(xml.resolve())
+            if key not in seen:
+                seen.add(key)
+                paths.append(xml)
+    return paths
+
+
+def merge_failure_records(
+    paths: Sequence[Path],
+) -> list[dict[str, Any]]:
+    merged: dict[tuple[str, str], dict[str, Any]] = {}
+    for path in paths:
+        for rec in parse_junit_failure_records(path):
+            key = (rec["signature"], rec["test_id"])
+            variant = rec.get("variant") or "unknown"
+            if key in merged:
+                entry = merged[key]
+                variants = entry.setdefault("variants", [])
+                if variant not in variants:
+                    variants.append(variant)
+                if not entry.get("source_file") and rec.get("source_file"):
+                    entry["source_file"] = rec["source_file"]
+                    entry["line"] = rec.get("line")
+            else:
+                copy = dict(rec)
+                copy["variants"] = [variant] if variant != "unknown" else []
+                if variant == "unknown":
+                    copy["variants"] = []
+                merged[key] = copy
+    for entry in merged.values():
+        entry["variants"] = sorted(set(entry.get("variants") or []))
+    return list(merged.values())
+
+
+def records_to_normalized_errors(
+    records: Sequence[Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    errors: list[dict[str, Any]] = []
+    for idx, rec in enumerate(records):
+        location: dict[str, str] = {}
+        if rec.get("source_file"):
+            location["loc"] = str(rec["source_file"])
+        if rec.get("line") is not None:
+            location["line"] = str(rec["line"])
+        error_type = str(rec.get("error_type") or "generic")
+        kind = "python_import" if error_type in ("ModuleNotFoundError", "ImportError") else "junit"
+        if error_type == "AssertionError":
+            kind = "assertion"
+        errors.append(
+            {
+                "error_type": error_type,
+                "language": "python" if error_type not in ("Unknown", "generic") else "junit",
+                "phase": "test",
+                "signature": str(rec.get("signature") or "generic"),
+                "location": location,
+                "kind": kind,
+                "first_seen": idx,
+                "message": str(rec.get("message") or "")[:500],
+                "source_line": str(rec.get("test_id") or ""),
+                "test_id": str(rec.get("test_id") or ""),
+                "variants": list(rec.get("variants") or []),
+            }
+        )
+    return errors
+
+
+def _repo_module_exists(project_root: Path | None, mod: str) -> bool:
+    if not project_root or not mod:
+        return False
+    top = mod.split(".")[0]
+    candidates = [
+        project_root / f"{top}.py",
+        project_root / top / "__init__.py",
+    ]
+    for rel in (top, *mod.split(".")):
+        candidates.append(project_root / rel.replace(".", os.sep) / "__init__.py")
+    return any(p.is_file() for p in candidates)
+
+
+def _import_contamination_module(record: Mapping[str, Any]) -> str | None:
+    message = str(record.get("message") or "")
+    error_type = str(record.get("error_type") or "")
+    mod = ""
+    if error_type == "ModuleNotFoundError":
+        match = _MODULE_NOT_FOUND_RE.search(message)
+        if match:
+            mod = match.group("mod").split(".")[0]
+    elif error_type == "AttributeError":
+        match = _ATTRIBUTE_ERROR_MOD_RE.search(message)
+        if match:
+            mod = match.group("mod").split(".")[-1]
+    if mod and re.match(r"^[A-Za-z_]\w*$", mod):
+        return mod
+    return None
+
+
+def build_cascade_hypotheses(
+    records: Sequence[Mapping[str, Any]],
+    project_root: Path | None,
+    squad_names: Sequence[str],
+) -> list[dict[str, Any]]:
+    if not records:
+        return []
+    explained: list[str] = []
+    for rec in records:
+        mod = _import_contamination_module(rec)
+        if mod and _repo_module_exists(project_root, mod):
+            test_id = str(rec.get("test_id") or rec.get("signature"))
+            if test_id not in explained:
+                explained.append(test_id)
+    if len(explained) < 2:
+        return []
+    total = len(records)
+    confidence = "high" if len(explained) >= total // 2 else "medium"
+    return [
+        {
+            "id": "H1",
+            "summary": "import-path contamination",
+            "confidence": confidence,
+            "explains": explained,
+            "source_squads": list(squad_names),
+        }
+    ]
+
+
+def _read_context_lines(path: Path, line: int | None, radius: int = 5) -> str:
+    try:
+        lines = path.read_text(encoding="utf-8", errors="replace").splitlines()
+    except OSError:
+        return ""
+    if line is None or line < 1:
+        start, end = 0, min(len(lines), radius * 2 + 1)
+    else:
+        start = max(0, line - 1 - radius)
+        end = min(len(lines), line + radius)
+    return "\n".join(lines[start:end])
+
+
+def _resolve_imports(tree: ast.AST, source_path: Path) -> tuple[list[str], list[str]]:
+    resolved: list[str] = []
+    unresolved: list[str] = []
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                resolved.append(alias.name)
+        elif isinstance(node, ast.ImportFrom):
+            mod = node.module or ""
+            if node.level:
+                unresolved.append(f"relative:{mod or '.'}")
+            elif mod:
+                resolved.append(mod)
+    return resolved, unresolved
+
+
+def _find_call_sites(root: Path, symbol: str, limit: int = 8) -> list[str]:
+    hits: list[str] = []
+    pattern = re.compile(rf"\b{re.escape(symbol)}\b")
+    for dirpath, dirnames, filenames in os.walk(root):
+        dirnames[:] = [d for d in dirnames if d not in (".git", ".venv", "node_modules", "__pycache__")]
+        for name in filenames:
+            if not name.endswith(".py"):
+                continue
+            path = Path(dirpath) / name
+            try:
+                text = path.read_text(encoding="utf-8", errors="replace")
+            except OSError:
+                continue
+            if pattern.search(text):
+                rel = path.relative_to(root) if path.is_relative_to(root) else path
+                hits.append(str(rel))
+                if len(hits) >= limit:
+                    return hits
+    return hits
+
+
+def _scan_path_contamination(root: Path) -> list[dict[str, str]]:
+    findings: list[dict[str, str]] = []
+    patterns = (
+        ("sys.path.insert", re.compile(r"sys\.path\.(insert|append)\s*\(")),
+        ("sys.modules", re.compile(r"sys\.modules\s*\[")),
+    )
+    for dirpath, dirnames, filenames in os.walk(root):
+        dirnames[:] = [d for d in dirnames if d not in (".git", ".venv", "node_modules")]
+        for name in filenames:
+            if not name.endswith(".py"):
+                continue
+            if "conftest" not in name and not name.startswith("test_"):
+                continue
+            path = Path(dirpath) / name
+            try:
+                text = path.read_text(encoding="utf-8", errors="replace")
+            except OSError:
+                continue
+            for label, pattern in patterns:
+                if pattern.search(text):
+                    rel = path.relative_to(root) if path.is_relative_to(root) else path
+                    findings.append({"kind": label, "file": str(rel)})
+    return findings
+
+
+def run_code_squad(ctx: SquadContext) -> dict[str, Any]:
+    started = time.monotonic()
+    findings: list[dict[str, Any]] = []
+    hypotheses: list[dict[str, Any]] = []
+    root = ctx.project_root
+    test_files: dict[str, Path] = {}
+    if root:
+        for rec in ctx.records:
+            test_id = str(rec.get("test_id") or "")
+            source = str(rec.get("source_file") or "")
+            if source:
+                candidate = root / source
+                if candidate.is_file():
+                    test_files[test_id] = candidate
+                else:
+                    alt = root / Path(source).name
+                    if alt.is_file():
+                        test_files[test_id] = alt
+
+    locations: list[dict[str, Any]] = []
+    related_files: set[str] = set()
+    unresolved_imports: set[str] = set()
+
+    for test_id, path in list(test_files.items())[:12]:
+        line = None
+        for rec in ctx.records:
+            if rec.get("test_id") == test_id:
+                line = rec.get("line")
+                break
+        snippet = _read_context_lines(path, line if isinstance(line, int) else None)
+        locations.append({"test_id": test_id, "file": str(path), "snippet": snippet[:800]})
+        try:
+            tree = ast.parse(path.read_text(encoding="utf-8", errors="replace"))
+            resolved, unresolved = _resolve_imports(tree, path)
+            for mod in unresolved:
+                unresolved_imports.add(mod)
+            for mod in resolved[:6]:
+                hits = _find_call_sites(root, mod.split(".")[-1], limit=3) if root else []
+                for hit in hits:
+                    related_files.add(hit)
+        except SyntaxError:
+            unresolved_imports.add(f"syntax_error:{path.name}")
+
+    if root:
+        for item in _scan_path_contamination(root):
+            findings.append(item)
+
+    findings.extend({"location": loc} for loc in locations[:8])
+    if unresolved_imports:
+        findings.append({"unresolved_imports": sorted(unresolved_imports)[:20]})
+    if related_files:
+        findings.append({"related_files": sorted(related_files)[:20]})
+
+    hypotheses.extend(build_cascade_hypotheses(ctx.records, root, (SQUAD_CODE,)))
+
+    elapsed_ms = int((time.monotonic() - started) * 1000)
+    return {
+        "name": SQUAD_CODE,
+        "status": "ok",
+        "elapsed_ms": elapsed_ms,
+        "findings": findings,
+        "hypotheses": hypotheses,
+    }
+
+
+def _git_root(start: Path | None) -> Path | None:
+    if start is None:
+        start = Path.cwd()
+    try:
+        completed = subprocess.run(
+            ["git", "-C", str(start), "rev-parse", "--show-toplevel"],
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=False,
+        )
+        if completed.returncode == 0:
+            return Path(completed.stdout.strip())
+    except (OSError, subprocess.TimeoutExpired):
+        pass
+    return None
+
+
+def _git_log_file(repo: Path, file_path: str, limit: int = 20) -> list[str]:
+    try:
+        completed = subprocess.run(
+            [
+                "git",
+                "-C",
+                str(repo),
+                "log",
+                f"-n{limit}",
+                "--oneline",
+                "--",
+                file_path,
+            ],
+            capture_output=True,
+            text=True,
+            timeout=8,
+            check=False,
+        )
+        if completed.returncode == 0:
+            return [ln.strip() for ln in completed.stdout.splitlines() if ln.strip()]
+    except (OSError, subprocess.TimeoutExpired):
+        pass
+    return []
+
+
+def _git_blame_line(repo: Path, file_path: str, line: int) -> str:
+    try:
+        completed = subprocess.run(
+            [
+                "git",
+                "-C",
+                str(repo),
+                "blame",
+                "-L",
+                f"{line},{line}",
+                "--porcelain",
+                "--",
+                file_path,
+            ],
+            capture_output=True,
+            text=True,
+            timeout=8,
+            check=False,
+        )
+        if completed.returncode == 0:
+            return completed.stdout.strip()[:400]
+    except (OSError, subprocess.TimeoutExpired):
+        pass
+    return ""
+
+
+def _corpus_signature_index(corpus_dirs: Sequence[str]) -> dict[str, dict[str, Any]]:
+    index: dict[str, dict[str, Any]] = {}
+    for raw_dir in corpus_dirs:
+        base = Path(raw_dir)
+        if not base.is_dir():
+            continue
+        for xml in sorted(base.glob("*.xml")):
+            for rec in parse_junit_failure_records(xml):
+                sig = str(rec.get("signature") or "")
+                if not sig:
+                    continue
+                entry = index.setdefault(
+                    sig,
+                    {"first_seen": xml.name, "last_seen": xml.name, "repos": set(), "variants": set()},
+                )
+                entry["last_seen"] = xml.name
+                entry["variants"].add(rec.get("variant") or "unknown")
+    return index
+
+
+def run_history_squad(ctx: SquadContext) -> dict[str, Any]:
+    started = time.monotonic()
+    repo = _git_root(ctx.project_root)
+    if repo is None:
+        return {
+            "name": SQUAD_HISTORY,
+            "status": "skipped",
+            "elapsed_ms": int((time.monotonic() - started) * 1000),
+            "findings": [],
+            "hypotheses": [],
+            "skip_reason": "no_git",
+        }
+
+    findings: list[dict[str, Any]] = []
+    seen_files: set[str] = set()
+    for rec in ctx.records[:15]:
+        source = str(rec.get("source_file") or "")
+        if not source or source in seen_files:
+            continue
+        seen_files.add(source)
+        log_lines = _git_log_file(repo, source)
+        if log_lines:
+            findings.append({"file": source, "git_log": log_lines[:5]})
+        line = rec.get("line")
+        if isinstance(line, int) and line > 0:
+            blame = _git_blame_line(repo, source, line)
+            if blame:
+                findings.append({"file": source, "line": line, "blame": blame})
+
+    corpus = _corpus_signature_index(ctx.corpus_dirs)
+    for rec in ctx.records[:20]:
+        sig = str(rec.get("signature") or "")
+        if sig not in corpus:
+            continue
+        meta = corpus[sig]
+        variants = set(rec.get("variants") or [])
+        corpus_variants = meta.get("variants") or set()
+        flaky = bool(variants and corpus_variants - variants)
+        findings.append(
+            {
+                "signature": sig,
+                "corpus_first": meta.get("first_seen"),
+                "corpus_last": meta.get("last_seen"),
+                "flaky_marker": flaky,
+            }
+        )
+
+    hypotheses = build_cascade_hypotheses(ctx.records, ctx.project_root, (SQUAD_HISTORY,))
+    elapsed_ms = int((time.monotonic() - started) * 1000)
+    return {
+        "name": SQUAD_HISTORY,
+        "status": "ok",
+        "elapsed_ms": elapsed_ms,
+        "findings": findings,
+        "hypotheses": hypotheses,
+    }
+
+
+def _allowed_endpoint(url: str, allowlist: Sequence[str]) -> bool:
+    for prefix in allowlist:
+        if url.startswith(prefix):
+            return True
+    return False
+
+
+def _framework_guess(records: Sequence[Mapping[str, Any]]) -> str:
+    for rec in records:
+        test_id = str(rec.get("test_id") or "")
+        if "tests." in test_id or ".tests." in test_id:
+            return "pytest"
+    return "python"
+
+
+def _web_queries(records: Sequence[Mapping[str, Any]]) -> list[str]:
+    queries: list[str] = []
+    framework = _framework_guess(records)
+    for rec in records[:5]:
+        error_type = str(rec.get("error_type") or "error")
+        message = normalize_signature(str(rec.get("message") or ""))
+        q = f"{error_type} {message} {framework}".strip()
+        queries.append(redact_text(q)[:200])
+    return queries
+
+
+def run_web_squad(ctx: SquadContext) -> dict[str, Any]:
+    started = time.monotonic()
+    queries = _web_queries(ctx.records)
+    allowlist = tuple(ctx.web_endpoints) if ctx.web_endpoints else (GITHUB_SEARCH_API,)
+
+    if ctx.offline:
+        return {
+            "name": SQUAD_WEB,
+            "status": "skipped",
+            "elapsed_ms": int((time.monotonic() - started) * 1000),
+            "findings": [],
+            "hypotheses": [],
+            "queries": queries,
+            "skip_reason": "offline",
+        }
+
+    results: list[dict[str, Any]] = []
+    for query in queries[:3]:
+        params = urllib.parse.urlencode({"q": query, "per_page": "5"})
+        url = f"{GITHUB_SEARCH_API}?{params}"
+        if not _allowed_endpoint(url, allowlist):
+            continue
+        try:
+            request = urllib.request.Request(
+                url,
+                headers={"Accept": "application/vnd.github+json", "User-Agent": "err-o-roadrunner-sentinel"},
+            )
+            with urllib.request.urlopen(request, timeout=min(ctx.timeout, 8)) as response:
+                payload = json.loads(response.read().decode("utf-8", errors="replace"))
+            for item in (payload.get("items") or [])[:5]:
+                results.append(
+                    {
+                        "title": redact_text(str(item.get("title") or ""))[:200],
+                        "url": str(item.get("html_url") or ""),
+                        "score": float(item.get("score") or 0.0),
+                    }
+                )
+        except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError, json.JSONDecodeError, OSError):
+            continue
+
+    elapsed_ms = int((time.monotonic() - started) * 1000)
+    return {
+        "name": SQUAD_WEB,
+        "status": "ok" if results else "ok",
+        "elapsed_ms": elapsed_ms,
+        "findings": results[:5],
+        "hypotheses": [],
+        "queries": queries,
+    }
+
+
+_SQUAD_RUNNERS: dict[str, SquadRunner] = {
+    SQUAD_CODE: run_code_squad,
+    SQUAD_HISTORY: run_history_squad,
+    SQUAD_WEB: run_web_squad,
+}
+
+
+def _run_one_squad(
+    name: str,
+    ctx: SquadContext,
+    timeout: float,
+) -> dict[str, Any]:
+    runner = _SQUAD_RUNNERS.get(name)
+    if runner is None:
+        return {
+            "name": name,
+            "status": "error",
+            "elapsed_ms": 0,
+            "findings": [],
+            "hypotheses": [],
+            "error": "unknown_squad",
+        }
+    result_box: dict[str, Any] = {}
+    error_box: list[BaseException] = []
+
+    def _target() -> None:
+        try:
+            result_box["result"] = runner(ctx)
+        except BaseException as exc:  # noqa: BLE001 — squads must never escape
+            error_box.append(exc)
+
+    thread = threading.Thread(target=_target, daemon=True)
+    thread.start()
+    thread.join(timeout=timeout)
+    if thread.is_alive():
+        return {
+            "name": name,
+            "status": "timeout",
+            "elapsed_ms": int(timeout * 1000),
+            "findings": [],
+            "hypotheses": [],
+        }
+    if error_box:
+        return {
+            "name": name,
+            "status": "error",
+            "elapsed_ms": 0,
+            "findings": [],
+            "hypotheses": [],
+            "error": type(error_box[0]).__name__,
+        }
+    return result_box.get(
+        "result",
+        {
+            "name": name,
+            "status": "error",
+            "elapsed_ms": 0,
+            "findings": [],
+            "hypotheses": [],
+        },
+    )
+
+
+def merge_squad_hypotheses(squad_results: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
+    by_summary: dict[str, dict[str, Any]] = {}
+    for squad in squad_results:
+        if squad.get("status") not in ("ok", "timeout"):
+            continue
+        for hyp in squad.get("hypotheses") or []:
+            summary = str(hyp.get("summary") or "")
+            if not summary:
+                continue
+            entry = by_summary.get(summary)
+            squads = {str(squad.get("name") or "")}
+            if entry:
+                entry["source_squads"] = sorted(set(entry.get("source_squads") or []) | squads)
+                entry["explains"] = list(
+                    dict.fromkeys([*(entry.get("explains") or []), *(hyp.get("explains") or [])])
+                )
+                if hyp.get("confidence") == "high":
+                    entry["confidence"] = "high"
+            else:
+                copy = dict(hyp)
+                copy["source_squads"] = sorted(squads)
+                by_summary[summary] = copy
+    ordered = sorted(
+        by_summary.values(),
+        key=lambda h: (
+            0 if h.get("confidence") == "high" else 1,
+            -len(h.get("explains") or []),
+            str(h.get("id") or ""),
+        ),
+    )
+    for idx, hyp in enumerate(ordered, start=1):
+        if not hyp.get("id"):
+            hyp["id"] = f"H{idx}"
+    return ordered
+
+
+def enrich_fix_candidates(
+    candidates: list[dict[str, Any]],
+    hypotheses: Sequence[Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    if not hypotheses:
+        return candidates
+    out = list(candidates)
+    for hyp in hypotheses:
+        if hyp.get("summary") != "import-path contamination":
+            continue
+        squads = list(hyp.get("source_squads") or [])
+        entry = {
+            "id": f"F{len(out) + 1}",
+            "kind": "python_import",
+            "confidence": hyp.get("confidence", "medium"),
+            "evidence": [f"hypothesis {hyp.get('id')}: import-path contamination"],
+            "location": {},
+            "suggestion": (
+                "Inspect test/conftest sys.path or sys.modules mutations; restore isolated imports."
+            ),
+            "verify_command": out[0].get("verify_command", "") if out else "",
+            "source_squads": squads,
+        }
+        out.insert(0, entry)
+        break
+    return out
+
+
+def run_error_squads(
+    *,
+    enabled: frozenset[str],
+    records: Sequence[Mapping[str, Any]],
+    project_root: Path | None,
+    junit_paths: Sequence[str],
+    corpus_dirs: Sequence[str],
+    offline: bool,
+    web_endpoints: Sequence[str],
+    squad_timeout: float = DEFAULT_SQUAD_TIMEOUT,
+    squad_budget: float = DEFAULT_SQUAD_BUDGET,
+    squad_workers: int = DEFAULT_SQUAD_WORKERS,
+) -> dict[str, Any]:
+    if not enabled:
+        return {"squads": [], "hypotheses": []}
+
+    ctx = SquadContext(
+        records=[dict(r) for r in records],
+        project_root=project_root,
+        junit_paths=tuple(junit_paths),
+        corpus_dirs=tuple(corpus_dirs),
+        offline=offline,
+        web_endpoints=tuple(web_endpoints),
+        timeout=squad_timeout,
+    )
+
+    deadline = time.monotonic() + max(0.1, squad_budget)
+    names = [name for name in ALL_SQUADS if name in enabled]
+    results: list[dict[str, Any]] = []
+
+    workers = max(1, min(squad_workers, len(names) or 1))
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        futures = {}
+        for name in names:
+            remaining = max(0.05, deadline - time.monotonic())
+            per_timeout = min(squad_timeout, remaining)
+            futures[pool.submit(_run_one_squad, name, ctx, per_timeout)] = name
+        for future in as_completed(futures):
+            try:
+                results.append(future.result())
+            except Exception:  # noqa: BLE001
+                results.append(
+                    {
+                        "name": futures[future],
+                        "status": "error",
+                        "elapsed_ms": 0,
+                        "findings": [],
+                        "hypotheses": [],
+                    }
+                )
+
+    results.sort(key=lambda r: ALL_SQUADS.index(r["name"]) if r["name"] in ALL_SQUADS else 99)
+    hypotheses = merge_squad_hypotheses(results)
+    return {"squads": results, "hypotheses": hypotheses}
+
+
+def load_failure_records_for_escalation(
+    junit_paths: Sequence[str],
+    corpus_dirs: Sequence[str],
+) -> list[dict[str, Any]]:
+    paths = collect_junit_paths(junit_paths, corpus_dirs)
+    if not paths:
+        return []
+    return merge_failure_records(paths)

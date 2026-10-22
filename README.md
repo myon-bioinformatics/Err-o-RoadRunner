@@ -22,7 +22,7 @@ Researching the cause of a Python, Node or GitHub Actions CI failure currently t
 ## Design principles (draft)
 
 1. **Light until escalation:** plain `triage` stays off until invoked; the optional **`sentinel`** wrapper keeps only a small ring buffer and redacted env snapshot while a command runs, then runs full triage when something fails.
-2. **Python standard library only:** the main implementation lives in root-level modules (`triage.py`, `sentinel.py`, `actions_log.py`, `junit_redact.py`, `project_version.py`).
+2. **Python standard library only:** the main implementation lives in root-level modules (`triage.py`, `sentinel.py`, `squad.py`, `actions_log.py`, `junit_redact.py`, `project_version.py`).
 3. **Node is optional:** Node stack parsing is regex-based on log text; no Node runtime is required for triage.
 4. **Read-only:** it never changes code or settings, and it never posts or sends anything.
 5. **Separates facts from guesses:** it shows `FOUND` and `NOT FOUND` explicitly, and labels inferences as `HINT`.
@@ -115,7 +115,7 @@ err-o-roadrunner sentinel --report-json /tmp/sentinel.json --print-triage --summ
   pytest -q tests/test_example.py
 ```
 
-See **`docs/sentinel-report-schema.md`** for the stable `sentinel-report/v1` JSON fields (written only on **go**), including optional `fix_candidates`, `groups`, and stdout `--format` / `--tb` / `--group-by` options. Pytest option alignment is documented in **`docs/pytest-options-survey.md`** (Japanese).
+See **`docs/sentinel-report-schema.md`** for the stable `sentinel-report/v1` JSON fields (written only on **go**), including optional `fix_candidates`, `groups`, `records`, `squads`, `hypotheses`, and stdout `--format` / `--tb` / `--group-by` options. Parallel **error squads** (`--squads`, default `code,history`) are documented in **`docs/sentinel-squads.md`** (Japanese). Pytest option alignment is documented in **`docs/pytest-options-survey.md`** (Japanese).
 
 **Example (Python failure, trimmed JSON)**
 

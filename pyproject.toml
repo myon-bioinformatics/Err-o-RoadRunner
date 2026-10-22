@@ -17,10 +17,10 @@ err-o-roadrunner = "triage:main"
 test = ["pytest>=9.1.1", "pip>=25.0"]
 
 [tool.hatch.build.targets.wheel]
-only-include = ["triage.py", "actions_log.py", "junit_redact.py", "project_version.py", "sentinel.py"]
+only-include = ["triage.py", "actions_log.py", "junit_redact.py", "project_version.py", "sentinel.py", "squad.py"]
 
 [tool.hatch.build.targets.sdist]
-only-include = ["triage.py", "actions_log.py", "junit_redact.py", "project_version.py", "sentinel.py"]
+only-include = ["triage.py", "actions_log.py", "junit_redact.py", "project_version.py", "sentinel.py", "squad.py"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
