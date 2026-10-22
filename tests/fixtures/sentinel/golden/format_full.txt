@@ -1,0 +1,5 @@
+FOUND: exit code: 1
+FOUND: python exception type: ValidationError
+FOUND: python exception message: 1 validation error for UserModel\nemail\n  value is not a valid email address
+FOUND: python traceback frame (first): app/models.py:42 in validate_user
+FIX: [F1] Re-run reproduce_command with verbose logging and inspect stderr.
