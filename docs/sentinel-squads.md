@@ -75,7 +75,7 @@
 | `VARIANT_AXES_PARSERS` | `parse_junit_failure_records` / `merge_failure_records` | `(artifact: str) -> dict[str, str] \| None` | マトリクス軸 `os` / `python` / `flavor` の部分 dict（S3 の `variant_axes` と同形） | 先に非 `None` の結果を `variant_axes` / `matrix_cells` に反映。マージ時は軸ごとに和集合。 |
 | `LANGUAGE_DETECTORS` | `parse_junit_failure_records`（レコード構築時） | `(record: Mapping[str, Any]) -> str \| None` | `python` など、未判定は `None` | 先に非 `None` の言語を `records[].language` に設定。すべて `None` なら `language` は `null`。 |
 | `HYPOTHESIS_RULES` | `merge_squad_hypotheses`（および `build_cascade_hypotheses`） | `(records, project_root, squad_names) -> list[dict]` | 仮説 dict のリスト（`summary`, `confidence`, `explains`, 任意 `id`） | 各ルールの出力を順にマージ。同一 `summary` は `source_squads` 和集合・`explains` 連結。 |
-| `FIX_RULES` | `enrich_fix_candidates` | `(candidates, hypotheses) -> list[dict] \| None` | 更新後の候補リスト、変更なしは `None` | 各ルールを順に適用。非 `None` を返したルールで候補リストを更新（複数ルール可）。 |
+| `FIX_RULES` | `enrich_fix_candidates` | `(candidates, hypotheses) -> list[dict] \| None` | 更新後の候補リスト、変更なしは `None` | 各ルールを順に適用。`None` のルールはスキップし、非 `None` の戻り値で候補リストを更新する（複数ルール可）。 |
 
 `records[]` には JUnit 解析時に `language` が載る（既定は Python JUnit のみ `python` を検出）。`records_to_normalized_errors` はレコードの `language` を優先し、無いときだけ従来の推定にフォールバックする。
 
