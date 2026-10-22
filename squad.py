@@ -101,6 +101,7 @@ def parse_squads_flag(value: str) -> frozenset[str]:
 
 def _cap_redacted_operand(fragment: str) -> str:
     text = redact_text(fragment.strip())
+    text = _SIGNATURE_PATH_RE.sub("<path>", text)
     if len(text) > _OPERAND_MAX_LEN:
         return text[: _OPERAND_MAX_LEN - 1] + "…"
     return text

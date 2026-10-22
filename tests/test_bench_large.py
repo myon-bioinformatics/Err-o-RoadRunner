@@ -91,8 +91,10 @@ def test_eorr_parse_perf_relative_to_small_baseline() -> None:
 def test_extract_assert_operands_redacts_and_caps() -> None:
     blob = "E       AssertionError: assert '/home/runner/work/pkg' == '7.7.7'\n"
     left, right = squad.extract_assert_operands("", blob, "")
-    assert left is not None and "<" in left
+    assert left is not None and "runner/work" not in left and "<" in left
     assert right == "'7.7.7'"
+    home_left, _ = squad.extract_assert_operands("assert '/home/u/x' == 'ok'", "", "")
+    assert home_left is not None and "<path>" in home_left and "/home/u" not in home_left
     long_val = "'" + ("x" * 120) + "'"
     left2, _ = squad.extract_assert_operands(f"assert {long_val} == '1'", "", "")
     assert left2 is not None and len(left2) <= 80
