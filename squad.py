@@ -73,6 +73,16 @@ _SIGNATURE_UUID_RE = re.compile(
     re.I,
 )
 _SIGNATURE_HEX_RE = re.compile(r"\b0x[0-9a-f]+\b", re.I)
+_ASSERT_EQ_RE = re.compile(
+    r"(?:AssertionError:\s*)?assert\s+(.+?)\s+==\s+(.+?)\s*$",
+    re.I,
+)
+_ASSERT_IS_NONE_RE = re.compile(
+    r"(?:AssertionError:\s*)?assert\s+(.+?)\s+is\s+(None|not\s+None)\s*$",
+    re.I,
+)
+_METADATA_HINT_RE = re.compile(r"(version|metadata|pyproject)", re.I)
+_OPERAND_MAX_LEN = 80
 _DID_YOU_MEAN_SUFFIX_RE = re.compile(
     r"\.\s*Did you mean:\s*(?:'[^']*'|\"[^\"]*\"|\S.*)?$",
     re.I,
@@ -110,6 +120,49 @@ def parse_squads_flag(value: str) -> frozenset[str]:
     if unknown:
         raise ValueError(f"invalid --squads names: {', '.join(sorted(unknown))}")
     return frozenset(names)
+
+
+def _cap_redacted_operand(fragment: str) -> str:
+    text = redact_text(fragment.strip())
+    text = _SIGNATURE_PATH_RE.sub("<path>", text)
+    if len(text) > _OPERAND_MAX_LEN:
+        return text[: _OPERAND_MAX_LEN - 1] + "…"
+    return text
+
+
+def _assert_line_candidates(message: str, blob: str, first_line: str) -> list[str]:
+    lines: list[str] = []
+    if first_line.strip():
+        lines.append(first_line.strip())
+    msg = (message or "").strip()
+    if msg:
+        for part in msg.splitlines()[:3]:
+            part = part.strip()
+            if part and part not in lines:
+                lines.append(part)
+    for raw in blob.splitlines():
+        stripped = raw.strip()
+        if "assert " not in stripped:
+            continue
+        if stripped.startswith("E "):
+            stripped = stripped[2:].strip()
+        if stripped.startswith("AssertionError:"):
+            stripped = stripped.split(":", 1)[1].strip()
+        if stripped and stripped not in lines:
+            lines.append(stripped)
+    return lines
+
+
+def extract_assert_operands(message: str, blob: str, first_line: str) -> tuple[str | None, str | None]:
+    """Parse pytest assert left/right operands (redacted, capped) from failure text."""
+    for line in _assert_line_candidates(message, blob, first_line):
+        match = _ASSERT_EQ_RE.search(line)
+        if match:
+            return _cap_redacted_operand(match.group(1)), _cap_redacted_operand(match.group(2))
+        match = _ASSERT_IS_NONE_RE.search(line)
+        if match:
+            return _cap_redacted_operand(match.group(1)), _cap_redacted_operand(match.group(2))
+    return None, None
 
 
 def normalize_signature(message: str) -> str:
@@ -471,6 +524,7 @@ def parse_junit_failure_records(path: Path) -> list[dict[str, Any]]:
                     else message_attr
                 )
             signature = normalize_signature(message or error_type)
+            assert_left, assert_right = extract_assert_operands(message_attr, blob, first_line)
             source_file, line_no, source_file_secondary, line_no_secondary = (
                 _traceback_location(blob)
             )
@@ -486,6 +540,10 @@ def parse_junit_failure_records(path: Path) -> list[dict[str, Any]]:
                 "artifact": artifact,
                 **record_fields,
             }
+            if assert_left is not None:
+                draft["assert_left"] = assert_left
+            if assert_right is not None:
+                draft["assert_right"] = assert_right
             if source_file_secondary:
                 draft["source_file_secondary"] = source_file_secondary
             if line_no_secondary is not None:
@@ -741,10 +799,99 @@ def rule_dart_compile_cascade(
     ]
 
 
+def _base_test_id(test_id: str) -> str:
+    if "[" in test_id:
+        return test_id.split("[", 1)[0]
+    return test_id
+
+
+def rule_stale_package_metadata(
+    records: Sequence[Mapping[str, Any]],
+    project_root: Path | None,
+    squad_names: Sequence[str],
+) -> list[dict[str, Any]]:
+    by_base: dict[str, list[Mapping[str, Any]]] = {}
+    for rec in records:
+        if str(rec.get("error_type") or "") != "AssertionError":
+            continue
+        left = rec.get("assert_left")
+        if left is None:
+            continue
+        base = _base_test_id(str(rec.get("test_id") or ""))
+        if not base:
+            continue
+        by_base.setdefault(base, []).append(rec)
+
+    explained: list[str] = []
+    for group in by_base.values():
+        if len(group) < 2:
+            continue
+        left_values = {str(item.get("assert_left") or "") for item in group}
+        if len(left_values) < 2:
+            continue
+        combined = " ".join(
+            " ".join(
+                (
+                    str(item.get("test_id") or ""),
+                    str(item.get("message") or ""),
+                    str(item.get("assert_left") or ""),
+                    str(item.get("assert_right") or ""),
+                )
+            )
+            for item in group
+        )
+        if not _METADATA_HINT_RE.search(combined):
+            continue
+        for item in group:
+            test_id = str(item.get("test_id") or "")
+            if test_id and test_id not in explained:
+                explained.append(test_id)
+
+    if len(explained) < 2:
+        return []
+    confidence = "high" if len(explained) >= 6 else "medium"
+    return [
+        {
+            "summary": "stale installed metadata or env override",
+            "confidence": confidence,
+            "explains": explained,
+            "source_squads": list(squad_names),
+        }
+    ]
+
+
 HYPOTHESIS_RULES: list[HypothesisRule] = [
     rule_import_cascade,
     rule_dart_compile_cascade,
+    rule_stale_package_metadata,
 ]
+
+
+def summarize_top_causes(
+    records: Sequence[Mapping[str, Any]],
+    *,
+    limit: int = 3,
+) -> list[dict[str, Any]]:
+    """Rank dominant failure signatures for large JUnit runs (report JSON)."""
+    if not records:
+        return []
+    buckets: dict[str, dict[str, Any]] = {}
+    for rec in records:
+        signature = str(rec.get("signature") or "generic")
+        entry = buckets.setdefault(
+            signature,
+            {
+                "signature": signature,
+                "count": 0,
+                "error_type": str(rec.get("error_type") or "generic"),
+            },
+        )
+        entry["count"] = int(entry["count"]) + 1
+    ranked = sorted(
+        buckets.values(),
+        key=lambda item: (-int(item["count"]), str(item["signature"])),
+    )
+    return ranked[: max(0, limit)]
 
 
 def build_cascade_hypotheses(
@@ -1414,9 +1561,40 @@ def rule_fix_dart_missing_import(
     return None
 
 
+def rule_fix_reinstall_editable(
+    candidates: list[dict[str, Any]],
+    hypotheses: Sequence[Mapping[str, Any]],
+) -> list[dict[str, Any]] | None:
+    for hyp in hypotheses:
+        if hyp.get("summary") != "stale installed metadata or env override":
+            continue
+        out = list(candidates)
+        squads = list(hyp.get("source_squads") or [])
+        entry = {
+            "id": f"F{len(out) + 1}",
+            "kind": "stale_metadata",
+            "confidence": hyp.get("confidence", "medium"),
+            "evidence": [
+                f"hypothesis {hyp.get('id')}: stale installed metadata or env override"
+            ],
+            "location": {},
+            "suggestion": (
+                "Reinstall the package in editable mode (`pip install -e .` or "
+                "`uv sync --reinstall`) and compare `importlib.metadata.version(...)` "
+                "against the version in pyproject.toml / source."
+            ),
+            "verify_command": out[0].get("verify_command", "") if out else "",
+            "source_squads": squads,
+        }
+        out.insert(0, entry)
+        return out
+    return None
+
+
 FIX_RULES: list[FixRule] = [
     rule_fix_import_cascade,
     rule_fix_dart_missing_import,
+    rule_fix_reinstall_editable,
 ]
 
 

@@ -29,6 +29,8 @@ Process exit codes: see **`docs/sentinel-exit-codes.md`** (`--exit-mode child` v
 | `records` | object[] | Optional. Per-testcase JUnit failure records (merged across `--junit` / `--corpus`). See below. |
 | `squads` | object[] | Optional. Parallel squad results (`name`, `status`, `elapsed_ms`, `findings`, …). |
 | `hypotheses` | object[] | Optional. Merged hypotheses (`id`, `summary`, `confidence`, `explains`, `source_squads`). |
+| `top_causes` | object[] | Optional. Up to three dominant failure signatures (`signature`, `count`, `error_type`) from all parsed records. |
+| `records_omitted` | number | Optional. Count of JUnit failure records dropped by `--max-records` (default 200). |
 | `diagnostic_hooks` | object[] | Present when `--hook` was used; per-hook `command`, `exit_code`, `stdout`, `stderr`. |
 
 Older consumers may ignore `fix_candidates`, `groups`, `records`, `squads`, and `hypotheses`; all other v1 fields are unchanged.
@@ -61,6 +63,8 @@ Built from a static rule table over triage lines. Deduped by `(kind, loc)`, sort
 | `variants` | string[] | Python versions seen across artifacts (e.g. `py3.11` … `py3.15`). |
 | `artifact` | string | Representative source XML filename. |
 | `language` | string \| null | Optional; from `LANGUAGE_DETECTORS` in `squad.py` (e.g. `python` for pytest JUnit). |
+| `assert_left` | string | Optional. Redacted left-hand pytest assert operand (max 80 chars). |
+| `assert_right` | string | Optional. Redacted right-hand operand or `None` / `not None` for `is` asserts. |
 
 Records with the same `(signature, test_id)` are merged; `variants` lists all artifact variants.
 
@@ -159,6 +163,7 @@ err-o-roadrunner sentinel --timeout 600 --junit reports/junit.xml --summary -- \
 | `--tb short\|line\|no` | Traceback/detail for stdout formats. |
 | `-v` | Verbose short output (`? NOT FOUND`). |
 | `--max-fixes N` | Cap fix candidates. |
+| `--max-records N` | Cap `records` in JSON; excess counted in `records_omitted` (default 200). |
 | `--group-by KEY[,KEY]` | Group normalized errors in JSON and short/table stdout. |
 | `--sort count\|first_seen\|name` | Sort group buckets. |
 | `--exit-mode child\|signal` | `child` (default): wrapped exit code. `signal`: `0`=stop, `1`=go. |
