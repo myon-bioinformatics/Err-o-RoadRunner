@@ -6,13 +6,51 @@
       "expected_exception": "FileExistsError",
       "language": "python",
       "line": 304,
+      "matrix_cells": [
+        {
+          "flavor": "core-windows:38186460415",
+          "os": "windows"
+        },
+        {
+          "flavor": "core-windows:38186463838",
+          "os": "windows"
+        },
+        {
+          "flavor": "core-windows:38186482403",
+          "os": "windows"
+        },
+        {
+          "flavor": "core-windows:38186540275",
+          "os": "windows"
+        },
+        {
+          "flavor": "core-windows:38186542809",
+          "os": "windows"
+        }
+      ],
       "message": "Failed: DID NOT RAISE FileExistsError",
       "signature": "Failed: DID NOT RAISE FileExistsError",
       "source_file": "tests/test_cli_args.py",
       "test_id": "tests.test_cli_args::test_exclusive_output_never_overwrites_existing_file_or_symlink",
-      "variant": "windows",
+      "variant": "windows:38186460415",
+      "variant_axes": {
+        "flavor": [
+          "core-windows:38186460415",
+          "core-windows:38186463838",
+          "core-windows:38186482403",
+          "core-windows:38186540275",
+          "core-windows:38186542809"
+        ],
+        "os": [
+          "windows"
+        ]
+      },
       "variants": [
-        "windows"
+        "windows:38186460415",
+        "windows:38186463838",
+        "windows:38186482403",
+        "windows:38186540275",
+        "windows:38186542809"
       ]
     }
   ],
@@ -37,7 +75,11 @@
             "source_line": "tests.test_cli_args::test_exclusive_output_never_overwrites_existing_file_or_symlink",
             "test_id": "tests.test_cli_args::test_exclusive_output_never_overwrites_existing_file_or_symlink",
             "variants": [
-              "windows"
+              "windows:38186460415",
+              "windows:38186463838",
+              "windows:38186482403",
+              "windows:38186540275",
+              "windows:38186542809"
             ]
           }
         ],

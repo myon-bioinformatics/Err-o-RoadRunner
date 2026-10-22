@@ -342,6 +342,9 @@ def parse_junit_failure_records(path: Path) -> list[dict[str, Any]]:
                 "artifact": artifact,
                 **record_fields,
             }
+            axes = _variant_axes_from_artifact(artifact)
+            if axes:
+                _attach_variant_axes_to_draft(draft, axes)
             draft["language"] = _record_language(draft)
             records.append(draft)
     return records
@@ -376,6 +379,7 @@ def merge_failure_records(
 ) -> list[dict[str, Any]]:
     merged: dict[str, dict[str, Any]] = {}
     for path in paths:
+        path_axes = _variant_axes_from_artifact(path.name) or {}
         for rec in parse_junit_failure_records(path):
             key = str(rec["test_id"])
             variant = rec.get("variant") or "unknown"
@@ -384,15 +388,27 @@ def merge_failure_records(
                 variants = entry.setdefault("variants", [])
                 if variant != "unknown" and variant not in variants:
                     variants.append(variant)
+                _merge_variant_axes(entry, path_axes)
+                for cell in rec.get("matrix_cells") or []:
+                    _merge_variant_axes(entry, cell)
                 if not entry.get("source_file") and rec.get("source_file"):
                     entry["source_file"] = rec["source_file"]
                     entry["line"] = rec.get("line")
             else:
                 copy = dict(rec)
                 copy["variants"] = [variant] if variant != "unknown" else []
+                if path_axes:
+                    _merge_variant_axes(copy, path_axes)
                 merged[key] = copy
     for entry in merged.values():
         entry["variants"] = sorted(set(entry.get("variants") or []))
+        axes = entry.get("variant_axes")
+        if isinstance(axes, dict):
+            entry["variant_axes"] = {
+                key: sorted(set(axes.get(key) or []))
+                for key in ("os", "python", "flavor")
+                if axes.get(key)
+            }
     return list(merged.values())
 
 
@@ -1186,6 +1202,7 @@ _PYTEST_FAILED_PREFIX_RE = re.compile(r"^Failed:\s*", re.I)
 _XPASS_STRICT_RE = re.compile(r"XPASS\s*\(\s*strict\s*\)", re.I)
 _PYTEST_SKIPPED_RE = re.compile(r"^Skipped(?:\s*:|$)", re.I)
 _OS_VARIANT_RE = re.compile(r"junit-(?:core-)?(windows|macos|ubuntu)", re.I)
+_CLI_ARGS_RUN_RE = re.compile(r"cli_args_(\d+)_", re.I)
 _PLATFORM_MSG_RE = re.compile(
     r"symlink|exclusive|x-mode|permissions|\bpaths?\b|line endings?",
     re.I,
@@ -1255,14 +1272,77 @@ def parse_windows_traceback_location(blob: str) -> tuple[str, int | None] | None
 TRACEBACK_LOCATION_PARSERS.append(parse_windows_traceback_location)
 
 
-def _variant_os_from_artifact(path: str) -> str | None:
-    match = _OS_VARIANT_RE.search(path)
-    if match:
-        return match.group(1).lower()
+VariantAxesParser = Callable[[str], dict[str, str] | None]
+
+VARIANT_AXES_PARSERS: list[VariantAxesParser] = []
+
+
+def _variant_axes_from_artifact(artifact: str) -> dict[str, str] | None:
+    for parser in VARIANT_AXES_PARSERS:
+        axes = parser(artifact)
+        if axes:
+            return axes
     return None
 
 
-VARIANT_PARSERS.append(_variant_os_from_artifact)
+def _merge_variant_axes(entry: dict[str, Any], axes: Mapping[str, str]) -> None:
+    if not axes:
+        return
+    merged_axes: dict[str, list[str]] = entry.setdefault(
+        "variant_axes",
+        {"os": [], "python": [], "flavor": []},
+    )
+    for key in ("os", "python", "flavor"):
+        value = axes.get(key)
+        if not value:
+            continue
+        bucket = merged_axes.setdefault(key, [])
+        if value not in bucket:
+            bucket.append(value)
+    cells: list[dict[str, str]] = entry.setdefault("matrix_cells", [])
+    cell = {k: axes[k] for k in ("os", "python", "flavor") if axes.get(k)}
+    if cell and cell not in cells:
+        cells.append(cell)
+
+
+def _attach_variant_axes_to_draft(draft: dict[str, Any], axes: Mapping[str, str]) -> None:
+    draft["variant_axes"] = {
+        key: [axes[key]] for key in ("os", "python", "flavor") if axes.get(key)
+    }
+    draft["matrix_cells"] = [
+        {key: axes[key] for key in ("os", "python", "flavor") if axes.get(key)}
+    ]
+
+
+def parse_os_junit_variant_axes(path: str) -> dict[str, str] | None:
+    """Matrix axes for OS-tagged JUnit artifacts (S3 ``parse_matrix_variant`` compatible)."""
+    name = path.rsplit("/", 1)[-1]
+    match = _OS_VARIANT_RE.search(name)
+    if not match:
+        return None
+    os_tag = match.group(1).lower()
+    flavor = "core-windows" if "core-windows" in name.lower() else "os-junit"
+    run_match = _CLI_ARGS_RUN_RE.search(name)
+    if run_match:
+        flavor = f"{flavor}:{run_match.group(1)}"
+    return {"os": os_tag, "flavor": flavor}
+
+
+VARIANT_AXES_PARSERS.append(parse_os_junit_variant_axes)
+
+
+def _variant_os_run_from_artifact(path: str) -> str | None:
+    axes = parse_os_junit_variant_axes(path)
+    if not axes:
+        return None
+    os_tag = axes["os"]
+    run_match = _CLI_ARGS_RUN_RE.search(path)
+    if run_match:
+        return f"{os_tag}:{run_match.group(1)}"
+    return os_tag
+
+
+VARIANT_PARSERS.append(_variant_os_run_from_artifact)
 
 
 def _detect_language_os_pytest_junit(record: Mapping[str, Any]) -> str | None:
@@ -1276,11 +1356,14 @@ LANGUAGE_DETECTORS.append(_detect_language_os_pytest_junit)
 
 
 def _record_is_windows_variant(record: Mapping[str, Any]) -> bool:
-    variant = str(record.get("variant") or "").lower()
-    if variant == "windows":
-        return True
-    for item in record.get("variants") or []:
-        if str(item).lower() == "windows":
+    axes = record.get("variant_axes")
+    if isinstance(axes, dict):
+        for value in axes.get("os") or []:
+            if str(value).lower() == "windows":
+                return True
+    for item in (record.get("variant"), *(record.get("variants") or [])):
+        text = str(item or "").lower()
+        if text == "windows" or text.startswith("windows:"):
             return True
     artifact = str(record.get("artifact") or "").lower()
     return "windows" in artifact or "core-windows" in artifact

@@ -52,8 +52,13 @@ def test_windows_cli_args_benchmark_records_match_golden() -> None:
     assert len(records) == 1
     rec = records[0]
     assert rec.get("error_type") != "Unknown"
-    assert rec.get("variant") == "windows"
-    assert rec.get("variants") == ["windows"]
+    assert str(rec.get("variant") or "").startswith("windows:")
+    variants = rec.get("variants") or []
+    assert len(variants) == 5
+    assert all(str(v).startswith("windows:") for v in variants)
+    axes = rec.get("variant_axes") or {}
+    assert axes.get("os") == ["windows"]
+    assert len(axes.get("flavor") or []) == 5
     assert rec.get("expected_exception") == "FileExistsError"
     assert rec.get("source_file") == "tests/test_cli_args.py"
     assert rec.get("line") in (304, 311)
