@@ -9,7 +9,10 @@ import subprocess
 import sys
 import tempfile
 from pathlib import Path
-from typing import Any, Sequence
+from copy import deepcopy
+from typing import Any, Mapping, Sequence
+
+_STABLE_ENV_KEYS = ("variable_count", "variable_names", "variable_names_truncated")
 
 _SHORT_ELAPSED_RE = re.compile(r"( in )\d+\.\d+(s ==)")
 _SHORT_SQUAD_MS_RE = re.compile(r"^S (\S+ \S+ )\d+ms")
@@ -22,6 +25,21 @@ _SHORT_ENV_LINE_RES = (
 
 ROOT = Path(__file__).resolve().parents[1]
 SENTINEL_CLI = [sys.executable, str(ROOT / "sentinel.py")]
+
+
+def normalize_report_benchmark(doc: Mapping[str, Any]) -> dict[str, Any]:
+    """Drop volatile environment values before writing or comparing benchmark report JSON."""
+    out = deepcopy(dict(doc))
+    env = out.get("environment")
+    if isinstance(env, dict):
+        out["environment"] = {
+            key: env[key] for key in _STABLE_ENV_KEYS if key in env
+        }
+        out["environment"]["values_redacted"] = {}
+    command = out.get("command")
+    if isinstance(command, dict) and command.get("cwd"):
+        command["cwd"] = "<repo>"
+    return out
 
 
 def normalize_short_timing(short_text: str) -> str:
@@ -100,7 +118,7 @@ def run_benchmark(
     )
     report = json.loads(Path(report_path).read_text(encoding="utf-8"))
     Path(report_path).unlink(missing_ok=True)
-    return proc.stdout, report
+    return proc.stdout, normalize_report_benchmark(report)
 
 
 def median_merge_records_seconds(path: str, *, rounds: int = 6) -> float:

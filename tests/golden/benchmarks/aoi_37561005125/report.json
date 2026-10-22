@@ -9,50 +9,10 @@
       "-c",
       "exit 0"
     ],
-    "cwd": "/workspace",
+    "cwd": "<repo>",
     "reproduce_command": "sh -c 'exit 0'"
   },
   "environment": {
-    "values_redacted": {
-      "AGENT_TRANSCRIPTS": "/home/ubuntu/.cursor/projects/workspace/agent-transcripts",
-      "CARGO_HOME": "/usr/local/cargo",
-      "CURSOR_AGENT": "1",
-      "CURSOR_AGENT_SOCKET": "/run/cursor/api.sock",
-      "CURSOR_CONVERSATION_ID": "bc-b0cd5e5c-4a13-5a5c-928e-f4cf3d26b2f7",
-      "CURSOR_REQUEST_ID": "95ce981d-df9b-403b-b76c-7ca97ec7c05d",
-      "CURSOR_RIPGREP_PATH": "/exec-daemon/rg",
-      "CURSOR_SPAWN_CWD_HOP": "1",
-      "CURSOR_WORKLOAD_CGROUP": "/sys/fs/cgroup/system.slice/pod-s2wdsbz3nza6jbe7temkxbme6y-92898b56/cursor-agent/workload",
-      "DISPLAY": ":1",
-      "EXEC_DAEMON_STARTUP_TRACEPARENT": "00-01a16351da9c76aa84345dd436b3d319-20c4838318831272-01",
-      "FORCE_COLOR": "0",
-      "GH_TELEMETRY": "false",
-      "GIT_DISCOVERY_ACROSS_FILESYSTEM": "0",
-      "GIT_LFS_SKIP_SMUDGE": "1",
-      "HOME": "/home/ubuntu",
-      "LANG": "en_US.UTF-8",
-      "LC_ALL": "en_US.UTF-8",
-      "NO_COLOR": "1",
-      "NVM_BIN": "/home/ubuntu/.nvm/versions/node/v22.23.4/bin",
-      "NVM_CD_FLAGS": "",
-      "NVM_DIR": "/home/ubuntu/.nvm",
-      "NVM_INC": "/home/ubuntu/.nvm/versions/node/v22.23.4/include/node",
-      "OLDPWD": "/workspace",
-      "PATH": "/usr/local/cargo/bin:/exec-daemon:/exec-daemon/tools:/usr/local/cargo/bin:/home/ubuntu/.nvm/versions/node/v22.23.4/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
-      "PS1": "\\[\u001b[36m\\]\\W\\[\u001b[0m\\] $ ",
-      "PWD": "/workspace",
-      "RUSTUP_HOME": "/usr/local/rustup",
-      "RUST_VERSION": "1.83.0",
-      "SHELL": "/bin/bash",
-      "SHLVL": "1",
-      "TERM": "dumb",
-      "USER": "ubuntu",
-      "VNC_DPI": "96",
-      "VNC_RESOLUTION": "1920x1200x24",
-      "_": "/usr/bin/python3",
-      "_ZO_DOCTOR": "0",
-      "__CURSOR_SANDBOX_ENV_RESTORE": "builtin unset CURSOR_CONVERSATION_ID CURSOR_REQUEST_ID CURSOR_AGENT_STORE_FILES_DIR CURSOR_AGENT_STORE_SHARED_PATHS 2>/dev/null || true; builtin export CURSOR_CONVERSATION_ID='bc-b0cd5e5c-4a13-5a5c-9…"
-    },
     "variable_count": 38,
     "variable_names": [
       "AGENT_TRANSCRIPTS",
@@ -94,7 +54,8 @@
       "_ZO_DOCTOR",
       "__CURSOR_SANDBOX_ENV_RESTORE"
     ],
-    "variable_names_truncated": false
+    "variable_names_truncated": false,
+    "values_redacted": {}
   },
   "escalation_reasons": [
     "junit_failure"
@@ -608,6 +569,7 @@
     {
       "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
       "error_type": "ModuleNotFoundError",
+      "language": "python",
       "line": 111,
       "message": "No module named 'sets'",
       "signature": "No module named 'sets'",
@@ -625,6 +587,7 @@
     {
       "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
       "error_type": "ModuleNotFoundError",
+      "language": "python",
       "line": 134,
       "message": "No module named 'sets'",
       "signature": "No module named 'sets'",
@@ -641,7 +604,10 @@
     },
     {
       "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
+      "assert_left": "0",
+      "assert_right": "1",
       "error_type": "AssertionError",
+      "language": "python",
       "line": null,
       "message": "assert 0 == 1",
       "signature": "assert <n> == <n>",
@@ -659,6 +625,7 @@
     {
       "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
       "error_type": "StopIteration",
+      "language": "python",
       "line": null,
       "message": "StopIteration",
       "signature": "StopIteration",
@@ -676,6 +643,7 @@
     {
       "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
       "error_type": "ModuleNotFoundError",
+      "language": "python",
       "line": 269,
       "message": "No module named 'neighbors'",
       "signature": "No module named 'neighbors'",
@@ -693,6 +661,7 @@
     {
       "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
       "error_type": "ModuleNotFoundError",
+      "language": "python",
       "line": 297,
       "message": "No module named 'neighbors'",
       "signature": "No module named 'neighbors'",
@@ -709,7 +678,10 @@
     },
     {
       "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
+      "assert_left": "0",
+      "assert_right": "1",
       "error_type": "AssertionError",
+      "language": "python",
       "line": null,
       "message": "assert 0 == 1",
       "signature": "assert <n> == <n>",
@@ -727,6 +699,7 @@
     {
       "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
       "error_type": "StopIteration",
+      "language": "python",
       "line": null,
       "message": "StopIteration",
       "signature": "StopIteration",
@@ -744,6 +717,7 @@
     {
       "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
       "error_type": "FileNotFoundError",
+      "language": "python",
       "line": 447,
       "message": "[Errno 2] No such file or directory: '<pytest-tmp>/pytest-0/test_stopped_manual_job_is_not0/state/requests/501.json'",
       "signature": "[Errno <n>] No such file or directory: '<pytest-tmp><path>'",
@@ -760,7 +734,10 @@
     },
     {
       "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
+      "assert_left": "0",
+      "assert_right": "5",
       "error_type": "AssertionError",
+      "language": "python",
       "line": null,
       "message": "assert 0 == 5",
       "signature": "assert <n> == <n>",
@@ -777,7 +754,10 @@
     },
     {
       "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
+      "assert_left": "len(batches) > 2 and len(calls)",
+      "assert_right": "1",
       "error_type": "AssertionError",
+      "language": "python",
       "line": null,
       "message": "assert (0 > 2)",
       "signature": "assert (<n> > <n>)",
@@ -795,6 +775,7 @@
     {
       "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
       "error_type": "AssertionError",
+      "language": "python",
       "line": null,
       "message": "assert 'すでに終了' in '判定不能 / 入力を確認してください: その探索依頼はありません\\n\\n対象サイクル: `` / 結果SHA: `` / 対象コード: `sha` / 元コメント: 532'",
       "signature": "assert 'すでに終了' in '判定不能 / 入力を確認してください: その探索依頼はありません\\n\\n対象サイクル: `` / 結果SHA: `` / 対象コード: `sha` / 元コメント: <n>'",
@@ -812,6 +793,7 @@
     {
       "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
       "error_type": "AttributeError",
+      "language": "python",
       "line": null,
       "message": "<module 'inbox' from '<runner-work>/nagoyaction/inbox/inbox.py'> has no attribute 'observe_report'",
       "signature": "<module 'inbox' from '<runner-work><path>'> has no attribute 'observe_report'",
@@ -829,6 +811,7 @@
     {
       "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
       "error_type": "SystemExit",
+      "language": "python",
       "line": 534,
       "message": "2",
       "signature": "<n>",
@@ -846,6 +829,7 @@
     {
       "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
       "error_type": "SystemExit",
+      "language": "python",
       "line": 534,
       "message": "2",
       "signature": "<n>",
@@ -863,6 +847,7 @@
     {
       "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
       "error_type": "SystemExit",
+      "language": "python",
       "line": 534,
       "message": "2",
       "signature": "<n>",
@@ -879,7 +864,10 @@
     },
     {
       "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
+      "assert_left": "[]",
+      "assert_right": "['<path>']",
       "error_type": "AssertionError",
+      "language": "python",
       "line": null,
       "message": "assert [] == ['/issues/1/comments']",
       "signature": "assert [] == ['<path>']",
@@ -896,7 +884,10 @@
     },
     {
       "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
+      "assert_left": "0",
+      "assert_right": "20",
       "error_type": "AssertionError",
+      "language": "python",
       "line": null,
       "message": "assert 0 == 20",
       "signature": "assert <n> == <n>",
@@ -913,7 +904,10 @@
     },
     {
       "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
+      "assert_left": "registration_status(posthoc)",
+      "assert_right": "\"事後構成\"",
       "error_type": "IndexError",
+      "language": "python",
       "line": null,
       "message": "list index out of range",
       "signature": "list index out of range",
@@ -932,9 +926,26 @@
   "schema": "sentinel-report/v1",
   "squads": [],
   "timing": {
-    "elapsed_seconds": 0.004,
-    "started_monotonic": 80.247023164
+    "elapsed_seconds": 0.003,
+    "started_monotonic": 5162.281937343
   },
+  "top_causes": [
+    {
+      "count": 4,
+      "error_type": "AssertionError",
+      "signature": "assert <n> == <n>"
+    },
+    {
+      "count": 3,
+      "error_type": "SystemExit",
+      "signature": "<n>"
+    },
+    {
+      "count": 2,
+      "error_type": "ModuleNotFoundError",
+      "signature": "No module named 'neighbors'"
+    }
+  ],
   "triage": {
     "found": [
       "exit code: 1",
@@ -967,31 +978,31 @@
       "web search keywords (5 variants): cycle = PosixPath('<pytest-tmp>/pytest-0/test_real_exploration_resume_m0/cycle')\\ntmp_path = PosixPath('<pytest-tmp>/pytest-0/test_real_exploration_resume_m0')\\n\\n    def test_real_exploration_resume_matches_uninterrupted(cycle, tmp_path):\\n        spec = plan('{\"sets\":[\"A\",\"B\"],\"max_depth\":2}', cycle)\\n>       ex = Explorer(cycle, spec)\\n             ^^^^^^^^^^^^^^^^^^^^^\\n\\nnagoyaction/tests/tes"
     ],
     "not_found": [
-      "junit errors (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.11_86.xml)",
-      "junit skipped (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.11_86.xml)",
-      "junit dart error (first) (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.11_86.xml)",
-      "junit system-err (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.11_86.xml)",
-      "junit collection errors (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.11_86.xml)",
-      "junit errors (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.12_90.xml)",
-      "junit skipped (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.12_90.xml)",
-      "junit dart error (first) (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.12_90.xml)",
-      "junit system-err (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.12_90.xml)",
-      "junit collection errors (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.12_90.xml)",
-      "junit errors (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.13_87.xml)",
-      "junit skipped (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.13_87.xml)",
-      "junit dart error (first) (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.13_87.xml)",
-      "junit system-err (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.13_87.xml)",
-      "junit collection errors (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.13_87.xml)",
-      "junit errors (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.14_88.xml)",
-      "junit skipped (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.14_88.xml)",
-      "junit dart error (first) (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.14_88.xml)",
-      "junit system-err (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.14_88.xml)",
-      "junit collection errors (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.14_88.xml)",
-      "junit errors (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.15_89.xml)",
-      "junit skipped (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.15_89.xml)",
-      "junit dart error (first) (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.15_89.xml)",
-      "junit system-err (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.15_89.xml)",
-      "junit collection errors (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.15_89.xml)"
+      "junit errors (tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.11_86.xml)",
+      "junit skipped (tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.11_86.xml)",
+      "junit dart error (first) (tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.11_86.xml)",
+      "junit system-err (tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.11_86.xml)",
+      "junit collection errors (tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.11_86.xml)",
+      "junit errors (tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.12_90.xml)",
+      "junit skipped (tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.12_90.xml)",
+      "junit dart error (first) (tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.12_90.xml)",
+      "junit system-err (tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.12_90.xml)",
+      "junit collection errors (tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.12_90.xml)",
+      "junit errors (tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.13_87.xml)",
+      "junit skipped (tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.13_87.xml)",
+      "junit dart error (first) (tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.13_87.xml)",
+      "junit system-err (tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.13_87.xml)",
+      "junit collection errors (tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.13_87.xml)",
+      "junit errors (tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.14_88.xml)",
+      "junit skipped (tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.14_88.xml)",
+      "junit dart error (first) (tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.14_88.xml)",
+      "junit system-err (tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.14_88.xml)",
+      "junit collection errors (tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.14_88.xml)",
+      "junit errors (tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.15_89.xml)",
+      "junit skipped (tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.15_89.xml)",
+      "junit dart error (first) (tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.15_89.xml)",
+      "junit system-err (tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.15_89.xml)",
+      "junit collection errors (tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.15_89.xml)"
     ]
   }
 }
