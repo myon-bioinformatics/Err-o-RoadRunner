@@ -26,23 +26,46 @@ Process exit codes: see **`docs/sentinel-exit-codes.md`** (`--exit-mode child` v
 | `human_summary` | string | Markdown block suitable for logs or `GITHUB_STEP_SUMMARY`. |
 | `fix_candidates` | object[] | Optional. Suggested fixes (never executed). See below. |
 | `groups` | object | Optional. Aggregated normalized errors. See below. |
+| `records` | object[] | Optional. Per-testcase JUnit failure records (merged across `--junit` / `--corpus`). See below. |
+| `squads` | object[] | Optional. Parallel squad results (`name`, `status`, `elapsed_ms`, `findings`, …). |
+| `hypotheses` | object[] | Optional. Merged hypotheses (`id`, `summary`, `confidence`, `explains`, `source_squads`). |
 | `diagnostic_hooks` | object[] | Present when `--hook` was used; per-hook `command`, `exit_code`, `stdout`, `stderr`. |
 
-Older consumers may ignore `fix_candidates` and `groups`; all other v1 fields are unchanged.
+Older consumers may ignore `fix_candidates`, `groups`, `records`, `squads`, and `hypotheses`; all other v1 fields are unchanged.
 
 ## `fix_candidates[]`
 
 | Field | Type | Description |
 |-------|------|-------------|
 | `id` | string | Stable label in this report, e.g. `F1`. |
-| `kind` | string | `python_import`, `missing_command`, `permission`, `timeout`, `node_module`, `assertion`, `junit`, `syntax`, `actions_step`, `generic`. |
+| `kind` | string | `python_import`, `import_cascade`, `missing_command`, `permission`, `timeout`, `node_module`, `assertion`, `junit`, `syntax`, `actions_step`, `generic`. |
 | `confidence` | string | `high`, `medium`, or `low`. |
 | `evidence` | string[] | Matching `triage.found` / `triage.hints` lines. |
 | `location` | object | Optional `loc`, `line`. |
 | `suggestion` | string | Human-readable next step. |
 | `verify_command` | string | Same as `command.reproduce_command` (re-run to verify). |
+| `source_squads` | string[] | Optional. Squad names that supported this candidate (e.g. `code`, `history`). |
 
-Built from a static rule table over triage lines. Deduped by `(kind, loc)`, sorted by confidence then evidence count, capped by `--max-fixes` (default 5).
+Built from a static rule table over triage lines. Deduped by `(kind, loc)`, sorted by confidence then evidence count, capped by `--max-fixes` (default 5). When JUnit `records` are present, grouping uses them first so `error_type` reflects real exception types. Squad hypotheses may prepend import-contamination candidates.
+
+## `records[]` (JUnit failures)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `error_type` | string | Parsed exception type (e.g. `ModuleNotFoundError`), not `JUnitFailure`. |
+| `message` | string | Normalized failure message excerpt. |
+| `signature` | string | Stable key with paths/numbers stripped (for merge and corpus). |
+| `test_id` | string | Pytest-style `classname::name`. |
+| `source_file` | string | Best-effort file from traceback. |
+| `line` | number | Optional failing line. |
+| `variants` | string[] | Python versions seen across artifacts (e.g. `py3.11` … `py3.15`). |
+| `artifact` | string | Representative source XML filename. |
+
+Records with the same `(signature, test_id)` are merged; `variants` lists all artifact variants.
+
+## `squads[]` / `hypotheses[]`
+
+See **`docs/sentinel-squads.md`** (Japanese) for squad behaviour, CLI flags, and stdout extensions.
 
 ## `groups` (normalized error aggregation)
 
@@ -101,9 +124,10 @@ Each row is tab-separated. Fields are never reordered within a row type.
 | `H` | `H` | `hint` | `{triage line}` | — | — | — | — | — |
 | `?` | `?` | `not_found` | `{triage line}` | — | — | — | — | — |
 | `C` | `C` | `id` | `kind` | `confidence` | `loc` | `line` | `suggestion` | `verify_command` |
+| `squad` | `squad` | `name` | `status` | `elapsed_ms` | `findings_count` | — | — | — |
 | Totals | `# totals` | `found=N` | `hints=N` | `not_found=N` | `fixes=N` | `elapsed=SECONDS` | — | — |
 
-Row order in the stream: **header** → all **F** rows → all **H** rows → all **?** rows → all **C** rows → **totals** (single line).
+Row order in the stream: **header** → all **F** rows → all **H** rows → all **?** rows → all **C** rows → all **squad** rows → **totals** (single line).
 
 ## Triage line semantics
 
@@ -138,7 +162,14 @@ err-o-roadrunner sentinel --timeout 600 --junit reports/junit.xml --summary -- \
 | `--sort count\|first_seen\|name` | Sort group buckets. |
 | `--exit-mode child\|signal` | `child` (default): wrapped exit code. `signal`: `0`=stop, `1`=go. |
 | `--go-on-stderr-traceback` | Opt-in **go** when exit is `0` but stderr contains a Python traceback (default: **stop**). |
+| `--squads` | Error squads on escalation (`code,history` default; `web` opt-in; `none` to disable). |
+| `--squad-timeout` / `--squad-budget` / `--squad-workers` | Squad time limits and parallelism. |
+| `--offline` | Skip network (web squad). |
+| `--corpus` | JUnit corpus directory for history-squad signature index only (repeatable; defaults to `tests/fixtures/junit_corpus` under project root when present). Does not add corpus XML to `records` (only `--junit` does). |
+| `--web-endpoint` | Allowlisted URL prefix for web squad (repeatable). |
 
 With `--exit-mode child` (default), the process exit code is the wrapped command's (or `124` after timeout). Escalation failures never override it. With `--exit-mode signal`, see `docs/sentinel-exit-codes.md`.
+
+Squad details: **`docs/sentinel-squads.md`**.
 
 Pytest alignment survey: **`docs/pytest-options-survey.md`**.

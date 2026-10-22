@@ -75,6 +75,13 @@ SORT_FIRST_SEEN = "first_seen"
 SORT_NAME = "name"
 GROUP_SORT_OPTIONS = (SORT_COUNT, SORT_FIRST_SEEN, SORT_NAME)
 
+DEFAULT_SQUAD_TIMEOUT = 10.0
+DEFAULT_SQUAD_BUDGET = 30.0
+DEFAULT_SQUAD_WORKERS = 3
+DEFAULT_SQUADS = ("code", "history")
+_SQUAD_NAMES = frozenset({"web", "code", "history"})
+_TRIAGE_PER_FILE_SOURCE_RE = re.compile(r" \([^)]+\)(?=:)")
+
 # Exit-mode: child (default) keeps the wrapped exit code; signal uses RoadRunner codes.
 EXIT_MODE_CHILD = "child"
 EXIT_MODE_SIGNAL = "signal"
@@ -397,6 +404,76 @@ def run_wrapped_command(
         sig = signal.Signals(-code).name
         return state, RunOutcome(exit_code=code, effective_exit_code=code, signal_name=sig)
     return state, RunOutcome(exit_code=code, effective_exit_code=code)
+
+
+def parse_squads_flag(value: str) -> frozenset[str]:
+    raw = (value or "").strip().lower()
+    if not raw or raw == "none":
+        return frozenset()
+    if raw == "all":
+        return frozenset(_SQUAD_NAMES)
+    names = {part.strip().lower() for part in raw.split(",") if part.strip()}
+    unknown = names - _SQUAD_NAMES
+    if unknown:
+        raise ValueError(f"invalid --squads names: {', '.join(sorted(unknown))}")
+    return frozenset(names)
+
+
+def _triage_line_dedupe_key(line: str) -> str:
+    key = _TRIAGE_PER_FILE_SOURCE_RE.sub("", line, count=1)
+    key = re.sub(r"\.?\s*Did you mean:\s*(?:<q>|'[^']*'|\"[^\"]*\")", "", key, flags=re.I)
+    key = re.sub(r"(No module named <q>)\?", r"\1", key)
+    key = re.sub(r"\?\s*$", "", key)
+    return key
+
+
+def _annotate_triage_variants(line: str, variant_count: int) -> str:
+    if variant_count <= 1:
+        return line
+    return _TRIAGE_PER_FILE_SOURCE_RE.sub(f" ({variant_count} variants)", line, count=1)
+
+
+def dedupe_multisource_triage(
+    structured: dict[str, list[str]],
+    *,
+    junit_artifact_count: int = 0,
+) -> dict[str, list[str]]:
+    out: dict[str, list[str]] = {}
+    for field in ("found", "not_found", "hints"):
+        buckets: dict[str, list[str]] = {}
+        for line in structured.get(field) or []:
+            key = _triage_line_dedupe_key(line)
+            buckets.setdefault(key, []).append(line)
+        kept: list[str] = []
+        for key, lines in buckets.items():
+            variant_n = len(lines)
+            if junit_artifact_count > 1:
+                variant_n = max(variant_n, junit_artifact_count)
+            kept.append(_annotate_triage_variants(lines[0], variant_n))
+        out[field] = kept
+    return out
+
+
+def resolve_default_corpus_dirs(
+    explicit: Sequence[str],
+    project_root: Path | None,
+) -> list[str]:
+    if explicit:
+        return list(explicit)
+    if project_root is None:
+        return []
+    for rel in ("tests/fixtures/junit_corpus/cases", "tests/fixtures/junit_corpus"):
+        candidate = project_root / rel
+        if candidate.is_dir():
+            return [str(candidate)]
+    return []
+
+
+@functools.lru_cache(maxsize=1)
+def _squad_module() -> Any:
+    import squad as squad_mod
+
+    return squad_mod
 
 
 def report_to_structured(report: Report) -> dict[str, list[str]]:
@@ -1044,6 +1121,23 @@ def _render_short(
     if groups:
         lines.extend(_format_groups_short(groups))
 
+    for squad in doc.get("squads") or []:
+        name = squad.get("name", "?")
+        status = squad.get("status", "?")
+        ms = squad.get("elapsed_ms", 0)
+        n_find = len(squad.get("findings") or [])
+        lines.append(_cap_output_line(f"S {name} {status} {ms}ms {n_find} findings"))
+
+    for hyp in doc.get("hypotheses") or []:
+        explains = hyp.get("explains") or []
+        total = len(doc.get("records") or []) or len(explains)
+        lines.append(
+            _cap_output_line(
+                f"{hyp.get('id', 'H?')} {hyp.get('summary', '')} "
+                f"(explains {len(explains)}/{total})"
+            )
+        )
+
     if verbose:
         for item in structured.get("not_found") or []:
             lines.append(_cap_output_line(f"? NOT FOUND: {item}"))
@@ -1111,6 +1205,21 @@ def _render_porcelain(doc: dict[str, Any]) -> str:
                 preserve_tabs=True,
             )
         )
+    for squad in doc.get("squads") or []:
+        lines.append(
+            _cap_output_line(
+                "\t".join(
+                    [
+                        "squad",
+                        str(squad.get("name", "")),
+                        str(squad.get("status", "")),
+                        str(squad.get("elapsed_ms", 0)),
+                        str(len(squad.get("findings") or [])),
+                    ]
+                ),
+                preserve_tabs=True,
+            )
+        )
     elapsed = doc.get("timing", {}).get("elapsed_seconds", 0.0)
     nfix = len(doc.get("fix_candidates") or [])
     lines.append(
@@ -1126,17 +1235,28 @@ def _render_porcelain(doc: dict[str, Any]) -> str:
 def _render_table(doc: dict[str, Any]) -> str:
     groups = doc.get("groups") or {}
     buckets = groups.get("buckets") or []
+    squads = doc.get("squads") or []
     if buckets:
         width = max(len("Group"), *(len(bucket["name"]) for bucket in buckets))
-        lines = [
-            f"{'Group':<{width}} {'Count':>6} {'First':>6}",
-        ]
+        squad_w = max((len("history"), *(len(str(s.get("name", ""))) for s in squads)), default=8)
+        squad_hdr = " ".join(f"{str(s.get('name', '')):>{squad_w}}" for s in squads) if squads else ""
+        header = f"{'Group':<{width}} {'Count':>6} {'First':>6}"
+        if squad_hdr:
+            header = f"{header} {squad_hdr}"
+        lines = [header]
         for bucket in buckets:
-            lines.append(
-                f"{bucket['name']:<{width}} {bucket['count']:>6} {bucket['first_seen']:>6}"
-            )
+            row = f"{bucket['name']:<{width}} {bucket['count']:>6} {bucket['first_seen']:>6}"
+            if squads:
+                row += " " + " ".join(f"{'-':>{squad_w}}" for _ in squads)
+            lines.append(row)
         total = groups.get("error_count", sum(b["count"] for b in buckets))
-        lines.append(f"{'TOTAL':<{width}} {total:>6} {'-':>6}")
+        total_row = f"{'TOTAL':<{width}} {total:>6} {'-':>6}"
+        if squads:
+            squad_cols = []
+            for squad in squads:
+                squad_cols.append(f"{str(squad.get('status', '-')):>{squad_w}}")
+            total_row += " " + " ".join(squad_cols)
+        lines.append(total_row)
         return "\n".join(_cap_output_line(ln) for ln in lines) + "\n"
 
     tri = doc.get("triage") or {}
@@ -1228,12 +1348,20 @@ def build_escalation_report(
     *,
     project_root: Path | None,
     junit_paths: Sequence[str],
+    corpus_dirs: Sequence[str] = (),
     actions_log_path: str | None,
     hooks: Sequence[str],
     hook_timeout: float,
     max_fixes: int = DEFAULT_MAX_FIXES,
     group_by: Sequence[str] = DEFAULT_GROUP_BY,
     sort: str = SORT_COUNT,
+    squads_enabled: frozenset[str] | None = None,
+    squad_timeout: float = DEFAULT_SQUAD_TIMEOUT,
+    squad_budget: float = DEFAULT_SQUAD_BUDGET,
+    squad_workers: int = DEFAULT_SQUAD_WORKERS,
+    squad_offline: bool = False,
+    web_endpoints: Sequence[str] = (),
+    project_root_explicit: bool = False,
 ) -> dict[str, Any]:
     elapsed = time.monotonic() - state.started_at
     stdout_text = state.stdout_tail.text()
@@ -1276,10 +1404,20 @@ def build_escalation_report(
     if stderr_has_python_traceback(stderr_text):
         reasons.append("stderr_traceback")
 
-    structured = report_to_structured(report)
+    structured = dedupe_multisource_triage(
+        report_to_structured(report),
+        junit_artifact_count=len(junit_paths),
+    )
     reported_exit = normalized_child_exit(outcome)
     command_block = _redact_command_block(state.command_argv, state.cwd)
     reproduce = command_block["reproduce_command"]
+    failure_records: list[dict[str, Any]] = []
+    squad_mod = None
+    if junit_paths or squads_enabled:
+        squad_mod = _squad_module()
+    if squad_mod is not None and junit_paths:
+        failure_records = squad_mod.load_failure_records_for_escalation(junit_paths)
+
     fix_candidates = _redact_fix_candidates(
         build_fix_candidates(
             structured,
@@ -1287,12 +1425,35 @@ def build_escalation_report(
             max_fixes=max_fixes,
         )
     )
-    normalized_errors = extract_normalized_errors(structured, outcome)
+    if failure_records and squad_mod is not None:
+        normalized_errors = squad_mod.records_to_normalized_errors(failure_records)
+    else:
+        normalized_errors = extract_normalized_errors(structured, outcome)
     groups = build_groups(
         normalized_errors,
         group_by=group_by,
         sort=sort,
     )
+
+    squad_pack: dict[str, Any] = {"squads": [], "hypotheses": []}
+    if squads_enabled and squad_mod is not None:
+        squad_pack = squad_mod.run_error_squads(
+            enabled=squads_enabled,
+            records=failure_records,
+            project_root=project_root,
+            project_root_explicit=project_root_explicit,
+            junit_paths=junit_paths,
+            corpus_dirs=corpus_dirs,
+            offline=squad_offline,
+            web_endpoints=web_endpoints,
+            squad_timeout=squad_timeout,
+            squad_budget=squad_budget,
+            squad_workers=squad_workers,
+        )
+        fix_candidates = _redact_fix_candidates(
+            squad_mod.enrich_fix_candidates(fix_candidates, squad_pack.get("hypotheses") or [])
+        )
+
     doc: dict[str, Any] = {
         "schema": SCHEMA_VERSION,
         "mode": "escalated",
@@ -1320,6 +1481,9 @@ def build_escalation_report(
         "next_investigation_steps": _next_investigation_steps(report, outcome),
         "fix_candidates": fix_candidates,
         "groups": groups,
+        "records": failure_records,
+        "squads": squad_pack.get("squads") or [],
+        "hypotheses": squad_pack.get("hypotheses") or [],
         "human_summary": "",
     }
     doc["human_summary"] = _redact_text(
@@ -1501,8 +1665,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--project-root",
         metavar="DIR",
-        default=".",
-        help="Project root for lock-file detection during escalation.",
+        default=None,
+        help="Project root for lock-file detection and code squad (default: cwd).",
     )
     parser.add_argument(
         "--report-json",
@@ -1591,6 +1755,55 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     parser.add_argument(
+        "--squads",
+        default=",".join(DEFAULT_SQUADS),
+        metavar="LIST",
+        help="Error squads: web,code,history, all, or none (default code,history).",
+    )
+    parser.add_argument(
+        "--squad-timeout",
+        type=float,
+        default=DEFAULT_SQUAD_TIMEOUT,
+        metavar="SEC",
+        help=f"Per-squad timeout in seconds (default {DEFAULT_SQUAD_TIMEOUT:g}).",
+    )
+    parser.add_argument(
+        "--squad-budget",
+        type=float,
+        default=DEFAULT_SQUAD_BUDGET,
+        metavar="SEC",
+        help=f"Total squad wall-clock budget (default {DEFAULT_SQUAD_BUDGET:g}).",
+    )
+    parser.add_argument(
+        "--squad-workers",
+        type=int,
+        default=DEFAULT_SQUAD_WORKERS,
+        metavar="N",
+        help=f"Parallel squad workers (default {DEFAULT_SQUAD_WORKERS}).",
+    )
+    parser.add_argument(
+        "--offline",
+        action="store_true",
+        help="Disable network squads (web squad skipped).",
+    )
+    parser.add_argument(
+        "--corpus",
+        action="append",
+        default=[],
+        metavar="DIR",
+        help=(
+            "JUnit corpus directory for record merge and history squad (repeatable). "
+            "When omitted, uses tests/fixtures/junit_corpus under --project-root if present."
+        ),
+    )
+    parser.add_argument(
+        "--web-endpoint",
+        action="append",
+        default=[],
+        metavar="URL",
+        help="Allowlisted URL prefix for web squad (repeatable; default GitHub search API).",
+    )
+    parser.add_argument(
         "--version",
         action="version",
         version=f"%(prog)s {__version__}",
@@ -1624,15 +1837,25 @@ def run_sentinel(argv: Sequence[str] | None = None) -> int:
         print(f"sentinel: {exc}", file=sys.stderr)
         return 2
 
+    try:
+        squads_enabled = parse_squads_flag(args.squads)
+    except ValueError as exc:
+        print(f"sentinel: {exc}", file=sys.stderr)
+        return 2
+
     ring_bytes = max(1024, args.ring_bytes)
 
+    project_root_explicit = args.project_root is not None
     project_root: Path | None
     try:
-        project_root = Path(args.project_root).resolve()
+        root_raw = args.project_root if args.project_root is not None else os.getcwd()
+        project_root = Path(root_raw).resolve()
         if not project_root.is_dir():
             project_root = None
     except OSError:
         project_root = None
+
+    corpus_dirs = resolve_default_corpus_dirs(args.corpus, project_root)
 
     state, outcome = run_wrapped_command(
         cmd,
@@ -1678,12 +1901,20 @@ def run_sentinel(argv: Sequence[str] | None = None) -> int:
             outcome,
             project_root=project_root,
             junit_paths=args.junit,
+            corpus_dirs=corpus_dirs,
             actions_log_path=args.actions_log,
             hooks=args.hook,
             hook_timeout=args.hook_timeout,
             max_fixes=max_fixes,
             group_by=group_by,
             sort=args.sort,
+            squads_enabled=squads_enabled,
+            squad_timeout=max(0.1, args.squad_timeout),
+            squad_budget=max(0.1, args.squad_budget),
+            squad_workers=max(1, args.squad_workers),
+            squad_offline=args.offline,
+            web_endpoints=args.web_endpoint,
+            project_root_explicit=project_root_explicit,
         )
         if args.report_json:
             write_report_json(Path(args.report_json), doc)
