@@ -1,4 +1,4 @@
-"""Golden benchmark: Err-o-RoadRunner version-matrix JUnit (large single artifact)."""
+"""Golden benchmark: Err-o-RoadRunner version-matrix JUnit (165KB single artifact)."""
 
 from __future__ import annotations
 
