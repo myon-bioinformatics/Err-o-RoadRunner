@@ -11,14 +11,19 @@ from pathlib import Path
 from typing import Any, Sequence
 
 _SHORT_ELAPSED_RE = re.compile(r"( in )\d+\.\d+(s ==)")
+_SHORT_PYTHON_VERSION_RE = re.compile(r"^  python version: .+$", re.M)
+_SHORT_NODE_VERSION_RE = re.compile(r"^  node version: .+$", re.M)
 
 ROOT = Path(__file__).resolve().parents[1]
 SENTINEL_CLI = [sys.executable, str(ROOT / "sentinel.py")]
 
 
 def normalize_short_timing(short_text: str) -> str:
-    """Strip wall-clock footer variance for golden comparison."""
-    return _SHORT_ELAPSED_RE.sub(r"\1<t>s ==", short_text)
+    """Strip wall-clock and runtime version variance for golden comparison."""
+    text = _SHORT_ELAPSED_RE.sub(r"\1<t>s ==", short_text)
+    text = _SHORT_PYTHON_VERSION_RE.sub("  python version: <runtime>", text)
+    text = _SHORT_NODE_VERSION_RE.sub("  node version: <runtime>", text)
+    return text
 
 
 def run_benchmark(case_paths: Sequence[str]) -> tuple[str, dict[str, Any]]:

@@ -5,8 +5,8 @@ F sh -c 'exit 0'
   junit failure groups (5 variants): 1 failure in 1 group
   junit testcase classname (first) (5 variants): tests.test_cli_args
   junit failure (first) (5 variants): tests\test_cli_args.py:311: in test_exclusive_output_never_overwrites_existing_file_or_symlink\n    with pytest.raises(FileExistsError):\n         ^^^^^^^^^^^^^^…
-  python version: 3.12.3 (cpython)
-  node version: v22.23.4
+  python version: <runtime>
+  node version: <runtime>
 fix: [F1] Open the first failing testcase in the JUnit XML and read the message/stack.
 G 1× error_type=pytest.Failed.DidNotRaise
 == 1 failed, 3 hint, 2 fixes in <t>s ==
