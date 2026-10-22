@@ -22,7 +22,11 @@ def _aoi_paths() -> list[str]:
 def _records_without_language(doc: dict) -> list:
     out = []
     for rec in doc.get("records") or []:
-        stripped = {k: v for k, v in rec.items() if k != "language"}
+        stripped = {
+            k: v
+            for k, v in rec.items()
+            if k not in ("language", "assert_left", "assert_right")
+        }
         out.append(stripped)
     return out
 

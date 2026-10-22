@@ -29,6 +29,7 @@ SCHEMA_VERSION = "sentinel-report/v1"
 DEFAULT_RING_BYTES = 64 * 1024
 DEFAULT_HOOK_TIMEOUT = 30
 DEFAULT_MAX_FIXES = 5
+DEFAULT_MAX_RECORDS = 200
 OUTPUT_LINE_MAX = 200
 ENV_VALUE_MAX = 200
 TIMEOUT_EXIT = 124
@@ -1353,6 +1354,7 @@ def build_escalation_report(
     hooks: Sequence[str],
     hook_timeout: float,
     max_fixes: int = DEFAULT_MAX_FIXES,
+    max_records: int = DEFAULT_MAX_RECORDS,
     group_by: Sequence[str] = DEFAULT_GROUP_BY,
     sort: str = SORT_COUNT,
     squads_enabled: frozenset[str] | None = None,
@@ -1418,6 +1420,12 @@ def build_escalation_report(
     if squad_mod is not None and junit_paths:
         failure_records = squad_mod.load_failure_records_for_escalation(junit_paths)
 
+    all_failure_records = failure_records
+    records_omitted = 0
+    if max_records >= 0 and len(failure_records) > max_records:
+        records_omitted = len(failure_records) - max_records
+        failure_records = failure_records[:max_records]
+
     fix_candidates = _redact_fix_candidates(
         build_fix_candidates(
             structured,
@@ -1425,8 +1433,8 @@ def build_escalation_report(
             max_fixes=max_fixes,
         )
     )
-    if failure_records and squad_mod is not None:
-        normalized_errors = squad_mod.records_to_normalized_errors(failure_records)
+    if all_failure_records and squad_mod is not None:
+        normalized_errors = squad_mod.records_to_normalized_errors(all_failure_records)
     else:
         normalized_errors = extract_normalized_errors(structured, outcome)
     groups = build_groups(
@@ -1439,7 +1447,7 @@ def build_escalation_report(
     if squads_enabled and squad_mod is not None:
         squad_pack = squad_mod.run_error_squads(
             enabled=squads_enabled,
-            records=failure_records,
+            records=all_failure_records,
             project_root=project_root,
             project_root_explicit=project_root_explicit,
             junit_paths=junit_paths,
@@ -1486,6 +1494,10 @@ def build_escalation_report(
         "hypotheses": squad_pack.get("hypotheses") or [],
         "human_summary": "",
     }
+    if squad_mod is not None and all_failure_records:
+        doc["top_causes"] = squad_mod.summarize_top_causes(all_failure_records)
+    if records_omitted:
+        doc["records_omitted"] = records_omitted
     doc["human_summary"] = _redact_text(
         _human_summary(
             structured,
@@ -1723,6 +1735,13 @@ def build_parser() -> argparse.ArgumentParser:
         help=f"Cap fix_candidates in JSON and stdout (default {DEFAULT_MAX_FIXES}).",
     )
     parser.add_argument(
+        "--max-records",
+        type=int,
+        default=DEFAULT_MAX_RECORDS,
+        metavar="N",
+        help=f"Cap JUnit failure records in JSON; remainder in records_omitted (default {DEFAULT_MAX_RECORDS}).",
+    )
+    parser.add_argument(
         "--group-by",
         default="error_type",
         metavar="KEY[,KEY]",
@@ -1896,6 +1915,7 @@ def run_sentinel(argv: Sequence[str] | None = None) -> int:
 
     try:
         max_fixes = max(0, args.max_fixes)
+        max_records = max(0, args.max_records)
         doc = build_escalation_report(
             state,
             outcome,
@@ -1906,6 +1926,7 @@ def run_sentinel(argv: Sequence[str] | None = None) -> int:
             hooks=args.hook,
             hook_timeout=args.hook_timeout,
             max_fixes=max_fixes,
+            max_records=max_records,
             group_by=group_by,
             sort=args.sort,
             squads_enabled=squads_enabled,
