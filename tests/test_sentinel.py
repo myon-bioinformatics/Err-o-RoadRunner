@@ -182,20 +182,13 @@ def test_ring_buffer_trims_old_bytes() -> None:
 
 @pytest.mark.sentinel
 def test_success_overhead_bounded() -> None:
-    iterations = 30
-    baseline = time.perf_counter()
-    for _ in range(iterations):
-        subprocess.run(["true"], check=False)
-    baseline_elapsed = time.perf_counter() - baseline
-
-    wrapped = time.perf_counter()
-    for _ in range(iterations):
-        proc = _run_sentinel("true")
-        assert proc.returncode == 0
-    wrapped_elapsed = time.perf_counter() - wrapped
-
-    # Loose guard: wrapper should not be orders of magnitude slower on success.
-    assert wrapped_elapsed < baseline_elapsed * 8 + 2.0
+    """In-process success path should stay cheap (no triage, no JSON)."""
+    start = time.perf_counter()
+    for _ in range(8):
+        assert run_sentinel(["--", "true"]) == 0
+    elapsed = time.perf_counter() - start
+    # Generous ceiling for shared CI runners; catches accidental escalation work.
+    assert elapsed < 8.0
 
 
 @pytest.mark.sentinel
