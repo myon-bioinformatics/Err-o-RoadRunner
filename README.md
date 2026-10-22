@@ -2,7 +2,19 @@
 
 Err-o-RoadRunner is a tool that does nothing in normal times. It starts working only after an error has happened. The name combines "Error" and "Road Runner".
 
-Researching the cause of a Python, Node or GitHub Actions CI failure currently takes a lot of time. Most error messages are well known, and a web search often turns up hints. This project automates that first investigation **without depending on an AI agent**. It lists what it found and what it did not find on stdout, as a plain report.
+Researching the cause of a Python, Node, Go or TypeScript failure, or a GitHub Actions CI failure, currently takes a lot of time. Most error messages are well known, and a web search often turns up hints. This project automates that first investigation **without depending on an AI agent**. It lists what it found and what it did not find on stdout, as a plain report.
+
+## Concept overview
+
+![Err-o-RoadRunner concept: failure logs are matched against known patterns, then reported as FOUND, NOT FOUND and HINT with examples and tests as evidence](docs/images/concept-overview.png)
+
+The supplied diagram summarizes the failure-triggered, read-only triage flow. Matching is best effort: hints are not verified root causes, and the tool does not repair code or run a resident monitor. See the current CLI and supported inputs below.
+
+### Challenges, responsibilities and intended outcomes
+
+![Err-o-RoadRunner concept: investigate CI failures through detection, known-pattern matching and FOUND, NOT FOUND or HINT reports](docs/images/concept-overview-v2.png)
+
+This complementary supplied panel shows the challenges, roles and intended outcomes alongside the flow above. Detection relies on failure information passed by the caller or wrapper, not background monitoring. Investigation time savings are a design goal, not a measured guarantee. The optional `sentinel` wrapper now available in the CLI provides light capture for an explicitly wrapped command and escalates on failure; the two supplied panels are not a complete inventory of that wrapper’s behavior.
 
 ## What it does
 
@@ -31,7 +43,7 @@ Researching the cause of a Python, Node or GitHub Actions CI failure currently t
 
 ## Status
 
-**Current slice:** read-only triage for Python tracebacks, Node stacks, JUnit XML, and downloaded GitHub Actions job logs (`--actions-log`). Summarize a downloaded CI artifact zip (or directory / single XML or JSON) in place with `digest` (JUnit counts and failing cases, receipt JSON fields, extension counts for everything else). Wrap commands with **`sentinel`** for always-on light capture and automatic escalation plus JSON for agents (`docs/sentinel-report-schema.md`).
+**Current slice:** read-only triage for Python tracebacks, Node stacks, Go panics and compiler errors, TypeScript compiler diagnostics, JUnit XML, and downloaded GitHub Actions job logs (`--actions-log`). Go and TypeScript detection is best effort and reported as `HINT`. Summarize a downloaded CI artifact zip (or directory / single XML or JSON) in place with `digest` (JUnit counts and failing cases, receipt JSON fields, extension counts for everything else). Wrap commands with **`sentinel`** for always-on light capture and automatic escalation plus JSON for agents (`docs/sentinel-report-schema.md`).
 
 ## CLI usage
 
@@ -112,7 +124,7 @@ By default (`--exit-mode child`), the process exit code is still the **wrapped c
 
 ```bash
 err-o-roadrunner sentinel --report-json /tmp/sentinel.json --print-triage --summary -- \
-  pytest -q tests/test_example.py
+  pytest -q tests/test_triage.py
 ```
 
 See **`docs/sentinel-report-schema.md`** for the stable `sentinel-report/v1` JSON fields (written only on **go**), including optional `fix_candidates`, `groups`, and stdout `--format` / `--tb` / `--group-by` options. Pytest option alignment is documented in **`docs/pytest-options-survey.md`** (Japanese).
@@ -465,6 +477,17 @@ HINT: web search keywords: ERR_MODULE_NOT_FOUND
 More captured scenarios (JUnit mix, hostile symlink refusal, additional Node errors) live under `tests/fixtures/readme/` and are checked by `tests/test_readme_golden.py`.
 
 ## Development
+
+Requires Python 3.11 or later.
+
+With uv (the lockfile is `uv.lock`, and CI runs the same commands):
+
+```bash
+uv sync --locked --extra test
+uv run --locked python -m pytest -q tests
+```
+
+With pip:
 
 ```bash
 python -m pip install -e ".[test]"
