@@ -64,8 +64,13 @@ def run_benchmark(
 ) -> tuple[str, dict[str, Any]]:
     """Run sentinel on JUnit case paths; return (short stdout, report JSON dict)."""
     junit_args: list[str] = []
+    root = ROOT.resolve()
     for path in case_paths:
-        junit_args.extend(["--junit", path])
+        candidate = Path(path)
+        try:
+            junit_args.extend(["--junit", str(candidate.resolve().relative_to(root))])
+        except ValueError:
+            junit_args.extend(["--junit", path])
     with tempfile.NamedTemporaryFile(suffix=".json", delete=False) as handle:
         report_path = handle.name
     extra: list[str] = []
