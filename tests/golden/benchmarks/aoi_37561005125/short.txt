@@ -15,4 +15,5 @@ G 2× error_type=StopIteration
 G 1× error_type=FileNotFoundError
 G 1× error_type=AttributeError
 G 1× error_type=IndexError
+M fails on all 5 variants (python: 5/5)
 == 1 failed, 2 hint, 2 fixes in 0.00s ==

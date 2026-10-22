@@ -61,6 +61,7 @@
 - スクワッド間で同じ `summary` をまとめ、`source_squads` を和集合にする。
 - `merge_squad_hypotheses` はスクワッドが返した `hypotheses` に加え、**HYPOTHESIS_RULES** を `records` に対して実行し、結果を同じ `summary` キーでマージする（並列エージェントはルールをリスト末尾に追加するだけ）。
 - **import-path contamination**（H1）: `rule_import_cascade` — リポジトリに実在する短いモジュール名への `ModuleNotFoundError` / `AttributeError` が複数あるとき、根因候補として `explains` にテスト ID を列挙する。
+- **matrix-invariant failure**（M）: `rule_matrix_invariance` — マトリクス全セルで同じ失敗が出るとき `invariant`（リポジトリ内容・ロジック疑い）、一部 OS のみなら `os-specific`、一部 Python のみなら `python-specific` と分類する。`--squads none` でも matrix 系の仮説だけはレポートに載る。
 
 ## 拡張ポイント（`squad.py`）
 
@@ -86,7 +87,7 @@
 
 ## 標準出力
 
-- **short**: `S code ok 120ms 4 findings`、`H1 import-path contamination (explains 9/19)` のような行。
+- **short**: `S code ok 120ms 4 findings`、`H1 import-path contamination (explains 9/19)`、`M fails on all 7 variants (os: 3/3, python: 5/5)` のような行。
 - **porcelain**: `squad` 行 — 列順は `squad`、名前、`status`、経過 ms、findings 件数（タブ区切り）。
 - **table**: グループ表の右にスクワッド名ごとの列（TOTAL 行に各 `status`）。
 

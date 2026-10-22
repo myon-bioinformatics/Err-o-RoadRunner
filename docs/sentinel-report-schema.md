@@ -29,9 +29,10 @@ Process exit codes: see **`docs/sentinel-exit-codes.md`** (`--exit-mode child` v
 | `records` | object[] | Optional. Per-testcase JUnit failure records (merged across `--junit` / `--corpus`). See below. |
 | `squads` | object[] | Optional. Parallel squad results (`name`, `status`, `elapsed_ms`, `findings`, …). |
 | `hypotheses` | object[] | Optional. Merged hypotheses (`id`, `summary`, `confidence`, `explains`, `source_squads`). |
+| `matrix` | object | Optional. Summary of CI matrix coverage across `--junit` artifacts. See below. |
 | `diagnostic_hooks` | object[] | Present when `--hook` was used; per-hook `command`, `exit_code`, `stdout`, `stderr`. |
 
-Older consumers may ignore `fix_candidates`, `groups`, `records`, `squads`, and `hypotheses`; all other v1 fields are unchanged.
+Older consumers may ignore `fix_candidates`, `groups`, `records`, `squads`, `hypotheses`, and `matrix`; all other v1 fields are unchanged.
 
 ## `fix_candidates[]`
 
@@ -59,10 +60,21 @@ Built from a static rule table over triage lines. Deduped by `(kind, loc)`, sort
 | `source_file` | string | Best-effort file from traceback. |
 | `line` | number | Optional failing line. |
 | `variants` | string[] | Python versions seen across artifacts (e.g. `py3.11` … `py3.15`). |
+| `variant_axes` | object | Optional. Distinct matrix axis values seen for this failure (`os`, `python`, `flavor` string lists). |
 | `artifact` | string | Representative source XML filename. |
 | `language` | string \| null | Optional; from `LANGUAGE_DETECTORS` in `squad.py` (e.g. `python` for pytest JUnit). |
 
 Records with the same `(signature, test_id)` are merged; `variants` lists all artifact variants.
+
+## `matrix` (CI variant summary)
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `axes` | object | Distinct axis counts in the input JUnit set, e.g. `{"os": 3, "python": 5, "flavor": 1}`. |
+| `failing` | number | Distinct matrix cells (parsed from artifact names) that contain at least one merged failure. |
+| `total` | number | Number of `--junit` artifacts in this escalation. |
+
+Axis parsing (`parse_matrix_variant` in `squad.py`) recognizes `test-report-<os>-py<ver>`, `junit-py<ver>`, and `junit-controlled-*` filenames.
 
 ## `squads[]` / `hypotheses[]`
 

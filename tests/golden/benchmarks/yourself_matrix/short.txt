@@ -1,0 +1,13 @@
+F sh -c 'exit 0'
+  exit code: 1
+  junit failures (7 variants): 1
+  junit failure (first) (7 variants): AssertionError: assert {('LICENSE', ...r/xprobe.py')} == {('LICENSE', ...r/xprobe.py')}\n  \n  Extra items in the left set:\n  ('LICENSE', 'vendor/gh_identity-LI…
+  junit failure groups (7 variants): 1 failure in 1 group
+  junit testcase classname (first) (7 variants): tests.test_native_observations
+  junit pytest exception type (7 variants): AssertionError
+  junit failure (first) (7 variants): AssertionError: assert {('LICENSE', ...r/xprobe.py')} == {('LICENSE', ...r/xprobe.py')}\n  \n  Extra items in the left set:\n  ('gh_identity.py', 'vendor/gh_iden…
+  python version: 3.12.3 (cpython)
+fix: [F1] Open the first failing testcase in the JUnit XML and read the message/stack.
+G 1× error_type=AssertionError
+M fails on all 7 variants (os: 3/3, python: 5/5)
+== 1 failed, 4 hint, 3 fixes in 0.00s ==
