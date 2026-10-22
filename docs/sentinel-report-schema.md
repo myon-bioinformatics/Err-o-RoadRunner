@@ -60,6 +60,7 @@ Built from a static rule table over triage lines. Deduped by `(kind, loc)`, sort
 | `line` | number | Optional failing line. |
 | `variants` | string[] | Python versions seen across artifacts (e.g. `py3.11` … `py3.15`). |
 | `artifact` | string | Representative source XML filename. |
+| `language` | string \| null | Optional; from `LANGUAGE_DETECTORS` in `squad.py` (e.g. `python` for pytest JUnit). |
 
 Records with the same `(signature, test_id)` are merged; `variants` lists all artifact variants.
 

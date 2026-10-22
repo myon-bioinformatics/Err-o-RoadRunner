@@ -1,0 +1,18 @@
+F sh -c 'exit 0'
+  exit code: 1
+  junit failures (5 variants): 19
+  junit failure (first) (5 variants): cycle = PosixPath('<pytest-tmp>/pytest-0/test_real_exploration_resume_m0/cycle')\ntmp_path = PosixPath('<pytest-tmp>/pytest-0/test_real_exploration_resume_m0')\n…
+  junit failure (last) (5 variants): def test_registration_status_is_conservative_and_rendered():\n        from ask import registration_status, render\n        posthoc = item()\n        posthoc["post…
+  junit failure groups (5 variants): 19 failures in 11 groups
+  junit failure group 1/11 (5 variants): 4× AssertionError: assert N == N — first: nagoyaction.tests.test_inbox::test_bot_intake_worker_completion_and_retry — msg: AssertionError: assert 0 == 1
+  junit failure group 2/11 (5 variants): 3× SystemExit: N — first: nagoyaction.tests.test_inbox::test_inbox_configuration_does_not_enable_automatic_research[] — msg: SystemExit: 2
+  junit failure group 3/11 (5 variants): 2× ModuleNotFoundError: No module named <q> — first: nagoyaction.tests.test_inbox::test_automatic_worker_without_comments_prepares_and_finishes — msg: ModuleN…
+fix: [F1] Open the first failing testcase in the JUnit XML and read the message/stack.
+G 7× error_type=AssertionError
+G 4× error_type=ModuleNotFoundError
+G 3× error_type=SystemExit
+G 2× error_type=StopIteration
+G 1× error_type=FileNotFoundError
+G 1× error_type=AttributeError
+G 1× error_type=IndexError
+== 1 failed, 2 hint, 2 fixes in 0.00s ==

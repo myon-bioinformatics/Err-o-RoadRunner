@@ -102,10 +102,23 @@ def normalize_signature(message: str) -> str:
     return text or "generic"
 
 
-def variant_from_artifact(path: str) -> str:
+def _variant_from_pytest_junit(path: str) -> str | None:
     match = _PYTEST_VARIANT_RE.search(path)
     if match:
         return match.group(1).lower()
+    return None
+
+
+VariantParser = Callable[[str], str | None]
+
+VARIANT_PARSERS: list[VariantParser] = [_variant_from_pytest_junit]
+
+
+def variant_from_artifact(path: str) -> str:
+    for parser in VARIANT_PARSERS:
+        variant = parser(path)
+        if variant:
+            return variant
     return "unknown"
 
 
@@ -154,24 +167,56 @@ def _message_first_line(message: str, blob: str) -> str:
     return ""
 
 
-def _exception_type(message: str, blob: str, first_line: str) -> str:
+ExceptionParser = Callable[[str, str, str], str | None]
+
+
+def _exc_from_pytest_e_lines(message: str, blob: str, first_line: str) -> str | None:
     for line in blob.splitlines():
         match = _PYTEST_E_EXC_LINE_RE.match(line)
         if match:
             return match.group("exc")
+    return None
+
+
+def _exc_from_assert_prefix(message: str, blob: str, first_line: str) -> str | None:
     if first_line.startswith("assert "):
         return "AssertionError"
+    return None
+
+
+def _exc_from_message_attr(message: str, blob: str, first_line: str) -> str | None:
     msg = (message or "").strip()
-    if msg:
-        head = msg.splitlines()[0]
-        match = _JUNIT_MSG_EXCEPTION_RE.match(head)
-        if match:
-            return match.group(1)
-        if _JUNIT_BARE_EXCEPTION_RE.match(head.strip()) and head.strip()[0].isupper():
-            return head.strip()
+    if not msg:
+        return None
+    head = msg.splitlines()[0]
+    match = _JUNIT_MSG_EXCEPTION_RE.match(head)
+    if match:
+        return match.group(1)
+    if _JUNIT_BARE_EXCEPTION_RE.match(head.strip()) and head.strip()[0].isupper():
+        return head.strip()
+    return None
+
+
+def _exc_from_first_line(message: str, blob: str, first_line: str) -> str | None:
     match = _JUNIT_MSG_EXCEPTION_RE.match(first_line)
     if match:
         return match.group(1)
+    return None
+
+
+EXCEPTION_PARSERS: list[ExceptionParser] = [
+    _exc_from_pytest_e_lines,
+    _exc_from_assert_prefix,
+    _exc_from_message_attr,
+    _exc_from_first_line,
+]
+
+
+def _exception_type(message: str, blob: str, first_line: str) -> str:
+    for parser in EXCEPTION_PARSERS:
+        exc = parser(message, blob, first_line)
+        if exc:
+            return exc
     return "Unknown"
 
 
@@ -182,6 +227,30 @@ def _parse_message_text(message: str, blob: str) -> str:
         rest = first[match.end() :].strip()
         return rest or first
     return first or blob.splitlines()[0].strip() if blob else ""
+
+
+LanguageDetector = Callable[[Mapping[str, Any]], str | None]
+
+
+def _detect_language_python(record: Mapping[str, Any]) -> str | None:
+    variant = str(record.get("variant") or "")
+    if variant.startswith("py3."):
+        return "python"
+    artifact = str(record.get("artifact") or "")
+    if _PYTEST_VARIANT_RE.search(artifact):
+        return "python"
+    return None
+
+
+LANGUAGE_DETECTORS: list[LanguageDetector] = [_detect_language_python]
+
+
+def _record_language(record: Mapping[str, Any]) -> str | None:
+    for detector in LANGUAGE_DETECTORS:
+        language = detector(record)
+        if language:
+            return language
+    return None
 
 
 def _traceback_location(blob: str) -> tuple[str, int | None]:
@@ -228,18 +297,18 @@ def parse_junit_failure_records(path: Path) -> list[dict[str, Any]]:
             source_file, line_no = _traceback_location(blob)
             test_id = _case_test_id(testcase)
             signature = normalize_signature(message or error_type)
-            records.append(
-                {
-                    "error_type": error_type,
-                    "message": message[:500],
-                    "signature": signature,
-                    "test_id": test_id,
-                    "source_file": source_file,
-                    "line": line_no,
-                    "variant": variant,
-                    "artifact": artifact,
-                }
-            )
+            draft = {
+                "error_type": error_type,
+                "message": message[:500],
+                "signature": signature,
+                "test_id": test_id,
+                "source_file": source_file,
+                "line": line_no,
+                "variant": variant,
+                "artifact": artifact,
+            }
+            draft["language"] = _record_language(draft)
+            records.append(draft)
     return records
 
 
@@ -306,10 +375,13 @@ def records_to_normalized_errors(
         kind = "python_import" if error_type in ("ModuleNotFoundError", "ImportError") else "junit"
         if error_type == "AssertionError":
             kind = "assertion"
+        language = rec.get("language")
+        if not language:
+            language = "python" if error_type not in ("Unknown", "generic") else "junit"
         errors.append(
             {
                 "error_type": error_type,
-                "language": "python" if error_type not in ("Unknown", "generic") else "junit",
+                "language": str(language),
                 "phase": "test",
                 "signature": str(rec.get("signature") or "generic"),
                 "location": location,
@@ -368,7 +440,13 @@ def _import_related_error(record: Mapping[str, Any]) -> bool:
     )
 
 
-def build_cascade_hypotheses(
+HypothesisRule = Callable[
+    [Sequence[Mapping[str, Any]], Path | None, Sequence[str]],
+    list[dict[str, Any]],
+]
+
+
+def rule_import_cascade(
     records: Sequence[Mapping[str, Any]],
     project_root: Path | None,
     squad_names: Sequence[str],
@@ -416,6 +494,20 @@ def build_cascade_hypotheses(
             "source_squads": list(squad_names),
         }
     ]
+
+
+HYPOTHESIS_RULES: list[HypothesisRule] = [rule_import_cascade]
+
+
+def build_cascade_hypotheses(
+    records: Sequence[Mapping[str, Any]],
+    project_root: Path | None,
+    squad_names: Sequence[str],
+) -> list[dict[str, Any]]:
+    hypotheses: list[dict[str, Any]] = []
+    for rule in HYPOTHESIS_RULES:
+        hypotheses.extend(rule(records, project_root, squad_names))
+    return hypotheses
 
 
 def _read_context_lines(path: Path, line: int | None, radius: int = 5) -> str:
@@ -594,8 +686,6 @@ def run_code_squad(ctx: SquadContext) -> dict[str, Any]:
         findings.append({"unresolved_imports": sorted(unresolved_imports)[:20]})
     if related_files:
         findings.append({"related_files": sorted(related_files)[:20]})
-
-    hypotheses.extend(build_cascade_hypotheses(ctx.records, root, (SQUAD_CODE,)))
 
     elapsed_ms = int((time.monotonic() - started) * 1000)
     return {
@@ -794,14 +884,13 @@ def run_history_squad(ctx: SquadContext) -> dict[str, Any]:
             }
         )
 
-    hypotheses = build_cascade_hypotheses(ctx.records, ctx.project_root, (SQUAD_HISTORY,))
     elapsed_ms = int((time.monotonic() - started) * 1000)
     return {
         "name": SQUAD_HISTORY,
         "status": "ok",
         "elapsed_ms": elapsed_ms,
         "findings": findings,
-        "hypotheses": hypotheses,
+        "hypotheses": [],
     }
 
 
@@ -963,28 +1052,50 @@ def _run_one_squad(
     )
 
 
-def merge_squad_hypotheses(squad_results: Sequence[Mapping[str, Any]]) -> list[dict[str, Any]]:
+def _merge_hypothesis_into(
+    by_summary: dict[str, dict[str, Any]],
+    hyp: Mapping[str, Any],
+    squad_names: Sequence[str],
+) -> None:
+    summary = str(hyp.get("summary") or "")
+    if not summary:
+        return
+    entry = by_summary.get(summary)
+    squads = {str(name) for name in squad_names if name}
+    if entry:
+        entry["source_squads"] = sorted(set(entry.get("source_squads") or []) | squads)
+        entry["explains"] = list(
+            dict.fromkeys([*(entry.get("explains") or []), *(hyp.get("explains") or [])])
+        )
+        if hyp.get("confidence") == "high":
+            entry["confidence"] = "high"
+    else:
+        copy = dict(hyp)
+        copy["source_squads"] = sorted(squads)
+        by_summary[summary] = copy
+
+
+def merge_squad_hypotheses(
+    squad_results: Sequence[Mapping[str, Any]],
+    *,
+    records: Sequence[Mapping[str, Any]] | None = None,
+    project_root: Path | None = None,
+) -> list[dict[str, Any]]:
     by_summary: dict[str, dict[str, Any]] = {}
+    active_squads = [
+        str(squad.get("name") or "")
+        for squad in squad_results
+        if squad.get("status") in ("ok", "timeout")
+    ]
     for squad in squad_results:
         if squad.get("status") not in ("ok", "timeout"):
             continue
         for hyp in squad.get("hypotheses") or []:
-            summary = str(hyp.get("summary") or "")
-            if not summary:
-                continue
-            entry = by_summary.get(summary)
-            squads = {str(squad.get("name") or "")}
-            if entry:
-                entry["source_squads"] = sorted(set(entry.get("source_squads") or []) | squads)
-                entry["explains"] = list(
-                    dict.fromkeys([*(entry.get("explains") or []), *(hyp.get("explains") or [])])
-                )
-                if hyp.get("confidence") == "high":
-                    entry["confidence"] = "high"
-            else:
-                copy = dict(hyp)
-                copy["source_squads"] = sorted(squads)
-                by_summary[summary] = copy
+            _merge_hypothesis_into(by_summary, hyp, (str(squad.get("name") or ""),))
+    if records is not None:
+        for rule in HYPOTHESIS_RULES:
+            for hyp in rule(records, project_root, active_squads):
+                _merge_hypothesis_into(by_summary, hyp, active_squads)
     ordered = sorted(
         by_summary.values(),
         key=lambda h: (
@@ -999,16 +1110,17 @@ def merge_squad_hypotheses(squad_results: Sequence[Mapping[str, Any]]) -> list[d
     return ordered
 
 
-def enrich_fix_candidates(
+FixRule = Callable[[list[dict[str, Any]], Sequence[Mapping[str, Any]]], list[dict[str, Any]] | None]
+
+
+def rule_fix_import_cascade(
     candidates: list[dict[str, Any]],
     hypotheses: Sequence[Mapping[str, Any]],
-) -> list[dict[str, Any]]:
-    if not hypotheses:
-        return candidates
-    out = list(candidates)
+) -> list[dict[str, Any]] | None:
     for hyp in hypotheses:
         if hyp.get("summary") != "import-path contamination":
             continue
+        out = list(candidates)
         squads = list(hyp.get("source_squads") or [])
         entry = {
             "id": f"F{len(out) + 1}",
@@ -1024,7 +1136,24 @@ def enrich_fix_candidates(
             "source_squads": squads,
         }
         out.insert(0, entry)
-        break
+        return out
+    return None
+
+
+FIX_RULES: list[FixRule] = [rule_fix_import_cascade]
+
+
+def enrich_fix_candidates(
+    candidates: list[dict[str, Any]],
+    hypotheses: Sequence[Mapping[str, Any]],
+) -> list[dict[str, Any]]:
+    if not hypotheses:
+        return candidates
+    out = list(candidates)
+    for rule in FIX_RULES:
+        updated = rule(out, hypotheses)
+        if updated is not None:
+            out = updated
     return out
 
 
@@ -1081,7 +1210,11 @@ def run_error_squads(
                 )
 
     results.sort(key=lambda r: ALL_SQUADS.index(r["name"]) if r["name"] in ALL_SQUADS else 99)
-    hypotheses = merge_squad_hypotheses(results)
+    hypotheses = merge_squad_hypotheses(
+        results,
+        records=ctx.records,
+        project_root=ctx.project_root,
+    )
     return {"squads": results, "hypotheses": hypotheses}
 
 

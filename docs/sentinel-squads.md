@@ -59,7 +59,22 @@
 ## 仮説のマージ
 
 - スクワッド間で同じ `summary` をまとめ、`source_squads` を和集合にする。
-- **import-path contamination**（H1）: リポジトリに実在する短いモジュール名への `ModuleNotFoundError` / `AttributeError` が複数あるとき、根因候補として `explains` にテスト ID を列挙する。
+- `merge_squad_hypotheses` はスクワッドが返した `hypotheses` に加え、**HYPOTHESIS_RULES** を `records` に対して実行し、結果を同じ `summary` キーでマージする（並列エージェントはルールをリスト末尾に追加するだけ）。
+- **import-path contamination**（H1）: `rule_import_cascade` — リポジトリに実在する短いモジュール名への `ModuleNotFoundError` / `AttributeError` が複数あるとき、根因候補として `explains` にテスト ID を列挙する。
+
+## 拡張ポイント（`squad.py`）
+
+並列エージェントは **既存の並びの末尾に関数を追加** する。先頭に挿入したり、既存エントリを差し替えない（順序が意味を持つものは下表のとおり）。
+
+| リスト | 呼び出し元 | シグネチャ | 戻り値 | 順序 |
+|--------|------------|------------|--------|------|
+| `EXCEPTION_PARSERS` | `_exception_type` | `(message: str, blob: str, first_line: str) -> str \| None` | 例外型名、未判定は `None` | 先に成功したパーサーが採用。最後まで `None` なら `Unknown`。 |
+| `VARIANT_PARSERS` | `variant_from_artifact` | `(path: str) -> str \| None` | バリアント名（例 `py3.12`）、未判定は `None` | 先に非 `None` の結果を採用。すべて `None` なら `unknown`。 |
+| `LANGUAGE_DETECTORS` | `parse_junit_failure_records`（レコード構築時） | `(record: Mapping[str, Any]) -> str \| None` | `python` など、未判定は `None` | 先に非 `None` の言語を `records[].language` に設定。すべて `None` なら `language` は `null`。 |
+| `HYPOTHESIS_RULES` | `merge_squad_hypotheses`（および `build_cascade_hypotheses`） | `(records, project_root, squad_names) -> list[dict]` | 仮説 dict のリスト（`summary`, `confidence`, `explains`, 任意 `id`） | 各ルールの出力を順にマージ。同一 `summary` は `source_squads` 和集合・`explains` 連結。 |
+| `FIX_RULES` | `enrich_fix_candidates` | `(candidates, hypotheses) -> list[dict] \| None` | 更新後の候補リスト、変更なしは `None` | 先に非 `None` を返したルールのみ適用（現状は import カスケード 1 件）。 |
+
+`records[]` には JUnit 解析時に `language` が載る（既定は Python JUnit のみ `python` を検出）。`records_to_normalized_errors` はレコードの `language` を優先し、無いときだけ従来の推定にフォールバックする。
 
 ## レポート JSON
 

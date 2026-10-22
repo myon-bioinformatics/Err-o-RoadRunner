@@ -1,0 +1,997 @@
+{
+  "capture": {
+    "stderr_tail": "",
+    "stdout_tail": ""
+  },
+  "command": {
+    "argv": [
+      "sh",
+      "-c",
+      "exit 0"
+    ],
+    "cwd": "/workspace",
+    "reproduce_command": "sh -c 'exit 0'"
+  },
+  "environment": {
+    "values_redacted": {
+      "AGENT_TRANSCRIPTS": "/home/ubuntu/.cursor/projects/workspace/agent-transcripts",
+      "CARGO_HOME": "/usr/local/cargo",
+      "CURSOR_AGENT": "1",
+      "CURSOR_AGENT_SOCKET": "/run/cursor/api.sock",
+      "CURSOR_CONVERSATION_ID": "bc-b0cd5e5c-4a13-5a5c-928e-f4cf3d26b2f7",
+      "CURSOR_REQUEST_ID": "95ce981d-df9b-403b-b76c-7ca97ec7c05d",
+      "CURSOR_RIPGREP_PATH": "/exec-daemon/rg",
+      "CURSOR_SPAWN_CWD_HOP": "1",
+      "CURSOR_WORKLOAD_CGROUP": "/sys/fs/cgroup/system.slice/pod-s2wdsbz3nza6jbe7temkxbme6y-92898b56/cursor-agent/workload",
+      "DISPLAY": ":1",
+      "EXEC_DAEMON_STARTUP_TRACEPARENT": "00-01a16351da9c76aa84345dd436b3d319-20c4838318831272-01",
+      "FORCE_COLOR": "0",
+      "GH_TELEMETRY": "false",
+      "GIT_DISCOVERY_ACROSS_FILESYSTEM": "0",
+      "GIT_LFS_SKIP_SMUDGE": "1",
+      "HOME": "/home/ubuntu",
+      "LANG": "en_US.UTF-8",
+      "LC_ALL": "en_US.UTF-8",
+      "NO_COLOR": "1",
+      "NVM_BIN": "/home/ubuntu/.nvm/versions/node/v22.23.4/bin",
+      "NVM_CD_FLAGS": "",
+      "NVM_DIR": "/home/ubuntu/.nvm",
+      "NVM_INC": "/home/ubuntu/.nvm/versions/node/v22.23.4/include/node",
+      "OLDPWD": "/workspace",
+      "PATH": "/usr/local/cargo/bin:/exec-daemon:/exec-daemon/tools:/usr/local/cargo/bin:/home/ubuntu/.nvm/versions/node/v22.23.4/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+      "PS1": "\\[\u001b[36m\\]\\W\\[\u001b[0m\\] $ ",
+      "PWD": "/workspace",
+      "RUSTUP_HOME": "/usr/local/rustup",
+      "RUST_VERSION": "1.83.0",
+      "SHELL": "/bin/bash",
+      "SHLVL": "1",
+      "TERM": "dumb",
+      "USER": "ubuntu",
+      "VNC_DPI": "96",
+      "VNC_RESOLUTION": "1920x1200x24",
+      "_": "/usr/bin/python3",
+      "_ZO_DOCTOR": "0",
+      "__CURSOR_SANDBOX_ENV_RESTORE": "builtin unset CURSOR_CONVERSATION_ID CURSOR_REQUEST_ID CURSOR_AGENT_STORE_FILES_DIR CURSOR_AGENT_STORE_SHARED_PATHS 2>/dev/null || true; builtin export CURSOR_CONVERSATION_ID='bc-b0cd5e5c-4a13-5a5c-9…"
+    },
+    "variable_count": 38,
+    "variable_names": [
+      "AGENT_TRANSCRIPTS",
+      "CARGO_HOME",
+      "CURSOR_AGENT",
+      "CURSOR_AGENT_SOCKET",
+      "CURSOR_CONVERSATION_ID",
+      "CURSOR_REQUEST_ID",
+      "CURSOR_RIPGREP_PATH",
+      "CURSOR_SPAWN_CWD_HOP",
+      "CURSOR_WORKLOAD_CGROUP",
+      "DISPLAY",
+      "EXEC_DAEMON_STARTUP_TRACEPARENT",
+      "FORCE_COLOR",
+      "GH_TELEMETRY",
+      "GIT_DISCOVERY_ACROSS_FILESYSTEM",
+      "GIT_LFS_SKIP_SMUDGE",
+      "HOME",
+      "LANG",
+      "LC_ALL",
+      "NO_COLOR",
+      "NVM_BIN",
+      "NVM_CD_FLAGS",
+      "NVM_DIR",
+      "NVM_INC",
+      "OLDPWD",
+      "PATH",
+      "PS1",
+      "PWD",
+      "RUSTUP_HOME",
+      "RUST_VERSION",
+      "SHELL",
+      "SHLVL",
+      "TERM",
+      "USER",
+      "VNC_DPI",
+      "VNC_RESOLUTION",
+      "_",
+      "_ZO_DOCTOR",
+      "__CURSOR_SANDBOX_ENV_RESTORE"
+    ],
+    "variable_names_truncated": false
+  },
+  "escalation_reasons": [
+    "junit_failure"
+  ],
+  "fix_candidates": [
+    {
+      "confidence": "high",
+      "evidence": [
+        "junit failure (first) (5 variants): cycle = PosixPath('<pytest-tmp>/pytest-0/test_real_exploration_resume_m0/cycle')\\ntmp_path = PosixPath('<pytest-tmp>/pytest-0/test_real_exploration_resume_m0')\\n\\n    def test_real_exploration_resume_matches_uninterrupted(cycle, tmp_path):\\n        spec = plan('{\"sets\":[\"A\",\"B\"],\"max_depth\":2}', cycle)\\n>       ex = Explorer(cycle, spec)\\n             ^^^^^^^^^^^^^^^^^^^^^\\n\\nnagoyaction/tests/tes"
+      ],
+      "id": "F1",
+      "kind": "junit",
+      "location": {},
+      "suggestion": "Open the first failing testcase in the JUnit XML and read the message/stack.",
+      "verify_command": "sh -c 'exit 0'"
+    },
+    {
+      "confidence": "low",
+      "evidence": [
+        "exit code: 1"
+      ],
+      "id": "F2",
+      "kind": "generic",
+      "location": {},
+      "suggestion": "Re-run reproduce_command with verbose logging and inspect stderr.",
+      "verify_command": "sh -c 'exit 0'"
+    }
+  ],
+  "groups": {
+    "buckets": [
+      {
+        "count": 7,
+        "errors": [
+          {
+            "error_type": "AssertionError",
+            "first_seen": 2,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 0 == 1",
+            "phase": "test",
+            "signature": "assert <n> == <n>",
+            "source_line": "nagoyaction.tests.test_inbox::test_bot_intake_worker_completion_and_retry",
+            "test_id": "nagoyaction.tests.test_inbox::test_bot_intake_worker_completion_and_retry",
+            "variants": [
+              "py3.11",
+              "py3.12",
+              "py3.13",
+              "py3.14",
+              "py3.15"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 6,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 0 == 1",
+            "phase": "test",
+            "signature": "assert <n> == <n>",
+            "source_line": "nagoyaction.tests.test_inbox::test_worker_bundled_completion_recovers_lost_response",
+            "test_id": "nagoyaction.tests.test_inbox::test_worker_bundled_completion_recovers_lost_response",
+            "variants": [
+              "py3.11",
+              "py3.12",
+              "py3.13",
+              "py3.14",
+              "py3.15"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 9,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 0 == 5",
+            "phase": "test",
+            "signature": "assert <n> == <n>",
+            "source_line": "nagoyaction.tests.test_inbox::test_trusted_exploration_has_five_pending_requests_per_author",
+            "test_id": "nagoyaction.tests.test_inbox::test_trusted_exploration_has_five_pending_requests_per_author",
+            "variants": [
+              "py3.11",
+              "py3.12",
+              "py3.13",
+              "py3.14",
+              "py3.15"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 10,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert (0 > 2)",
+            "phase": "test",
+            "signature": "assert (<n> > <n>)",
+            "source_line": "nagoyaction.tests.test_inbox::test_worker_reads_comments_only_for_completion",
+            "test_id": "nagoyaction.tests.test_inbox::test_worker_reads_comments_only_for_completion",
+            "variants": [
+              "py3.11",
+              "py3.12",
+              "py3.13",
+              "py3.14",
+              "py3.15"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 11,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 'すでに終了' in '判定不能 / 入力を確認してください: その探索依頼はありません\\n\\n対象サイクル: `` / 結果SHA: `` / 対象コード: `sha` / 元コメント: 532'",
+            "phase": "test",
+            "signature": "assert 'すでに終了' in '判定不能 / 入力を確認してください: その探索依頼はありません\\n\\n対象サイクル: `` / 結果SHA: `` / 対象コード: `sha` / 元コメント: <n>'",
+            "source_line": "nagoyaction.tests.test_inbox::test_finished_stop_does_not_create_stop_record",
+            "test_id": "nagoyaction.tests.test_inbox::test_finished_stop_does_not_create_stop_record",
+            "variants": [
+              "py3.11",
+              "py3.12",
+              "py3.13",
+              "py3.14",
+              "py3.15"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 16,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert [] == ['/issues/1/comments']",
+            "phase": "test",
+            "signature": "assert [] == ['<path>']",
+            "source_line": "nagoyaction.tests.test_inbox::test_completion_bundles_use_run_id_without_run_api",
+            "test_id": "nagoyaction.tests.test_inbox::test_completion_bundles_use_run_id_without_run_api",
+            "variants": [
+              "py3.11",
+              "py3.12",
+              "py3.13",
+              "py3.14",
+              "py3.15"
+            ]
+          },
+          {
+            "error_type": "AssertionError",
+            "first_seen": 17,
+            "kind": "assertion",
+            "language": "python",
+            "location": {},
+            "message": "assert 0 == 20",
+            "phase": "test",
+            "signature": "assert <n> == <n>",
+            "source_line": "nagoyaction.tests.test_inbox::test_total_pending_limit_still_applies_to_trusted_users",
+            "test_id": "nagoyaction.tests.test_inbox::test_total_pending_limit_still_applies_to_trusted_users",
+            "variants": [
+              "py3.11",
+              "py3.12",
+              "py3.13",
+              "py3.14",
+              "py3.15"
+            ]
+          }
+        ],
+        "first_seen": 2,
+        "key": {
+          "error_type": "AssertionError"
+        },
+        "name": "error_type=AssertionError"
+      },
+      {
+        "count": 4,
+        "errors": [
+          {
+            "error_type": "ModuleNotFoundError",
+            "first_seen": 0,
+            "kind": "python_import",
+            "language": "python",
+            "location": {
+              "line": "111",
+              "loc": "nagoyaction/tests/test_inbox.py"
+            },
+            "message": "No module named 'sets'",
+            "phase": "test",
+            "signature": "No module named 'sets'",
+            "source_line": "nagoyaction.tests.test_inbox::test_real_exploration_resume_matches_uninterrupted",
+            "test_id": "nagoyaction.tests.test_inbox::test_real_exploration_resume_matches_uninterrupted",
+            "variants": [
+              "py3.11",
+              "py3.12",
+              "py3.13",
+              "py3.14",
+              "py3.15"
+            ]
+          },
+          {
+            "error_type": "ModuleNotFoundError",
+            "first_seen": 1,
+            "kind": "python_import",
+            "language": "python",
+            "location": {
+              "line": "134",
+              "loc": "nagoyaction/tests/test_inbox.py"
+            },
+            "message": "No module named 'sets'",
+            "phase": "test",
+            "signature": "No module named 'sets'",
+            "source_line": "nagoyaction.tests.test_inbox::test_exploration_deadline_and_candidate_bound",
+            "test_id": "nagoyaction.tests.test_inbox::test_exploration_deadline_and_candidate_bound",
+            "variants": [
+              "py3.11",
+              "py3.12",
+              "py3.13",
+              "py3.14",
+              "py3.15"
+            ]
+          },
+          {
+            "error_type": "ModuleNotFoundError",
+            "first_seen": 4,
+            "kind": "python_import",
+            "language": "python",
+            "location": {
+              "line": "269",
+              "loc": "nagoyaction/tests/test_inbox.py"
+            },
+            "message": "No module named 'neighbors'",
+            "phase": "test",
+            "signature": "No module named 'neighbors'",
+            "source_line": "nagoyaction.tests.test_inbox::test_automatic_worker_without_comments_prepares_and_finishes",
+            "test_id": "nagoyaction.tests.test_inbox::test_automatic_worker_without_comments_prepares_and_finishes",
+            "variants": [
+              "py3.11",
+              "py3.12",
+              "py3.13",
+              "py3.14",
+              "py3.15"
+            ]
+          },
+          {
+            "error_type": "ModuleNotFoundError",
+            "first_seen": 5,
+            "kind": "python_import",
+            "language": "python",
+            "location": {
+              "line": "297",
+              "loc": "nagoyaction/tests/test_inbox.py"
+            },
+            "message": "No module named 'neighbors'",
+            "phase": "test",
+            "signature": "No module named 'neighbors'",
+            "source_line": "nagoyaction.tests.test_inbox::test_neighbor_feedback_html_roundtrip_and_restart",
+            "test_id": "nagoyaction.tests.test_inbox::test_neighbor_feedback_html_roundtrip_and_restart",
+            "variants": [
+              "py3.11",
+              "py3.12",
+              "py3.13",
+              "py3.14",
+              "py3.15"
+            ]
+          }
+        ],
+        "first_seen": 0,
+        "key": {
+          "error_type": "ModuleNotFoundError"
+        },
+        "name": "error_type=ModuleNotFoundError"
+      },
+      {
+        "count": 3,
+        "errors": [
+          {
+            "error_type": "SystemExit",
+            "first_seen": 13,
+            "kind": "junit",
+            "language": "python",
+            "location": {
+              "line": "534",
+              "loc": "nagoyaction/tests/test_inbox.py"
+            },
+            "message": "2",
+            "phase": "test",
+            "signature": "<n>",
+            "source_line": "nagoyaction.tests.test_inbox::test_inbox_configuration_does_not_enable_automatic_research[]",
+            "test_id": "nagoyaction.tests.test_inbox::test_inbox_configuration_does_not_enable_automatic_research[]",
+            "variants": [
+              "py3.11",
+              "py3.12",
+              "py3.13",
+              "py3.14",
+              "py3.15"
+            ]
+          },
+          {
+            "error_type": "SystemExit",
+            "first_seen": 14,
+            "kind": "junit",
+            "language": "python",
+            "location": {
+              "line": "534",
+              "loc": "nagoyaction/tests/test_inbox.py"
+            },
+            "message": "2",
+            "phase": "test",
+            "signature": "<n>",
+            "source_line": "nagoyaction.tests.test_inbox::test_inbox_configuration_does_not_enable_automatic_research[0]",
+            "test_id": "nagoyaction.tests.test_inbox::test_inbox_configuration_does_not_enable_automatic_research[0]",
+            "variants": [
+              "py3.11",
+              "py3.12",
+              "py3.13",
+              "py3.14",
+              "py3.15"
+            ]
+          },
+          {
+            "error_type": "SystemExit",
+            "first_seen": 15,
+            "kind": "junit",
+            "language": "python",
+            "location": {
+              "line": "534",
+              "loc": "nagoyaction/tests/test_inbox.py"
+            },
+            "message": "2",
+            "phase": "test",
+            "signature": "<n>",
+            "source_line": "nagoyaction.tests.test_inbox::test_inbox_configuration_does_not_enable_automatic_research[1]",
+            "test_id": "nagoyaction.tests.test_inbox::test_inbox_configuration_does_not_enable_automatic_research[1]",
+            "variants": [
+              "py3.11",
+              "py3.12",
+              "py3.13",
+              "py3.14",
+              "py3.15"
+            ]
+          }
+        ],
+        "first_seen": 13,
+        "key": {
+          "error_type": "SystemExit"
+        },
+        "name": "error_type=SystemExit"
+      },
+      {
+        "count": 2,
+        "errors": [
+          {
+            "error_type": "StopIteration",
+            "first_seen": 3,
+            "kind": "junit",
+            "language": "python",
+            "location": {},
+            "message": "StopIteration",
+            "phase": "test",
+            "signature": "StopIteration",
+            "source_line": "nagoyaction.tests.test_inbox::test_worker_refuses_to_mix_changed_inputs",
+            "test_id": "nagoyaction.tests.test_inbox::test_worker_refuses_to_mix_changed_inputs",
+            "variants": [
+              "py3.11",
+              "py3.12",
+              "py3.13",
+              "py3.14",
+              "py3.15"
+            ]
+          },
+          {
+            "error_type": "StopIteration",
+            "first_seen": 7,
+            "kind": "junit",
+            "language": "python",
+            "location": {},
+            "message": "StopIteration",
+            "phase": "test",
+            "signature": "StopIteration",
+            "source_line": "nagoyaction.tests.test_inbox::test_worker_comment_get_failure_does_not_interrupt_evaluation",
+            "test_id": "nagoyaction.tests.test_inbox::test_worker_comment_get_failure_does_not_interrupt_evaluation",
+            "variants": [
+              "py3.11",
+              "py3.12",
+              "py3.13",
+              "py3.14",
+              "py3.15"
+            ]
+          }
+        ],
+        "first_seen": 3,
+        "key": {
+          "error_type": "StopIteration"
+        },
+        "name": "error_type=StopIteration"
+      },
+      {
+        "count": 1,
+        "errors": [
+          {
+            "error_type": "FileNotFoundError",
+            "first_seen": 8,
+            "kind": "junit",
+            "language": "python",
+            "location": {
+              "line": "447",
+              "loc": "nagoyaction/tests/test_inbox.py"
+            },
+            "message": "[Errno 2] No such file or directory: '<pytest-tmp>/pytest-0/test_stopped_manual_job_is_not0/state/requests/501.json'",
+            "phase": "test",
+            "signature": "[Errno <n>] No such file or directory: '<pytest-tmp><path>'",
+            "source_line": "nagoyaction.tests.test_inbox::test_stopped_manual_job_is_not_selected_automatically",
+            "test_id": "nagoyaction.tests.test_inbox::test_stopped_manual_job_is_not_selected_automatically",
+            "variants": [
+              "py3.11",
+              "py3.12",
+              "py3.13",
+              "py3.14",
+              "py3.15"
+            ]
+          }
+        ],
+        "first_seen": 8,
+        "key": {
+          "error_type": "FileNotFoundError"
+        },
+        "name": "error_type=FileNotFoundError"
+      },
+      {
+        "count": 1,
+        "errors": [
+          {
+            "error_type": "AttributeError",
+            "first_seen": 12,
+            "kind": "junit",
+            "language": "python",
+            "location": {},
+            "message": "<module 'inbox' from '<runner-work>/nagoyaction/inbox/inbox.py'> has no attribute 'observe_report'",
+            "phase": "test",
+            "signature": "<module 'inbox' from '<runner-work><path>'> has no attribute 'observe_report'",
+            "source_line": "nagoyaction.tests.test_inbox::test_html_observation_failure_keeps_previous_and_worker_continues",
+            "test_id": "nagoyaction.tests.test_inbox::test_html_observation_failure_keeps_previous_and_worker_continues",
+            "variants": [
+              "py3.11",
+              "py3.12",
+              "py3.13",
+              "py3.14",
+              "py3.15"
+            ]
+          }
+        ],
+        "first_seen": 12,
+        "key": {
+          "error_type": "AttributeError"
+        },
+        "name": "error_type=AttributeError"
+      },
+      {
+        "count": 1,
+        "errors": [
+          {
+            "error_type": "IndexError",
+            "first_seen": 18,
+            "kind": "junit",
+            "language": "python",
+            "location": {},
+            "message": "list index out of range",
+            "phase": "test",
+            "signature": "list index out of range",
+            "source_line": "nagoyaction.tests.test_inbox::test_registration_status_is_conservative_and_rendered",
+            "test_id": "nagoyaction.tests.test_inbox::test_registration_status_is_conservative_and_rendered",
+            "variants": [
+              "py3.11",
+              "py3.12",
+              "py3.13",
+              "py3.14",
+              "py3.15"
+            ]
+          }
+        ],
+        "first_seen": 18,
+        "key": {
+          "error_type": "IndexError"
+        },
+        "name": "error_type=IndexError"
+      }
+    ],
+    "error_count": 19,
+    "group_by": [
+      "error_type"
+    ],
+    "sort": "count"
+  },
+  "human_summary": "## Err-o-RoadRunner sentinel (escalated)\n\n- **Reasons:** junit_failure\n- **Command:** `sh -c 'exit 0'`\n- **Exit code:** 0\n\n### Hints\n- junit framework guess (5 variants): pytest/python\n- web search keywords (5 variants): cycle = PosixPath('<pytest-tmp>/pytest-0/test_real_exploration_resume_m0/cycle')\\ntmp_path = PosixPath('<pytest-tmp>/pytest-0/test_real_exploration_resume_m0')\\n\\n    def test_real_exploration_resume_matches_uninterrupted(cycle, tmp_path):\\n        spec = plan('{\"sets\":[\"A\",\"B\"],\"max_depth\":2}', cycle)\\n>       ex = Explorer(cycle, spec)\\n             ^^^^^^^^^^^^^^^^^^^^^\\n\\nnagoyaction/tests/tes\n\n### Key findings\n- exit code: 1\n- junit failures (5 variants): 19\n- junit failure (first) (5 variants): cycle = PosixPath('<pytest-tmp>/pytest-0/test_real_exploration_resume_m0/cycle')\\ntmp_path = PosixPath('<pytest-tmp>/pytest-0/test_real_exploration_resume_m0')\\n\\n    def test_real_exploration_resume_matches_uninterrupted(cycle, tmp_path):\\n        spec = plan('{\"sets\":[\"A\",\"B\"],\"max_depth\":2}', cycle)\\n>       ex = Explorer(cycle, spec)\\n             ^^^^^^^^^^^^^^^^^^^^^\\n\\nnagoyaction/tests/tes\n- junit failure (last) (5 variants): def test_registration_status_is_conservative_and_rendered():\\n        from ask import registration_status, render\\n        posthoc = item()\\n        posthoc[\"posthoc\"] = True\\n        unknown = item()\\n        unknown[\"id\"] = \"E2\"\\n        prereg = item()\\n        prereg[\"id\"] = \"E3\"\\n        prereg[\"preregistered\"] = True\\n        assert registration_status(posthoc) == \"事後構成\"\\n        assert regi\n- junit failure groups (5 variants): 19 failures in 11 groups\n- junit failure group 1/11 (5 variants): 4× AssertionError: assert N == N — first: nagoyaction.tests.test_inbox::test_bot_intake_worker_completion_and_retry — msg: AssertionError: assert 0 == 1\n- junit failure group 2/11 (5 variants): 3× SystemExit: N — first: nagoyaction.tests.test_inbox::test_inbox_configuration_does_not_enable_automatic_research[] — msg: SystemExit: 2\n- junit failure group 3/11 (5 variants): 2× ModuleNotFoundError: No module named <q> — first: nagoyaction.tests.test_inbox::test_automatic_worker_without_comments_prepares_and_finishes — msg: ModuleNotFoundError: No module named 'neighbors'\n- junit failure group 4/11 (5 variants): 2× ModuleNotFoundError: No module named <q> — first: nagoyaction.tests.test_inbox::test_real_exploration_resume_matches_uninterrupted — msg: ModuleNotFoundError: No module named 'sets'\n- junit failure group 5/11 (5 variants): 2× StopIteration — first: nagoyaction.tests.test_inbox::test_worker_refuses_to_mix_changed_inputs — msg: StopIteration\n- junit failure group 6/11 (5 variants): 1× AssertionError: assert [] == [<q>] — first: nagoyaction.tests.test_inbox::test_completion_bundles_use_run_id_without_run_api — msg: AssertionError: assert [] == ['/issues/1/comments']\n- junit failure group 7/11 (5 variants): 1× AssertionError: assert <q> in <q> — first: nagoyaction.tests.test_inbox::test_finished_stop_does_not_create_stop_record — msg: AssertionError: assert 'すでに終了' in '判定不能 / 入力を確認してください: その探索依頼はありません\\n\\n対象サイクル: `` / 結果SHA: `` / 対象コード: `sha` / 元コメント: 532'\n- … 12 more FOUND lines in JSON\n\n### Fix candidates\n- **F1** (junit, high): Open the first failing testcase in the JUnit XML and read the message/stack.\n- **F2** (generic, low): Re-run reproduce_command with verbose logging and inspect stderr.",
+  "hypotheses": [],
+  "locations": [],
+  "mode": "escalated",
+  "next_investigation_steps": [
+    "Open the JUnit XML and read the first failure or error testcase.",
+    "Reproduce with the same Node version; check package-lock or lockfile.",
+    "Use HINT web search keywords before deeper code archaeology."
+  ],
+  "outcome": {
+    "exit_code": 0,
+    "junit_failure": true,
+    "raw_exit_code": 0,
+    "signal": null,
+    "termination_signal": null,
+    "timed_out": false
+  },
+  "records": [
+    {
+      "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
+      "error_type": "ModuleNotFoundError",
+      "line": 111,
+      "message": "No module named 'sets'",
+      "signature": "No module named 'sets'",
+      "source_file": "nagoyaction/tests/test_inbox.py",
+      "test_id": "nagoyaction.tests.test_inbox::test_real_exploration_resume_matches_uninterrupted",
+      "variant": "py3.11",
+      "variants": [
+        "py3.11",
+        "py3.12",
+        "py3.13",
+        "py3.14",
+        "py3.15"
+      ]
+    },
+    {
+      "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
+      "error_type": "ModuleNotFoundError",
+      "line": 134,
+      "message": "No module named 'sets'",
+      "signature": "No module named 'sets'",
+      "source_file": "nagoyaction/tests/test_inbox.py",
+      "test_id": "nagoyaction.tests.test_inbox::test_exploration_deadline_and_candidate_bound",
+      "variant": "py3.11",
+      "variants": [
+        "py3.11",
+        "py3.12",
+        "py3.13",
+        "py3.14",
+        "py3.15"
+      ]
+    },
+    {
+      "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
+      "error_type": "AssertionError",
+      "line": null,
+      "message": "assert 0 == 1",
+      "signature": "assert <n> == <n>",
+      "source_file": "",
+      "test_id": "nagoyaction.tests.test_inbox::test_bot_intake_worker_completion_and_retry",
+      "variant": "py3.11",
+      "variants": [
+        "py3.11",
+        "py3.12",
+        "py3.13",
+        "py3.14",
+        "py3.15"
+      ]
+    },
+    {
+      "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
+      "error_type": "StopIteration",
+      "line": null,
+      "message": "StopIteration",
+      "signature": "StopIteration",
+      "source_file": "",
+      "test_id": "nagoyaction.tests.test_inbox::test_worker_refuses_to_mix_changed_inputs",
+      "variant": "py3.11",
+      "variants": [
+        "py3.11",
+        "py3.12",
+        "py3.13",
+        "py3.14",
+        "py3.15"
+      ]
+    },
+    {
+      "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
+      "error_type": "ModuleNotFoundError",
+      "line": 269,
+      "message": "No module named 'neighbors'",
+      "signature": "No module named 'neighbors'",
+      "source_file": "nagoyaction/tests/test_inbox.py",
+      "test_id": "nagoyaction.tests.test_inbox::test_automatic_worker_without_comments_prepares_and_finishes",
+      "variant": "py3.11",
+      "variants": [
+        "py3.11",
+        "py3.12",
+        "py3.13",
+        "py3.14",
+        "py3.15"
+      ]
+    },
+    {
+      "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
+      "error_type": "ModuleNotFoundError",
+      "line": 297,
+      "message": "No module named 'neighbors'",
+      "signature": "No module named 'neighbors'",
+      "source_file": "nagoyaction/tests/test_inbox.py",
+      "test_id": "nagoyaction.tests.test_inbox::test_neighbor_feedback_html_roundtrip_and_restart",
+      "variant": "py3.11",
+      "variants": [
+        "py3.11",
+        "py3.12",
+        "py3.13",
+        "py3.14",
+        "py3.15"
+      ]
+    },
+    {
+      "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
+      "error_type": "AssertionError",
+      "line": null,
+      "message": "assert 0 == 1",
+      "signature": "assert <n> == <n>",
+      "source_file": "",
+      "test_id": "nagoyaction.tests.test_inbox::test_worker_bundled_completion_recovers_lost_response",
+      "variant": "py3.11",
+      "variants": [
+        "py3.11",
+        "py3.12",
+        "py3.13",
+        "py3.14",
+        "py3.15"
+      ]
+    },
+    {
+      "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
+      "error_type": "StopIteration",
+      "line": null,
+      "message": "StopIteration",
+      "signature": "StopIteration",
+      "source_file": "",
+      "test_id": "nagoyaction.tests.test_inbox::test_worker_comment_get_failure_does_not_interrupt_evaluation",
+      "variant": "py3.11",
+      "variants": [
+        "py3.11",
+        "py3.12",
+        "py3.13",
+        "py3.14",
+        "py3.15"
+      ]
+    },
+    {
+      "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
+      "error_type": "FileNotFoundError",
+      "line": 447,
+      "message": "[Errno 2] No such file or directory: '<pytest-tmp>/pytest-0/test_stopped_manual_job_is_not0/state/requests/501.json'",
+      "signature": "[Errno <n>] No such file or directory: '<pytest-tmp><path>'",
+      "source_file": "nagoyaction/tests/test_inbox.py",
+      "test_id": "nagoyaction.tests.test_inbox::test_stopped_manual_job_is_not_selected_automatically",
+      "variant": "py3.11",
+      "variants": [
+        "py3.11",
+        "py3.12",
+        "py3.13",
+        "py3.14",
+        "py3.15"
+      ]
+    },
+    {
+      "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
+      "error_type": "AssertionError",
+      "line": null,
+      "message": "assert 0 == 5",
+      "signature": "assert <n> == <n>",
+      "source_file": "",
+      "test_id": "nagoyaction.tests.test_inbox::test_trusted_exploration_has_five_pending_requests_per_author",
+      "variant": "py3.11",
+      "variants": [
+        "py3.11",
+        "py3.12",
+        "py3.13",
+        "py3.14",
+        "py3.15"
+      ]
+    },
+    {
+      "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
+      "error_type": "AssertionError",
+      "line": null,
+      "message": "assert (0 > 2)",
+      "signature": "assert (<n> > <n>)",
+      "source_file": "",
+      "test_id": "nagoyaction.tests.test_inbox::test_worker_reads_comments_only_for_completion",
+      "variant": "py3.11",
+      "variants": [
+        "py3.11",
+        "py3.12",
+        "py3.13",
+        "py3.14",
+        "py3.15"
+      ]
+    },
+    {
+      "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
+      "error_type": "AssertionError",
+      "line": null,
+      "message": "assert 'すでに終了' in '判定不能 / 入力を確認してください: その探索依頼はありません\\n\\n対象サイクル: `` / 結果SHA: `` / 対象コード: `sha` / 元コメント: 532'",
+      "signature": "assert 'すでに終了' in '判定不能 / 入力を確認してください: その探索依頼はありません\\n\\n対象サイクル: `` / 結果SHA: `` / 対象コード: `sha` / 元コメント: <n>'",
+      "source_file": "",
+      "test_id": "nagoyaction.tests.test_inbox::test_finished_stop_does_not_create_stop_record",
+      "variant": "py3.11",
+      "variants": [
+        "py3.11",
+        "py3.12",
+        "py3.13",
+        "py3.14",
+        "py3.15"
+      ]
+    },
+    {
+      "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
+      "error_type": "AttributeError",
+      "line": null,
+      "message": "<module 'inbox' from '<runner-work>/nagoyaction/inbox/inbox.py'> has no attribute 'observe_report'",
+      "signature": "<module 'inbox' from '<runner-work><path>'> has no attribute 'observe_report'",
+      "source_file": "",
+      "test_id": "nagoyaction.tests.test_inbox::test_html_observation_failure_keeps_previous_and_worker_continues",
+      "variant": "py3.11",
+      "variants": [
+        "py3.11",
+        "py3.12",
+        "py3.13",
+        "py3.14",
+        "py3.15"
+      ]
+    },
+    {
+      "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
+      "error_type": "SystemExit",
+      "line": 534,
+      "message": "2",
+      "signature": "<n>",
+      "source_file": "nagoyaction/tests/test_inbox.py",
+      "test_id": "nagoyaction.tests.test_inbox::test_inbox_configuration_does_not_enable_automatic_research[]",
+      "variant": "py3.11",
+      "variants": [
+        "py3.11",
+        "py3.12",
+        "py3.13",
+        "py3.14",
+        "py3.15"
+      ]
+    },
+    {
+      "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
+      "error_type": "SystemExit",
+      "line": 534,
+      "message": "2",
+      "signature": "<n>",
+      "source_file": "nagoyaction/tests/test_inbox.py",
+      "test_id": "nagoyaction.tests.test_inbox::test_inbox_configuration_does_not_enable_automatic_research[0]",
+      "variant": "py3.11",
+      "variants": [
+        "py3.11",
+        "py3.12",
+        "py3.13",
+        "py3.14",
+        "py3.15"
+      ]
+    },
+    {
+      "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
+      "error_type": "SystemExit",
+      "line": 534,
+      "message": "2",
+      "signature": "<n>",
+      "source_file": "nagoyaction/tests/test_inbox.py",
+      "test_id": "nagoyaction.tests.test_inbox::test_inbox_configuration_does_not_enable_automatic_research[1]",
+      "variant": "py3.11",
+      "variants": [
+        "py3.11",
+        "py3.12",
+        "py3.13",
+        "py3.14",
+        "py3.15"
+      ]
+    },
+    {
+      "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
+      "error_type": "AssertionError",
+      "line": null,
+      "message": "assert [] == ['/issues/1/comments']",
+      "signature": "assert [] == ['<path>']",
+      "source_file": "",
+      "test_id": "nagoyaction.tests.test_inbox::test_completion_bundles_use_run_id_without_run_api",
+      "variant": "py3.11",
+      "variants": [
+        "py3.11",
+        "py3.12",
+        "py3.13",
+        "py3.14",
+        "py3.15"
+      ]
+    },
+    {
+      "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
+      "error_type": "AssertionError",
+      "line": null,
+      "message": "assert 0 == 20",
+      "signature": "assert <n> == <n>",
+      "source_file": "",
+      "test_id": "nagoyaction.tests.test_inbox::test_total_pending_limit_still_applies_to_trusted_users",
+      "variant": "py3.11",
+      "variants": [
+        "py3.11",
+        "py3.12",
+        "py3.13",
+        "py3.14",
+        "py3.15"
+      ]
+    },
+    {
+      "artifact": "Aoi_37561005125_junit-py3.11_86.xml",
+      "error_type": "IndexError",
+      "line": null,
+      "message": "list index out of range",
+      "signature": "list index out of range",
+      "source_file": "",
+      "test_id": "nagoyaction.tests.test_inbox::test_registration_status_is_conservative_and_rendered",
+      "variant": "py3.11",
+      "variants": [
+        "py3.11",
+        "py3.12",
+        "py3.13",
+        "py3.14",
+        "py3.15"
+      ]
+    }
+  ],
+  "schema": "sentinel-report/v1",
+  "squads": [],
+  "timing": {
+    "elapsed_seconds": 0.004,
+    "started_monotonic": 80.247023164
+  },
+  "triage": {
+    "found": [
+      "exit code: 1",
+      "junit failures (5 variants): 19",
+      "junit failure (first) (5 variants): cycle = PosixPath('<pytest-tmp>/pytest-0/test_real_exploration_resume_m0/cycle')\\ntmp_path = PosixPath('<pytest-tmp>/pytest-0/test_real_exploration_resume_m0')\\n\\n    def test_real_exploration_resume_matches_uninterrupted(cycle, tmp_path):\\n        spec = plan('{\"sets\":[\"A\",\"B\"],\"max_depth\":2}', cycle)\\n>       ex = Explorer(cycle, spec)\\n             ^^^^^^^^^^^^^^^^^^^^^\\n\\nnagoyaction/tests/tes",
+      "junit failure (last) (5 variants): def test_registration_status_is_conservative_and_rendered():\\n        from ask import registration_status, render\\n        posthoc = item()\\n        posthoc[\"posthoc\"] = True\\n        unknown = item()\\n        unknown[\"id\"] = \"E2\"\\n        prereg = item()\\n        prereg[\"id\"] = \"E3\"\\n        prereg[\"preregistered\"] = True\\n        assert registration_status(posthoc) == \"事後構成\"\\n        assert regi",
+      "junit failure groups (5 variants): 19 failures in 11 groups",
+      "junit failure group 1/11 (5 variants): 4× AssertionError: assert N == N — first: nagoyaction.tests.test_inbox::test_bot_intake_worker_completion_and_retry — msg: AssertionError: assert 0 == 1",
+      "junit failure group 2/11 (5 variants): 3× SystemExit: N — first: nagoyaction.tests.test_inbox::test_inbox_configuration_does_not_enable_automatic_research[] — msg: SystemExit: 2",
+      "junit failure group 3/11 (5 variants): 2× ModuleNotFoundError: No module named <q> — first: nagoyaction.tests.test_inbox::test_automatic_worker_without_comments_prepares_and_finishes — msg: ModuleNotFoundError: No module named 'neighbors'",
+      "junit failure group 4/11 (5 variants): 2× ModuleNotFoundError: No module named <q> — first: nagoyaction.tests.test_inbox::test_real_exploration_resume_matches_uninterrupted — msg: ModuleNotFoundError: No module named 'sets'",
+      "junit failure group 5/11 (5 variants): 2× StopIteration — first: nagoyaction.tests.test_inbox::test_worker_refuses_to_mix_changed_inputs — msg: StopIteration",
+      "junit failure group 6/11 (5 variants): 1× AssertionError: assert [] == [<q>] — first: nagoyaction.tests.test_inbox::test_completion_bundles_use_run_id_without_run_api — msg: AssertionError: assert [] == ['/issues/1/comments']",
+      "junit failure group 7/11 (5 variants): 1× AssertionError: assert <q> in <q> — first: nagoyaction.tests.test_inbox::test_finished_stop_does_not_create_stop_record — msg: AssertionError: assert 'すでに終了' in '判定不能 / 入力を確認してください: その探索依頼はありません\\n\\n対象サイクル: `` / 結果SHA: `` / 対象コード: `sha` / 元コメント: 532'",
+      "junit failure group 8/11 (5 variants): 1× AttributeError: <module <q> from <q>> has no attribute <q> — first: nagoyaction.tests.test_inbox::test_html_observation_failure_keeps_previous_and_worker_continues — msg: AttributeError: <module 'inbox' from '<runner-work>/nagoyaction/inbox/inbox.py'> has no attribute 'observe_report'",
+      "junit failure group 9/11 (5 variants): 1× IndexError: list index out of range — first: nagoyaction.tests.test_inbox::test_registration_status_is_conservative_and_rendered — msg: IndexError: list index out of range",
+      "junit failure group 10/11 (5 variants): 1× FileNotFoundError: [Errno N] No such file or directory: <q> — first: nagoyaction.tests.test_inbox::test_stopped_manual_job_is_not_selected_automatically — msg: FileNotFoundError: [Errno 2] No such file or directory: '<pytest-tmp>/pytest-0/test_stopped_manual_job_is_not0/state/requests/501.json'",
+      "junit failure groups truncated (5 variants): 1 type, 1 failure omitted",
+      "junit testcase classname (first) (5 variants): nagoyaction.tests.test_inbox",
+      "junit pytest exception type (5 variants): ModuleNotFoundError",
+      "python version: 3.12.3 (cpython)",
+      "node version: v22.23.4",
+      "gh version: gh version 2.102.0 (2026-09-30)",
+      "lock files present: uv.lock",
+      "environment variable count: 38",
+      "environment variable names: AGENT_TRANSCRIPTS, CARGO_HOME, CURSOR_AGENT, CURSOR_AGENT_SOCKET, CURSOR_CONVERSATION_ID, CURSOR_REQUEST_ID, CURSOR_RIPGREP_PATH, CURSOR_SPAWN_CWD_HOP, CURSOR_WORKLOAD_CGROUP, DISPLAY, EXEC_DAEMON_STARTUP_TRACEPARENT, FORCE_COLOR, GH_TELEMETRY, GIT_DISCOVERY_ACROSS_FILESYSTEM, GIT_LFS_SKIP_SMUDGE, HOME, LANG, LC_ALL, NO_COLOR, NVM_BIN, NVM_CD_FLAGS, NVM_DIR, NVM_INC, OLDPWD, PATH, PS1, PWD, RUSTUP_HOME, RUST_VERSION, SHELL, SHLVL, TERM, USER, VNC_DPI, VNC_RESOLUTION, _, _ZO_DOCTOR, __CURSOR_SANDBOX_ENV_RESTORE"
+    ],
+    "hints": [
+      "junit framework guess (5 variants): pytest/python",
+      "web search keywords (5 variants): cycle = PosixPath('<pytest-tmp>/pytest-0/test_real_exploration_resume_m0/cycle')\\ntmp_path = PosixPath('<pytest-tmp>/pytest-0/test_real_exploration_resume_m0')\\n\\n    def test_real_exploration_resume_matches_uninterrupted(cycle, tmp_path):\\n        spec = plan('{\"sets\":[\"A\",\"B\"],\"max_depth\":2}', cycle)\\n>       ex = Explorer(cycle, spec)\\n             ^^^^^^^^^^^^^^^^^^^^^\\n\\nnagoyaction/tests/tes"
+    ],
+    "not_found": [
+      "junit errors (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.11_86.xml)",
+      "junit skipped (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.11_86.xml)",
+      "junit dart error (first) (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.11_86.xml)",
+      "junit system-err (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.11_86.xml)",
+      "junit collection errors (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.11_86.xml)",
+      "junit errors (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.12_90.xml)",
+      "junit skipped (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.12_90.xml)",
+      "junit dart error (first) (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.12_90.xml)",
+      "junit system-err (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.12_90.xml)",
+      "junit collection errors (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.12_90.xml)",
+      "junit errors (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.13_87.xml)",
+      "junit skipped (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.13_87.xml)",
+      "junit dart error (first) (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.13_87.xml)",
+      "junit system-err (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.13_87.xml)",
+      "junit collection errors (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.13_87.xml)",
+      "junit errors (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.14_88.xml)",
+      "junit skipped (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.14_88.xml)",
+      "junit dart error (first) (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.14_88.xml)",
+      "junit system-err (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.14_88.xml)",
+      "junit collection errors (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.14_88.xml)",
+      "junit errors (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.15_89.xml)",
+      "junit skipped (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.15_89.xml)",
+      "junit dart error (first) (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.15_89.xml)",
+      "junit system-err (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.15_89.xml)",
+      "junit collection errors (/workspace/tests/fixtures/junit_corpus/cases/Aoi_37561005125_junit-py3.15_89.xml)"
+    ]
+  }
+}
