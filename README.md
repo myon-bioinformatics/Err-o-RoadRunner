@@ -4,6 +4,12 @@ Err-o-RoadRunner is a tool that does nothing in normal times. It starts working 
 
 Researching the cause of a Python, Node, Go or TypeScript failure, or a GitHub Actions CI failure, currently takes a lot of time. Most error messages are well known, and a web search often turns up hints. This project automates that first investigation **without depending on an AI agent**. It lists what it found and what it did not find on stdout, as a plain report.
 
+## Concept overview
+
+![Err-o-RoadRunner concept: failure logs are matched against known patterns, then reported as FOUND, NOT FOUND and HINT with examples and tests as evidence](docs/images/concept-overview.png)
+
+The supplied diagram summarizes the failure-triggered, read-only triage flow. Matching is best effort: hints are not verified root causes, and the tool does not repair code or run a resident monitor. See the current CLI and supported inputs below.
+
 ## What it does
 
 - It is woken up only when a test, script or CI job fails, from a runner or a wrapper.
