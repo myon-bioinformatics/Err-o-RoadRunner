@@ -37,7 +37,12 @@ _DART_COMPILER_ERROR_RE = re.compile(
     r"^(?P<file>\S+\.dart):(?P<line>\d+):(?P<col>\d+):\s*Error:\s*(?P<rest>.+)$"
 )
 _DART_READ_ERROR_RE = re.compile(
-    r"Error when reading ['\"](?P<path>[^'\"]+)['\"]: No such file or directory",
+    r"Error when reading ['\"](?P<path>[^'\"]+)['\"]\s*:\s*No such file or directory",
+    re.I,
+)
+_DART_IMPORT_SITE_RE = re.compile(
+    r"(?P<file>(?:lib|test)/\S+\.dart):(?P<line>\d+):(?P<col>\d+):"
+    r"\s*Error:\s*Error when reading",
     re.I,
 )
 _DART_TYPE_NOT_FOUND_RE = re.compile(
@@ -336,16 +341,40 @@ def _record_language(record: Mapping[str, Any]) -> str | None:
 TracebackLocationParser = Callable[[str], tuple[str, int | None] | None]
 
 
-def _tb_from_dart_compiler(blob: str) -> tuple[str, int | None] | None:
+def _dart_error_locations(
+    blob: str,
+) -> tuple[tuple[str, int | None], tuple[str, int | None]]:
+    primary: tuple[str, int | None] = ("", None)
+    secondary: tuple[str, int | None] = ("", None)
+    for line in blob.splitlines():
+        site = _DART_IMPORT_SITE_RE.search(line)
+        if site and not primary[0]:
+            primary = (site.group("file"), int(site.group("line")))
     for line in blob.splitlines():
         stripped = line.strip()
-        match = _DART_COMPILER_ERROR_RE.match(stripped)
-        if match:
-            return match.group("file"), int(match.group("line"))
-        inline = _DART_COMPILER_ERROR_RE.search(stripped)
-        if inline:
-            return inline.group("file"), int(inline.group("line"))
-    return None
+        match = _DART_COMPILER_ERROR_RE.match(stripped) or _DART_COMPILER_ERROR_RE.search(
+            stripped
+        )
+        if not match:
+            continue
+        loc = (match.group("file"), int(match.group("line")))
+        if primary[0] and loc == primary:
+            continue
+        if not secondary[0]:
+            secondary = loc
+            break
+    if not primary[0]:
+        for line in blob.splitlines():
+            stripped = line.strip()
+            match = _DART_COMPILER_ERROR_RE.match(stripped) or _DART_COMPILER_ERROR_RE.search(
+                stripped
+            )
+            if match:
+                primary = (match.group("file"), int(match.group("line")))
+                break
+    if primary[0] and secondary[0] and primary == secondary:
+        secondary = ("", None)
+    return primary, secondary
 
 
 def _dart_record_message(blob: str) -> str:
@@ -378,18 +407,25 @@ def _tb_from_pytest_file_line(blob: str) -> tuple[str, int | None] | None:
 
 
 TRACEBACK_LOCATION_PARSERS: list[TracebackLocationParser] = [
-    _tb_from_dart_compiler,
     _tb_from_python_frame,
     _tb_from_pytest_file_line,
 ]
 
 
-def _traceback_location(blob: str) -> tuple[str, int | None]:
+def _traceback_location_from_parsers(blob: str) -> tuple[str, int | None]:
     for parser in TRACEBACK_LOCATION_PARSERS:
         found = parser(blob)
         if found and found[0]:
             return found
     return "", None
+
+
+def _traceback_location(blob: str) -> tuple[str, int | None, str, int | None]:
+    (dart_file, dart_line), (dart_file2, dart_line2) = _dart_error_locations(blob)
+    if dart_file:
+        return dart_file, dart_line, dart_file2, dart_line2
+    py_file, py_line = _traceback_location_from_parsers(blob)
+    return py_file, py_line, "", None
 
 
 def parse_junit_failure_records(path: Path) -> list[dict[str, Any]]:
@@ -435,7 +471,9 @@ def parse_junit_failure_records(path: Path) -> list[dict[str, Any]]:
                     else message_attr
                 )
             signature = normalize_signature(message or error_type)
-            source_file, line_no = _traceback_location(blob)
+            source_file, line_no, source_file_secondary, line_no_secondary = (
+                _traceback_location(blob)
+            )
             test_id = _case_test_id(testcase)
             draft = {
                 "error_type": error_type,
@@ -448,6 +486,10 @@ def parse_junit_failure_records(path: Path) -> list[dict[str, Any]]:
                 "artifact": artifact,
                 **record_fields,
             }
+            if source_file_secondary:
+                draft["source_file_secondary"] = source_file_secondary
+            if line_no_secondary is not None:
+                draft["line_secondary"] = line_no_secondary
             axes = _variant_axes_from_artifact(artifact)
             if axes:
                 _attach_variant_axes_to_draft(draft, axes)
@@ -528,6 +570,10 @@ def records_to_normalized_errors(
             location["loc"] = str(rec["source_file"])
         if rec.get("line") is not None:
             location["line"] = str(rec["line"])
+        if rec.get("source_file_secondary"):
+            location["loc_secondary"] = str(rec["source_file_secondary"])
+        if rec.get("line_secondary") is not None:
+            location["line_secondary"] = str(rec["line_secondary"])
         error_type = str(rec.get("error_type") or "generic")
         kind = "python_import" if error_type in ("ModuleNotFoundError", "ImportError") else "junit"
         if error_type == "AssertionError":
@@ -644,7 +690,6 @@ def rule_import_cascade(
         return []
     return [
         {
-            "id": "H1",
             "summary": "import-path contamination",
             "confidence": confidence,
             "explains": explained,
@@ -1308,8 +1353,7 @@ def merge_squad_hypotheses(
         ),
     )
     for idx, hyp in enumerate(ordered, start=1):
-        if not hyp.get("id"):
-            hyp["id"] = f"H{idx}"
+        hyp["id"] = f"H{idx}"
     return ordered
 
 
@@ -1631,6 +1675,8 @@ def enrich_fix_candidates(
         updated = rule(out, hypotheses)
         if updated is not None:
             out = updated
+    if any(cand.get("kind") == "dart_import" for cand in out):
+        out = [cand for cand in out if cand.get("kind") != "missing_command"]
     return out
 
 

@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 
 import squad
-from tests.benchmark_util import normalize_short_timing, run_benchmark
+from tests.benchmark_util import normalize_short_benchmark, run_benchmark
 
 ROOT = Path(__file__).resolve().parents[1]
 WINDOWS_GLOB = "cli_args_38186*junit-core-windows*.xml"
@@ -36,10 +36,10 @@ def test_windows_cli_args_benchmark_has_five_junit_variants() -> None:
 @pytest.mark.sentinel
 def test_windows_cli_args_benchmark_short_stdout_matches_golden() -> None:
     short_text, _report = run_benchmark(_windows_paths())
-    golden = normalize_short_timing(
+    golden = normalize_short_benchmark(
         (GOLDEN_DIR / "short.txt").read_text(encoding="utf-8")
     )
-    assert normalize_short_timing(short_text) == golden
+    assert normalize_short_benchmark(short_text) == golden
     assert "junit failures (5 variants): 1" in short_text
 
 

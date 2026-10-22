@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from tests.benchmark_util import normalize_short_timing, run_benchmark
+from tests.benchmark_util import normalize_short_benchmark, run_benchmark
 
 ROOT = Path(__file__).resolve().parents[1]
 AOI_GLOB = "Aoi_37561005125_junit-py3.*_*.xml"
@@ -30,10 +30,10 @@ def _records_without_language(doc: dict) -> list:
 @pytest.mark.sentinel
 def test_aoi_benchmark_short_stdout_matches_golden() -> None:
     short_text, _report = run_benchmark(_aoi_paths())
-    golden = normalize_short_timing(
+    golden = normalize_short_benchmark(
         (GOLDEN_DIR / "short.txt").read_text(encoding="utf-8")
     )
-    assert normalize_short_timing(short_text) == golden
+    assert normalize_short_benchmark(short_text) == golden
 
 
 @pytest.mark.sentinel
