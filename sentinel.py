@@ -427,17 +427,29 @@ def _triage_line_dedupe_key(line: str) -> str:
     return key
 
 
-def dedupe_multisource_triage(structured: dict[str, list[str]]) -> dict[str, list[str]]:
+def _annotate_triage_variants(line: str, variant_count: int) -> str:
+    if variant_count <= 1:
+        return line
+    return _TRIAGE_PER_FILE_SOURCE_RE.sub(f" ({variant_count} variants)", line, count=1)
+
+
+def dedupe_multisource_triage(
+    structured: dict[str, list[str]],
+    *,
+    junit_artifact_count: int = 0,
+) -> dict[str, list[str]]:
     out: dict[str, list[str]] = {}
     for field in ("found", "not_found", "hints"):
-        seen: set[str] = set()
-        kept: list[str] = []
+        buckets: dict[str, list[str]] = {}
         for line in structured.get(field) or []:
             key = _triage_line_dedupe_key(line)
-            if key in seen:
-                continue
-            seen.add(key)
-            kept.append(line)
+            buckets.setdefault(key, []).append(line)
+        kept: list[str] = []
+        for key, lines in buckets.items():
+            variant_n = len(lines)
+            if junit_artifact_count > 1:
+                variant_n = max(variant_n, junit_artifact_count)
+            kept.append(_annotate_triage_variants(lines[0], variant_n))
         out[field] = kept
     return out
 
@@ -1392,16 +1404,19 @@ def build_escalation_report(
     if stderr_has_python_traceback(stderr_text):
         reasons.append("stderr_traceback")
 
-    structured = dedupe_multisource_triage(report_to_structured(report))
+    structured = dedupe_multisource_triage(
+        report_to_structured(report),
+        junit_artifact_count=len(junit_paths),
+    )
     reported_exit = normalized_child_exit(outcome)
     command_block = _redact_command_block(state.command_argv, state.cwd)
     reproduce = command_block["reproduce_command"]
     failure_records: list[dict[str, Any]] = []
     squad_mod = None
-    if junit_paths or corpus_dirs or squads_enabled:
+    if junit_paths or squads_enabled:
         squad_mod = _squad_module()
-    if squad_mod is not None and (junit_paths or corpus_dirs):
-        failure_records = squad_mod.load_failure_records_for_escalation(junit_paths, corpus_dirs)
+    if squad_mod is not None and junit_paths:
+        failure_records = squad_mod.load_failure_records_for_escalation(junit_paths)
 
     fix_candidates = _redact_fix_candidates(
         build_fix_candidates(

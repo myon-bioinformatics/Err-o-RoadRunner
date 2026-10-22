@@ -165,7 +165,7 @@ err-o-roadrunner sentinel --timeout 600 --junit reports/junit.xml --summary -- \
 | `--squads` | Error squads on escalation (`code,history` default; `web` opt-in; `none` to disable). |
 | `--squad-timeout` / `--squad-budget` / `--squad-workers` | Squad time limits and parallelism. |
 | `--offline` | Skip network (web squad). |
-| `--corpus` | JUnit corpus directory for record merge / history (repeatable; defaults to `tests/fixtures/junit_corpus` under project root when present). |
+| `--corpus` | JUnit corpus directory for history-squad signature index only (repeatable; defaults to `tests/fixtures/junit_corpus` under project root when present). Does not add corpus XML to `records` (only `--junit` does). |
 | `--web-endpoint` | Allowlisted URL prefix for web squad (repeatable). |
 
 With `--exit-mode child` (default), the process exit code is the wrapped command's (or `124` after timeout). Escalation failures never override it. With `--exit-mode signal`, see `docs/sentinel-exit-codes.md`.

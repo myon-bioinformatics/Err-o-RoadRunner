@@ -43,7 +43,7 @@ def contamination_root(tmp_path: Path) -> Path:
 
 @pytest.mark.sentinel
 def test_aoi_merged_records_distinct_error_types_and_variants() -> None:
-    records = squad.load_failure_records_for_escalation(_aoi_paths(), [])
+    records = squad.load_failure_records_for_escalation(_aoi_paths())
     assert len(records) == 19
     assert all(len(rec.get("variants") or []) == 5 for rec in records)
     error_types = {rec["error_type"] for rec in records}
@@ -58,7 +58,7 @@ def test_aoi_merged_records_distinct_error_types_and_variants() -> None:
 
 @pytest.mark.sentinel
 def test_aoi_h1_without_fake_repo_modules() -> None:
-    records = squad.load_failure_records_for_escalation(_aoi_paths(), [])
+    records = squad.load_failure_records_for_escalation(_aoi_paths())
     hyps = squad.build_cascade_hypotheses(records, ROOT, ("code",))
     assert hyps
     assert hyps[0]["summary"] == "import-path contamination"
@@ -71,6 +71,40 @@ def test_normalize_signature_strips_did_you_mean() -> None:
     a = squad.normalize_signature("No module named 'sets'")
     b = squad.normalize_signature("No module named 'sets'. Did you mean: 'tests'?")
     assert a == b
+
+
+@pytest.mark.sentinel
+def test_benchmark_default_corpus_keeps_nineteen_records(tmp_path: Path) -> None:
+    import json
+
+    junit_args = sum([["--junit", str(p)] for p in AOI_CASES], [])
+    report = tmp_path / "bench.json"
+    subprocess.run(
+        [
+            *SENTINEL_CLI,
+            "--squads",
+            "code,history",
+            "--offline",
+            "--report-json",
+            str(report),
+            *junit_args,
+            "--",
+            "sh",
+            "-c",
+            "exit 0",
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    doc = json.loads(report.read_text(encoding="utf-8"))
+    records = doc.get("records") or []
+    assert len(records) == 19
+    assert all(len(rec.get("variants") or []) == 5 for rec in records)
+    h1 = next(h for h in doc.get("hypotheses") or [] if h.get("id") == "H1")
+    assert len(h1.get("explains") or []) <= len(records)
+    assert len(h1["explains"]) >= 2
 
 
 @pytest.mark.sentinel
@@ -105,6 +139,59 @@ def test_triage_dedupe_across_identical_junit_files(tmp_path: Path) -> None:
     single = _run(["--junit", str(AOI_CASES[0])])
     assert len(multi["triage"]["found"]) == len(single["triage"]["found"])
     assert len(multi["triage"]["found"]) < 92
+    assert any("variants" in line for line in multi["triage"]["found"])
+
+
+@pytest.mark.sentinel
+def test_short_stdout_dedupes_junit_variants(tmp_path: Path) -> None:
+    junit_args = sum([["--junit", str(p)] for p in AOI_CASES], [])
+    proc = subprocess.run(
+        [
+            *SENTINEL_CLI,
+            "--squads",
+            "none",
+            "--format",
+            "short",
+            *junit_args,
+            "--",
+            "sh",
+            "-c",
+            "exit 0",
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    assert proc.stdout.count("variants") >= 1
+    assert proc.stdout.count("junit failures") == 1
+
+
+@pytest.mark.sentinel
+def test_porcelain_stdout_dedupes_junit_variants(tmp_path: Path) -> None:
+    junit_args = sum([["--junit", str(p)] for p in AOI_CASES], [])
+    proc = subprocess.run(
+        [
+            *SENTINEL_CLI,
+            "--squads",
+            "none",
+            "--format",
+            "porcelain",
+            *junit_args,
+            "--",
+            "sh",
+            "-c",
+            "exit 0",
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=True,
+    )
+    found_rows = [ln for ln in proc.stdout.splitlines() if ln.startswith("F\tfound\t")]
+    junit_rows = [ln for ln in found_rows if "junit failures" in ln]
+    assert len(junit_rows) == 1
+    assert "variants" in junit_rows[0]
 
 
 @pytest.mark.sentinel
@@ -262,6 +349,61 @@ def test_sys_path_insert_flagged_in_code_squad(tmp_path: Path) -> None:
 
 
 @pytest.mark.sentinel
+def test_code_squad_aoi_does_not_flag_err_o_roadrunner_tests() -> None:
+    records = squad.load_failure_records_for_escalation(_aoi_paths())
+    pack = squad.run_code_squad(
+        squad.SquadContext(
+            records=records,
+            project_root=ROOT,
+            project_root_explicit=False,
+            junit_paths=tuple(_aoi_paths()),
+            corpus_dirs=(),
+            offline=True,
+            web_endpoints=(),
+            timeout=5.0,
+        )
+    )
+    flagged = {
+        f.get("file", "")
+        for f in pack["findings"]
+        if f.get("kind") in ("sys.path.insert", "sys.modules")
+    }
+    assert not flagged
+    for finding in pack["findings"]:
+        file_ref = str(finding.get("file") or "")
+        assert "/workspace" not in file_ref
+        assert "test_harvest_junit_corpus" not in file_ref
+        assert "test_squad.py" not in file_ref
+
+
+@pytest.mark.sentinel
+def test_history_corpus_matches_earlier_aoi_runs() -> None:
+    corpus = str(ROOT / "tests/fixtures/junit_corpus/cases")
+    records = squad.load_failure_records_for_escalation(_aoi_paths())
+    target_runs = {"37559206978", "37560026164"}
+    pack = squad.run_error_squads(
+        enabled=frozenset({squad.SQUAD_HISTORY}),
+        records=records,
+        project_root=ROOT,
+        junit_paths=tuple(_aoi_paths()),
+        corpus_dirs=(corpus,),
+        offline=True,
+        web_endpoints=(),
+        squad_timeout=5.0,
+        squad_budget=10.0,
+        squad_workers=1,
+    )
+    hist = pack["squads"][0]
+    run_hits = {
+        rid
+        for finding in hist.get("findings") or []
+        for rid in finding.get("corpus_run_ids") or []
+        if rid in target_runs
+    }
+    assert run_hits
+
+
+@pytest.mark.sentinel
 def test_code_squad_skips_repo_walk_without_resolved_tests(tmp_path: Path) -> None:
     (tmp_path / "conftest.py").write_text("import sys\nsys.path.insert(0, 'x')\n", encoding="utf-8")
     pack = squad.run_code_squad(
@@ -354,5 +496,6 @@ def test_dedupe_multisource_triage_helper() -> None:
         "not_found": [],
         "hints": [],
     }
-    out = dedupe_multisource_triage(structured)
+    out = dedupe_multisource_triage(structured, junit_artifact_count=5)
     assert len(out["found"]) == 1
+    assert "5 variants" in out["found"][0]

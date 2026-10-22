@@ -468,7 +468,10 @@ def _find_call_sites(root: Path, symbol: str, limit: int = 8) -> list[str]:
     return hits
 
 
-def _scan_path_contamination(paths: Sequence[Path]) -> list[dict[str, str]]:
+def _scan_path_contamination(
+    paths: Sequence[Path],
+    root: Path | None,
+) -> list[dict[str, str]]:
     findings: list[dict[str, str]] = []
     patterns = (
         ("sys.path.insert", re.compile(r"sys\.path\.(insert|append)\s*\(")),
@@ -494,8 +497,19 @@ def _scan_path_contamination(paths: Sequence[Path]) -> list[dict[str, str]]:
                     continue
                 for label, pattern in patterns:
                     if pattern.search(text):
-                        findings.append({"kind": label, "file": str(path)})
+                        findings.append(
+                            {
+                                "kind": label,
+                                "file": _report_path(path, root),
+                            }
+                        )
     return findings
+
+
+def _source_matches_test_module(test_id: str, source: str) -> bool:
+    expected = _test_module_from_test_id(test_id).replace(".", "/") + ".py"
+    norm = source.replace("\\", "/")
+    return norm == expected or norm.endswith("/" + expected)
 
 
 def _resolve_record_test_file(root: Path, source: str) -> Path | None:
@@ -509,6 +523,15 @@ def _resolve_record_test_file(root: Path, source: str) -> Path | None:
     return candidate if candidate.is_file() else None
 
 
+def _report_path(path: Path, root: Path | None) -> str:
+    if root is not None:
+        try:
+            return redact_text(str(path.resolve().relative_to(root.resolve())))
+        except ValueError:
+            pass
+    return redact_text(path.name)
+
+
 def run_code_squad(ctx: SquadContext) -> dict[str, Any]:
     started = time.monotonic()
     findings: list[dict[str, Any]] = []
@@ -519,11 +542,18 @@ def run_code_squad(ctx: SquadContext) -> dict[str, Any]:
         for rec in ctx.records:
             test_id = str(rec.get("test_id") or "")
             source = str(rec.get("source_file") or "")
-            resolved = _resolve_record_test_file(root, source)
+            if not source:
+                continue
+            if ctx.project_root_explicit:
+                resolved = _resolve_record_test_file(root, source)
+            elif _source_matches_test_module(test_id, source):
+                resolved = _resolve_record_test_file(root, source)
+            else:
+                resolved = None
             if resolved is not None:
                 test_files[test_id] = resolved
 
-    scan_allowed = bool(test_files) or ctx.project_root_explicit
+    scan_allowed = bool(test_files)
     locations: list[dict[str, Any]] = []
     related_files: set[str] = set()
     unresolved_imports: set[str] = set()
@@ -535,7 +565,13 @@ def run_code_squad(ctx: SquadContext) -> dict[str, Any]:
                 line = rec.get("line")
                 break
         snippet = _read_context_lines(path, line if isinstance(line, int) else None)
-        locations.append({"test_id": test_id, "file": str(path), "snippet": snippet[:800]})
+        locations.append(
+            {
+                "test_id": test_id,
+                "file": _report_path(path, root),
+                "snippet": snippet[:800],
+            }
+        )
         try:
             tree = ast.parse(path.read_text(encoding="utf-8", errors="replace"))
             resolved, unresolved = _resolve_imports(tree, path)
@@ -549,8 +585,8 @@ def run_code_squad(ctx: SquadContext) -> dict[str, Any]:
         except SyntaxError:
             unresolved_imports.add(f"syntax_error:{path.name}")
 
-    if scan_allowed and test_files:
-        for item in _scan_path_contamination(list(test_files.values())):
+    if scan_allowed:
+        for item in _scan_path_contamination(list(test_files.values()), root):
             findings.append(item)
 
     findings.extend({"location": loc} for loc in locations[:8])
@@ -640,6 +676,36 @@ def _git_blame_line(repo: Path, file_path: str, line: int) -> str:
     return ""
 
 
+_CORPUS_RUN_ID_RE = re.compile(r"_(\d{10,})_")
+
+
+def _corpus_module_index(corpus_dirs: Sequence[str]) -> dict[str, dict[str, Any]]:
+    index: dict[str, dict[str, Any]] = {}
+    for raw_dir in corpus_dirs:
+        base = Path(raw_dir)
+        if not base.is_dir():
+            continue
+        for xml in sorted(base.glob("*.xml")):
+            run_match = _CORPUS_RUN_ID_RE.search(xml.name)
+            run_id = run_match.group(1) if run_match else ""
+            for rec in parse_junit_failure_records(xml):
+                module = _test_module_from_test_id(str(rec.get("test_id") or ""))
+                if not module:
+                    continue
+                entry = index.setdefault(
+                    module,
+                    {
+                        "first_seen": xml.name,
+                        "last_seen": xml.name,
+                        "run_ids": set(),
+                    },
+                )
+                entry["last_seen"] = xml.name
+                if run_id:
+                    entry["run_ids"].add(run_id)
+    return index
+
+
 def _corpus_signature_index(corpus_dirs: Sequence[str]) -> dict[str, dict[str, Any]]:
     index: dict[str, dict[str, Any]] = {}
     for raw_dir in corpus_dirs:
@@ -647,16 +713,26 @@ def _corpus_signature_index(corpus_dirs: Sequence[str]) -> dict[str, dict[str, A
         if not base.is_dir():
             continue
         for xml in sorted(base.glob("*.xml")):
+            run_match = _CORPUS_RUN_ID_RE.search(xml.name)
+            run_id = run_match.group(1) if run_match else ""
             for rec in parse_junit_failure_records(xml):
                 sig = str(rec.get("signature") or "")
                 if not sig:
                     continue
                 entry = index.setdefault(
                     sig,
-                    {"first_seen": xml.name, "last_seen": xml.name, "repos": set(), "variants": set()},
+                    {
+                        "first_seen": xml.name,
+                        "last_seen": xml.name,
+                        "repos": set(),
+                        "variants": set(),
+                        "run_ids": set(),
+                    },
                 )
                 entry["last_seen"] = xml.name
                 entry["variants"].add(rec.get("variant") or "unknown")
+                if run_id:
+                    entry["run_ids"].add(run_id)
     return index
 
 
@@ -689,20 +765,31 @@ def run_history_squad(ctx: SquadContext) -> dict[str, Any]:
             if blame:
                 findings.append({"file": source, "line": line, "blame": blame})
 
-    corpus = _corpus_signature_index(ctx.corpus_dirs)
+    corpus_sig = _corpus_signature_index(ctx.corpus_dirs)
+    corpus_mod = _corpus_module_index(ctx.corpus_dirs)
     for rec in ctx.records[:20]:
         sig = str(rec.get("signature") or "")
-        if sig not in corpus:
+        module = _test_module_from_test_id(str(rec.get("test_id") or ""))
+        sig_meta = corpus_sig.get(sig)
+        mod_meta = corpus_mod.get(module)
+        if sig_meta is None and mod_meta is None:
             continue
-        meta = corpus[sig]
+        base = sig_meta or mod_meta or {}
+        run_ids: set[str] = set()
+        if sig_meta:
+            run_ids |= set(sig_meta.get("run_ids") or ())
+        if mod_meta:
+            run_ids |= set(mod_meta.get("run_ids") or ())
         variants = set(rec.get("variants") or [])
-        corpus_variants = meta.get("variants") or set()
+        corpus_variants = (sig_meta or {}).get("variants") or set()
         flaky = bool(variants and corpus_variants - variants)
         findings.append(
             {
                 "signature": sig,
-                "corpus_first": meta.get("first_seen"),
-                "corpus_last": meta.get("last_seen"),
+                "test_module": module,
+                "corpus_first": base.get("first_seen"),
+                "corpus_last": base.get("last_seen"),
+                "corpus_run_ids": sorted(run_ids),
                 "flaky_marker": flaky,
             }
         )
@@ -1000,9 +1087,8 @@ def run_error_squads(
 
 def load_failure_records_for_escalation(
     junit_paths: Sequence[str],
-    corpus_dirs: Sequence[str],
 ) -> list[dict[str, Any]]:
-    paths = collect_junit_paths(junit_paths, corpus_dirs)
+    paths = collect_junit_paths(junit_paths, ())
     if not paths:
         return []
     return merge_failure_records(paths)

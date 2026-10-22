@@ -17,7 +17,7 @@
 | `--squad-budget` | `30` | 全体の壁時計バジェット（秒） |
 | `--squad-workers` | `3` | `ThreadPoolExecutor` のワーカー数 |
 | `--offline` | オフ | Web スクワッドをスキップ（ネットワークなし） |
-| `--corpus` | リポジトリ内 `tests/fixtures/junit_corpus` があれば自動 | JUnit コーパスディレクトリ（繰り返し可）。マージと history 用 |
+| `--corpus` | リポジトリ内 `tests/fixtures/junit_corpus` があれば自動 | JUnit コーパスディレクトリ（繰り返し可）。**history スクワッドの署名索引のみ**（現在の失敗 `records` には含めない） |
 | `--web-endpoint` | GitHub Search API | Web スクワッドの URL プレフィックス許可リスト（繰り返し可） |
 | `--project-root` | `.` | コードスクワッドと汚染判定のルート |
 
