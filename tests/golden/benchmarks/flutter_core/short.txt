@@ -6,7 +6,7 @@ F sh -c 'exit 0'
   junit failure group 1/1 (2 variants): 12× Error when reading <q>: No such file or directory — first: <runner-work>/test/core/navigation/numbered_routes_observation_test.dart::loading <runner-work>/…
   junit testcase classname (first) (2 variants): <runner-work>/test/core/navigation/numbered_routes_observation_test.dart
   junit dart error (first) (2 variants): lib/shared/catalog/catalog_search.dart:7:6: Error: Type 'ScreenData' not found.
-  python version: 3.12.3 (cpython)
+  python version: <masked>
 fix: [F1] Re-run reproduce_command with verbose logging and inspect stderr.
 G 12× error_type=DartMissingImport
 == 1 failed, 2 hint, 1 fixes in <t>s ==

@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 
 import squad
-from tests.benchmark_util import normalize_short_timing, run_benchmark
+from tests.benchmark_util import normalize_short_benchmark, run_benchmark
 
 ROOT = Path(__file__).resolve().parents[1]
 FLUTTER_CORE_CASES = sorted(
@@ -37,10 +37,10 @@ def _records_without_language(doc: dict) -> list:
 @pytest.mark.sentinel
 def test_flutter_core_benchmark_short_stdout_matches_golden() -> None:
     short_text, _report = run_benchmark(_flutter_core_paths())
-    golden = normalize_short_timing(
+    golden = normalize_short_benchmark(
         (GOLDEN_DIR / "short.txt").read_text(encoding="utf-8")
     )
-    assert normalize_short_timing(short_text) == golden
+    assert normalize_short_benchmark(short_text) == golden
 
 
 @pytest.mark.sentinel
@@ -56,6 +56,17 @@ def test_flutter_core_benchmark_records_match_golden_except_language() -> None:
     error_types = {rec.get("error_type") for rec in records}
     assert "Unknown" not in error_types
     assert error_types == {"DartMissingImport"}
+
+
+@pytest.mark.sentinel
+@pytest.mark.sentinel
+def test_flutter_core_primary_import_location() -> None:
+    records = squad.load_failure_records_for_escalation(_flutter_core_paths())
+    rec = records[0]
+    assert rec.get("source_file") == "lib/shared/catalog/catalog_search.dart"
+    assert rec.get("line") == 1
+    assert rec.get("source_file_secondary") == "lib/shared/catalog/catalog_search.dart"
+    assert rec.get("line_secondary") == 7
 
 
 @pytest.mark.sentinel
