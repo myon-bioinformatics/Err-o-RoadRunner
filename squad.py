@@ -897,8 +897,20 @@ _SQUAD_RUNNERS: dict[str, SquadRunner] = {
 def _run_one_squad(
     name: str,
     ctx: SquadContext,
-    timeout: float,
+    squad_timeout: float,
+    deadline: float,
 ) -> dict[str, Any]:
+    remaining = deadline - time.monotonic()
+    if remaining <= 0:
+        return {
+            "name": name,
+            "status": "skipped",
+            "elapsed_ms": 0,
+            "findings": [],
+            "hypotheses": [],
+            "skip_reason": "budget",
+        }
+    timeout = min(squad_timeout, remaining)
     runner = _SQUAD_RUNNERS.get(name)
     if runner is None:
         return {
@@ -911,6 +923,7 @@ def _run_one_squad(
         }
     result_box: dict[str, Any] = {}
     error_box: list[BaseException] = []
+    started = time.monotonic()
 
     def _target() -> None:
         try:
@@ -925,7 +938,7 @@ def _run_one_squad(
         return {
             "name": name,
             "status": "timeout",
-            "elapsed_ms": int(timeout * 1000),
+            "elapsed_ms": int((time.monotonic() - started) * 1000),
             "findings": [],
             "hypotheses": [],
         }
@@ -1043,7 +1056,8 @@ def run_error_squads(
         timeout=squad_timeout,
     )
 
-    deadline = time.monotonic() + max(0.1, squad_budget)
+    budget_start = time.monotonic()
+    deadline = budget_start + max(0.1, squad_budget)
     names = [name for name in ALL_SQUADS if name in enabled]
     results: list[dict[str, Any]] = []
 
@@ -1051,21 +1065,7 @@ def run_error_squads(
     with ThreadPoolExecutor(max_workers=workers) as pool:
         futures = {}
         for name in names:
-            if time.monotonic() >= deadline:
-                results.append(
-                    {
-                        "name": name,
-                        "status": "skipped",
-                        "elapsed_ms": 0,
-                        "findings": [],
-                        "hypotheses": [],
-                        "skip_reason": "budget",
-                    }
-                )
-                continue
-            remaining = max(0.05, deadline - time.monotonic())
-            per_timeout = min(squad_timeout, remaining)
-            futures[pool.submit(_run_one_squad, name, ctx, per_timeout)] = name
+            futures[pool.submit(_run_one_squad, name, ctx, squad_timeout, deadline)] = name
         for future in as_completed(futures):
             try:
                 results.append(future.result())

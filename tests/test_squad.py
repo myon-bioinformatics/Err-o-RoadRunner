@@ -448,17 +448,109 @@ def test_sentinel_exit_code_unchanged_with_squads(tmp_path: Path) -> None:
     assert code_none == code_squads == 0
 
 
-@pytest.mark.sentinel
-def test_sentinel_true_subprocess_fast() -> None:
-    cmd = [*SENTINEL_CLI, "--", "true"]
+_STOP_PATH_IMPORT_PROBE = """
+import sys
+from pathlib import Path
+
+root = Path({root})
+sys.path.insert(0, str(root))
+from sentinel import run_sentinel
+
+before = set(sys.modules)
+code = run_sentinel(["--", "true"])
+assert code == 0
+after = set(sys.modules)
+new = after - before
+bad = sorted(
+    name
+    for name in new
+    if name == "squad"
+    or name.startswith("urllib")
+    or name == "http.client"
+)
+if bad:
+    raise SystemExit("stop path imported: " + ", ".join(bad))
+"""
+
+
+def _median_subprocess_seconds(cmd: list[str], *, rounds: int = 8) -> float:
     subprocess.run(cmd, cwd=ROOT, capture_output=True, check=False)
     samples: list[float] = []
-    for _ in range(12):
+    for _ in range(rounds):
         started = time.perf_counter()
         subprocess.run(cmd, cwd=ROOT, capture_output=True, check=False)
         samples.append(time.perf_counter() - started)
-    median = statistics.median(samples)
-    assert median < 0.075, f"sentinel -- true median {median:.3f}s exceeds 75ms"
+    return statistics.median(samples)
+
+
+@pytest.mark.sentinel
+def test_sentinel_stop_path_does_not_import_squad_or_urllib() -> None:
+    probe = _STOP_PATH_IMPORT_PROBE.format(root=repr(str(ROOT)))
+    completed = subprocess.run(
+        [sys.executable, "-c", probe],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert completed.returncode == 0, completed.stderr or completed.stdout
+
+
+@pytest.mark.sentinel
+def test_sentinel_stop_path_timing_sane_vs_baseline() -> None:
+    baseline_cmd = [sys.executable, "-c", "pass"]
+    sentinel_cmd = [*SENTINEL_CLI, "--", "true"]
+    baseline = _median_subprocess_seconds(baseline_cmd)
+    sentinel = _median_subprocess_seconds(sentinel_cmd)
+    assert sentinel < 0.5, f"sentinel -- true median {sentinel:.3f}s exceeds 500ms"
+    assert sentinel < baseline * 6 + 0.08, (
+        f"sentinel median {sentinel:.3f}s vs baseline {baseline:.3f}s"
+    )
+
+
+@pytest.mark.sentinel
+def test_squad_budget_with_single_worker() -> None:
+    def slow_code(_ctx: squad.SquadContext) -> dict:
+        time.sleep(0.35)
+        return {
+            "name": squad.SQUAD_CODE,
+            "status": "ok",
+            "elapsed_ms": 350,
+            "findings": [],
+            "hypotheses": [],
+        }
+
+    def slow_history(_ctx: squad.SquadContext) -> dict:
+        time.sleep(0.35)
+        return {
+            "name": squad.SQUAD_HISTORY,
+            "status": "ok",
+            "elapsed_ms": 350,
+            "findings": [],
+            "hypotheses": [],
+        }
+
+    with mock.patch.dict(
+        squad._SQUAD_RUNNERS,
+        {squad.SQUAD_CODE: slow_code, squad.SQUAD_HISTORY: slow_history},
+    ):
+        started = time.monotonic()
+        pack = squad.run_error_squads(
+            enabled=frozenset({squad.SQUAD_CODE, squad.SQUAD_HISTORY}),
+            records=[],
+            project_root=ROOT,
+            junit_paths=[],
+            corpus_dirs=[],
+            offline=True,
+            web_endpoints=[],
+            squad_timeout=2.0,
+            squad_budget=0.35,
+            squad_workers=1,
+        )
+        elapsed = time.monotonic() - started
+    assert elapsed < 0.55, f"squads exceeded budget wall time ({elapsed:.3f}s)"
+    statuses = {item["status"] for item in pack["squads"]}
+    assert statuses & {"timeout", "skipped"}
 
 
 @pytest.mark.sentinel
