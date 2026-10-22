@@ -73,9 +73,9 @@
 | `VARIANT_PARSERS` | `variant_from_artifact` | `(path: str) -> str \| None` | バリアント名（例 `py3.12`）、未判定は `None` | 先に非 `None` の結果を採用。すべて `None` なら `unknown`。 |
 | `LANGUAGE_DETECTORS` | `parse_junit_failure_records`（レコード構築時） | `(record: Mapping[str, Any]) -> str \| None` | `python` など、未判定は `None` | 先に非 `None` の言語を `records[].language` に設定。すべて `None` なら `language` は `null`。 |
 | `HYPOTHESIS_RULES` | `merge_squad_hypotheses`（および `build_cascade_hypotheses`） | `(records, project_root, squad_names) -> list[dict]` | 仮説 dict のリスト（`summary`, `confidence`, `explains`, 任意 `id`） | 各ルールの出力を順にマージ。同一 `summary` は `source_squads` 和集合・`explains` 連結。 |
-| `FIX_RULES` | `enrich_fix_candidates` | `(candidates, hypotheses) -> list[dict] \| None` | 更新後の候補リスト、変更なしは `None` | 先に非 `None` を返したルールのみ適用（import カスケード、editable 再インストール案など）。 |
+| `FIX_RULES` | `enrich_fix_candidates` | `(candidates, hypotheses) -> list[dict] \| None` | 更新後の候補リスト、変更なしは `None` | 各ルールを順に適用。`None` のルールはスキップし、非 `None` の戻り値で候補リストを更新する（import カスケード、Dart import、editable 再インストール案など）。 |
 
-`parse_junit_failure_records` は `AssertionError` 向けに `extract_assert_operands` で `assert_left` / `assert_right`（redact 済み・最大 80 文字）を `signature` の直後に付与する。`summarize_top_causes` は大きな JUnit ラン向けに上位署名を最大 3 件返す（レポート JSON の `top_causes`）。
+`parse_junit_failure_records` は `AssertionError` 向けに `extract_assert_operands` で `assert_left` / `assert_right`（パス redact 済み・最大 80 文字）を `signature` の直後に付与する。`summarize_top_causes` は大きな JUnit ラン向けに上位署名を最大 3 件返す（レポート JSON の `top_causes`）。
 
 `records[]` には JUnit 解析時に `language` が載る（既定は Python JUnit のみ `python` を検出）。`records_to_normalized_errors` はレコードの `language` を優先し、無いときだけ従来の推定にフォールバックする。
 

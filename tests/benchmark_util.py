@@ -13,6 +13,11 @@ from typing import Any, Sequence
 
 _SHORT_ELAPSED_RE = re.compile(r"( in )\d+\.\d+(s ==)")
 _SHORT_SQUAD_MS_RE = re.compile(r"^S (\S+ \S+ )\d+ms")
+_SHORT_ENV_LINE_RES = (
+    re.compile(r"^  python version: .*$"),
+    re.compile(r"^  node version: .*$"),
+    re.compile(r"^  gh version: .*$"),
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 SENTINEL_CLI = [sys.executable, str(ROOT / "sentinel.py")]
@@ -24,7 +29,7 @@ def normalize_short_timing(short_text: str) -> str:
 
 
 def normalize_short_benchmark(short_text: str, root: Path | None = None) -> str:
-    """Normalize timing, squad elapsed ms, and absolute paths for golden diffs."""
+    """Normalize short stdout for golden comparison (timing, env, squad ms, paths)."""
     text = normalize_short_timing(short_text)
     if root is not None:
         root_text = str(root.resolve())
@@ -32,11 +37,18 @@ def normalize_short_benchmark(short_text: str, root: Path | None = None) -> str:
         text = text.replace(root_text + "/", "")
     lines: list[str] = []
     for line in text.splitlines():
-        match = _SHORT_SQUAD_MS_RE.match(line)
-        if match:
-            lines.append(f"S {match.group(1)}<ms>")
+        if _SHORT_ENV_LINE_RES[0].match(line):
+            lines.append("  python version: <masked>")
+        elif _SHORT_ENV_LINE_RES[1].match(line):
+            lines.append("  node version: <masked>")
+        elif _SHORT_ENV_LINE_RES[2].match(line):
+            lines.append("  gh version: <masked>")
         else:
-            lines.append(line)
+            match = _SHORT_SQUAD_MS_RE.match(line)
+            if match:
+                lines.append(f"S {match.group(1)}<ms>")
+            else:
+                lines.append(line)
     if text.endswith("\n"):
         return "\n".join(lines) + "\n"
     return "\n".join(lines)
