@@ -59,11 +59,34 @@ def test_aoi_merged_records_distinct_error_types_and_variants() -> None:
 @pytest.mark.sentinel
 def test_aoi_h1_without_fake_repo_modules() -> None:
     records = squad.load_failure_records_for_escalation(_aoi_paths())
-    hyps = squad.build_cascade_hypotheses(records, ROOT, ("code",))
-    assert hyps
-    assert hyps[0]["summary"] == "import-path contamination"
-    assert hyps[0]["confidence"] == "medium"
-    assert len(hyps[0]["explains"]) >= 2
+    hyps = squad.merge_squad_hypotheses([], records=records, project_root=ROOT)
+    import_hyp = next(
+        h for h in hyps if h.get("summary") == "import-path contamination"
+    )
+    assert import_hyp["confidence"] == "medium"
+    assert len(import_hyp.get("explains") or []) >= 2
+
+
+@pytest.mark.sentinel
+def test_merge_hypotheses_assigns_unique_ids_for_multiple_cascades() -> None:
+    flutter_paths = [
+        str(
+            ROOT
+            / "tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38139683688_junit-flutter-core-0_78.xml"
+        ),
+        str(
+            ROOT
+            / "tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38139683688_junit-flutter-core-1_77.xml"
+        ),
+    ]
+    records = squad.load_failure_records_for_escalation(_aoi_paths() + flutter_paths)
+    hyps = squad.merge_squad_hypotheses([], records=records, project_root=ROOT)
+    summaries = {h.get("summary") for h in hyps}
+    assert "import-path contamination" in summaries
+    assert "dart-compile-cascade" in summaries
+    ids = [h.get("id") for h in hyps]
+    assert len(ids) == len(set(ids))
+    assert set(ids) == {"H1", "H2"}
 
 
 @pytest.mark.sentinel

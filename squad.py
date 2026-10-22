@@ -30,6 +30,29 @@ DEFAULT_SQUADS = (SQUAD_CODE, SQUAD_HISTORY)
 GITHUB_SEARCH_API = "https://api.github.com/search/issues"
 
 _PYTEST_VARIANT_RE = re.compile(r"junit-(py3\.\d+)", re.I)
+_FLUTTER_CORE_VARIANT_RE = re.compile(r"junit-flutter-core-(\d+)", re.I)
+_FLUTTER_REFACTOR_VARIANT_RE = re.compile(r"junit-flutter-refactor", re.I)
+_PLAYWRIGHT_E2E_VARIANT_RE = re.compile(r"junit-playwright-e2e", re.I)
+_DART_COMPILER_ERROR_RE = re.compile(
+    r"^(?P<file>\S+\.dart):(?P<line>\d+):(?P<col>\d+):\s*Error:\s*(?P<rest>.+)$"
+)
+_DART_READ_ERROR_RE = re.compile(
+    r"Error when reading ['\"](?P<path>[^'\"]+)['\"]\s*:\s*No such file or directory",
+    re.I,
+)
+_DART_IMPORT_SITE_RE = re.compile(
+    r"(?P<file>(?:lib|test)/\S+\.dart):(?P<line>\d+):(?P<col>\d+):"
+    r"\s*Error:\s*Error when reading",
+    re.I,
+)
+_DART_TYPE_NOT_FOUND_RE = re.compile(
+    r"Type ['\"](?P<type>[^'\"]+)['\"] not found",
+    re.I,
+)
+_DART_COMPILATION_FAILED_RE = re.compile(
+    r"Compilation failed for testPath=",
+    re.I,
+)
 _PYTHON_FRAME_RE = re.compile(
     r'^  File "(?P<file>[^"]+)", line (?P<line>\d+)(?:, in (?P<func>.*))?$'
 )
@@ -109,9 +132,33 @@ def _variant_from_pytest_junit(path: str) -> str | None:
     return None
 
 
+def _variant_from_flutter_core(path: str) -> str | None:
+    match = _FLUTTER_CORE_VARIANT_RE.search(path)
+    if match:
+        return f"flutter-core-{match.group(1)}"
+    return None
+
+
+def _variant_from_flutter_refactor(path: str) -> str | None:
+    if _FLUTTER_REFACTOR_VARIANT_RE.search(path):
+        return "flutter-refactor"
+    return None
+
+
+def _variant_from_playwright_e2e(path: str) -> str | None:
+    if _PLAYWRIGHT_E2E_VARIANT_RE.search(path):
+        return "playwright-e2e"
+    return None
+
+
 VariantParser = Callable[[str], str | None]
 
-VARIANT_PARSERS: list[VariantParser] = [_variant_from_pytest_junit]
+VARIANT_PARSERS: list[VariantParser] = [
+    _variant_from_pytest_junit,
+    _variant_from_flutter_core,
+    _variant_from_flutter_refactor,
+    _variant_from_playwright_e2e,
+]
 
 
 def variant_from_artifact(path: str) -> str:
@@ -204,11 +251,26 @@ def _exc_from_first_line(message: str, blob: str, first_line: str) -> str | None
     return None
 
 
+def parse_dart_error(message: str, blob: str, first_line: str) -> str | None:
+    text = "\n".join(part for part in (message, blob, first_line) if part)
+    if _DART_READ_ERROR_RE.search(text):
+        return "DartMissingImport"
+    if _DART_TYPE_NOT_FOUND_RE.search(text):
+        return "DartCompileError"
+    if _DART_COMPILATION_FAILED_RE.search(text):
+        return "DartCompileError"
+    for line in text.splitlines():
+        if _DART_COMPILER_ERROR_RE.match(line.strip()):
+            return "DartCompileError"
+    return None
+
+
 EXCEPTION_PARSERS: list[ExceptionParser] = [
     _exc_from_pytest_e_lines,
     _exc_from_assert_prefix,
     _exc_from_message_attr,
     _exc_from_first_line,
+    parse_dart_error,
 ]
 
 
@@ -242,7 +304,26 @@ def _detect_language_python(record: Mapping[str, Any]) -> str | None:
     return None
 
 
-LANGUAGE_DETECTORS: list[LanguageDetector] = [_detect_language_python]
+def detect_language_dart(record: Mapping[str, Any]) -> str | None:
+    error_type = str(record.get("error_type") or "")
+    if error_type.startswith("Dart"):
+        return "dart"
+    variant = str(record.get("variant") or "")
+    if variant.startswith("flutter-core-") or variant in (
+        "flutter-refactor",
+        "playwright-e2e",
+    ):
+        return "dart"
+    artifact = str(record.get("artifact") or "").lower()
+    if "flutter" in artifact or "playwright-e2e" in artifact:
+        return "dart"
+    return None
+
+
+LANGUAGE_DETECTORS: list[LanguageDetector] = [
+    _detect_language_python,
+    detect_language_dart,
+]
 
 
 def _record_language(record: Mapping[str, Any]) -> str | None:
@@ -253,15 +334,67 @@ def _record_language(record: Mapping[str, Any]) -> str | None:
     return None
 
 
-def _traceback_location(blob: str) -> tuple[str, int | None]:
+def _dart_error_locations(
+    blob: str,
+) -> tuple[tuple[str, int | None], tuple[str, int | None]]:
+    primary: tuple[str, int | None] = ("", None)
+    secondary: tuple[str, int | None] = ("", None)
+    for line in blob.splitlines():
+        site = _DART_IMPORT_SITE_RE.search(line)
+        if site and not primary[0]:
+            primary = (site.group("file"), int(site.group("line")))
+    for line in blob.splitlines():
+        stripped = line.strip()
+        match = _DART_COMPILER_ERROR_RE.match(stripped) or _DART_COMPILER_ERROR_RE.search(
+            stripped
+        )
+        if not match:
+            continue
+        loc = (match.group("file"), int(match.group("line")))
+        if primary[0] and loc == primary:
+            continue
+        if not secondary[0]:
+            secondary = loc
+            break
+    if not primary[0]:
+        for line in blob.splitlines():
+            stripped = line.strip()
+            match = _DART_COMPILER_ERROR_RE.match(stripped) or _DART_COMPILER_ERROR_RE.search(
+                stripped
+            )
+            if match:
+                primary = (match.group("file"), int(match.group("line")))
+                break
+    if primary[0] and secondary[0] and primary == secondary:
+        secondary = ("", None)
+    return primary, secondary
+
+
+def _dart_record_message(blob: str) -> str:
+    match = _DART_READ_ERROR_RE.search(blob)
+    if match:
+        return (
+            f"Error when reading '{match.group('path')}': No such file or directory"
+        )
+    for line in blob.splitlines():
+        stripped = line.strip()
+        if _DART_COMPILER_ERROR_RE.match(stripped):
+            return stripped[:500]
+    return ""
+
+
+def _traceback_location(blob: str) -> tuple[str, int | None, str, int | None]:
+    (dart_file, dart_line), (dart_file2, dart_line2) = _dart_error_locations(blob)
+    if dart_file:
+        return dart_file, dart_line, dart_file2, dart_line2
     for line in blob.splitlines():
         match = _PYTHON_FRAME_RE.match(line)
         if match:
-            return match.group("file"), int(match.group("line"))
+            return match.group("file"), int(match.group("line")), "", None
         match = _PYTEST_FILE_LINE_RE.match(line.strip())
         if match:
-            return match.group("file"), int(match.group("line"))
-    return "", None
+            return match.group("file"), int(match.group("line")), "", None
+    return "", None, "", None
 
 
 def parse_junit_failure_records(path: Path) -> list[dict[str, Any]]:
@@ -287,6 +420,10 @@ def parse_junit_failure_records(path: Path) -> list[dict[str, Any]]:
             first_line = _message_first_line(message_attr, blob)
             error_type = _exception_type(message_attr, blob, first_line)
             message = _parse_message_text(message_attr, blob)
+            if error_type.startswith("Dart"):
+                dart_message = _dart_record_message(blob)
+                if dart_message:
+                    message = dart_message
             if not message and message_attr:
                 match = _JUNIT_MSG_EXCEPTION_RE.match(message_attr.splitlines()[0])
                 message = (
@@ -294,9 +431,11 @@ def parse_junit_failure_records(path: Path) -> list[dict[str, Any]]:
                     if match and ":" in message_attr
                     else message_attr
                 )
-            source_file, line_no = _traceback_location(blob)
-            test_id = _case_test_id(testcase)
             signature = normalize_signature(message or error_type)
+            source_file, line_no, source_file_secondary, line_no_secondary = (
+                _traceback_location(blob)
+            )
+            test_id = _case_test_id(testcase)
             draft = {
                 "error_type": error_type,
                 "message": message[:500],
@@ -307,6 +446,10 @@ def parse_junit_failure_records(path: Path) -> list[dict[str, Any]]:
                 "variant": variant,
                 "artifact": artifact,
             }
+            if source_file_secondary:
+                draft["source_file_secondary"] = source_file_secondary
+            if line_no_secondary is not None:
+                draft["line_secondary"] = line_no_secondary
             draft["language"] = _record_language(draft)
             records.append(draft)
     return records
@@ -371,6 +514,10 @@ def records_to_normalized_errors(
             location["loc"] = str(rec["source_file"])
         if rec.get("line") is not None:
             location["line"] = str(rec["line"])
+        if rec.get("source_file_secondary"):
+            location["loc_secondary"] = str(rec["source_file_secondary"])
+        if rec.get("line_secondary") is not None:
+            location["line_secondary"] = str(rec["line_secondary"])
         error_type = str(rec.get("error_type") or "generic")
         kind = "python_import" if error_type in ("ModuleNotFoundError", "ImportError") else "junit"
         if error_type == "AssertionError":
@@ -487,7 +634,6 @@ def rule_import_cascade(
         return []
     return [
         {
-            "id": "H1",
             "summary": "import-path contamination",
             "confidence": confidence,
             "explains": explained,
@@ -496,7 +642,53 @@ def rule_import_cascade(
     ]
 
 
-HYPOTHESIS_RULES: list[HypothesisRule] = [rule_import_cascade]
+def _dart_missing_import_path(record: Mapping[str, Any]) -> str | None:
+    text = str(record.get("message") or "")
+    match = _DART_READ_ERROR_RE.search(text)
+    if match:
+        return match.group("path")
+    return None
+
+
+def rule_dart_compile_cascade(
+    records: Sequence[Mapping[str, Any]],
+    project_root: Path | None,
+    squad_names: Sequence[str],
+) -> list[dict[str, Any]]:
+    if not records:
+        return []
+    by_path: dict[str, list[str]] = {}
+    for rec in records:
+        missing = _dart_missing_import_path(rec)
+        if not missing:
+            continue
+        test_id = str(rec.get("test_id") or rec.get("signature") or "")
+        if not test_id:
+            continue
+        by_path.setdefault(missing, [])
+        if test_id not in by_path[missing]:
+            by_path[missing].append(test_id)
+    if not by_path:
+        return []
+    _path, explained = max(by_path.items(), key=lambda item: len(item[1]))
+    if len(explained) < 2:
+        return []
+    total = len(records)
+    confidence = "high" if len(explained) >= total else "medium"
+    return [
+        {
+            "summary": "dart-compile-cascade",
+            "confidence": confidence,
+            "explains": explained,
+            "source_squads": list(squad_names),
+        }
+    ]
+
+
+HYPOTHESIS_RULES: list[HypothesisRule] = [
+    rule_import_cascade,
+    rule_dart_compile_cascade,
+]
 
 
 def build_cascade_hypotheses(
@@ -1105,8 +1297,7 @@ def merge_squad_hypotheses(
         ),
     )
     for idx, hyp in enumerate(ordered, start=1):
-        if not hyp.get("id"):
-            hyp["id"] = f"H{idx}"
+        hyp["id"] = f"H{idx}"
     return ordered
 
 
@@ -1140,7 +1331,37 @@ def rule_fix_import_cascade(
     return None
 
 
-FIX_RULES: list[FixRule] = [rule_fix_import_cascade]
+def rule_fix_dart_missing_import(
+    candidates: list[dict[str, Any]],
+    hypotheses: Sequence[Mapping[str, Any]],
+) -> list[dict[str, Any]] | None:
+    for hyp in hypotheses:
+        if hyp.get("summary") != "dart-compile-cascade":
+            continue
+        out = list(candidates)
+        squads = list(hyp.get("source_squads") or [])
+        entry = {
+            "id": f"F{len(out) + 1}",
+            "kind": "dart_import",
+            "confidence": hyp.get("confidence", "medium"),
+            "evidence": [f"hypothesis {hyp.get('id')}: dart-compile-cascade"],
+            "location": {},
+            "suggestion": (
+                "Restore or rename the missing Dart import target, then run "
+                "flutter analyze to confirm the project compiles."
+            ),
+            "verify_command": "flutter analyze",
+            "source_squads": squads,
+        }
+        out.insert(0, entry)
+        return out
+    return None
+
+
+FIX_RULES: list[FixRule] = [
+    rule_fix_import_cascade,
+    rule_fix_dart_missing_import,
+]
 
 
 def enrich_fix_candidates(
@@ -1154,6 +1375,8 @@ def enrich_fix_candidates(
         updated = rule(out, hypotheses)
         if updated is not None:
             out = updated
+    if any(cand.get("kind") == "dart_import" for cand in out):
+        out = [cand for cand in out if cand.get("kind") != "missing_command"]
     return out
 
 

@@ -702,6 +702,25 @@ def _location_from_evidence(rule: _FixRule, evidence: Sequence[str]) -> dict[str
     return {}
 
 
+def _hint_is_dart_file_read_context(line: str) -> bool:
+    return (
+        "Error when reading" in line
+        or "FileSystemException" in line
+        or "(OS Error: No such file or directory" in line
+    )
+
+
+def _missing_command_hint_evidence(hints: Sequence[str]) -> list[str]:
+    evidence: list[str] = []
+    for line in hints:
+        if not re.search(r"FileNotFoundError|command not found|No such file", line, re.I):
+            continue
+        if _hint_is_dart_file_read_context(line):
+            continue
+        evidence.append(line)
+    return evidence
+
+
 def build_fix_candidates(
     structured: dict[str, list[str]],
     *,
@@ -716,6 +735,13 @@ def build_fix_candidates(
         ev_found = [ln for ln in found if rule.found_re.search(ln)]
         if ev_found:
             raw.append((rule, rule.confidence_found, ev_found))
+            continue
+        if rule.kind == "missing_command":
+            if any(_hint_is_dart_file_read_context(line) for line in hints):
+                continue
+            ev_hint = _missing_command_hint_evidence(hints)
+            if ev_hint:
+                raw.append((rule, "low", ev_hint))
             continue
         if rule.hint_re:
             ev_hint = [ln for ln in hints if rule.hint_re.search(ln)]
@@ -754,6 +780,10 @@ def build_fix_candidates(
                 "verify_command": reproduce_command,
             }
         )
+    if any(cand.get("kind") == "dart_import" for cand in candidates):
+        candidates = [
+            cand for cand in candidates if cand.get("kind") != "missing_command"
+        ]
     return candidates
 
 
