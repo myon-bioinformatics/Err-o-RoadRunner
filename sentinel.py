@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import collections
+import functools
 import json
 import os
 import re
@@ -13,7 +14,6 @@ import subprocess
 import sys
 import threading
 import time
-import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Sequence
@@ -74,51 +74,6 @@ SORT_COUNT = "count"
 SORT_FIRST_SEEN = "first_seen"
 SORT_NAME = "name"
 GROUP_SORT_OPTIONS = (SORT_COUNT, SORT_FIRST_SEEN, SORT_NAME)
-
-_PATH_SIGNATURE_RE = re.compile(
-    r"(?:/[\w.~$-]+)+|(?:[A-Za-z]:\\[\w.~$-\\]+)+|<repo>[\w./-]*"
-)
-_NUMBER_SIGNATURE_RE = re.compile(r"\b\d+(?:\.\d+)?\b")
-_UUID_SIGNATURE_RE = re.compile(
-    r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
-    re.I,
-)
-_HEX_ID_SIGNATURE_RE = re.compile(r"\b0x[0-9a-f]+\b", re.I)
-
-_PHASE_RULES: tuple[tuple[re.Pattern[str], str], ...] = (
-    (re.compile(r"junit collection error|collection errors", re.I), "collect"),
-    (re.compile(r"collect only|error during collection", re.I), "collect"),
-    (re.compile(r"ModuleNotFoundError|ImportError|cannot import", re.I), "import"),
-    (re.compile(r"setup|fixture setup", re.I), "setup"),
-    (re.compile(r"teardown", re.I), "teardown"),
-    (re.compile(r"junit failure|AssertionError|expect\(locator\)", re.I), "test"),
-    (re.compile(r"timed out|exit code: 124", re.I), "timeout"),
-)
-
-_ERROR_TYPE_RULES: tuple[tuple[re.Pattern[str], str, str], ...] = (
-    (re.compile(r"python exception type: ModuleNotFoundError", re.I), "ModuleNotFoundError", "python"),
-    (re.compile(r"python exception type: ImportError", re.I), "ImportError", "python"),
-    (re.compile(r"python exception type: TypeError", re.I), "TypeError", "python"),
-    (re.compile(r"python exception type: SyntaxError", re.I), "SyntaxError", "python"),
-    (re.compile(r"python exception type: AssertionError", re.I), "AssertionError", "python"),
-    (re.compile(r"ValidationError|pydantic.*validation", re.I), "ValidationError", "python"),
-    (re.compile(r"sqlite3\.OperationalError|OperationalError.*(?:sqlite|database)", re.I), "sqlite3.OperationalError", "python"),
-    (re.compile(r"psycopg(?:2|3)?\.(?:errors\.)?\w+|PsycopgError", re.I), "psycopg.Error", "python"),
-    (re.compile(r"SQLAlchemyError|sqlalchemy\.exc\.\w+", re.I), "SQLAlchemyError", "python"),
-    (re.compile(r"node error|Cannot find module|ERR_MODULE_NOT_FOUND", re.I), "NodeError", "node"),
-    (re.compile(r"junit failure|junit error", re.I), "JUnitFailure", "junit"),
-    (re.compile(r"actions log failing|actions log ::error::", re.I), "ActionsStepFailure", "actions"),
-    (re.compile(r"exit code: 127|FileNotFoundError", re.I), "CommandNotFound", "shell"),
-    (re.compile(r"exit code: 126|PermissionError", re.I), "PermissionDenied", "shell"),
-)
-
-_LANGUAGE_HINTS: tuple[tuple[re.Pattern[str], str], ...] = (
-    (re.compile(r"python exception|python traceback", re.I), "python"),
-    (re.compile(r"node error|Cannot find module", re.I), "node"),
-    (re.compile(r"junit ", re.I), "junit"),
-    (re.compile(r"actions log", re.I), "actions"),
-    (re.compile(r"exit code: 12[67]", re.I), "shell"),
-)
 
 # Exit-mode: child (default) keeps the wrapped exit code; signal uses RoadRunner codes.
 EXIT_MODE_CHILD = "child"
@@ -208,6 +163,31 @@ def _redact_text(text: str) -> str:
     return redact_text(text)
 
 
+def _redact_argv(argv: Sequence[str]) -> list[str]:
+    return [_redact_text(part) for part in argv]
+
+
+def _redact_command_block(argv: Sequence[str], cwd: str | None) -> dict[str, Any]:
+    safe_argv = _redact_argv(argv)
+    block: dict[str, Any] = {
+        "argv": safe_argv,
+        "reproduce_command": _redact_text(shell_join(safe_argv)),
+    }
+    if cwd is not None:
+        block["cwd"] = _redact_text(cwd)
+    return block
+
+
+def _redact_fix_candidates(candidates: Sequence[dict[str, Any]]) -> list[dict[str, Any]]:
+    redacted: list[dict[str, Any]] = []
+    for cand in candidates:
+        entry = dict(cand)
+        if "verify_command" in entry:
+            entry["verify_command"] = _redact_text(str(entry["verify_command"]))
+        redacted.append(entry)
+    return redacted
+
+
 def summarize_environment() -> dict[str, Any]:
     names = sorted(os.environ)
     redacted_values: dict[str, str] = {}
@@ -228,6 +208,8 @@ def summarize_environment() -> dict[str, Any]:
 
 
 def junit_has_failures(path: Path) -> bool:
+    import xml.etree.ElementTree as ET
+
     try:
         data = path.read_bytes()
     except OSError:
@@ -418,10 +400,20 @@ def run_wrapped_command(
 
 
 def report_to_structured(report: Report) -> dict[str, list[str]]:
+    return _redact_triage_structured(
+        {
+            "found": list(report.found),
+            "not_found": list(report.not_found),
+            "hints": list(report.hints),
+        }
+    )
+
+
+def _redact_triage_structured(structured: dict[str, list[str]]) -> dict[str, list[str]]:
     return {
-        "found": list(report.found),
-        "not_found": list(report.not_found),
-        "hints": list(report.hints),
+        "found": [_redact_text(line) for line in structured.get("found") or []],
+        "not_found": [_redact_text(line) for line in structured.get("not_found") or []],
+        "hints": [_redact_text(line) for line in structured.get("hints") or []],
     }
 
 
@@ -444,7 +436,78 @@ class _FixRule:
     loc_re: re.Pattern[str] | None = None
 
 
-_FIX_RULES: tuple[_FixRule, ...] = (
+@functools.lru_cache(maxsize=1)
+def _phase_rules() -> tuple[tuple[re.Pattern[str], str], ...]:
+    return (
+        (re.compile(r"junit collection error|collection errors", re.I), "collect"),
+        (re.compile(r"collect only|error during collection", re.I), "collect"),
+        (re.compile(r"ModuleNotFoundError|ImportError|cannot import", re.I), "import"),
+        (re.compile(r"setup|fixture setup", re.I), "setup"),
+        (re.compile(r"teardown", re.I), "teardown"),
+        (re.compile(r"junit failure|AssertionError|expect\(locator\)", re.I), "test"),
+        (re.compile(r"timed out|exit code: 124", re.I), "timeout"),
+    )
+
+
+@functools.lru_cache(maxsize=1)
+def _error_type_rules() -> tuple[tuple[re.Pattern[str], str, str], ...]:
+    return (
+        (re.compile(r"exit code: 124|timed out after", re.I), "Timeout", "shell"),
+        (re.compile(r"python exception type: ModuleNotFoundError", re.I), "ModuleNotFoundError", "python"),
+        (re.compile(r"python exception type: ImportError", re.I), "ImportError", "python"),
+        (re.compile(r"python exception type: TypeError", re.I), "TypeError", "python"),
+        (re.compile(r"python exception type: SyntaxError", re.I), "SyntaxError", "python"),
+        (re.compile(r"python exception type: AssertionError", re.I), "AssertionError", "python"),
+        (re.compile(r"ValidationError|pydantic.*validation", re.I), "ValidationError", "python"),
+        (re.compile(r"sqlite3\.OperationalError|OperationalError.*(?:sqlite|database)", re.I), "sqlite3.OperationalError", "python"),
+        (re.compile(r"psycopg(?:2|3)?\.(?:errors\.)?\w+|PsycopgError", re.I), "psycopg.Error", "python"),
+        (re.compile(r"SQLAlchemyError|sqlalchemy\.exc\.\w+", re.I), "SQLAlchemyError", "python"),
+        (re.compile(r"node error|Cannot find module|ERR_MODULE_NOT_FOUND", re.I), "NodeError", "node"),
+        (re.compile(r"junit failure|junit error", re.I), "JUnitFailure", "junit"),
+        (re.compile(r"actions log failing|actions log ::error::", re.I), "ActionsStepFailure", "actions"),
+        (re.compile(r"exit code: 127|FileNotFoundError", re.I), "CommandNotFound", "shell"),
+        (re.compile(r"exit code: 126|PermissionError", re.I), "PermissionDenied", "shell"),
+    )
+
+
+@functools.lru_cache(maxsize=1)
+def _language_hints() -> tuple[tuple[re.Pattern[str], str], ...]:
+    return (
+        (re.compile(r"python exception|python traceback", re.I), "python"),
+        (re.compile(r"node error|Cannot find module", re.I), "node"),
+        (re.compile(r"junit ", re.I), "junit"),
+        (re.compile(r"actions log", re.I), "actions"),
+        (re.compile(r"exit code: 12[467]", re.I), "shell"),
+    )
+
+
+@functools.lru_cache(maxsize=1)
+def _signature_patterns() -> tuple[re.Pattern[str], ...]:
+    return (
+        re.compile(r"(?:/[\w.~$-]+)+|(?:[A-Za-z]:\\[\w.~$-\\]+)+|<repo>[\w./-]*"),
+        re.compile(r"\b\d+(?:\.\d+)?\b"),
+        re.compile(
+            r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}",
+            re.I,
+        ),
+        re.compile(r"\b0x[0-9a-f]+\b", re.I),
+    )
+
+
+@functools.lru_cache(maxsize=1)
+def _location_line_patterns() -> tuple[re.Pattern[str], ...]:
+    return (
+        re.compile(r"python traceback frame \(first\): (?P<loc>[^:]+):(?P<line>\d+)"),
+        re.compile(r"frame \(first\): (?P<loc>[^:]+):(?P<line>\d+)"),
+        re.compile(r"file=(?P<loc>[^,]+),line=(?P<line>\d+)"),
+        re.compile(r"(?P<loc>[\w./-]+\.spec\.[jt]s):(?P<line>\d+)"),
+        re.compile(r"junit testcase classname \(first\).*?: (?P<loc>[^\s]+)"),
+    )
+
+
+@functools.lru_cache(maxsize=1)
+def _fix_rules() -> tuple[_FixRule, ...]:
+    return (
     _FixRule(
         "python_import",
         re.compile(r"python exception type: ModuleNotFoundError", re.I),
@@ -536,7 +599,7 @@ _FIX_RULES: tuple[_FixRule, ...] = (
         "Re-run reproduce_command with verbose logging and inspect stderr.",
         None,
     ),
-)
+    )
 
 
 def _location_from_evidence(rule: _FixRule, evidence: Sequence[str]) -> dict[str, str]:
@@ -555,12 +618,7 @@ def _location_from_evidence(rule: _FixRule, evidence: Sequence[str]) -> dict[str
             if out:
                 return out
     for line in evidence:
-        for pattern in (
-            re.compile(r"frame \(first\): (?P<loc>[^:]+):(?P<line>\d+)"),
-            re.compile(r"file=(?P<loc>[^,]+),line=(?P<line>\d+)"),
-            re.compile(r"junit testcase classname \(first\).*?: (?P<loc>[^\s]+)"),
-            re.compile(r"(?P<loc>[\w./-]+\.spec\.[jt]s):(?P<line>\d+)"),
-        ):
+        for pattern in _location_line_patterns():
             match = pattern.search(line)
             if match:
                 return {k: v for k, v in match.groupdict().items() if v}
@@ -577,7 +635,7 @@ def build_fix_candidates(
     hints = structured.get("hints") or []
     raw: list[tuple[_FixRule, str, Sequence[str]]] = []
 
-    for rule in _FIX_RULES:
+    for rule in _fix_rules():
         ev_found = [ln for ln in found if rule.found_re.search(ln)]
         if ev_found:
             raw.append((rule, rule.confidence_found, ev_found))
@@ -613,7 +671,7 @@ def build_fix_candidates(
                 "id": f"F{idx}",
                 "kind": rule.kind,
                 "confidence": confidence,
-                "evidence": list(evidence),
+                "evidence": [_redact_text(line) for line in evidence],
                 "location": location,
                 "suggestion": rule.suggestion,
                 "verify_command": reproduce_command,
@@ -634,10 +692,11 @@ def parse_group_by(value: str) -> tuple[str, ...]:
 
 def normalize_signature(message: str) -> str:
     text = message.strip()
-    text = _PATH_SIGNATURE_RE.sub("<path>", text)
-    text = _UUID_SIGNATURE_RE.sub("<id>", text)
-    text = _HEX_ID_SIGNATURE_RE.sub("<id>", text)
-    text = _NUMBER_SIGNATURE_RE.sub("<n>", text)
+    path_re, number_re, uuid_re, hex_re = _signature_patterns()
+    text = path_re.sub("<path>", text)
+    text = uuid_re.sub("<id>", text)
+    text = hex_re.sub("<id>", text)
+    text = number_re.sub("<n>", text)
     text = " ".join(text.split())
     if len(text) > 160:
         text = text[:159] + "…"
@@ -645,13 +704,13 @@ def normalize_signature(message: str) -> str:
 
 
 def _classify_error_type_language(text: str) -> tuple[str, str]:
-    for pattern, etype, lang in _ERROR_TYPE_RULES:
+    for pattern, etype, lang in _error_type_rules():
         if pattern.search(text):
             return etype, lang
     match = re.search(r"python exception type: (?P<etype>[A-Za-z_][\w.]*)", text, re.I)
     if match:
         return match.group("etype"), "python"
-    for pattern, lang in _LANGUAGE_HINTS:
+    for pattern, lang in _language_hints():
         if pattern.search(text):
             return "generic", lang
     return "generic", "generic"
@@ -660,7 +719,7 @@ def _classify_error_type_language(text: str) -> tuple[str, str]:
 def _classify_phase(text: str, outcome: RunOutcome) -> str:
     if outcome.timed_out:
         return "timeout"
-    for pattern, phase in _PHASE_RULES:
+    for pattern, phase in _phase_rules():
         if pattern.search(text):
             return phase
     if outcome.junit_failure and "junit" in text.lower():
@@ -669,7 +728,7 @@ def _classify_phase(text: str, outcome: RunOutcome) -> str:
 
 
 def _classify_kind(text: str, error_type: str) -> str:
-    for rule in _FIX_RULES:
+    for rule in _fix_rules():
         if rule.found_re.search(text):
             return rule.kind
     if error_type in ("ModuleNotFoundError", "ImportError"):
@@ -682,15 +741,18 @@ def _classify_kind(text: str, error_type: str) -> str:
 
 
 def _parse_location_from_line(line: str) -> dict[str, str]:
-    for pattern in (
-        re.compile(r"frame \(first\): (?P<loc>[^:]+):(?P<line>\d+)"),
-        re.compile(r"file=(?P<loc>[^,]+),line=(?P<line>\d+)"),
-        re.compile(r"(?P<loc>[\w./-]+\.spec\.[jt]s):(?P<line>\d+)"),
-        re.compile(r"junit testcase classname \(first\).*?: (?P<loc>[^\s]+)"),
-    ):
+    for pattern in _location_line_patterns():
         match = pattern.search(line)
         if match:
             return {k: v for k, v in match.groupdict().items() if v}
+    return {}
+
+
+def _traceback_frame_from_found(found: Sequence[str]) -> dict[str, str]:
+    for line in found:
+        loc = _parse_location_from_line(line)
+        if loc:
+            return loc
     return {}
 
 
@@ -749,10 +811,15 @@ def extract_normalized_errors(
             continue
         message = _message_from_found_lines(found, idx)
         error_type, language = _classify_error_type_language(line + " " + message)
+        if outcome.timed_out or "exit code: 124" in line:
+            error_type = "Timeout"
+            language = "shell"
         phase = _classify_phase(line + " " + message, outcome)
         location = _parse_location_from_line(line)
         if not location and idx + 1 < len(found):
             location = _parse_location_from_line(found[idx + 1])
+        if not location:
+            location = _traceback_frame_from_found(found)
         kind = _classify_kind(line, error_type)
         errors.append(
             {
@@ -772,16 +839,21 @@ def extract_normalized_errors(
         blob = "\n".join(found)
         error_type, language = _classify_error_type_language(blob)
         phase = _classify_phase(blob, outcome)
-        if outcome.exception_type:
+        if outcome.timed_out:
+            error_type = "Timeout"
+            language = "shell"
+            phase = "timeout"
+        elif outcome.exception_type:
             error_type = outcome.exception_type
             language = "python"
+        fallback_location = _traceback_frame_from_found(found) or _parse_location_from_line(blob)
         errors.append(
             {
                 "error_type": error_type,
                 "language": language,
                 "phase": phase,
                 "signature": normalize_signature(blob[:300] or "failure"),
-                "location": _parse_location_from_line(blob),
+                "location": fallback_location,
                 "kind": _classify_kind(blob, error_type),
                 "first_seen": 0,
                 "message": blob[:300] or "failure",
@@ -1055,13 +1127,13 @@ def _render_table(doc: dict[str, Any]) -> str:
     groups = doc.get("groups") or {}
     buckets = groups.get("buckets") or []
     if buckets:
-        width = 28
+        width = max(len("Group"), *(len(bucket["name"]) for bucket in buckets))
         lines = [
             f"{'Group':<{width}} {'Count':>6} {'First':>6}",
         ]
         for bucket in buckets:
             lines.append(
-                f"{bucket['name'][:width]:<{width}} {bucket['count']:>6} {bucket['first_seen']:>6}"
+                f"{bucket['name']:<{width}} {bucket['count']:>6} {bucket['first_seen']:>6}"
             )
         total = groups.get("error_count", sum(b["count"] for b in buckets))
         lines.append(f"{'TOTAL':<{width}} {total:>6} {'-':>6}")
@@ -1206,11 +1278,14 @@ def build_escalation_report(
 
     structured = report_to_structured(report)
     reported_exit = normalized_child_exit(outcome)
-    reproduce = shell_join(state.command_argv)
-    fix_candidates = build_fix_candidates(
-        structured,
-        reproduce_command=reproduce,
-        max_fixes=max_fixes,
+    command_block = _redact_command_block(state.command_argv, state.cwd)
+    reproduce = command_block["reproduce_command"]
+    fix_candidates = _redact_fix_candidates(
+        build_fix_candidates(
+            structured,
+            reproduce_command=reproduce,
+            max_fixes=max_fixes,
+        )
     )
     normalized_errors = extract_normalized_errors(structured, outcome)
     groups = build_groups(
@@ -1222,11 +1297,7 @@ def build_escalation_report(
         "schema": SCHEMA_VERSION,
         "mode": "escalated",
         "escalation_reasons": reasons,
-        "command": {
-            "argv": state.command_argv,
-            "reproduce_command": shell_join(state.command_argv),
-            "cwd": state.cwd,
-        },
+        "command": command_block,
         "timing": {
             "elapsed_seconds": round(elapsed, 3),
             "started_monotonic": state.started_at,
@@ -1251,8 +1322,15 @@ def build_escalation_report(
         "groups": groups,
         "human_summary": "",
     }
-    doc["human_summary"] = _human_summary(
-        structured, reasons, state, outcome, fix_candidates=fix_candidates
+    doc["human_summary"] = _redact_text(
+        _human_summary(
+            structured,
+            reasons,
+            state,
+            outcome,
+            fix_candidates=fix_candidates,
+            command_block=command_block,
+        )
     )
     if hooks:
         doc["diagnostic_hooks"] = run_diagnostic_hooks(hooks, timeout=hook_timeout)
@@ -1266,12 +1344,14 @@ def _human_summary(
     outcome: RunOutcome,
     *,
     fix_candidates: Sequence[dict[str, Any]] | None = None,
+    command_block: dict[str, Any] | None = None,
 ) -> str:
+    cmd_display = (command_block or {}).get("reproduce_command") or shell_join(state.command_argv)
     lines = [
         "## Err-o-RoadRunner sentinel (escalated)",
         "",
         f"- **Reasons:** {', '.join(reasons) or 'failure'}",
-        f"- **Command:** `{shell_join(state.command_argv)}`",
+        f"- **Command:** `{cmd_display}`",
         f"- **Exit code:** {normalized_child_exit(outcome)}",
     ]
     if outcome.timed_out:
@@ -1387,6 +1467,7 @@ def append_step_summary(markdown: str) -> None:
         pass
 
 
+@functools.lru_cache(maxsize=1)
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="err-o-roadrunner sentinel",

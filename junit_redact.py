@@ -90,6 +90,11 @@ _CREDENTIAL_REDUCTION: list[tuple[re.Pattern[str], str | Callable[[re.Match[str]
     _compile_credential_redaction(spec) for spec in CREDENTIAL_PATTERN_SPECS
 ]
 
+_KV_SECRET_ASSIGNMENT_RE = re.compile(
+    r"(?i)\b(token|password|passwd|secret|api[_-]?key|credential|authorization)\s*=\s*"
+    r"['\"]?([^\s'\"&;]+)",
+)
+
 _PATH_REDACTION_PATTERNS: list[tuple[re.Pattern[str], str]] = [
     (re.compile(r"/home/runner/work/[^/\s<>\"']+/[^/\s<>\"']+"), "<runner-work>"),
     # pytest repr truncation can leave only the workspace prefix / repository.
@@ -101,8 +106,13 @@ _PATH_REDACTION_PATTERNS: list[tuple[re.Pattern[str], str]] = [
     (re.compile(r"0x[0-9a-fA-F]{8,}"), "0x<addr>"),
 ]
 
+def _kv_secret_replacement(match: re.Match[str]) -> str:
+    return f"{match.group(1)}=<redacted>"
+
+
 SECRET_PATTERNS: list[tuple[re.Pattern[str], str | Callable[[re.Match[str]], str]]] = [
     *_CREDENTIAL_REDUCTION,
+    (_KV_SECRET_ASSIGNMENT_RE, _kv_secret_replacement),
     *_PATH_REDACTION_PATTERNS,
 ]
 

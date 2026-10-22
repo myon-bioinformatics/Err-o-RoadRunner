@@ -1,1 +1,1 @@
-location=	1	1
+location=app/models.py:42	1	1

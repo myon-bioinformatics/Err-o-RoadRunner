@@ -92,12 +92,18 @@ All stdout lines are redacted and capped at **200** characters.
 
 ### Porcelain column order (fixed)
 
-1. **Header:** `# sentinel-report/v1` · `mode` · `reproduce_command` · `exit_code` (tab-separated).
-2. **Triage row:** `F` · `found` · `{line}`  
-   `H` · `hint` · `{line}`  
-   `?` · `not_found` · `{line}`
-3. **Fix row (`C`):** `C` · `id` · `kind` · `confidence` · `loc` · `line` · `suggestion` · `verify_command`
-4. **Totals:** `# totals` · `found=N` · `hints=N` · `not_found=N` · `fixes=N` · `elapsed=SECONDS`
+Each row is tab-separated. Fields are never reordered within a row type.
+
+| Row kind | Col 1 | Col 2 | Col 3 | Col 4 | Col 5 | Col 6 | Col 7 | Col 8 |
+|----------|-------|-------|-------|-------|-------|-------|-------|-------|
+| Header | `# sentinel-report/v1` | `mode` | `reproduce_command` | `exit_code` | — | — | — | — |
+| `F` | `F` | `found` | `{triage line}` | — | — | — | — | — |
+| `H` | `H` | `hint` | `{triage line}` | — | — | — | — | — |
+| `?` | `?` | `not_found` | `{triage line}` | — | — | — | — | — |
+| `C` | `C` | `id` | `kind` | `confidence` | `loc` | `line` | `suggestion` | `verify_command` |
+| Totals | `# totals` | `found=N` | `hints=N` | `not_found=N` | `fixes=N` | `elapsed=SECONDS` | — | — |
+
+Row order in the stream: **header** → all **F** rows → all **H** rows → all **?** rows → all **C** rows → **totals** (single line).
 
 ## Triage line semantics
 

@@ -16,8 +16,7 @@ from sentinel import (
     FORMAT_SHORT,
     FORMAT_TABLE,
     SCHEMA_VERSION,
-    _FIX_RULES,
-    build_escalation_report,
+    _fix_rules,
     build_fix_candidates,
     build_groups,
     extract_normalized_errors,
@@ -110,19 +109,19 @@ def test_sql_error_type_grouping() -> None:
 @pytest.mark.parametrize(
     ("rule", "line"),
     [
-        (_FIX_RULES[0], "python exception type: ModuleNotFoundError"),
-        (_FIX_RULES[1], "python exception type: ImportError"),
-        (_FIX_RULES[2], "exit code: 127"),
-        (_FIX_RULES[3], "exit code: 126"),
-        (_FIX_RULES[4], "exit code: 124"),
-        (_FIX_RULES[5], "Cannot find module '@playwright/test'"),
-        (_FIX_RULES[6], "python exception type: AssertionError"),
-        (_FIX_RULES[7], "junit failure (first) (x.xml): tests/view-mode.spec.js:104 expect(locator).toHaveCount"),
-        (_FIX_RULES[8], "python exception type: SyntaxError"),
-        (_FIX_RULES[9], "actions log failing step (log): Run tests"),
-        (_FIX_RULES[10], "exit code: 9"),
+        (_fix_rules()[0], "python exception type: ModuleNotFoundError"),
+        (_fix_rules()[1], "python exception type: ImportError"),
+        (_fix_rules()[2], "exit code: 127"),
+        (_fix_rules()[3], "exit code: 126"),
+        (_fix_rules()[4], "exit code: 124"),
+        (_fix_rules()[5], "Cannot find module '@playwright/test'"),
+        (_fix_rules()[6], "python exception type: AssertionError"),
+        (_fix_rules()[7], "junit failure (first) (x.xml): tests/view-mode.spec.js:104 expect(locator).toHaveCount"),
+        (_fix_rules()[8], "python exception type: SyntaxError"),
+        (_fix_rules()[9], "actions log failing step (log): Run tests"),
+        (_fix_rules()[10], "exit code: 9"),
     ],
-    ids=[r.kind for r in _FIX_RULES],
+    ids=[r.kind for r in _fix_rules()],
 )
 def test_fix_rule_regex_matches_fixture_line(rule, line: str) -> None:
     assert rule.found_re.search(line), f"{rule.kind} should match {line}"
@@ -224,6 +223,92 @@ def test_report_json_includes_fix_candidates_and_groups(tmp_path: Path) -> None:
     doc = json.loads(report.read_text(encoding="utf-8"))
     assert doc.get("fix_candidates")
     assert doc.get("groups", {}).get("buckets")
+
+
+@pytest.mark.sentinel
+def test_porcelain_column_order() -> None:
+    doc = _doc_from_structured(_load_struct("pydantic_validation.found.json"))
+    out = render_stdout_format(doc, fmt=FORMAT_PORCELAIN, tb="no", verbose=False)
+    rows = [ln for ln in out.strip().split("\n") if ln]
+    header_cols = rows[0].split("\t")
+    assert header_cols == [
+        f"# {SCHEMA_VERSION}",
+        "escalated",
+        "pytest -q",
+        "1",
+    ]
+    f_row = next(ln for ln in rows if ln.startswith("F\t"))
+    assert f_row.split("\t", 2)[:2] == ["F", "found"]
+    c_row = next(ln for ln in rows if ln.startswith("C\t"))
+    c_cols = c_row.split("\t")
+    assert len(c_cols) == 8
+    assert c_cols[0] == "C"
+    totals = next(ln for ln in rows if ln.startswith("# totals\t"))
+    assert totals.startswith("# totals\tfound=")
+
+
+@pytest.mark.sentinel
+def test_timeout_error_type() -> None:
+    structured = {"found": ["exit code: 124"], "not_found": [], "hints": []}
+    outcome = RunOutcome(exit_code=124, effective_exit_code=124, timed_out=True)
+    errors = extract_normalized_errors(structured, outcome)
+    assert errors[0]["error_type"] == "Timeout"
+
+
+@pytest.mark.sentinel
+def test_location_group_uses_traceback_frame() -> None:
+    structured = {
+        "found": [
+            "python exception type: RuntimeError",
+            "python traceback frame (first): <string>:1 in <module>",
+        ],
+        "not_found": [],
+        "hints": [],
+    }
+    errors = extract_normalized_errors(structured, RunOutcome(exit_code=1, effective_exit_code=1))
+    groups = build_groups(errors, group_by=("location",), sort="name")
+    assert groups["buckets"][0]["key"]["location"] == "<string>:1"
+
+
+@pytest.mark.sentinel
+def test_command_and_capture_secrets_redacted(tmp_path: Path) -> None:
+    leak = "api_key=supersecretvalue123"
+    report = tmp_path / "r.json"
+    proc = subprocess.run(
+        [
+            sys.executable,
+            "-m",
+            "triage",
+            "sentinel",
+            "--report-json",
+            str(report),
+            "--format",
+            "short",
+            "--",
+            "sh",
+            "-c",
+            f"printf '%s\\n' '{leak}' 1>&2; exit 1",
+        ],
+        cwd=ROOT,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    doc = json.loads(report.read_text(encoding="utf-8"))
+    sentinel_stdout = "\n".join(
+        ln
+        for ln in proc.stdout.splitlines()
+        if ln.startswith(("F ", "  ", "fix:", "G ", "==", "FOUND:", "NOT FOUND:", "HINT:"))
+    )
+    assert "supersecretvalue123" not in json.dumps(doc)
+    assert "supersecretvalue123" not in sentinel_stdout
+    assert "api_key=<redacted>" in doc["capture"]["stderr_tail"]
+    assert "api_key=<redacted>" in doc["command"]["reproduce_command"]
+    assert "api_key=<redacted>" in doc["command"]["argv"][-1]
+    assert "api_key=<redacted>" in doc["human_summary"]
+    assert doc["fix_candidates"][0]["verify_command"].count("api_key=<redacted>") >= 1
+    assert proc.stdout.splitlines()[0].startswith("F ")
+    assert "api_key=<redacted>" in proc.stdout.splitlines()[0]
 
 
 @pytest.mark.sentinel
