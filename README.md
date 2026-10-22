@@ -6,7 +6,7 @@ Researching the cause of a Python, Node or GitHub Actions CI failure currently t
 
 ## What it does
 
-- It is woken up only when a test, script or CI job fails, from a runner or a wrapper.
+- It is woken up when a test, script or CI job fails, from a runner or a wrapper (or when **`sentinel`** detects a failure while lightly monitoring a command).
 - It reads the information related to the failure, such as stderr, the exit code, JUnit XML and logs.
 - It extracts what it can locally, for example:
   - the exception type, the message and the first and last stack frames
@@ -21,8 +21,8 @@ Researching the cause of a Python, Node or GitHub Actions CI failure currently t
 
 ## Design principles (draft)
 
-1. **Stays idle in normal times:** it does nothing unless there is an error. It has no daemon and no resident process.
-2. **Python standard library only:** the main implementation lives in root-level modules (`triage.py`, `actions_log.py`, `junit_redact.py`, `project_version.py`).
+1. **Light until escalation:** plain `triage` stays off until invoked; the optional **`sentinel`** wrapper keeps only a small ring buffer and redacted env snapshot while a command runs, then runs full triage when something fails.
+2. **Python standard library only:** the main implementation lives in root-level modules (`triage.py`, `sentinel.py`, `actions_log.py`, `junit_redact.py`, `project_version.py`).
 3. **Node is optional:** Node stack parsing is regex-based on log text; no Node runtime is required for triage.
 4. **Read-only:** it never changes code or settings, and it never posts or sends anything.
 5. **Separates facts from guesses:** it shows `FOUND` and `NOT FOUND` explicitly, and labels inferences as `HINT`.
@@ -31,7 +31,7 @@ Researching the cause of a Python, Node or GitHub Actions CI failure currently t
 
 ## Status
 
-**Current slice:** read-only triage for Python tracebacks, Node stacks, JUnit XML, and downloaded GitHub Actions job logs (`--actions-log`). Summarize a downloaded CI artifact zip (or directory / single XML or JSON) in place with `digest` (JUnit counts and failing cases, receipt JSON fields, extension counts for everything else).
+**Current slice:** read-only triage for Python tracebacks, Node stacks, JUnit XML, and downloaded GitHub Actions job logs (`--actions-log`). Summarize a downloaded CI artifact zip (or directory / single XML or JSON) in place with `digest` (JUnit counts and failing cases, receipt JSON fields, extension counts for everything else). Wrap commands with **`sentinel`** for always-on light capture and automatic escalation plus JSON for agents (`docs/sentinel-report-schema.md`).
 
 ## CLI usage
 
@@ -100,6 +100,61 @@ Per JUnit XML: one counts line and one `FAIL class::name: message` line per fail
 The default triage mode always exits `0` after printing a report. The `digest` subcommand exits `1` when JUnit reports failing testcases and `2` when any digest input cannot be verified. Input problems take precedence when both conditions occur.
 
 Triage does not re-raise the original failure; it always aims to print a report instead of crashing.
+
+### Sentinel wrapper (stop on exit 0, go otherwise)
+
+Logic is **inverted** from “treat non-zero as failure”:
+
+- **stop:** wrapped command exits `0` with no timeout, signal, or JUnit failure — sentinel returns immediately. The classifier and JSON report **do not run** (minimal normal-path cost).
+- **go:** anything else (non-zero exit, timeout, signal, JUnit failure/error, wrapper error) — full triage runs and an optional JSON report is emitted.
+
+By default (`--exit-mode child`), the process exit code is still the **wrapped command’s** code (CI-safe; timeout → `124`, not found → `127`, not executable → `126`). For agents, `--exit-mode signal` uses RoadRunner codes: `0` = stop (no investigation), `1` = go (investigation ran). Exit `0` with only a traceback on stderr stays **stop** unless you pass **`--go-on-stderr-traceback`**. See **`docs/sentinel-exit-codes.md`**.
+
+```bash
+err-o-roadrunner sentinel --report-json /tmp/sentinel.json --print-triage --summary -- \
+  pytest -q tests/test_example.py
+```
+
+See **`docs/sentinel-report-schema.md`** for the stable `sentinel-report/v1` JSON fields (written only on **go**).
+
+**Example (Python failure, trimmed JSON)**
+
+Command:
+
+```bash
+python3 triage.py sentinel --report-json /tmp/sentinel.json --print-triage -- \
+  python3 -c "raise RuntimeError('demo failure')"
+```
+
+Fragment of `/tmp/sentinel.json`:
+
+```json
+{
+  "schema": "sentinel-report/v1",
+  "mode": "escalated",
+  "escalation_reasons": ["non_zero_exit"],
+  "command": {
+    "reproduce_command": "python3 -c 'raise RuntimeError('\"'\"'demo failure'\"'\"')'"
+  },
+  "capture": {
+    "stderr_tail": "RuntimeError: demo failure\n"
+  },
+  "triage": {
+    "found": [
+      "exit code: 1",
+      "python exception type: RuntimeError",
+      "python exception message: demo failure"
+    ],
+    "hints": [
+      "web search keywords: RuntimeError demo failure"
+    ]
+  },
+  "next_investigation_steps": [
+    "Reproduce locally with the same Python version and lock files.",
+    "Use HINT web search keywords before deeper code archaeology."
+  ]
+}
+```
 
 ## Real report examples
 

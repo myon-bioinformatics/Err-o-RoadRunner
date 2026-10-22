@@ -8,7 +8,13 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 
-ROOT_MODULES = ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py")
+ROOT_MODULES = (
+    "triage.py",
+    "actions_log.py",
+    "junit_redact.py",
+    "project_version.py",
+    "sentinel.py",
+)
 
 
 def test_main_modules_at_repository_root() -> None:

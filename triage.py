@@ -1858,6 +1858,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         argv = list(argv)
     if argv and argv[0] == "digest":
         return run_digest(argv[1:])
+    if argv and argv[0] == "sentinel":
+        from sentinel import run_sentinel
+
+        return run_sentinel(argv[1:])
     parser = build_parser()
     try:
         args = parser.parse_args(argv)
