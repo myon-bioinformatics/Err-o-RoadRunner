@@ -16,11 +16,12 @@ import time
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Callable, Sequence
+from typing import TYPE_CHECKING, Any, Callable, Sequence
 
-from junit_redact import find_corpus_leaks, redact_text
 from project_version import resolve_version
-from triage import Report, triage
+
+if TYPE_CHECKING:
+    from triage import Report
 
 __version__ = resolve_version(package_dir=Path(__file__).resolve().parent)
 
@@ -28,6 +29,9 @@ SCHEMA_VERSION = "sentinel-report/v1"
 DEFAULT_RING_BYTES = 64 * 1024
 DEFAULT_HOOK_TIMEOUT = 30
 ENV_VALUE_MAX = 200
+TIMEOUT_EXIT = 124
+TERM_GRACE_SECONDS = 2.0
+_USE_PROCESS_GROUP = os.name == "posix"
 
 # Exit-mode: child (default) keeps the wrapped exit code; signal uses RoadRunner codes.
 EXIT_MODE_CHILD = "child"
@@ -39,6 +43,7 @@ EXIT_USAGE = 2
 _SENSITIVE_ENV_RE = re.compile(
     r"(?i)(secret|token|password|passwd|credential|api[_-]?key|private[_-]?key|authorization)"
 )
+_STDERR_TRACEBACK_MARKER = "Traceback (most recent call last):"
 
 
 @dataclass
@@ -55,8 +60,10 @@ class WatchState:
 @dataclass
 class RunOutcome:
     exit_code: int | None
+    effective_exit_code: int | None = None
     timed_out: bool = False
     signal_name: str | None = None
+    termination_signal: str | None = None
     junit_failure: bool = False
     exception_type: str | None = None
     exception_message: str | None = None
@@ -88,6 +95,32 @@ def shell_join(argv: Sequence[str]) -> str:
     return " ".join(shlex.quote(part) for part in argv)
 
 
+def stderr_has_python_traceback(text: str) -> bool:
+    return _STDERR_TRACEBACK_MARKER in text
+
+
+def normalized_child_exit(outcome: RunOutcome) -> int:
+    if outcome.timed_out:
+        return TIMEOUT_EXIT
+    if outcome.effective_exit_code is not None:
+        return outcome.effective_exit_code
+    if outcome.exit_code is not None:
+        return outcome.exit_code
+    return 1
+
+
+def _call_triage(**kwargs: Any) -> Report:
+    from triage import triage as triage_fn
+
+    return triage_fn(**kwargs)
+
+
+def _redact_text(text: str) -> str:
+    from junit_redact import redact_text
+
+    return redact_text(text)
+
+
 def summarize_environment() -> dict[str, Any]:
     names = sorted(os.environ)
     redacted_values: dict[str, str] = {}
@@ -98,7 +131,7 @@ def summarize_environment() -> dict[str, Any]:
         raw = os.environ.get(name, "")
         if len(raw) > ENV_VALUE_MAX:
             raw = raw[: ENV_VALUE_MAX - 1] + "…"
-        redacted_values[name] = redact_text(raw)
+        redacted_values[name] = _redact_text(raw)
     return {
         "variable_count": len(names),
         "variable_names": names[:40],
@@ -140,6 +173,28 @@ def _stream_reader(
         done.set()
 
 
+def _terminate_process_group(
+    pgid: int,
+    proc: subprocess.Popen[bytes],
+    *,
+    grace: float,
+) -> str:
+    """Send TERM to the group, then KILL after grace. Returns last signal name."""
+    try:
+        os.killpg(pgid, signal.SIGTERM)
+    except ProcessLookupError:
+        return "SIGTERM"
+    try:
+        proc.wait(timeout=grace)
+        return "SIGTERM"
+    except subprocess.TimeoutExpired:
+        try:
+            os.killpg(pgid, signal.SIGKILL)
+        except ProcessLookupError:
+            pass
+        return "SIGKILL"
+
+
 def run_wrapped_command(
     argv: Sequence[str],
     *,
@@ -156,19 +211,58 @@ def run_wrapped_command(
     )
     if not argv:
         return state, RunOutcome(
-            exit_code=2,
+            exit_code=EXIT_USAGE,
+            effective_exit_code=EXIT_USAGE,
             exception_type="ValueError",
             exception_message="empty command",
         )
 
-    proc = subprocess.Popen(
-        list(argv),
-        cwd=cwd,
-        env=env,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
-        bufsize=0,
-    )
+    popen_kwargs: dict[str, Any] = {
+        "cwd": cwd,
+        "env": env,
+        "stdout": subprocess.PIPE,
+        "stderr": subprocess.PIPE,
+        "bufsize": 0,
+    }
+    if _USE_PROCESS_GROUP:
+        popen_kwargs["start_new_session"] = True
+
+    try:
+        proc = subprocess.Popen(list(argv), **popen_kwargs)
+    except FileNotFoundError as exc:
+        return state, RunOutcome(
+            exit_code=127,
+            effective_exit_code=127,
+            exception_type="FileNotFoundError",
+            exception_message=str(exc),
+        )
+    except PermissionError as exc:
+        return state, RunOutcome(
+            exit_code=126,
+            effective_exit_code=126,
+            exception_type="PermissionError",
+            exception_message=str(exc),
+        )
+
+    pgid = proc.pid if _USE_PROCESS_GROUP else None
+    forwarded_handlers: dict[int, Any] = {}
+
+    def _forward_signal(signum: int, _frame: Any) -> None:
+        if pgid is not None:
+            try:
+                os.killpg(pgid, signum)
+            except ProcessLookupError:
+                pass
+        else:
+            try:
+                proc.send_signal(signum)
+            except ProcessLookupError:
+                pass
+
+    if _USE_PROCESS_GROUP and pgid is not None:
+        for sig in (signal.SIGINT, signal.SIGTERM):
+            forwarded_handlers[sig] = signal.signal(sig, _forward_signal)
+
     out_done = threading.Event()
     err_done = threading.Event()
 
@@ -196,14 +290,23 @@ def run_wrapped_command(
         thread.start()
 
     timed_out = False
-    signal_name: str | None = None
+    termination_signal: str | None = None
     try:
         proc.wait(timeout=timeout)
     except subprocess.TimeoutExpired:
         timed_out = True
-        proc.kill()
-        proc.wait()
+        if pgid is not None:
+            termination_signal = _terminate_process_group(
+                pgid, proc, grace=TERM_GRACE_SECONDS
+            )
+            proc.wait()
+        else:
+            termination_signal = "SIGKILL"
+            proc.kill()
+            proc.wait()
     finally:
+        for sig, handler in forwarded_handlers.items():
+            signal.signal(sig, handler)
         out_done.wait(timeout=1)
         err_done.wait(timeout=1)
         for thread in threads:
@@ -215,11 +318,16 @@ def run_wrapped_command(
 
     code = proc.returncode
     if timed_out:
-        return state, RunOutcome(exit_code=code, timed_out=True)
+        return state, RunOutcome(
+            exit_code=code,
+            effective_exit_code=TIMEOUT_EXIT,
+            timed_out=True,
+            termination_signal=termination_signal,
+        )
     if code is not None and code < 0:
         sig = signal.Signals(-code).name
-        return state, RunOutcome(exit_code=code, signal_name=sig)
-    return state, RunOutcome(exit_code=code)
+        return state, RunOutcome(exit_code=code, effective_exit_code=code, signal_name=sig)
+    return state, RunOutcome(exit_code=code, effective_exit_code=code)
 
 
 def report_to_structured(report: Report) -> dict[str, list[str]]:
@@ -287,13 +395,13 @@ def run_diagnostic_hooks(
                 check=False,
             )
             entry["exit_code"] = completed.returncode
-            entry["stdout"] = redact_text((completed.stdout or "")[:8000])
-            entry["stderr"] = redact_text((completed.stderr or "")[:8000])
+            entry["stdout"] = _redact_text((completed.stdout or "")[:8000])
+            entry["stderr"] = _redact_text((completed.stderr or "")[:8000])
         except subprocess.TimeoutExpired:
             entry["exit_code"] = None
             entry["stderr"] = f"hook timed out after {timeout}s"
         except OSError as exc:
-            entry["stderr"] = redact_text(str(exc))
+            entry["stderr"] = _redact_text(str(exc))
         results.append(entry)
     return results
 
@@ -322,13 +430,11 @@ def build_escalation_report(
         except OSError:
             actions_log_text = None
 
-    exit_code = outcome.exit_code if outcome.exit_code is not None else 1
-    if outcome.timed_out:
-        exit_code = exit_code if exit_code not in (None, 0) else 124
+    exit_code = normalized_child_exit(outcome)
     if outcome.junit_failure and exit_code == 0:
         exit_code = 1
 
-    report = triage(
+    report = _call_triage(
         exit_code=exit_code,
         stderr_text=stderr_text if stderr_text.strip() else None,
         log_text=log_text,
@@ -338,18 +444,21 @@ def build_escalation_report(
     )
 
     reasons: list[str] = []
-    if outcome.exit_code not in (None, 0):
-        reasons.append("non_zero_exit")
     if outcome.timed_out:
         reasons.append("timeout")
+    elif outcome.exit_code not in (None, 0):
+        reasons.append("non_zero_exit")
     if outcome.signal_name:
         reasons.append(f"signal:{outcome.signal_name}")
     if outcome.junit_failure:
         reasons.append("junit_failure")
     if outcome.exception_type:
         reasons.append(f"wrapper:{outcome.exception_type}")
+    if stderr_has_python_traceback(stderr_text):
+        reasons.append("stderr_traceback")
 
     structured = report_to_structured(report)
+    reported_exit = normalized_child_exit(outcome)
     doc: dict[str, Any] = {
         "schema": SCHEMA_VERSION,
         "mode": "escalated",
@@ -364,14 +473,16 @@ def build_escalation_report(
             "started_monotonic": state.started_at,
         },
         "outcome": {
-            "exit_code": outcome.exit_code,
+            "exit_code": reported_exit,
+            "raw_exit_code": outcome.exit_code,
             "timed_out": outcome.timed_out,
             "signal": outcome.signal_name,
+            "termination_signal": outcome.termination_signal,
             "junit_failure": outcome.junit_failure,
         },
         "capture": {
-            "stdout_tail": redact_text(stdout_text),
-            "stderr_tail": redact_text(stderr_text),
+            "stdout_tail": _redact_text(stdout_text),
+            "stderr_tail": _redact_text(stderr_text),
         },
         "environment": summarize_environment(),
         "triage": structured,
@@ -395,12 +506,14 @@ def _human_summary(
         "",
         f"- **Reasons:** {', '.join(reasons) or 'failure'}",
         f"- **Command:** `{shell_join(state.command_argv)}`",
-        f"- **Exit code:** {outcome.exit_code}",
+        f"- **Exit code:** {normalized_child_exit(outcome)}",
     ]
     if outcome.timed_out:
         lines.append("- **Timed out:** yes")
     if outcome.signal_name:
         lines.append(f"- **Signal:** {outcome.signal_name}")
+    if outcome.termination_signal:
+        lines.append(f"- **Termination signal:** {outcome.termination_signal}")
     hints = structured.get("hints") or []
     if hints:
         lines.append("")
@@ -418,7 +531,13 @@ def _human_summary(
     return "\n".join(lines)
 
 
-def is_stop_signal(outcome: RunOutcome, *, junit_failure: bool) -> bool:
+def is_stop_signal(
+    outcome: RunOutcome,
+    *,
+    junit_failure: bool,
+    stderr_text: str,
+    go_on_stderr_traceback: bool,
+) -> bool:
     """Early-stop path: wrapped exit 0 and no go triggers (no triage, no report)."""
     if outcome.exception_type:
         return False
@@ -428,11 +547,24 @@ def is_stop_signal(outcome: RunOutcome, *, junit_failure: bool) -> bool:
         return False
     if junit_failure:
         return False
+    if go_on_stderr_traceback and stderr_has_python_traceback(stderr_text):
+        return False
     return True
 
 
-def is_go_signal(outcome: RunOutcome, *, junit_failure: bool) -> bool:
-    return not is_stop_signal(outcome, junit_failure=junit_failure)
+def is_go_signal(
+    outcome: RunOutcome,
+    *,
+    junit_failure: bool,
+    stderr_text: str,
+    go_on_stderr_traceback: bool,
+) -> bool:
+    return not is_stop_signal(
+        outcome,
+        junit_failure=junit_failure,
+        stderr_text=stderr_text,
+        go_on_stderr_traceback=go_on_stderr_traceback,
+    )
 
 
 def resolve_sentinel_exit(
@@ -456,7 +588,7 @@ def detect_junit_failure(junit_paths: Sequence[str]) -> bool:
 def write_report_json(path: Path, doc: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     payload = json.dumps(doc, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
-    path.write_text(redact_text(payload), encoding="utf-8")
+    path.write_text(_redact_text(payload), encoding="utf-8")
 
 
 def append_step_summary(markdown: str) -> None:
@@ -547,6 +679,14 @@ def build_parser() -> argparse.ArgumentParser:
         ),
     )
     parser.add_argument(
+        "--go-on-stderr-traceback",
+        action="store_true",
+        help=(
+            "Treat exit 0 with a Python traceback on stderr as go (default: stop). "
+            "Owner default remains exit 0 = stop unless this flag is set."
+        ),
+    )
+    parser.add_argument(
         "--version",
         action="version",
         version=f"%(prog)s {__version__}",
@@ -592,15 +732,18 @@ def run_sentinel(argv: Sequence[str] | None = None) -> int:
         ring_bytes=ring_bytes,
     )
 
-    child_exit = outcome.exit_code if outcome.exit_code is not None else 1
-    if outcome.timed_out and child_exit == 0:
-        child_exit = 124
+    stderr_text = state.stderr_tail.text()
+    child_exit = normalized_child_exit(outcome)
 
-    # JUnit is consulted only when needed for the stop/go decision (exit 0 may still be go).
     junit_fail = detect_junit_failure(args.junit) if args.junit else False
     outcome.junit_failure = junit_fail
 
-    if is_stop_signal(outcome, junit_failure=junit_fail):
+    if is_stop_signal(
+        outcome,
+        junit_failure=junit_fail,
+        stderr_text=stderr_text,
+        go_on_stderr_traceback=args.go_on_stderr_traceback,
+    ):
         return resolve_sentinel_exit(
             child_exit=child_exit,
             investigated=False,

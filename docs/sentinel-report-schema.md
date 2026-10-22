@@ -17,7 +17,7 @@ Process exit codes: see **`docs/sentinel-exit-codes.md`** (`--exit-mode child` v
 | `escalation_reasons` | string[] | Machine tags, e.g. `non_zero_exit`, `timeout`, `signal:SIGTERM`, `junit_failure`. |
 | `command` | object | `argv`, shell-safe `reproduce_command`, optional `cwd`. |
 | `timing` | object | `elapsed_seconds`, `started_monotonic`. |
-| `outcome` | object | `exit_code`, `timed_out`, `signal`, `junit_failure`. |
+| `outcome` | object | `exit_code` (normalized, `124` on timeout), `raw_exit_code`, `timed_out`, `signal` (child), `termination_signal` (sentinel kill), `junit_failure`. |
 | `capture` | object | Redacted `stdout_tail` and `stderr_tail` from ring buffers. |
 | `environment` | object | Redacted env summary (`variable_names`, `values_redacted`, …). |
 | `triage` | object | `found`, `not_found`, `hints` lists (same semantics as CLI triage lines). |
@@ -52,5 +52,6 @@ err-o-roadrunner sentinel --timeout 600 --junit reports/junit.xml --summary -- \
 | `--hook SHELL` | Repeatable diagnostic command on escalation. |
 | `--print-triage` | Emit FOUND/NOT FOUND/HINT lines to stdout on escalation. |
 | `--exit-mode child\|signal` | `child` (default): wrapped exit code. `signal`: `0`=stop, `1`=go. |
+| `--go-on-stderr-traceback` | Opt-in **go** when exit is `0` but stderr contains a Python traceback (default: **stop**). |
 
 With `--exit-mode child` (default), the process exit code is the wrapped command's (or `124` after timeout). Escalation failures never override it. With `--exit-mode signal`, see `docs/sentinel-exit-codes.md`.

@@ -11,7 +11,13 @@ Sentinel uses **inverted control flow** relative to “fail if non-zero”:
 
 ### `child` (default, CI-safe)
 
-Returns the **wrapped command’s exit code** unchanged (timeout normalization: if the child is killed by timeout and reports `0`, sentinel returns `124`).
+Returns the **wrapped command’s exit code**, with these normalizations:
+
+| Situation | Exit code |
+|-----------|-----------|
+| Timeout (`--timeout`) | `124` (always; JSON also sets `timed_out: true` and `termination_signal`) |
+| Command not found | `127` |
+| Command not executable | `126` |
 
 Escalation and reports do not change this code. If escalation code crashes, the wrapped code is still returned.
 
