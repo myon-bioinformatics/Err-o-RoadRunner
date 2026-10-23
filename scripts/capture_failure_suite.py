@@ -115,7 +115,7 @@ def main() -> None:
     mini = INPUTS / "suite_fail.py"
     write(mini, "def test_fail():\n    assert 0\n")
     junit = INPUTS / "suite.junit.xml"
-    run_fail([sys.executable, "-m", "pytest", "-q", str(mini), f"--junitxml={junit}"], cwd=INPUTS)
+    run_fail(["uv", "run", "pytest", "-q", str(mini), f"--junitxml={junit}"], cwd=INPUTS)
     from junit_redact import redact_xml_document
 
     junit.write_text(redact_xml_document(junit.read_text(encoding="utf-8")), encoding="utf-8")

@@ -31,8 +31,9 @@ def _step_script(name: str) -> str:
                 break
             lines.append(line[10:])
         run = "\n".join(lines)
+    root = shlex.quote(str(ROOT))
     return run.replace("uv run --locked python", shlex.quote(sys.executable)).replace(
-        "uv run --locked pytest", f"{shlex.quote(sys.executable)} -m pytest")
+        "uv run pytest", f"uv run --project {root} --offline --no-sync pytest")
 
 
 @pytest.fixture

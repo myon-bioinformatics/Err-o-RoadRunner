@@ -176,7 +176,7 @@ def main() -> None:
     write_text(mini_test, "def assert_fail():\n    assert 1 == 2\n")
     junit_path = INPUTS / "pytest_assertion.junit.xml"
     run_fail(
-        [sys.executable, "-m", "pytest", "-q", str(mini_test), f"--junitxml={junit_path}"],
+        ["uv", "run", "pytest", "-q", str(mini_test), f"--junitxml={junit_path}"],
         cwd=INPUTS,
     )
     from junit_redact import redact_xml_document

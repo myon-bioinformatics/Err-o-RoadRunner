@@ -1,7 +1,7 @@
 # pytest オプション調査（sentinel 設計用）
 
 調査日: 2026-10-22  
-対象: `pytest 9.1.1` の `python3 -m pytest --help` 出力（CLI フラグ、\`[pytest]\` 設定キー、環境変数）
+対象: `pytest 9.1.1` の `uv run pytest --help` 出力（CLI フラグ、\`[pytest]\` 設定キー、環境変数）
 
 sentinel の新しい `--format` / `--tb` / `-v` は、採用（**はい**）とした pytest 概念に合わせて命名・要約コードを揃えています。採用しないものは **いいえ**（ラッパーの責務外）、将来検討は **後日** としています。
 
@@ -99,5 +99,5 @@ sentinel の新しい `--format` / `--tb` / `-v` は、採用（**はい**）と
 
 ## 参考
 
-- 生ログ: 調査時に `python3 -m pytest --help` を実行（本リポジトリ CI と同じ pytest 9.x 系）
+- 生ログ: 調査時に `uv run pytest --help` を実行（本リポジトリ CI と同じ pytest 9.x 系）
 - sentinel スキーマ: `docs/sentinel-report-schema.md`

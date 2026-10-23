@@ -495,15 +495,8 @@ Requires Python 3.11 or later.
 With uv (the lockfile is `uv.lock`, and CI runs the same commands):
 
 ```bash
-uv sync --locked --extra test
-uv run --locked python -m pytest -q tests
-```
-
-With pip:
-
-```bash
-python -m pip install -e ".[test]"
-python -m pytest -q tests
+uv sync --locked
+uv run pytest -q tests
 ```
 
 Tests are grouped with pytest markers: `success`, `failure`, and `adversarial`.
