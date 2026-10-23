@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="630" time="49.964" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_load_config_node_launch" name="test_load_yaml_under_python_I_subprocess" time="0.013"><failure message="AssertionError: Traceback (most recent call last):&#10;    File &quot;&lt;string&gt;&quot;, line 1, in &lt;module&gt;&#10;  ModuleNotFoundError: No module named 'xprobe'&#10;  &#10;assert 1 == 0&#10; +  where 1 = CompletedProcess(args=['&lt;runner-work&gt;/.venv/bin/python', '-I', '-c', &quot;import xprobe; print(xprobe.lo...k (most recent call last):\n  File &quot;&lt;string&gt;&quot;, line 1, in &lt;module&gt;\nModuleNotFoundError: No module named \'xprobe\'\n').returncode">@pytest.mark.skipif(
+        not _load_config_mod._node_reader_ready(),
+        reason="Node 24+ and tests/js required",
+    )
+    def test_load_yaml_under_python_I_subprocess():
+        env = os.environ.copy()
+        env["NODE_PATH"] = str(JS)
+        env["PYTHONPATH"] = str(ROOT)
+        code = "import xprobe; print(xprobe.load_yaml('a: 1\\n'))"
+        done = subprocess.run(
+            [sys.executable, "-I", "-c", code],
+            cwd=str(ROOT),
+            env=env,
+            capture_output=True,
+            text=True,
+            timeout=60,
+            check=False,
+        )
+&gt;       assert done.returncode == 0, done.stderr
+E       AssertionError: Traceback (most recent call last):
+E           File "&lt;string&gt;", line 1, in &lt;module&gt;
+E         ModuleNotFoundError: No module named 'xprobe'
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['&lt;runner-work&gt;/.venv/bin/python', '-I', '-c', "import xprobe; print(xprobe.lo...k (most recent call last):\n  File "&lt;string&gt;", line 1, in &lt;module&gt;\nModuleNotFoundError: No module named \'xprobe\'\n').returncode
+
+tests/test_load_config_node_launch.py:491: AssertionError</failure></testcase></testsuite></testsuites>

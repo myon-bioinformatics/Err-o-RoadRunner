@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="31" tests="1612" time="64.330" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_flutter_vendor_registry_sync" name="test_retired_git_inspector_is_explicit_skip_not_new_registration" time="0.002"><failure message="assert 32 == 31">def test_retired_git_inspector_is_explicit_skip_not_new_registration():
+        catalog = load("vendor-catalog.json")
+        registry = load("vendor-consumers.json")
+        result = vendor_fleet_plan.plan(catalog, registry, active_consumers=[FLUTTER])
+        retired = [x for x in result["rows"]
+                   if x["tool_repository"] == "myon-bioinformatics/myon-bioinformatics"
+                   and x["source"] == "git_inspector.py"]
+        assert len(retired) == 1
+        assert retired[0]["action"] == "skipped"
+        assert retired[0]["reason"] == "retired_after_gh_identity_migration"
+        assert result["counts"]["needs_registration"] == 6
+&gt;       assert result["counts"]["skipped"] == 31
+E       assert 32 == 31
+
+tests/test_flutter_vendor_registry_sync.py:53: AssertionError</failure></testcase><testcase classname="tests.test_ironmate_vendor_registry_sync" name="test_retired_sources_are_not_proposed_for_reenrollment" time="0.002"><failure message="assert 19 == 18">def test_retired_sources_are_not_proposed_for_reenrollment():
+        result = vendor_fleet_plan.plan(load('vendor-catalog.json'), load('vendor-consumers.json'),
+                                       active_consumers=[CONSUMER])
+        for source in ('git_inspector.py', 'vendor_sync.py'):
+            rows = [x for x in result['rows'] if x['tool_repository'] ==
+                    'myon-bioinformatics/myon-bioinformatics' and x['source'] == source]
+            assert len(rows) == 1 and rows[0]['action'] == 'skipped'
+        assert result['counts']['registered'] == 29
+&gt;       assert result['counts']['skipped'] == 18
+E       assert 19 == 18
+
+tests/test_ironmate_vendor_registry_sync.py:37: AssertionError</failure></testcase><testcase classname="tests.test_pytest_uv_ci" name="test_pytest_workflows_use_uv_run_pytest" time="0.001"><failure message="AssertionError: node-launch-tests.yml&#10;assert 'python -m pytest' not in 'name: node_..._parity.py\n'&#10;  &#10;  'python -m pytest' is contained here:&#10;         run: python -m pytest -q tests/test_node_launch.py tests/test_node_launch_cli_args_parity.py&#10;  ?           ++++++++++++++++">def test_pytest_workflows_use_uv_run_pytest():
+        for name in PYTEST_WORKFLOWS:
+            text = (WORKFLOWS / name).read_text(encoding="utf-8")
+            assert "uv run pytest" in text, name
+            assert "python -m pytest" not in text, name
+            assert "python -m pip install" not in text, name
+            assert SETUP_UV in text, name
+        candidate = (WORKFLOWS / "vendor-candidate.yml").read_text(encoding="utf-8")
+        assert "uv run python -S vendor_candidate.py" in candidate
+        others = [path.name for path in WORKFLOWS.glob("*.yml") if path.name not in PYTEST_WORKFLOWS]
+        for name in others:
+            text = (WORKFLOWS / name).read_text(encoding="utf-8")
+&gt;           assert "python -m pytest" not in text, name
+E           AssertionError: node-launch-tests.yml
+E           assert 'python -m pytest' not in 'name: node_..._parity.py\n'
+E             
+E             'python -m pytest' is contained here:
+E                    run: python -m pytest -q tests/test_node_launch.py tests/test_node_launch_cli_args_parity.py
+E             ?           ++++++++++++++++
+
+tests/test_pytest_uv_ci.py:55: AssertionError</failure></testcase></testsuite></testsuites>

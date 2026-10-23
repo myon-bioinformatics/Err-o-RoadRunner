@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="6" tests="1424" time="177.855" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_portable_execution.PortableExecutionTests" name="test_export_standalone_runtime_and_source_assets" time="1.484"><failure message="AssertionError: 12 != 4">self = &lt;tests.test_portable_execution.PortableExecutionTests testMethod=test_export_standalone_runtime_and_source_assets&gt;
+
+    def test_export_standalone_runtime_and_source_assets(self):
+        with tempfile.TemporaryDirectory() as directory:
+            out = Path(directory) / 'site'
+            sha = 'a' * 40
+            subprocess.run([sys.executable, '-S', str(ROOT / 'scripts/build_portable_pages.py'), '--out', str(out), '--source-sha', sha], env=ENV, check=True)
+            target = out / 'execution'
+            self.assertIn('location.replace', (out / 'index.html').read_text())
+            meta = json.loads((target / 'build.json').read_text())
+            self.assertEqual(meta['source_sha'], sha)
+            self.assertEqual(meta['summaries']['status'], 'not_generated')
+            self.assertFalse(meta['summaries']['model_inference_performed'])
+            manifest = json.loads((target / 'source-summary-manifest.json').read_text())
+&gt;           self.assertEqual(len(manifest['entries']), 4)
+E           AssertionError: 12 != 4
+
+tests/test_portable_execution.py:241: AssertionError</failure></testcase></testsuite></testsuites>

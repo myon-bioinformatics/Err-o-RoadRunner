@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="31" tests="1645" time="95.021" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_gh_ops_write_surface" name="test_no_unlisted_parent_write_surface" time="0.052"><failure message="AssertionError: unlisted GitHub write surface: packages/gh_ops/gh_identity.py, packages/gh_ops/gh_ops.py, packages/gh_workflow/gh_workflow.py, pilot/resolve_sources.py&#10;assert not ['packages/gh_ops/gh_identity.py', 'packages/gh_ops/gh_ops.py', 'packages/gh_workflow/gh_workflow.py', 'pilot/resolve_sources.py']">def test_no_unlisted_parent_write_surface():
+        extra = [path for path in _write_files() if path not in ALLOW]
+&gt;       assert not extra, "unlisted GitHub write surface: " + ", ".join(extra)
+E       AssertionError: unlisted GitHub write surface: packages/gh_ops/gh_identity.py, packages/gh_ops/gh_ops.py, packages/gh_workflow/gh_workflow.py, pilot/resolve_sources.py
+E       assert not ['packages/gh_ops/gh_identity.py', 'packages/gh_ops/gh_ops.py', 'packages/gh_workflow/gh_workflow.py', 'pilot/resolve_sources.py']
+
+tests/test_gh_ops_write_surface.py:52: AssertionError</failure></testcase></testsuite></testsuites>

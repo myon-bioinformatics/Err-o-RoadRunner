@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="1" tests="46" time="26.183" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="dragowing.tests.test_render" name="test_stalled_dbus_does_not_block_browser_get_version" time="8.445"><failure message="assert (55.654619581 - 47.211069907) &lt; 8&#10; +  where 55.654619581 = &lt;built-in function monotonic&gt;()&#10; +    where &lt;built-in function monotonic&gt; = time.monotonic">chrome_executable = '/usr/bin/google-chrome'
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+
+    def test_stalled_dbus_does_not_block_browser_get_version(chrome_executable, monkeypatch):
+        # A bus that accepts and never replies used to swallow the whole launch
+        # budget before Browser.getVersion. The browser must ignore that bus.
+        sock_path = "/tmp/dragowing-stalled-bus-%d.sock" % os.getpid()
+        try:
+            os.unlink(sock_path)
+        except FileNotFoundError:
+            pass
+        server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        server.bind(sock_path)
+        server.listen(8)
+        stop = threading.Event()
+    
+        def accept():
+            server.settimeout(0.2)
+            while not stop.is_set():
+                try:
+                    conn, _ = server.accept()
+                except socket.timeout:
+                    continue
+                except OSError:
+                    return
+    
+                def hold(client=conn):
+                    try:
+                        while not stop.is_set():
+                            time.sleep(0.1)
+                    finally:
+                        try:
+                            client.close()
+                        except OSError:
+                            pass
+    
+                threading.Thread(target=hold, daemon=True).start()
+    
+        threading.Thread(target=accept, daemon=True).start()
+        address = "unix:path=" + sock_path
+        monkeypatch.setenv("DBUS_SESSION_BUS_ADDRESS", address)
+        monkeypatch.setenv("DBUS_SYSTEM_BUS_ADDRESS", address)
+        started = time.monotonic()
+        try:
+            with RenderSession(chrome=chrome_executable, timeouts=Timeouts(launch=8)) as session:
+                version = session.browser.call("Browser.getVersion", timeout=8)
+            assert version.get("product") or version.get("protocolVersion")
+&gt;           assert time.monotonic() - started &lt; 8
+E           assert (55.654619581 - 47.211069907) &lt; 8
+E            +  where 55.654619581 = &lt;built-in function monotonic&gt;()
+E            +    where &lt;built-in function monotonic&gt; = time.monotonic
+
+dragowing/tests/test_render.py:114: AssertionError</failure></testcase></testsuite></testsuites>
