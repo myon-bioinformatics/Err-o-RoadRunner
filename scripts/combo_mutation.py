@@ -13,8 +13,8 @@ ROOT = Path(__file__).resolve().parents[1]
 SRC = ROOT
 
 GUARD_CMD = [
-    sys.executable,
-    "-m",
+    "uv",
+    "run",
     "pytest",
     "-q",
     "tests/test_multi_error_coverage.py",
