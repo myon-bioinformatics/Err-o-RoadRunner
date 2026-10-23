@@ -1,31 +1,31 @@
-# Sentinel エラー・スクワッド
+# Sentinel error squads
 
-`err-o-roadrunner sentinel` の **go** 経路（失敗時のエスカレーション）で、JUnit の失敗を機械可読な **records** に分解し、並列の **スクワッド** が追加の手がかりを集めます。ネットワークはデフォルトでは使いません。
+On the **go** path of `err-o-roadrunner sentinel` (escalation on failure), JUnit failures are broken down into machine-readable **records**, and parallel **squads** gather extra clues. No network is used by default.
 
-## 目的
+## Purpose
 
-- テストケース単位の失敗（`error_type`、メッセージ、`signature`、`test_id`、トレースバック上の `source_file` / 行）を保持し、複数の JUnit ファイル（例: `py3.11` … `py3.15`）を **variants** としてマージする。
-- `--group-by error_type` が `JUnitFailure` に潰れないようにする（従来の triage 行ベースの正規化の代わりに records を優先）。
-- コード・履歴・（任意で）Web からの仮説を `hypotheses` と `fix_candidates.source_squads` に載せる。
+- Keep per-testcase failures (`error_type`, message, `signature`, `test_id`, `source_file` / line from the traceback), and merge multiple JUnit files (e.g. `py3.11` … `py3.15`) as **variants**.
+- Keep `--group-by error_type` from collapsing into `JUnitFailure` (records take priority over the older triage-line normalization).
+- Put hypotheses from code, history, and (optionally) the web into `hypotheses` and `fix_candidates.source_squads`.
 
 ## CLI
 
-| フラグ | 既定 | 説明 |
+| Flag | Default | Description |
 |--------|------|------|
-| `--squads` | `code,history` | `web,code,history` のカンマ区切り、`all`、`none` |
-| `--squad-timeout` | `10` | 各スクワッドの上限（秒） |
-| `--squad-budget` | `30` | 全体の壁時計バジェット（秒） |
-| `--squad-workers` | `3` | `ThreadPoolExecutor` のワーカー数 |
-| `--offline` | オフ | Web スクワッドをスキップ（ネットワークなし） |
-| `--corpus` | リポジトリ内 `tests/fixtures/junit_corpus` があれば自動 | JUnit コーパスディレクトリ（繰り返し可）。**history スクワッドの署名索引のみ**（現在の失敗 `records` には含めない） |
-| `--web-endpoint` | GitHub Search API | Web スクワッドの URL プレフィックス許可リスト（繰り返し可） |
-| `--project-root` | `.` | コードスクワッドと汚染判定のルート |
+| `--squads` | `code,history` | Comma-separated `web,code,history`, `all`, or `none` |
+| `--squad-timeout` | `10` | Limit per squad (seconds) |
+| `--squad-budget` | `30` | Overall wall-clock budget (seconds) |
+| `--squad-workers` | `3` | Number of `ThreadPoolExecutor` workers |
+| `--offline` | off | Skip the web squad (no network) |
+| `--corpus` | Auto if the repository has `tests/fixtures/junit_corpus` | JUnit corpus directory (repeatable). **Used only for the history squad's signature index** (not included in the current failure `records`) |
+| `--web-endpoint` | GitHub Search API | URL prefix allowlist for the web squad (repeatable) |
+| `--project-root` | `.` | Root for the code squad and contamination checks |
 
-**Web スクワッド**は `--squads` に `web` を含め、かつ `--offline` でないときだけ動きます。
+The **web squad** runs only when `--squads` includes `web` and `--offline` is not set.
 
-## スクワッドの戻り値
+## Squad return value
 
-各スクワッドは例外を外に出さず、次の形を返します。
+Each squad never lets an exception escape and returns this shape:
 
 ```json
 {
@@ -37,64 +37,64 @@
 }
 ```
 
-`status` は `ok` / `timeout` / `error` / `skipped` です。プロセスの終了コードは変えません。
+`status` is `ok` / `timeout` / `error` / `skipped`. The process exit code is not changed.
 
 ### code
 
-- `test_id` からテストファイルを特定し、失敗行の前後数行を読む。
-- `ast` で import を列挙し、未解決を `unresolved_imports` に載せる。
-- `tests` / `conftest` 内の `sys.path.insert` / `sys.modules` 変更を検出する。
+- Locate the test file from `test_id` and read a few lines around the failing line.
+- List imports with `ast` and put unresolved ones in `unresolved_imports`.
+- Detect `sys.path.insert` / `sys.modules` changes in `tests` / `conftest`.
 
 ### history
 
-- `.git` がない場合は `skipped`。
-- 失敗ファイルごとに `git log -n20`、`git blame -L`（porcelain）。
-- `--corpus` の XML から同じ `signature` の初出・最終出現を照合し、兄弟バリアントの pass/fail で **flaky** マーカーを付けることがあります。
+- `skipped` when there is no `.git`.
+- `git log -n20` and `git blame -L` (porcelain) per failing file.
+- Match the first and last appearance of the same `signature` in the `--corpus` XML, and may add a **flaky** marker based on pass/fail of sibling variants.
 
 ### web
 
-- `error_type` と正規化メッセージとフレームワーク推定から検索クエリを組み立て、常に `queries[]` を出力する。
-- 既定は `https://api.github.com/search/issues` のみ。結果は `{title, url, score}` 最大 5 件。`junit_redact.redact_text` でパスやトークンを落とす。
+- Build a search query from `error_type`, the normalized message, and the guessed framework, and always output `queries[]`.
+- Only `https://api.github.com/search/issues` by default. Results are `{title, url, score}`, at most 5. Paths and tokens are stripped with `junit_redact.redact_text`.
 
-## 仮説のマージ
+## Hypothesis merging
 
-- スクワッド間で同じ `summary` をまとめ、`source_squads` を和集合にする。
-- `merge_squad_hypotheses` はスクワッドが返した `hypotheses` に加え、**HYPOTHESIS_RULES** を `records` に対して実行し、結果を同じ `summary` キーでマージする（並列エージェントはルールをリスト末尾に追加するだけ）。
-- **import-path contamination**（H1）: `rule_import_cascade` — リポジトリに実在する短いモジュール名への `ModuleNotFoundError` / `AttributeError` が複数あるとき、根因候補として `explains` にテスト ID を列挙する。
-- **stale installed metadata or env override**: `rule_stale_package_metadata` — 同一テスト関数の parametrize で `assert_left` が複数値に割れ、名前やメッセージに version / metadata / pyproject が含まれるとき。
-- **matrix-invariant failure**（M 行）: `rule_matrix_invariance` — マトリクス全セルで同じ失敗が出るとき `invariant`（リポジトリ内容・ロジック疑い）、一部 OS のみなら `os-specific`、一部 Python のみなら `python-specific` と分類する。`--squads none` でも matrix 系の仮説だけはレポートに載る。
+- Identical `summary` values across squads are combined, with `source_squads` unioned.
+- `merge_squad_hypotheses` runs **HYPOTHESIS_RULES** over `records` in addition to the `hypotheses` returned by squads, and merges results by the same `summary` key (parallel agents only append rules to the end of the list).
+- **import-path contamination** (H1): `rule_import_cascade` — when there are several `ModuleNotFoundError` / `AttributeError` for short module names that exist in the repository, list the test IDs in `explains` as a root-cause candidate.
+- **stale installed metadata or env override**: `rule_stale_package_metadata` — when parametrized cases of the same test function split `assert_left` into several values and the name or message mentions version / metadata / pyproject.
+- **matrix-invariant failure** (M line): `rule_matrix_invariance` — classify as `invariant` (repository content or logic suspected) when every matrix cell has the same failure, `os-specific` when only some OSes fail, and `python-specific` when only some Pythons fail. Matrix hypotheses appear in the report even with `--squads none`.
 
-## 拡張ポイント（`squad.py`）
+## Extension points (`squad.py`)
 
-並列エージェントは **既存の並びの末尾に関数を追加** する。先頭に挿入したり、既存エントリを差し替えない（順序が意味を持つものは下表のとおり）。
+Parallel agents **append functions to the end of the existing lists**. Do not insert at the front or replace existing entries (where order matters, see the table).
 
-| リスト | 呼び出し元 | シグネチャ | 戻り値 | 順序 |
+| List | Caller | Signature | Return value | Order |
 |--------|------------|------------|--------|------|
-| `EXCEPTION_PARSERS` | `_exception_type` | `(message: str, blob: str, first_line: str) -> str \| None` | 例外型名、未判定は `None` | 先に成功したパーサーが採用。最後まで `None` なら `Unknown`。 |
-| `RECORD_FIELD_PARSERS` | `parse_junit_failure_records` | `(message: str, blob: str, first_line: str) -> dict \| None` | レコードへマージする任意フィールド（例 `error_type` の上書き、`expected_exception`）。未判定は `None` | 各パーサーの dict を順に `update`。`error_type` キーは組み立て時に `_exception_type` より優先。 |
-| `TRACEBACK_LOCATION_PARSERS` | `_traceback_location` | `(blob: str) -> (file, line) \| None` | ファイルパスと行番号のタプル、未判定は `None` | 先にファイルパスが非空の結果を採用。すべて未判定なら `source_file` は空。 |
-| `VARIANT_PARSERS` | `variant_from_artifact` | `(path: str) -> str \| None` | バリアント名（例 `py3.12`、`windows:38186460415`）、未判定は `None` | 先に非 `None` の結果を採用。すべて `None` なら `unknown`。 |
-| `VARIANT_AXES_PARSERS` | `parse_junit_failure_records` / `merge_failure_records` | `(artifact: str) -> dict[str, str] \| None` | マトリクス軸 `os` / `python` / `flavor` の部分 dict（S3 の `variant_axes` と同形） | 先に非 `None` の結果を `variant_axes` / `matrix_cells` に反映。マージ時は軸ごとに和集合。 |
-| `LANGUAGE_DETECTORS` | `parse_junit_failure_records`（レコード構築時） | `(record: Mapping[str, Any]) -> str \| None` | `python` など、未判定は `None` | 先に非 `None` の言語を `records[].language` に設定。すべて `None` なら `language` は `null`。 |
-| `HYPOTHESIS_RULES` | `merge_squad_hypotheses`（および `build_cascade_hypotheses`） | `(records, project_root, squad_names) -> list[dict]` | 仮説 dict のリスト（`summary`, `confidence`, `explains`, 任意 `id`） | 各ルールの出力を順にマージ。同一 `summary` は `source_squads` 和集合・`explains` 連結。 |
-| `FIX_RULES` | `enrich_fix_candidates` | `(candidates, hypotheses) -> list[dict] \| None` | 更新後の候補リスト、変更なしは `None` | 各ルールを順に適用。`None` のルールはスキップし、非 `None` の戻り値で候補リストを更新する（import カスケード、Dart import、editable 再インストール案など）。 |
+| `EXCEPTION_PARSERS` | `_exception_type` | `(message: str, blob: str, first_line: str) -> str \| None` | Exception type name, `None` if undetermined | The first parser to succeed wins. `Unknown` if all return `None`. |
+| `RECORD_FIELD_PARSERS` | `parse_junit_failure_records` | `(message: str, blob: str, first_line: str) -> dict \| None` | Optional fields merged into the record (e.g. overriding `error_type`, `expected_exception`). `None` if undetermined | Each parser's dict is applied with `update` in order. An `error_type` key takes priority over `_exception_type` when building. |
+| `TRACEBACK_LOCATION_PARSERS` | `_traceback_location` | `(blob: str) -> (file, line) \| None` | Tuple of file path and line number, `None` if undetermined | The first result with a non-empty file path wins. `source_file` is empty if none match. |
+| `VARIANT_PARSERS` | `variant_from_artifact` | `(path: str) -> str \| None` | Variant name (e.g. `py3.12`, `windows:38186460415`), `None` if undetermined | The first non-`None` result wins. `unknown` if all are `None`. |
+| `VARIANT_AXES_PARSERS` | `parse_junit_failure_records` / `merge_failure_records` | `(artifact: str) -> dict[str, str] \| None` | Partial dict of matrix axes `os` / `python` / `flavor` (same shape as S3's `variant_axes`) | The first non-`None` result goes into `variant_axes` / `matrix_cells`. Axes are unioned when merging. |
+| `LANGUAGE_DETECTORS` | `parse_junit_failure_records` (when building records) | `(record: Mapping[str, Any]) -> str \| None` | e.g. `python`, `None` if undetermined | The first non-`None` language is set on `records[].language`. `language` is `null` if all are `None`. |
+| `HYPOTHESIS_RULES` | `merge_squad_hypotheses` (and `build_cascade_hypotheses`) | `(records, project_root, squad_names) -> list[dict]` | List of hypothesis dicts (`summary`, `confidence`, `explains`, optional `id`) | Each rule's output is merged in order. Identical `summary` values union `source_squads` and concatenate `explains`. |
+| `FIX_RULES` | `enrich_fix_candidates` | `(candidates, hypotheses) -> list[dict] \| None` | Updated candidate list, `None` if unchanged | Rules are applied in order. Rules returning `None` are skipped; a non-`None` return replaces the candidate list (import cascade, Dart import, editable reinstall suggestions, etc.). |
 
-`parse_junit_failure_records` は `AssertionError` 向けに `extract_assert_operands` で `assert_left` / `assert_right`（パス redact 済み・最大 80 文字）を `signature` の直後に付与する。`summarize_top_causes` は大きな JUnit ラン向けに上位署名を最大 3 件返す（レポート JSON の `top_causes`）。仮説の `id`（`H1` …）は `merge_squad_hypotheses` がマージ後に一括付与する。
+For `AssertionError`, `parse_junit_failure_records` uses `extract_assert_operands` to add `assert_left` / `assert_right` (paths redacted, up to 80 characters) right after `signature`. `summarize_top_causes` returns up to 3 top signatures for large JUnit runs (`top_causes` in the report JSON). Hypothesis `id`s (`H1` …) are assigned all at once by `merge_squad_hypotheses` after merging.
 
-`records[]` には JUnit 解析時に `language` が載る（既定は Python JUnit のみ `python` を検出）。`records_to_normalized_errors` はレコードの `language` を優先し、無いときだけ従来の推定にフォールバックする。
+`records[]` carries `language` from JUnit parsing (by default only Python JUnit is detected, as `python`). `records_to_normalized_errors` prefers the record's `language` and falls back to the older guess only when it is missing.
 
-## レポート JSON
+## Report JSON
 
-`docs/sentinel-report-schema.md` の任意フィールド:
+Optional fields in `docs/sentinel-report-schema.md`:
 
-- `records[]` — マージ後の失敗レコード（`variants` 付き）
-- `squads[]` — 上記のスクワッド結果
+- `records[]` — merged failure records (with `variants`)
+- `squads[]` — the squad results above
 - `hypotheses[]` — `{id, summary, confidence, explains, source_squads}`
 
-## 標準出力
+## Standard output
 
-- **short**: `S code ok 120ms 4 findings`、`H1 import-path contamination (explains 9/19)`、`M fails on all 7 variants (os: 3/3, python: 5/5)` のような行。
-- **porcelain**: `squad` 行 — 列順は `squad`、名前、`status`、経過 ms、findings 件数（タブ区切り）。
-- **table**: グループ表の右にスクワッド名ごとの列（TOTAL 行に各 `status`）。
+- **short**: lines such as `S code ok 120ms 4 findings`, `H1 import-path contamination (explains 9/19)`, `M fails on all 7 variants (os: 3/3, python: 5/5)`.
+- **porcelain**: `squad` lines — columns are `squad`, name, `status`, elapsed ms, findings count (tab-separated).
+- **table**: a column per squad name to the right of the group table (each `status` on the TOTAL row).
 
-実装は `squad.py`（標準ライブラリのみ）にあり、`sentinel.py` から go 時に呼ばれます。
+The implementation is in `squad.py` (standard library only) and is called from `sentinel.py` on go.
