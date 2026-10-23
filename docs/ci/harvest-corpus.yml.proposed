@@ -26,13 +26,15 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 90
     steps:
-      - uses: actions/checkout@v7.0.1
-      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
-      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+      - uses: astral-sh/setup-uv@07a047e608db84b3d8c06cd9a7c7dcc9c355c18e # v10.3.2
+        with:
+          version: "latest"
       - name: Install test dependencies
-        run: uv sync --locked --extra test
+        run: uv sync --locked
       # Bronze: raw artifacts stay in the runner temporary directory; never upload them.
       - name: Harvest (partial results allowed)
         id: harvest
@@ -52,7 +54,7 @@ jobs:
           fi
       - name: Preserve collection report
         if: always() && steps.harvest.outcome != 'skipped'
-        uses: actions/upload-artifact@v7.0.2
+        uses: actions/upload-artifact@v7
         with:
           name: harvest-coverage
           path: |
@@ -70,7 +72,7 @@ jobs:
       # Gold: validate XML, generated goldens, and JSON/JSONL before publishing corpus.
       - name: Validate corpus
         id: validate
-        run: uv run --locked pytest -q tests/test_junit_corpus_golden.py tests/test_results_corpus.py tests/test_fixture_redaction_scan.py
+        run: uv run pytest -q tests/test_junit_corpus_golden.py tests/test_results_corpus.py tests/test_fixture_redaction_scan.py
       - name: Open PR with new entries
         if: success() && steps.validate.outcome == 'success'
         env:

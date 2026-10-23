@@ -16,18 +16,19 @@ name = "err-o-roadrunner"
 version = "0.6.0"
 source = { editable = "." }
 
-[package.optional-dependencies]
-test = [
+[package.dev-dependencies]
+dev = [
     { name = "pip" },
     { name = "pytest" },
 ]
 
 [package.metadata]
-requires-dist = [
-    { name = "pip", marker = "extra == 'test'", specifier = ">=25.0" },
-    { name = "pytest", marker = "extra == 'test'", specifier = ">=9.1.1" },
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "pip", specifier = ">=25.0" },
+    { name = "pytest", specifier = ">=9.1.1" },
 ]
-provides-extras = ["test"]
 
 [[package]]
 name = "iniconfig"

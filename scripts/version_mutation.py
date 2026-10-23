@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import subprocess
-import sys
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -12,8 +11,8 @@ ROOT = Path(__file__).resolve().parents[1]
 TARGET = ROOT / "project_version.py"
 
 GUARD_CMD = [
-    sys.executable,
-    "-m",
+    "uv",
+    "run",
     "pytest",
     "-q",
     "tests/test_version_matrix.py",
