@@ -1,0 +1,8 @@
+Error: tests/view-mode.spec.js:104:5 expect(locator).toHaveCount(expected) failed
+
+Expected: 3
+Received: 1
+
+Call log:
+  - expect.toHaveCount with timeout 5000ms
+  - waiting for locator('.item-row')

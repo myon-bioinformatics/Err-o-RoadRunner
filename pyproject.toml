@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "err-o-roadrunner"
-version = "0.5.0"
+version = "0.6.0"
 description = "Error-triggered triage tool (read-only failure report)"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -14,13 +14,13 @@ license = { text = "MIT" }
 err-o-roadrunner = "triage:main"
 
 [project.optional-dependencies]
-test = ["pytest>=8,<10"]
+test = ["pytest>=9.1.1", "pip>=25.0"]
 
 [tool.hatch.build.targets.wheel]
-only-include = ["triage.py", "actions_log.py", "junit_redact.py", "project_version.py"]
+only-include = ["triage.py", "actions_log.py", "junit_redact.py", "project_version.py", "sentinel.py"]
 
 [tool.hatch.build.targets.sdist]
-only-include = ["triage.py", "actions_log.py", "junit_redact.py", "project_version.py"]
+only-include = ["triage.py", "actions_log.py", "junit_redact.py", "project_version.py", "sentinel.py"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -37,4 +37,5 @@ markers = [
     "junit_corpus: real failed-run JUnit XML golden suite",
     "multi_error: multi-error coverage and standard-error HINT floor",
     "mutation_guard: mutations targeted by scripts/combo_mutation.py",
+    "sentinel: lightweight wrapper and error escalation",
 ]

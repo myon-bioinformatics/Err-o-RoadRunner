@@ -1,0 +1,10 @@
+{
+  "found": [
+    "exit code: 1",
+    "python exception type: OperationalError",
+    "python exception message: (sqlite3.OperationalError) no such table: users",
+    "python traceback frame (first): app/db.py:18 in fetch_all"
+  ],
+  "not_found": [],
+  "hints": []
+}

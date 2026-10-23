@@ -12,9 +12,9 @@ FOUND: actions log error marker (first) (actions-log): Process completed with ex
 FOUND: python version: <runtime>
 FOUND: node version: <runtime>
 FOUND: gh version: <runtime>
+FOUND: lock files present: uv.lock
 FOUND: environment variable count: <runtime>
 FOUND: environment variable names: <runtime>
 NOT FOUND: actions log ::error:: commands (actions-log)
 NOT FOUND: actions log pytest failed lines (actions-log)
-NOT FOUND: lock files in project root
 HINT: actions log search keywords (actions-log): Process completed with exit code 1.

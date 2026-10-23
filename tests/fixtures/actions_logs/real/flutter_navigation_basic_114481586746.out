@@ -22,10 +22,10 @@ FOUND: node error 1 stack frame (first): screen_navigation.spec.ts:154
 FOUND: python version: <runtime>
 FOUND: node version: <runtime>
 FOUND: gh version: <runtime>
+FOUND: lock files present: uv.lock
 FOUND: environment variable count: <runtime>
 FOUND: environment variable names: <runtime>
 NOT FOUND: actions log ::error:: commands (actions-log)
 NOT FOUND: actions log pytest failed lines (actions-log)
-NOT FOUND: lock files in project root
 HINT: web search keywords: SyntaxError: /home/runner/work/flutter_navigation_basic/flutter_navigation_basic/e2e/tests/screen_navigation.spec.ts: Invalid regular expression flag. (154:40)
 HINT: actions log search keywords (actions-log): Process completed with exit code 1.
