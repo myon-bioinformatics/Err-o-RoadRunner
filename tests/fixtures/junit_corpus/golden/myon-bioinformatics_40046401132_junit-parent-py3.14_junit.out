@@ -1,0 +1,19 @@
+FOUND: exit code: 1
+FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/myon-bioinformatics_40046401132_junit-parent-py3.14_junit.xml): 1
+FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/myon-bioinformatics_40046401132_junit-parent-py3.14_junit.xml): AssertionError: assert ('fetch' == 'fetch'\n  \n    fetch and 'private' in 'source is not an exported packed Node entry; plain fetch')\ntmp_path = PosixPath('<pytest-tmp>/pytest-0/test_dispatch_installs_fetches0')\n\n    def test_dispatch_installs_fetches_and_records(tmp_path):\n        module = _driver()\n        catalog = _catalog()\n        calls = []\n    \n        def install(repository, ref,
+FOUND: junit failure groups (<repo>/tests/fixtures/junit_corpus/cases/myon-bioinformatics_40046401132_junit-parent-py3.14_junit.xml): 1 failure in 1 group
+FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/myon-bioinformatics_40046401132_junit-parent-py3.14_junit.xml): tests.test_uv_git_sources
+FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/myon-bioinformatics_40046401132_junit-parent-py3.14_junit.xml): AssertionError
+FOUND: python version: 3.12.15 (cpython)
+FOUND: node version: v22.23.3
+FOUND: gh version: gh version 2.102.0 (2026-09-30)
+FOUND: environment variable count: 125
+FOUND: environment variable names: ACCEPT_EULA, ACTIONS_ORCHESTRATION_ID, ACTIONS_RUNNER_ACTION_ARCHIVE_CACHE, ACTIONS_RUNNER_RETURN_JOB_RESULT_FOR_HOSTED, AGENT_TOOLSDIRECTORY, ANDROID_HOME, ANDROID_NDK, ANDROID_NDK_HOME, ANDROID_NDK_LATEST_HOME, ANDROID_NDK_ROOT, ANDROID_SDK_ROOT, ANT_HOME, AZURE_EXTENSION_DIR, BOOTSTRAP_HASKELL_NONINTERACTIVE, CHROMEWEBDRIVER, CHROME_BIN, CI, CONDA, DEBIAN_FRONTEND, DOTNET_MULTILEVEL_LOOKUP, DOTNET_NOLOGO, DOTNET_SKIP_FIRST_TIME_EXPERIENCE, EDGEWEBDRIVER, ENABLE_RUNNER_TRACING, GECKOWEBDRIVER, GHCUP_INSTALL_BASE_PREFIX, GITHUB_ACTION, GITHUB_ACTIONS, GITHUB_ACTION_REF, GITHUB_ACTION_REPOSITORY, GITHUB_ACTOR, GITHUB_ACTOR_ID, GITHUB_API_URL, GITHUB_ARTIFACTS, GITHUB_ARTIFACTS_LIST, GITHUB_BASE_REF, GITHUB_ENV, GITHUB_EVENT_NAME, GITHUB_EVENT_PATH, GITHUB_GRAPHQL_URL, ...
+NOT FOUND: junit errors (<repo>/tests/fixtures/junit_corpus/cases/myon-bioinformatics_40046401132_junit-parent-py3.14_junit.xml)
+NOT FOUND: junit skipped (<repo>/tests/fixtures/junit_corpus/cases/myon-bioinformatics_40046401132_junit-parent-py3.14_junit.xml)
+NOT FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/myon-bioinformatics_40046401132_junit-parent-py3.14_junit.xml)
+NOT FOUND: junit system-err (<repo>/tests/fixtures/junit_corpus/cases/myon-bioinformatics_40046401132_junit-parent-py3.14_junit.xml)
+NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/myon-bioinformatics_40046401132_junit-parent-py3.14_junit.xml)
+NOT FOUND: lock files in project root
+HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/myon-bioinformatics_40046401132_junit-parent-py3.14_junit.xml): pytest/python
+HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/myon-bioinformatics_40046401132_junit-parent-py3.14_junit.xml): AssertionError: assert ('fetch' == 'fetch'\n  \n    fetch and 'private' in 'source is not an exported packed Node entry; plain fetch')\ntmp_path = PosixPath('<pytest-tmp>/pytest-0/test_dispatch_installs_fetches0')\n\n    def test_dispatch_installs_fetches_and_records(tmp_path):\n        module = _driver()\n        catalog = _catalog()\n        calls = []\n    \n        def install(repository, ref,

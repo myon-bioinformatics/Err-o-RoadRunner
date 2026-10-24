@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="1" tests="190" time="39.047" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_diagnostics" name="test_new_workspace_markers" time="0.028"><failure message="AssertionError: assert ['Makefile', ...ustfile', ...] == ['Makefile', ...ile.yml', ...]&#10;  &#10;  At index 5 diff: 'Justfile' != 'Taskfile.yml'&#10;  Left contains one more item: '.venv'&#10;  &#10;  Full diff:&#10;    [&#10;        'Makefile',&#10;        'Cargo.toml',&#10;        'go.mod',&#10;        'tsconfig.json',&#10;        'justfile',&#10;  +     'Justfile',&#10;        'Taskfile.yml',&#10;        'flake.nix',&#10;        'pixi.toml',&#10;        'Brewfile',&#10;        '.python-version',&#10;        '.node-version',&#10;        '.tool-versions',&#10;        '.mise.toml',&#10;        'poetry.lock',&#10;        'pdm.lock',&#10;        'uv.lock',&#10;        'Pipfile',&#10;        '.venv',&#10;    ]">tmp_path = WindowsPath('C:&lt;user-home&gt;/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_new_workspace_markers0')
+
+    def test_new_workspace_markers(tmp_path):
+        (tmp_path / 'Makefile').touch()
+        (tmp_path / 'Cargo.toml').touch()
+        (tmp_path / 'go.mod').touch()
+        (tmp_path / 'tsconfig.json').touch()
+        (tmp_path / 'justfile').touch()
+        (tmp_path / 'Taskfile.yml').touch()
+        (tmp_path / 'flake.nix').touch()
+        (tmp_path / 'pixi.toml').touch()
+        (tmp_path / 'Brewfile').touch()
+        (tmp_path / '.python-version').touch()
+        (tmp_path / '.node-version').touch()
+        (tmp_path / '.tool-versions').touch()
+        (tmp_path / '.mise.toml').touch()
+        (tmp_path / 'poetry.lock').touch()
+        (tmp_path / 'pdm.lock').touch()
+        (tmp_path / 'uv.lock').touch()
+        (tmp_path / 'Pipfile').touch()
+        (tmp_path / '.venv').mkdir()
+        report = yourself.workspace_facts(tmp_path)
+&gt;       assert report['markers'] == [
+            'Makefile', 'Cargo.toml', 'go.mod', 'tsconfig.json',
+            'justfile', 'Taskfile.yml', 'flake.nix', 'pixi.toml', 'Brewfile',
+            '.python-version', '.node-version', '.tool-versions', '.mise.toml',
+            'poetry.lock', 'pdm.lock', 'uv.lock', 'Pipfile', '.venv'
+        ]
+E       AssertionError: assert ['Makefile', ...ustfile', ...] == ['Makefile', ...ile.yml', ...]
+E         
+E         At index 5 diff: 'Justfile' != 'Taskfile.yml'
+E         Left contains one more item: '.venv'
+E         
+E         Full diff:
+E           [
+E               'Makefile',
+E               'Cargo.toml',
+E               'go.mod',
+E               'tsconfig.json',
+E               'justfile',
+E         +     'Justfile',
+E               'Taskfile.yml',
+E               'flake.nix',
+E               'pixi.toml',
+E               'Brewfile',
+E               '.python-version',
+E               '.node-version',
+E               '.tool-versions',
+E               '.mise.toml',
+E               'poetry.lock',
+E               'pdm.lock',
+E               'uv.lock',
+E               'Pipfile',
+E               '.venv',
+E           ]
+
+tests\test_diagnostics.py:98: AssertionError</failure></testcase></testsuite></testsuites>
