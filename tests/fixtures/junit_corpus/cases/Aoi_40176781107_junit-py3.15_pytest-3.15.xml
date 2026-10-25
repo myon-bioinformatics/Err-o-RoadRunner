@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="41" tests="2447" time="640.882" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_dragowing_browser_workflow" name="test_ci_prefers_chromium_and_records_selected_path" time="0.008"><failure message="AssertionError: /bin/bash: line 8: readlink: command not found&#10;  &#10;assert 127 == 0&#10; +  where 127 = CompletedProcess(args=['/bin/bash', '--noprofile', '--norc', '-c', 'set -euo pipefail\nif ! chromium=&quot;$(command -v chr...$GITHUB_ENV&quot;\n'], returncode=127, stdout='Chromium 123.4\n', stderr='/bin/bash: line 8: readlink: command not found\n').returncode">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_ci_prefers_chromium_and_r0')
+
+    def test_ci_prefers_chromium_and_records_selected_path(tmp_path):
+        for job_name in ("test", "chrome-export"):
+            work = tmp_path / job_name
+            result, output = _select(work, ["google-chrome", "chromium", "chromium-browser"], job_name)
+&gt;           assert result.returncode == 0, result.stderr
+E           AssertionError: /bin/bash: line 8: readlink: command not found
+E             
+E           assert 127 == 0
+E            +  where 127 = CompletedProcess(args=['/bin/bash', '--noprofile', '--norc', '-c', 'set -euo pipefail\nif ! chromium="$(command -v chr...$GITHUB_ENV"\n'], returncode=127, stdout='Chromium 123.4\n', stderr='/bin/bash: line 8: readlink: command not found\n').returncode
+
+tests/test_dragowing_browser_workflow.py:37: AssertionError</failure></testcase><testcase classname="tests.test_dragowing_browser_workflow" name="test_ci_accepts_chromium_alias" time="0.008"><failure message="AssertionError: /bin/bash: line 8: readlink: command not found&#10;  &#10;assert 127 == 0&#10; +  where 127 = CompletedProcess(args=['/bin/bash', '--noprofile', '--norc', '-c', 'set -euo pipefail\nif ! chromium=&quot;$(command -v chr...$GITHUB_ENV&quot;\n'], returncode=127, stdout='Chromium 123.4\n', stderr='/bin/bash: line 8: readlink: command not found\n').returncode">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_ci_accepts_chromium_alias0')
+
+    def test_ci_accepts_chromium_alias(tmp_path):
+        for job_name in ("test", "chrome-export"):
+            work = tmp_path / job_name
+            result, output = _select(work, ["chromium-browser"], job_name)
+&gt;           assert result.returncode == 0, result.stderr
+E           AssertionError: /bin/bash: line 8: readlink: command not found
+E             
+E           assert 127 == 0
+E            +  where 127 = CompletedProcess(args=['/bin/bash', '--noprofile', '--norc', '-c', 'set -euo pipefail\nif ! chromium="$(command -v chr...$GITHUB_ENV"\n'], returncode=127, stdout='Chromium 123.4\n', stderr='/bin/bash: line 8: readlink: command not found\n').returncode
+
+tests/test_dragowing_browser_workflow.py:46: AssertionError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites id="" name="" tests="210" failures="0" skipped="13" errors="2" time="681.7172290000001"><testsuite name="screen_navigation.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="5" failures="0" skipped="0" time="110.287" errors="2"><testcase name="Screen Navigation › Hub use-case filtering, zero results, clear and Screen5 route @portable" classname="screen_navigation.spec.ts" time="32.615"><system-out>
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen-N-f6cd9--and-Screen5-route-portable-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen-N-f6cd9--and-Screen5-route-portable-webkit/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen-N-f6cd9--and-Screen5-route-portable-webkit/error-context.md]]
+
+</system-out>
+<error message="Test timeout of 30000ms exceeded." type="Error">
+  [webkit] › screen_navigation.spec.ts:159:7 › Screen Navigation › Hub use-case filtering, zero results, clear and Screen5 route @portable 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('[flt-semantics-identifier="hub-search"]').getByRole('textbox')
+        - locator resolved to &lt;input type="text" autocorrect="on" spellcheck="false" autocomplete="off" aria-label="Search screens…" placeholder="Search screens…" data-semantics-role="text-field"/&gt;
+      - attempting click action
+        - waiting for element to be visible, enabled and stable
+
+
+      15 |   await expect(search).toHaveValue('');
+      16 |   if (query) {
+    &gt; 17 |     await search.click();
+         |                  ^
+      18 |     await expect(search).toBeFocused();
+      19 |     await expect(search).toHaveAttribute('autocorrect', 'on');
+      20 |     await search.pressSequentially(query, { delay: 50 });
+        at setCatalogQuery (&lt;runner-work&gt;/e2e/tests/screen_navigation.spec.ts:17:18)
+        at &lt;runner-work&gt;/e2e/tests/screen_navigation.spec.ts:178:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/screen_navigation-Screen-N-f6cd9--and-Screen5-route-portable-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/screen_navigation-Screen-N-f6cd9--and-Screen5-route-portable-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/screen_navigation-Screen-N-f6cd9--and-Screen5-route-portable-webkit/error-context.md
+
+</error>
+</testcase><testcase name="Screen Navigation › Screen6 excludes unrelated results, handles zero matches and clear @portable" classname="screen_navigation.spec.ts" time="31.722"><system-out>
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen-N-2c88d--matches-and-clear-portable-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen-N-2c88d--matches-and-clear-portable-webkit/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen-N-2c88d--matches-and-clear-portable-webkit/error-context.md]]
+
+</system-out>
+<error message="Test timeout of 30000ms exceeded." type="Error">
+  [webkit] › screen_navigation.spec.ts:190:7 › Screen Navigation › Screen6 excludes unrelated results, handles zero matches and clear @portable 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('[flt-semantics-identifier="screen6-clear"]').getByRole('button')
+        - locator resolved to &lt;flt-semantics tabindex="0" role="button" flt-tappable="" id="flt-semantic-node-120"&gt;Clear&lt;/flt-semantics&gt;
+      - attempting click action
+        - waiting for element to be visible, enabled and stable
+
+
+      213 |     await expect(resultCount).toHaveText('11 / 198');
+      214 |     await expect(result6).toBeVisible();
+    &gt; 215 |     await clear.click();
+          |                 ^
+      216 |     await expect(search).toHaveValue('');
+      217 |     await expect(resultCount).toHaveText('198 / 198');
+      218 |     await expect(page.locator('[flt-semantics-identifier="screen6-result-1"]')).toBeVisible();
+        at &lt;runner-work&gt;/e2e/tests/screen_navigation.spec.ts:215:17
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/screen_navigation-Screen-N-2c88d--matches-and-clear-portable-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/screen_navigation-Screen-N-2c88d--matches-and-clear-portable-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/screen_navigation-Screen-N-2c88d--matches-and-clear-portable-webkit/error-context.md
+
+</error>
+</testcase></testsuite></testsuites>

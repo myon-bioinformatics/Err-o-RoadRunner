@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="6" tests="1199" time="82.541" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_junit_ci" name="test_python_junit_workflow_keeps_failed_producer_visible" time="0.001"><failure message="AssertionError: assert 'astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0' in '    permissions:\n      contents: read\n    needs: [changes, vendor-locked]\n    if: needs.changes.outputs.product_ch...-python-3.12\n          path: reports/pytest.xml\n          if-no-files-found: error\n          retention-days: 14\n\n'">def test_python_junit_workflow_keeps_failed_producer_visible():
+        workflow = (Path(__file__).parents[1] / ".github/workflows/test.yml").read_text(encoding="utf-8")
+        producer = workflow.split("  test:\n", 1)[1].split("  junit-identity:\n", 1)[0]
+        collector = workflow.split("  junit-identity:\n", 1)[1].split("  public-resolver-compat:", 1)[0]
+&gt;       assert "astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0" in producer
+E       AssertionError: assert 'astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0' in '    permissions:\n      contents: read\n    needs: [changes, vendor-locked]\n    if: needs.changes.outputs.product_ch...-python-3.12\n          path: reports/pytest.xml\n          if-no-files-found: error\n          retention-days: 14\n\n'
+
+tests/test_junit_ci.py:51: AssertionError</failure></testcase></testsuite></testsuites>

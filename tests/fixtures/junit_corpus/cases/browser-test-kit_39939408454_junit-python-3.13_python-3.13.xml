@@ -1,0 +1,600 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="3" tests="958" time="38.089" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.python.test_page_inspect" name="test_loopback_policy_and_evidence_do_not_treat_missing_as_same" time="0.005"><failure message="assert '.evaluate(' not in '&quot;&quot;&quot;Observe ...it(main())\n'&#10;  &#10;  '.evaluate(' is contained here:&#10;          page.evaluate(QUIET_CLEANUP_JS)&#10;  ?           ++++++++++&#10;            except Exception:&#10;                pass  # the page may have navigated away; a new document has no observer to remove&#10;    &#10;    &#10;    def _perform(page, action: str, locator: str, text, timeout_ms: int, outcome: dict | None = None) -&gt; bool:&#10;        &quot;&quot;&quot;Run one declared action through the Playwright method of the same name. Returns page_js.&quot;&quot;&quot;&#10;        if action == &quot;wait_for_timeout&quot;:&#10;            page.wait_for_timeout(timeout_ms)&#10;            return False&#10;        if action == &quot;settle&quot;:&#10;            quiet = _wait_quiet(page, timeout_ms)&#10;            if outcome is not None:&#10;                outcome[&quot;quiet&quot;] = quiet&#10;            return True&#10;        if action == &quot;press&quot; and not (locator or &quot;&quot;).strip():&#10;            page.keyboard.press(text, timeout=timeout_ms)&#10;            return True&#10;        target, page_js = _action_locator(page, locator)&#10;        if action == &quot;click&quot;:&#10;            target.click(timeout=timeout_ms)&#10;        elif action == &quot;fill&quot;:&#10;            target.fill(text, timeout=timeout_ms)&#10;        elif action == &quot;press&quot;:&#10;            target.press(text, timeout=timeout_ms)&#10;        elif action == &quot;select&quot;:&#10;            target.select_option(text, timeout=timeout_ms)&#10;        elif action == &quot;dblclick&quot;:&#10;            target.dblclick(timeout=timeout_ms)&#10;        elif action == &quot;hover&quot;:&#10;            target.hover(timeout=timeout_ms)&#10;        elif action == &quot;focus&quot;:&#10;            target.focus(timeout=timeout_ms)&#10;        elif action == &quot;check&quot;:&#10;            target.check(timeout=timeout_ms)&#10;        elif action == &quot;uncheck&quot;:&#10;            target.uncheck(timeout=timeout_ms)&#10;        return page_js&#10;    &#10;    &#10;    def act_page(*, url: str, browser_name: str, profile: str, headed: bool, channel: str | None,&#10;                 action: str, locator: str, text: str, timeout_ms: int) -&gt; dict:&#10;        url = loopback_target(url)&#10;        if action not in ACT_ACTIONS:&#10;            raise InspectError(&#10;                f&quot;unknown action {action}&quot;,&#10;                &quot;use one of &quot; + &quot;, &quot;.join(sorted(ACT_ACTIONS)),&#10;            )&#10;        if action in ACT_TEXT_ACTIONS and text is None:&#10;            raise InspectError(f&quot;{action} needs --text&quot;, &quot;pass the literal text, key name, or option value&quot;)&#10;        keyboard_only = action == &quot;press&quot; and not (locator or &quot;&quot;).strip()&#10;        if action not in (&quot;wait_for_timeout&quot;, &quot;settle&quot;) and not keyboard_only:&#10;            _check_action_locator(locator)&#10;        playwright, browser, page = _with_browser(url, browser_name, profile, headed, channel)&#10;        failure = None&#10;        result = None&#10;        outcome: dict = {}&#10;        try:&#10;            try:&#10;                page.goto(url, wait_until=&quot;load&quot;, timeout=30000)&#10;            except Exception as exc:&#10;                raise InspectError(&#10;                    f&quot;{type(exc).__name__}: {exc}&quot;,&#10;                    &quot;check that the loopback server is up&quot;,&#10;                    stage=&quot;navigate&quot;,&#10;                ) from exc&#10;            page_js = False&#10;            try:&#10;                page_js = _perform(page, action, locator, text, timeout_ms, outcome)&#10;            except InspectError:&#10;                raise&#10;            except Exception as exc:&#10;                raise InspectError(&#10;                    f&quot;{type(exc).__name__}: {exc}&quot;,&#10;                    &quot;the locator was resolved on this call. If it missed, observe again and pass that address&quot;,&#10;                    stage=&quot;inspect&quot;,&#10;                ) from exc&#10;            if browser_name == &quot;chromium&quot;:&#10;                try:&#10;                    client = page.context.new_cdp_session(page)&#10;                    ax = _cdp_send(client, &quot;Accessibility.getFullAXTree&quot;, {}, [])&#10;                    names = []&#10;                    for node in ax.get(&quot;nodes&quot;) or []:&#10;                        role_name = _ax_text(node.get(&quot;role&quot;)).lower()&#10;                        if role_name in INTERACTIVE_ROLES and not node.get(&quot;ignored&quot;):&#10;                            names.append(clip(_ax_text(node.get(&quot;name&quot;))))&#10;                    ax_section = _section(&quot;cdp:Accessibility.getFullAXTree&quot;, &quot;complete&quot;, {&quot;names&quot;: names})&#10;                except Exception as exc:&#10;                    ax_section = _section(&quot;cdp:Accessibility.getFullAXTree&quot;, &quot;unavailable&quot;, {&quot;reason&quot;: type(exc).__name__})&#10;            else:&#10;                ax_section = _section(None, &quot;not_requested&quot;)&#10;            viewport = page.viewport_size or {}&#10;            result = {&#10;                &quot;schema&quot;: SCHEMA_INSPECT,&#10;                &quot;ok&quot;: True,&#10;                &quot;operation&quot;: &quot;act&quot;,&#10;                &quot;action&quot;: action,&#10;                &quot;locator&quot;: locator,&#10;                &quot;url&quot;: strip_userinfo(page.url),&#10;                &quot;environment&quot;: _environment(browser, browser_name, channel, headed, profile, viewport),&#10;                &quot;limits&quot;: {&#10;                    &quot;page_js_called&quot;: page_js,&#10;                    &quot;bounded_to&quot;: [action],&#10;                    **({&quot;quiet&quot;: outcome[&quot;quiet&quot;]} if &quot;quiet&quot; in outcome else {}),&#10;                    &quot;ordinals&quot;: &quot;rejected&quot;,&#10;                    &quot;dom&quot;: &quot;not_requested&quot;,&#10;                    &quot;selector_engine&quot;: &quot;playwright&quot; if page_js else &quot;none&quot;,&#10;                },&#10;                &quot;sections&quot;: {&#10;                    &quot;url&quot;: _section(&quot;playwright:page.url&quot;, &quot;complete&quot;, {&quot;url&quot;: strip_userinfo(page.url)}),&#10;                    &quot;accessibility&quot;: ax_section,&#10;                    &quot;dom&quot;: _section(None, &quot;not_requested&quot;),&#10;                    &quot;storage&quot;: _section(None, &quot;not_requested&quot;),&#10;                },&#10;                &quot;hint&quot;: &quot;url was captured. dom was not requested, so this result cannot say the markup was unchanged&quot;,&#10;            }&#10;        except InspectError as exc:&#10;            failure = exc&#10;        except Exception as exc:&#10;            failure = InspectError(&#10;                f&quot;{type(exc).__name__}: {exc}&quot;,&#10;                &quot;the action failed before it could write a result&quot;,&#10;                stage=&quot;inspect&quot;,&#10;            )&#10;        return _finish(playwright, browser, failure, result)&#10;    &#10;    &#10;    def read_snapshot(path: str) -&gt; dict:&#10;        file = Path(path)&#10;        if not file.is_file():&#10;            raise InspectError(f&quot;snapshot not found: {path}&quot;, &quot;run observe --out this path first&quot;)&#10;        try:&#10;            data = json.loads(file.read_text(encoding=&quot;utf-8&quot;))&#10;        except (OSError, UnicodeError, json.JSONDecodeError) as exc:&#10;            raise InspectError(&quot;snapshot is not JSON&quot;, &quot;run observe again and pass that file&quot;) from exc&#10;        if not isinstance(data, dict) or data.get(&quot;schema&quot;) != SCHEMA_OBSERVE:&#10;            raise InspectError(&quot;snapshot schema is not btk-page-observe/1&quot;, &quot;pass a file written by observe, not a locate result&quot;)&#10;        elements = data.get(&quot;elements&quot;)&#10;        if not isinstance(elements, list):&#10;            raise InspectError(&quot;snapshot has no elements list&quot;, &quot;run observe again&quot;)&#10;        for element in elements:&#10;            if not isinstance(element, dict) or not isinstance(element.get(&quot;address&quot;), str) or not isinstance(element.get(&quot;handle&quot;), str):&#10;                raise InspectError(&quot;snapshot element is missing address or handle&quot;, &quot;run observe again&quot;)&#10;        return data&#10;    &#10;    &#10;    def _shadow_counts(snapshot: dict) -&gt; dict | None:&#10;        section = (snapshot.get(&quot;sections&quot;) or {}).get(&quot;shadow_roots&quot;)&#10;        if not isinstance(section, dict) or section.get(&quot;coverage&quot;) not in COMPLETE_COVERAGE:&#10;            return None&#10;        counts = {}&#10;        for key in (&quot;open&quot;, &quot;closed&quot;, &quot;count&quot;):&#10;            value = section.get(key)&#10;            if isinstance(value, bool) or not isinstance(value, int):&#10;                return None&#10;            counts[key] = value&#10;        return counts&#10;    &#10;    &#10;    def _count_pair(left, right) -&gt; dict:&#10;        delta = right - left if isinstance(left, int) and isinstance(right, int) else None&#10;        return {&quot;left&quot;: left, &quot;right&quot;: right, &quot;delta&quot;: delta}&#10;    &#10;    &#10;    def compare_snapshots(left: dict, right: dict) -&gt; dict:&#10;        &quot;&quot;&quot;Section relations and counts for two observe snapshots. A missing side is never same.&quot;&quot;&quot;&#10;        left_sections = left.get(&quot;sections&quot;) or {}&#10;        right_sections = right.get(&quot;sections&quot;) or {}&#10;        sections = {}&#10;        for name in sorted(set(left_sections) | set(right_sections)):&#10;            left_part = left_sections.get(name)&#10;            right_part = right_sections.get(name)&#10;            sections[name] = {&#10;                &quot;relation&quot;: evidence_relation(left_part, right_part),&#10;                &quot;left&quot;: left_part.get(&quot;coverage&quot;) if isinstance(left_part, dict) else None,&#10;                &quot;right&quot;: right_part.get(&quot;coverage&quot;) if isinstance(right_part, dict) else None,&#10;            }&#10;        left_shadow = _shadow_counts(left)&#10;        right_shadow = _shadow_counts(right)&#10;        shadow = {key: _count_pair(*_side(left_shadow, right_shadow, key)) for key in (&quot;open&quot;, &quot;closed&quot;, &quot;count&quot;)}&#10;        left_env = left.get(&quot;environment&quot;) if isinstance(left.get(&quot;environment&quot;), dict) else {}&#10;        right_env = right.get(&quot;environment&quot;) if isinstance(right.get(&quot;environment&quot;), dict) else {}&#10;        environment = {key: [left_env.get(key), right_env.get(key)] for key in COMPARE_ENVIRONMENT_KEYS}&#10;        same_environment = all(pair[0] == pair[1] for pair in environment.values())&#10;        hints = [&#10;            &quot;same, different, and unknown are section relations; a missing or truncated section is never same&quot;,&#10;            &quot;shadow_roots counts are null when that section was not complete on one side&quot;,&#10;        ]&#10;        if not same_environment:&#10;            hints.append(&quot;environments differ; section differences may come from the browser or profile, not the page&quot;)&#10;        return {&#10;            &quot;schema&quot;: SCHEMA_COMPARE,&#10;            &quot;ok&quot;: True,&#10;            &quot;left_url&quot;: left.get(&quot;url&quot;),&#10;            &quot;right_url&quot;: right.get(&quot;url&quot;),&#10;            &quot;same_environment&quot;: same_environment,&#10;            &quot;environment&quot;: environment,&#10;            &quot;sections&quot;: sections,&#10;            &quot;shadow_roots&quot;: shadow,&#10;            &quot;child_frames&quot;: _count_pair(left.get(&quot;child_frames&quot;), right.get(&quot;child_frames&quot;)),&#10;            &quot;elements&quot;: _count_pair(left.get(&quot;total&quot;), right.get(&quot;total&quot;)),&#10;            &quot;hint&quot;: &quot;. &quot;.join(hints),&#10;        }&#10;    &#10;    &#10;    def _side(left_shadow, right_shadow, key):&#10;        return (&#10;            left_shadow[key] if left_shadow else None,&#10;            right_shadow[key] if right_shadow else None,&#10;        )&#10;    &#10;    &#10;    def dumps(payload: dict) -&gt; str:&#10;        return json.dumps(payload, indent=2, ensure_ascii=False) + &quot;\n&quot;&#10;    &#10;    &#10;    # Ported from Stagehand's sanitizeErrorMessage (packages/integrations/core/src/harness/redact.ts).&#10;    # Playwright exception text can carry URLs with keys, bearer tokens, or provider keys.&#10;    REDACTIONS = (&#10;        (re.compile(r&quot;([?&amp;](?:signingKey|apiKey|api_key|token|key)=)[^&amp;\s\&quot;']+&quot;, re.IGNORECASE), r&quot;\1[redacted]&quot;),&#10;        (re.compile(r&quot;\b(sk-[A-Za-z0-9_-]{6})[A-Za-z0-9_-]+&quot;), r&quot;\1[redacted]&quot;),&#10;        (re.compile(r&quot;\b(bb_(?:live|test)_[A-Za-z0-9]{4})[A-Za-z0-9_-]+&quot;), r&quot;\1[redacted]&quot;),&#10;        (re.compile(r&quot;\bAIza[0-9A-Za-z_-]{30,}&quot;), &quot;AIza[redacted]&quot;),&#10;        (re.compile(r&quot;\b(Bearer\s+)[A-Za-z0-9._~+/=-]{8,}&quot;, re.IGNORECASE), r&quot;\1[redacted]&quot;),&#10;    )&#10;    &#10;    &#10;    def redact_text(text: str) -&gt; str:&#10;        for pattern, replacement in REDACTIONS:&#10;            text = pattern.sub(replacement, text)&#10;        return text&#10;    &#10;    &#10;    def error_envelope(operation: str, exc: InspectError) -&gt; dict:&#10;        payload = {&#10;            &quot;schema&quot;: SCHEMA_INSPECT, &quot;ok&quot;: False, &quot;operation&quot;: operation, &quot;stage&quot;: exc.stage,&#10;            &quot;error&quot;: redact_text(exc.error), &quot;hint&quot;: redact_text(exc.hint),&#10;        }&#10;        if exc.suggestions:&#10;            payload[&quot;suggestions&quot;] = exc.suggestions&#10;        return payload&#10;    &#10;    &#10;    def error_text(payload: dict) -&gt; str:&#10;        lines = [f&quot;stage: {payload.get('stage', 'input')}&quot;, f&quot;error: {payload.get('error')}&quot;, f&quot;hint: {payload.get('hint')}&quot;]&#10;        for item in payload.get(&quot;suggestions&quot;) or []:&#10;            score = item.get(&quot;score&quot;)&#10;            score_text = &quot;&quot; if not isinstance(score, (int, float)) or isinstance(score, bool) else f&quot; {score:.6f}&quot;&#10;            lines.append(f&quot;suggest: {item.get('address')}{score_text} {item.get('name')}&quot;)&#10;        return &quot;\n&quot;.join(lines) + &quot;\n&quot;&#10;    &#10;    &#10;    def observe_text(payload: dict) -&gt; str:&#10;        env = payload[&quot;environment&quot;]&#10;        mode = &quot;headless&quot; if env.get(&quot;headless&quot;) else &quot;headed&quot;&#10;        lines = [&#10;            f&quot;btk-page-observe/1 {env.get('os')} {env.get('browser')} {env.get('profile')} {mode} &quot;&#10;            f&quot;elements={payload.get('total')} showing={len(payload.get('elements') or [])}&quot;&#10;        ]&#10;        lines.extend(element_line(element) for element in payload.get(&quot;elements&quot;) or [])&#10;        lines.append(f&quot;hint: {payload.get('hint')}&quot;)&#10;        return &quot;\n&quot;.join(lines) + &quot;\n&quot;&#10;    &#10;    &#10;    def locate_text(payload: dict) -&gt; str:&#10;        if not payload.get(&quot;ok&quot;):&#10;            return error_text(payload)&#10;        lines = [element_line(element) for element in payload.get(&quot;items&quot;) or []]&#10;        page = payload[&quot;pagination&quot;]&#10;        lines.append(f&quot;returned {page['returned']} of {page['total']}; start {page['start']}&quot;)&#10;        lines.append(f&quot;hint: {payload.get('hint')}&quot;)&#10;        return &quot;\n&quot;.join(lines) + &quot;\n&quot;&#10;    &#10;    &#10;    def count_text(payload: dict) -&gt; str:&#10;        lines = [f&quot;total={payload['total']} visible={payload['visible']} enabled={payload['enabled']}&quot;]&#10;        for role, count in payload[&quot;by_role&quot;].items():&#10;            lines.append(f&quot;role {role}={count}&quot;)&#10;        lines.append(f&quot;hint: {payload['hint']}&quot;)&#10;        return &quot;\n&quot;.join(lines) + &quot;\n&quot;&#10;    &#10;    &#10;    def describe_text(payload: dict) -&gt; str:&#10;        if not payload.get(&quot;ok&quot;):&#10;            return error_text(payload)&#10;        lines = [f&quot;resolved_as={payload['resolved_as']}&quot;, *payload[&quot;context&quot;], f&quot;hint: {payload['hint']}&quot;]&#10;        return &quot;\n&quot;.join(lines) + &quot;\n&quot;&#10;    &#10;    &#10;    def compare_text(payload: dict) -&gt; str:&#10;        lines = [f&quot;btk-page-compare/1 same_environment={str(payload['same_environment']).lower()}&quot;]&#10;        for name, item in payload[&quot;sections&quot;].items():&#10;            lines.append(f&quot;section {name}={item['relation']} left={item['left']} right={item['right']}&quot;)&#10;        for key in (&quot;open&quot;, &quot;closed&quot;, &quot;count&quot;):&#10;            pair = payload[&quot;shadow_roots&quot;][key]&#10;            lines.append(f&quot;shadow_roots {key} left={pair['left']} right={pair['right']} delta={pair['delta']}&quot;)&#10;        for key in (&quot;elements&quot;, &quot;child_frames&quot;):&#10;            pair = payload[key]&#10;            lines.append(f&quot;{key} left={pair['left']} right={pair['right']} delta={pair['delta']}&quot;)&#10;        lines.append(f&quot;hint: {payload['hint']}&quot;)&#10;        return &quot;\n&quot;.join(lines) + &quot;\n&quot;&#10;    &#10;    &#10;    def operations_text(payload: dict) -&gt; str:&#10;        lines = [f&quot;{item['name']}: {item['summary']}&quot; for item in payload[&quot;items&quot;]]&#10;        lines.append(f&quot;hint: {payload['hint']}&quot;)&#10;        return &quot;\n&quot;.join(lines) + &quot;\n&quot;&#10;    &#10;    &#10;    def _bounded(maximum: int):&#10;        def parse(text: str) -&gt; int:&#10;            if not re.fullmatch(r&quot;(?:0|[1-9][0-9]*)&quot;, text):&#10;                raise argparse.ArgumentTypeError(&quot;must be a whole number&quot;)&#10;            value = int(text)&#10;            if value &gt; maximum:&#10;                raise argparse.ArgumentTypeError(f&quot;must be at most {maximum}&quot;)&#10;            return value&#10;        return parse&#10;    &#10;    &#10;    def _threshold(text: str) -&gt; float:&#10;        try:&#10;            value = float(text)&#10;        except ValueError as exc:&#10;            raise argparse.ArgumentTypeError(&quot;must be a number&quot;) from exc&#10;        if not math.isfinite(value) or not 0 &lt;= value &lt;= 1:&#10;            raise argparse.ArgumentTypeError(&quot;must be from 0 to 1&quot;)&#10;        return value&#10;    &#10;    &#10;    def build_parser() -&gt; argparse.ArgumentParser:&#10;        common = argparse.ArgumentParser(add_help=False, allow_abbrev=False)&#10;        common.add_argument(&quot;--json&quot;, action=&quot;store_true&quot;, help=&quot;write the JSON document to stdout&quot;)&#10;        common.add_argument(&quot;--out&quot;, help=&quot;write the JSON document to this path; the parent directory must exist&quot;)&#10;        parser = argparse.ArgumentParser(prog=&quot;page_inspect.py&quot;, description=__doc__.split(&quot;\n\n&quot;)[0], allow_abbrev=False)&#10;        sub = parser.add_subparsers(dest=&quot;command&quot;, required=True)&#10;        observe = sub.add_parser(&quot;observe&quot;, parents=[common], help=&quot;passive CDP snapshot of a loopback page&quot;, allow_abbrev=False)&#10;        observe.add_argument(&quot;target&quot;, help=&quot;http://127.0.0.1:PORT/path or http://[::1]:PORT/path&quot;)&#10;        observe.add_argument(&quot;--browser&quot;, choices=(&quot;chromium&quot;, &quot;firefox&quot;, &quot;webkit&quot;), default=&quot;chromium&quot;)&#10;        observe.add_argument(&quot;--profile&quot;, choices=tuple(PROFILES), default=&quot;desktop&quot;)&#10;        observe.add_argument(&quot;--channel&quot;, help=&quot;branded browser channel, for example chrome&quot;)&#10;        observe.add_argument(&quot;--headed&quot;, action=&quot;store_true&quot;, help=&quot;launch the full browser instead of headless&quot;)&#10;        observe.add_argument(&quot;--include-hidden&quot;, action=&quot;store_true&quot;, help=&quot;keep controls the accessibility tree ignored&quot;)&#10;        observe.add_argument(&quot;--include-storage-keys&quot;, action=&quot;store_true&quot;, help=&quot;record storage key names, never values&quot;)&#10;        observe.add_argument(&quot;--include-storage-fingerprints&quot;, action=&quot;store_true&quot;, help=&quot;add SHA-256 fingerprints; requires keys&quot;)&#10;        observe.add_argument(&quot;--role&quot;, default=&quot;&quot;, help=&quot;only this role&quot;)&#10;        observe.add_argument(&quot;--start&quot;, type=_bounded(100000), default=0)&#10;        observe.add_argument(&quot;--limit&quot;, type=_bounded(SURVEY_LIMIT_MAX), default=SURVEY_LIMIT_DEFAULT)&#10;        observe.add_argument(&quot;--after-click&quot;, metavar=&quot;LOCATOR&quot;, help=&quot;click this id:, testid:, role:, or css: address once, then take a second snapshot&quot;)&#10;        observe.add_argument(&quot;--after-out&quot;, help=&quot;write the second snapshot here; requires --after-click and --out&quot;)&#10;        observe.add_argument(&quot;--step&quot;, action=&quot;append&quot;, default=[], metavar=&quot;'ACTION LOCATOR [TEXT]'&quot;,&#10;                             help=&quot;one action, then a snapshot; repeat for a sequence. LOCATOR - means none. Use with --out-dir&quot;)&#10;        observe.add_argument(&quot;--out-dir&quot;, help=&quot;write 00-initial.json and one NN-action.json per --step here&quot;)&#10;        act = sub.add_parser(&quot;act&quot;, parents=[common], help=&quot;one declared action that re-queries a locator&quot;, allow_abbrev=False)&#10;        act.add_argument(&quot;target&quot;, help=&quot;loopback URL; a snapshot ordinal is not accepted&quot;)&#10;        act.add_argument(&quot;--action&quot;, required=True, choices=tuple(sorted(ACT_ACTIONS)))&#10;        act.add_argument(&quot;--locator&quot;, default=&quot;&quot;, help=&quot;id:, testid:, role:, or css: from observe&quot;)&#10;        act.add_argument(&quot;--text&quot;, default=None, help=&quot;literal text for fill, key name for press (Playwright names, for example Enter or ControlOrMeta+A), option value for select&quot;)&#10;        act.add_argument(&quot;--timeout-ms&quot;, type=_bounded(120000), default=5000)&#10;        act.add_argument(&quot;--browser&quot;, choices=(&quot;chromium&quot;, &quot;firefox&quot;, &quot;webkit&quot;), default=&quot;chromium&quot;)&#10;        act.add_argument(&quot;--profile&quot;, choices=tuple(PROFILES), default=&quot;desktop&quot;)&#10;        act.add_argument(&quot;--channel&quot;, help=&quot;branded browser channel, for example chrome&quot;)&#10;        act.add_argument(&quot;--headed&quot;, action=&quot;store_true&quot;)&#10;        locate_parser = sub.add_parser(&quot;locate&quot;, parents=[common], help=&quot;rank controls in a snapshot&quot;, allow_abbrev=False)&#10;        locate_parser.add_argument(&quot;snapshot&quot;)&#10;        locate_parser.add_argument(&quot;--query&quot;, default=&quot;&quot;)&#10;        locate_parser.add_argument(&quot;--role&quot;, default=&quot;&quot;)&#10;        locate_parser.add_argument(&quot;--threshold&quot;, type=_threshold, default=THRESHOLD_DEFAULT)&#10;        locate_parser.add_argument(&quot;--start&quot;, type=_bounded(100000), default=0)&#10;        locate_parser.add_argument(&quot;--limit&quot;, type=_bounded(PAGE_LIMIT_MAX), default=PAGE_LIMIT_DEFAULT)&#10;        locate_parser.add_argument(&quot;--unique&quot;, action=&quot;store_true&quot;, help=&quot;fail when the top score is shared&quot;)&#10;        count_parser = sub.add_parser(&quot;count&quot;, parents=[common], help=&quot;count controls without listing them&quot;, allow_abbrev=False)&#10;        count_parser.add_argument(&quot;snapshot&quot;)&#10;        count_parser.add_argument(&quot;--query&quot;, default=&quot;&quot;)&#10;        count_parser.add_argument(&quot;--role&quot;, default=&quot;&quot;)&#10;        count_parser.add_argument(&quot;--threshold&quot;, type=_threshold, default=THRESHOLD_DEFAULT)&#10;        describe_parser = sub.add_parser(&quot;describe&quot;, parents=[common], help=&quot;one control and neighbor lines&quot;, allow_abbrev=False)&#10;        describe_parser.add_argument(&quot;snapshot&quot;)&#10;        describe_parser.add_argument(&quot;--target&quot;, required=True)&#10;        describe_parser.add_argument(&quot;--context&quot;, type=_bounded(CONTEXT_MAX), default=CONTEXT_DEFAULT)&#10;        compare_parser = sub.add_parser(&quot;compare&quot;, parents=[common], help=&quot;compare two observe snapshots&quot;, allow_abbrev=False)&#10;        compare_parser.add_argument(&quot;left&quot;)&#10;        compare_parser.add_argument(&quot;right&quot;)&#10;        sub.add_parser(&quot;operations&quot;, parents=[common], help=&quot;list commands&quot;, allow_abbrev=False)&#10;        return parser&#10;    &#10;    &#10;    def _check_action_locator(locator: str | None) -&gt; None:&#10;        &quot;&quot;&quot;Shared by act and observe --after-click: an address from observe, never a snapshot ordinal.&quot;&quot;&quot;&#10;        text = (locator or &quot;&quot;).strip()&#10;        if not text or text.startswith(&quot;h:&quot;):&#10;            raise InspectError(&#10;                &quot;act does not accept a snapshot ordinal&quot;,&#10;                &quot;pass id:, testid:, role:, or css: so the control is queried again&quot;,&#10;            )&#10;        if not text.startswith((&quot;id:&quot;, &quot;testid:&quot;, &quot;role:&quot;, &quot;css:&quot;)):&#10;            raise InspectError(&#10;                &quot;act locator must be id:, testid:, role:, or css:&quot;,&#10;                &quot;observe prints those addresses; h:N is not accepted&quot;,&#10;            )&#10;    &#10;    &#10;    def _check_sequence_args(args: argparse.Namespace) -&gt; None:&#10;        if args.after_click is None or args.after_out is None or not args.out:&#10;            raise InspectError(&#10;                &quot;after-click needs --out for the first snapshot and --after-out for the second&quot;,&#10;                &quot;pass both file paths; each file is a btk-page-observe/1 snapshot&quot;,&#10;            )&#10;        _check_action_locator(args.after_click)&#10;        if Path(args.out).resolve() == Path(args.after_out).resolve():&#10;            raise InspectError(&quot;--out and --after-out must be different files&quot;, &quot;give each snapshot its own path&quot;)&#10;        for path in (args.out, args.after_out):&#10;            if not Path(path).parent.is_dir():&#10;                raise InspectError(f&quot;directory does not exist: {Path(path).parent}&quot;, &quot;create the directory before --out or --after-out&quot;)&#10;    &#10;    &#10;    def _parse_step(raw: str, index: int) -&gt; dict:&#10;        parts = raw.strip().split(None, 2)&#10;        if not parts:&#10;            raise InspectError(f&quot;step {index} is empty&quot;, &quot;use ACTION LOCATOR [TEXT]; LOCATOR - means none&quot;)&#10;        action = parts[0]&#10;        if action not in ACT_ACTIONS:&#10;            raise InspectError(f&quot;step {index}: unknown action {action}&quot;, &quot;use one of &quot; + &quot;, &quot;.join(sorted(ACT_ACTIONS)))&#10;        locator = &quot;&quot; if len(parts) &lt; 2 or parts[1] == &quot;-&quot; else parts[1]&#10;        text = parts[2] if len(parts) == 3 else None&#10;        if action in ACT_TEXT_ACTIONS and text is None:&#10;            raise InspectError(f&quot;step {index}: {action} needs TEXT&quot;, &quot;write ACTION LOCATOR TEXT; text is not recorded in the output&quot;)&#10;        if action == &quot;wait_for_timeout&quot;:&#10;            if text is None or not re.fullmatch(r&quot;[0-9]{1,6}&quot;, text) or int(text) &gt; 120000:&#10;                raise InspectError(f&quot;step {index}: wait_for_timeout needs milliseconds 0..120000 as TEXT&quot;, &quot;write wait_for_timeout - 500&quot;)&#10;        elif action != &quot;settle&quot; and not (action == &quot;press&quot; and not locator):&#10;            _check_action_locator(locator)&#10;        return {&quot;action&quot;: action, &quot;locator&quot;: locator, &quot;text&quot;: text}&#10;    &#10;    &#10;    def _check_step_args(args: argparse.Namespace) -&gt; None:&#10;        if args.after_click is not None or args.after_out is not None:&#10;            raise InspectError(&quot;--step and --after-click cannot be combined&quot;, &quot;use --step for every action&quot;)&#10;        if args.out or not args.out_dir:&#10;            raise InspectError(&quot;--step writes one file per snapshot, so it needs --out-dir and not --out&quot;, &quot;pass --out-dir&quot;)&#10;        if not Path(args.out_dir).is_dir():&#10;            raise InspectError(f&quot;directory does not exist: {args.out_dir}&quot;, &quot;create the directory before --out-dir&quot;)&#10;        if len(args.step) &gt; MAX_STEPS:&#10;            raise InspectError(f&quot;at most {MAX_STEPS} steps&quot;, &quot;split the sequence into more than one observe&quot;)&#10;    &#10;    &#10;    def _write_snapshot(path: str, payload: dict) -&gt; None:&#10;        try:&#10;            Path(path).write_text(dumps(payload), encoding=&quot;utf-8&quot;, newline=&quot;\n&quot;)&#10;        except OSError as exc:&#10;            raise InspectError(f&quot;cannot write {path}: {exc}&quot;, &quot;choose a writable file path&quot;) from exc&#10;    &#10;    &#10;    def dispatch(args: argparse.Namespace) -&gt; tuple[dict, str, int]:&#10;        if args.command == &quot;operations&quot;:&#10;            payload = operations()&#10;            return payload, operations_text(payload), 0&#10;        if args.command == &quot;observe&quot;:&#10;            if args.limit &lt; 1:&#10;                raise InspectError(&quot;limit must be at least 1&quot;, f&quot;use 1..{SURVEY_LIMIT_MAX}&quot;)&#10;            steps = None&#10;            if args.after_click is not None or args.after_out is not None:&#10;                _check_sequence_args(args)&#10;                steps = [{&quot;action&quot;: &quot;click&quot;, &quot;locator&quot;: args.after_click.strip(), &quot;text&quot;: None}]&#10;            if args.step:&#10;                _check_step_args(args)&#10;                steps = [_parse_step(raw, index) for index, raw in enumerate(args.step, start=1)]&#10;            results = observe_page(&#10;                url=args.target, browser_name=args.browser, profile=args.profile, headed=args.headed,&#10;                channel=args.channel or None, include_hidden=args.include_hidden,&#10;                include_storage_keys=args.include_storage_keys,&#10;                include_storage_fingerprints=args.include_storage_fingerprints,&#10;                role=args.role, start=args.start, limit=args.limit, steps=steps,&#10;            )&#10;            if args.step:&#10;                names = [&quot;00-initial.json&quot;] + [&#10;                    f&quot;{index:02d}-{step['action']}.json&quot; for index, step in enumerate(steps, start=1)&#10;                ]&#10;                files = []&#10;                for name, snapshot in zip(names, results):&#10;                    target = str(Path(args.out_dir) / name)&#10;                    _write_snapshot(target, snapshot)&#10;                    files.append(target)&#10;                payload = {&#10;                    &quot;schema&quot;: &quot;btk-page-observe-steps/1&quot;,&#10;                    &quot;ok&quot;: True,&#10;                    &quot;files&quot;: files,&#10;                    &quot;steps&quot;: [{&quot;index&quot;: i, &quot;action&quot;: step[&quot;action&quot;], &quot;locator&quot;: step[&quot;locator&quot;]} for i, step in enumerate(steps, start=1)],&#10;                    &quot;hint&quot;: &quot;each file is a btk-page-observe/1 snapshot; compare any two. step text is not recorded&quot;,&#10;                }&#10;                return payload, &quot;&quot;.join(f&quot;wrote {name}\n&quot; for name in files), 0&#10;            payload = results[0]&#10;            text_out = observe_text(payload)&#10;            if len(results) == 2:&#10;                _write_snapshot(args.after_out, results[1])&#10;                text_out += f&quot;after-click {args.after_click}: second snapshot written to {args.after_out}\n&quot;&#10;            return payload, text_out, 0&#10;        if args.command == &quot;act&quot;:&#10;            if args.timeout_ms &lt; 1:&#10;                raise InspectError(&quot;timeout-ms must be at least 1&quot;, &quot;use 1..120000&quot;)&#10;            payload = act_page(&#10;                url=args.target, browser_name=args.browser, profile=args.profile, headed=args.headed,&#10;                channel=args.channel or None, action=args.action, locator=args.locator,&#10;                text=args.text, timeout_ms=args.timeout_ms,&#10;            )&#10;            text_out = f&quot;action={payload['action']} url={payload['url']}\nhint: {payload['hint']}\n&quot;&#10;            return payload, text_out, 0&#10;        if args.command == &quot;compare&quot;:&#10;            payload = compare_snapshots(read_snapshot(args.left), read_snapshot(args.right))&#10;            return payload, compare_text(payload), 0&#10;        snapshot = read_snapshot(args.snapshot)&#10;        elements = snapshot[&quot;elements&quot;]&#10;        if args.command == &quot;count&quot;:&#10;            payload = count_elements(elements, query=args.query, role=args.role, threshold=args.threshold)&#10;            return payload, count_text(payload), 0&#10;        if args.command == &quot;locate&quot;:&#10;            if args.limit &lt; 1:&#10;                raise InspectError(&quot;limit must be at least 1&quot;, f&quot;use 1..{PAGE_LIMIT_MAX}&quot;)&#10;            payload = locate(&#10;                elements, query=args.query, role=args.role, threshold=args.threshold,&#10;                start=args.start, limit=args.limit, unique=args.unique,&#10;            )&#10;            return payload, locate_text(payload), 0 if payload[&quot;ok&quot;] else 1&#10;        if args.context &lt; 0:&#10;            raise InspectError(&quot;context must be at least 0&quot;, f&quot;use 0..{CONTEXT_MAX}&quot;)&#10;        payload = describe_element(elements, args.target, context=args.context)&#10;        return payload, describe_text(payload), 0 if payload[&quot;ok&quot;] else 1&#10;    &#10;    &#10;    def emit(payload: dict, text: str, code: int, args: argparse.Namespace) -&gt; int:&#10;        raw = dumps(payload)&#10;        if args.out:&#10;            path = Path(args.out)&#10;            if not path.parent.exists():&#10;                sys.stderr.write(f&quot;error: directory does not exist: {path.parent}\nhint: create the directory before --out\n&quot;)&#10;                return 2&#10;            try:&#10;                path.write_text(raw, encoding=&quot;utf-8&quot;, newline=&quot;\n&quot;)&#10;            except OSError as exc:&#10;                sys.stderr.write(f&quot;error: cannot write {path}: {exc}\nhint: choose a writable file path\n&quot;)&#10;                return 2&#10;        if args.json or not payload.get(&quot;ok&quot;, True):&#10;            if args.json:&#10;                sys.stdout.write(raw)&#10;            else:&#10;                sys.stderr.write(text)&#10;        else:&#10;            sys.stdout.write(text)&#10;        return code&#10;    &#10;    &#10;    def main(argv: list[str] | None = None) -&gt; int:&#10;        parser = build_parser()&#10;        try:&#10;            args = parser.parse_args(argv)&#10;        except SystemExit as exc:&#10;            code = exc.code&#10;            return 0 if code is None else int(code)&#10;        try:&#10;            payload, text, code = dispatch(args)&#10;        except InspectError as exc:&#10;            payload = error_envelope(args.command, exc)&#10;            return emit(payload, error_text(payload), exc.code, args)&#10;        return emit(payload, text, code, args)&#10;    &#10;    &#10;    if __name__ == &quot;__main__&quot;:&#10;        raise SystemExit(main())">def test_loopback_policy_and_evidence_do_not_treat_missing_as_same():
+        assert page_inspect.loopback_target("http://127.0.0.1:9/a") == "http://127.0.0.1:9/a"
+        assert page_inspect.loopback_target("http://[::1]:80/a") == "http://[::1]:80/a"
+        assert page_inspect.loopback_target("http://127.0.0.1:8081/") == "http://127.0.0.1:8081/"
+        for url in (
+            "http://localhost:9/",
+            "http://127.0.0.1/a",
+            "file:///tmp/page.html",
+            "javascript:alert(1)",
+            "https://example.test:9/",
+            "http://user:secret" + chr(64) + "127.0.0.1:9/",
+        ):
+            with pytest.raises(page_inspect.InspectError):
+                page_inspect.loopback_target(url)
+        missing = {"coverage": "not_requested"}
+        assert page_inspect.evidence_relation(missing, missing) == "unknown"
+        same = {"coverage": "complete", "digest": "abc"}
+        assert page_inspect.evidence_relation(same, dict(same)) == "same"
+        assert page_inspect.evidence_relation(same, {"coverage": "complete", "digest": "def"}) == "different"
+        limited = {"coverage": "attach_limited", "digest": "abc"}
+        assert page_inspect.evidence_relation(limited, dict(limited)) == "unknown"
+        finger = page_inspect.storage_fingerprint("secret-value")
+        assert finger["fingerprint_version"] == 2 and "secret-value" not in json.dumps(finger)
+        source = (ROOT / "scripts" / "page_inspect.py").read_text(encoding="utf-8")
+&gt;       assert ".evaluate(" not in source
+E       assert '.evaluate(' not in '"""Observe ...it(main())\n'
+E         
+E         '.evaluate(' is contained here:
+E                 page.evaluate(QUIET_CLEANUP_JS)
+E         ?           ++++++++++
+E                   except Exception:
+E                       pass  # the page may have navigated away; a new document has no observer to remove
+E           
+E           
+E           def _perform(page, action: str, locator: str, text, timeout_ms: int, outcome: dict | None = None) -&gt; bool:
+E               """Run one declared action through the Playwright method of the same name. Returns page_js."""
+E               if action == "wait_for_timeout":
+E                   page.wait_for_timeout(timeout_ms)
+E                   return False
+E               if action == "settle":
+E                   quiet = _wait_quiet(page, timeout_ms)
+E                   if outcome is not None:
+E                       outcome["quiet"] = quiet
+E                   return True
+E               if action == "press" and not (locator or "").strip():
+E                   page.keyboard.press(text, timeout=timeout_ms)
+E                   return True
+E               target, page_js = _action_locator(page, locator)
+E               if action == "click":
+E                   target.click(timeout=timeout_ms)
+E               elif action == "fill":
+E                   target.fill(text, timeout=timeout_ms)
+E               elif action == "press":
+E                   target.press(text, timeout=timeout_ms)
+E               elif action == "select":
+E                   target.select_option(text, timeout=timeout_ms)
+E               elif action == "dblclick":
+E                   target.dblclick(timeout=timeout_ms)
+E               elif action == "hover":
+E                   target.hover(timeout=timeout_ms)
+E               elif action == "focus":
+E                   target.focus(timeout=timeout_ms)
+E               elif action == "check":
+E                   target.check(timeout=timeout_ms)
+E               elif action == "uncheck":
+E                   target.uncheck(timeout=timeout_ms)
+E               return page_js
+E           
+E           
+E           def act_page(*, url: str, browser_name: str, profile: str, headed: bool, channel: str | None,
+E                        action: str, locator: str, text: str, timeout_ms: int) -&gt; dict:
+E               url = loopback_target(url)
+E               if action not in ACT_ACTIONS:
+E                   raise InspectError(
+E                       f"unknown action {action}",
+E                       "use one of " + ", ".join(sorted(ACT_ACTIONS)),
+E                   )
+E               if action in ACT_TEXT_ACTIONS and text is None:
+E                   raise InspectError(f"{action} needs --text", "pass the literal text, key name, or option value")
+E               keyboard_only = action == "press" and not (locator or "").strip()
+E               if action not in ("wait_for_timeout", "settle") and not keyboard_only:
+E                   _check_action_locator(locator)
+E               playwright, browser, page = _with_browser(url, browser_name, profile, headed, channel)
+E               failure = None
+E               result = None
+E               outcome: dict = {}
+E               try:
+E                   try:
+E                       page.goto(url, wait_until="load", timeout=30000)
+E                   except Exception as exc:
+E                       raise InspectError(
+E                           f"{type(exc).__name__}: {exc}",
+E                           "check that the loopback server is up",
+E                           stage="navigate",
+E                       ) from exc
+E                   page_js = False
+E                   try:
+E                       page_js = _perform(page, action, locator, text, timeout_ms, outcome)
+E                   except InspectError:
+E                       raise
+E                   except Exception as exc:
+E                       raise InspectError(
+E                           f"{type(exc).__name__}: {exc}",
+E                           "the locator was resolved on this call. If it missed, observe again and pass that address",
+E                           stage="inspect",
+E                       ) from exc
+E                   if browser_name == "chromium":
+E                       try:
+E                           client = page.context.new_cdp_session(page)
+E                           ax = _cdp_send(client, "Accessibility.getFullAXTree", {}, [])
+E                           names = []
+E                           for node in ax.get("nodes") or []:
+E                               role_name = _ax_text(node.get("role")).lower()
+E                               if role_name in INTERACTIVE_ROLES and not node.get("ignored"):
+E                                   names.append(clip(_ax_text(node.get("name"))))
+E                           ax_section = _section("cdp:Accessibility.getFullAXTree", "complete", {"names": names})
+E                       except Exception as exc:
+E                           ax_section = _section("cdp:Accessibility.getFullAXTree", "unavailable", {"reason": type(exc).__name__})
+E                   else:
+E                       ax_section = _section(None, "not_requested")
+E                   viewport = page.viewport_size or {}
+E                   result = {
+E                       "schema": SCHEMA_INSPECT,
+E                       "ok": True,
+E                       "operation": "act",
+E                       "action": action,
+E                       "locator": locator,
+E                       "url": strip_userinfo(page.url),
+E                       "environment": _environment(browser, browser_name, channel, headed, profile, viewport),
+E                       "limits": {
+E                           "page_js_called": page_js,
+E                           "bounded_to": [action],
+E                           **({"quiet": outcome["quiet"]} if "quiet" in outcome else {}),
+E                           "ordinals": "rejected",
+E                           "dom": "not_requested",
+E                           "selector_engine": "playwright" if page_js else "none",
+E                       },
+E                       "sections": {
+E                           "url": _section("playwright:page.url", "complete", {"url": strip_userinfo(page.url)}),
+E                           "accessibility": ax_section,
+E                           "dom": _section(None, "not_requested"),
+E                           "storage": _section(None, "not_requested"),
+E                       },
+E                       "hint": "url was captured. dom was not requested, so this result cannot say the markup was unchanged",
+E                   }
+E               except InspectError as exc:
+E                   failure = exc
+E               except Exception as exc:
+E                   failure = InspectError(
+E                       f"{type(exc).__name__}: {exc}",
+E                       "the action failed before it could write a result",
+E                       stage="inspect",
+E                   )
+E               return _finish(playwright, browser, failure, result)
+E           
+E           
+E           def read_snapshot(path: str) -&gt; dict:
+E               file = Path(path)
+E               if not file.is_file():
+E                   raise InspectError(f"snapshot not found: {path}", "run observe --out this path first")
+E               try:
+E                   data = json.loads(file.read_text(encoding="utf-8"))
+E               except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+E                   raise InspectError("snapshot is not JSON", "run observe again and pass that file") from exc
+E               if not isinstance(data, dict) or data.get("schema") != SCHEMA_OBSERVE:
+E                   raise InspectError("snapshot schema is not btk-page-observe/1", "pass a file written by observe, not a locate result")
+E               elements = data.get("elements")
+E               if not isinstance(elements, list):
+E                   raise InspectError("snapshot has no elements list", "run observe again")
+E               for element in elements:
+E                   if not isinstance(element, dict) or not isinstance(element.get("address"), str) or not isinstance(element.get("handle"), str):
+E                       raise InspectError("snapshot element is missing address or handle", "run observe again")
+E               return data
+E           
+E           
+E           def _shadow_counts(snapshot: dict) -&gt; dict | None:
+E               section = (snapshot.get("sections") or {}).get("shadow_roots")
+E               if not isinstance(section, dict) or section.get("coverage") not in COMPLETE_COVERAGE:
+E                   return None
+E               counts = {}
+E               for key in ("open", "closed", "count"):
+E                   value = section.get(key)
+E                   if isinstance(value, bool) or not isinstance(value, int):
+E                       return None
+E                   counts[key] = value
+E               return counts
+E           
+E           
+E           def _count_pair(left, right) -&gt; dict:
+E               delta = right - left if isinstance(left, int) and isinstance(right, int) else None
+E               return {"left": left, "right": right, "delta": delta}
+E           
+E           
+E           def compare_snapshots(left: dict, right: dict) -&gt; dict:
+E               """Section relations and counts for two observe snapshots. A missing side is never same."""
+E               left_sections = left.get("sections") or {}
+E               right_sections = right.get("sections") or {}
+E               sections = {}
+E               for name in sorted(set(left_sections) | set(right_sections)):
+E                   left_part = left_sections.get(name)
+E                   right_part = right_sections.get(name)
+E                   sections[name] = {
+E                       "relation": evidence_relation(left_part, right_part),
+E                       "left": left_part.get("coverage") if isinstance(left_part, dict) else None,
+E                       "right": right_part.get("coverage") if isinstance(right_part, dict) else None,
+E                   }
+E               left_shadow = _shadow_counts(left)
+E               right_shadow = _shadow_counts(right)
+E               shadow = {key: _count_pair(*_side(left_shadow, right_shadow, key)) for key in ("open", "closed", "count")}
+E               left_env = left.get("environment") if isinstance(left.get("environment"), dict) else {}
+E               right_env = right.get("environment") if isinstance(right.get("environment"), dict) else {}
+E               environment = {key: [left_env.get(key), right_env.get(key)] for key in COMPARE_ENVIRONMENT_KEYS}
+E               same_environment = all(pair[0] == pair[1] for pair in environment.values())
+E               hints = [
+E                   "same, different, and unknown are section relations; a missing or truncated section is never same",
+E                   "shadow_roots counts are null when that section was not complete on one side",
+E               ]
+E               if not same_environment:
+E                   hints.append("environments differ; section differences may come from the browser or profile, not the page")
+E               return {
+E                   "schema": SCHEMA_COMPARE,
+E                   "ok": True,
+E                   "left_url": left.get("url"),
+E                   "right_url": right.get("url"),
+E                   "same_environment": same_environment,
+E                   "environment": environment,
+E                   "sections": sections,
+E                   "shadow_roots": shadow,
+E                   "child_frames": _count_pair(left.get("child_frames"), right.get("child_frames")),
+E                   "elements": _count_pair(left.get("total"), right.get("total")),
+E                   "hint": ". ".join(hints),
+E               }
+E           
+E           
+E           def _side(left_shadow, right_shadow, key):
+E               return (
+E                   left_shadow[key] if left_shadow else None,
+E                   right_shadow[key] if right_shadow else None,
+E               )
+E           
+E           
+E           def dumps(payload: dict) -&gt; str:
+E               return json.dumps(payload, indent=2, ensure_ascii=False) + "\n"
+E           
+E           
+E           # Ported from Stagehand's sanitizeErrorMessage (packages/integrations/core/src/harness/redact.ts).
+E           # Playwright exception text can carry URLs with keys, bearer tokens, or provider keys.
+E           REDACTIONS = (
+E               (re.compile(r"([?&amp;](?:signingKey|apiKey|api_key|token|key)=)[^&amp;\s\"']+", re.IGNORECASE), r"\1[redacted]"),
+E               (re.compile(r"\b(sk-[A-Za-z0-9_-]{6})[A-Za-z0-9_-]+"), r"\1[redacted]"),
+E               (re.compile(r"\b(bb_(?:live|test)_[A-Za-z0-9]{4})[A-Za-z0-9_-]+"), r"\1[redacted]"),
+E               (re.compile(r"\bAIza[0-9A-Za-z_-]{30,}"), "AIza[redacted]"),
+E               (re.compile(r"\b(Bearer\s+)[A-Za-z0-9._~+/=-]{8,}", re.IGNORECASE), r"\1[redacted]"),
+E           )
+E           
+E           
+E           def redact_text(text: str) -&gt; str:
+E               for pattern, replacement in REDACTIONS:
+E                   text = pattern.sub(replacement, text)
+E               return text
+E           
+E           
+E           def error_envelope(operation: str, exc: InspectError) -&gt; dict:
+E               payload = {
+E                   "schema": SCHEMA_INSPECT, "ok": False, "operation": operation, "stage": exc.stage,
+E                   "error": redact_text(exc.error), "hint": redact_text(exc.hint),
+E               }
+E               if exc.suggestions:
+E                   payload["suggestions"] = exc.suggestions
+E               return payload
+E           
+E           
+E           def error_text(payload: dict) -&gt; str:
+E               lines = [f"stage: {payload.get('stage', 'input')}", f"error: {payload.get('error')}", f"hint: {payload.get('hint')}"]
+E               for item in payload.get("suggestions") or []:
+E                   score = item.get("score")
+E                   score_text = "" if not isinstance(score, (int, float)) or isinstance(score, bool) else f" {score:.6f}"
+E                   lines.append(f"suggest: {item.get('address')}{score_text} {item.get('name')}")
+E               return "\n".join(lines) + "\n"
+E           
+E           
+E           def observe_text(payload: dict) -&gt; str:
+E               env = payload["environment"]
+E               mode = "headless" if env.get("headless") else "headed"
+E               lines = [
+E                   f"btk-page-observe/1 {env.get('os')} {env.get('browser')} {env.get('profile')} {mode} "
+E                   f"elements={payload.get('total')} showing={len(payload.get('elements') or [])}"
+E               ]
+E               lines.extend(element_line(element) for element in payload.get("elements") or [])
+E               lines.append(f"hint: {payload.get('hint')}")
+E               return "\n".join(lines) + "\n"
+E           
+E           
+E           def locate_text(payload: dict) -&gt; str:
+E               if not payload.get("ok"):
+E                   return error_text(payload)
+E               lines = [element_line(element) for element in payload.get("items") or []]
+E               page = payload["pagination"]
+E               lines.append(f"returned {page['returned']} of {page['total']}; start {page['start']}")
+E               lines.append(f"hint: {payload.get('hint')}")
+E               return "\n".join(lines) + "\n"
+E           
+E           
+E           def count_text(payload: dict) -&gt; str:
+E               lines = [f"total={payload['total']} visible={payload['visible']} enabled={payload['enabled']}"]
+E               for role, count in payload["by_role"].items():
+E                   lines.append(f"role {role}={count}")
+E               lines.append(f"hint: {payload['hint']}")
+E               return "\n".join(lines) + "\n"
+E           
+E           
+E           def describe_text(payload: dict) -&gt; str:
+E               if not payload.get("ok"):
+E                   return error_text(payload)
+E               lines = [f"resolved_as={payload['resolved_as']}", *payload["context"], f"hint: {payload['hint']}"]
+E               return "\n".join(lines) + "\n"
+E           
+E           
+E           def compare_text(payload: dict) -&gt; str:
+E               lines = [f"btk-page-compare/1 same_environment={str(payload['same_environment']).lower()}"]
+E               for name, item in payload["sections"].items():
+E                   lines.append(f"section {name}={item['relation']} left={item['left']} right={item['right']}")
+E               for key in ("open", "closed", "count"):
+E                   pair = payload["shadow_roots"][key]
+E                   lines.append(f"shadow_roots {key} left={pair['left']} right={pair['right']} delta={pair['delta']}")
+E               for key in ("elements", "child_frames"):
+E                   pair = payload[key]
+E                   lines.append(f"{key} left={pair['left']} right={pair['right']} delta={pair['delta']}")
+E               lines.append(f"hint: {payload['hint']}")
+E               return "\n".join(lines) + "\n"
+E           
+E           
+E           def operations_text(payload: dict) -&gt; str:
+E               lines = [f"{item['name']}: {item['summary']}" for item in payload["items"]]
+E               lines.append(f"hint: {payload['hint']}")
+E               return "\n".join(lines) + "\n"
+E           
+E           
+E           def _bounded(maximum: int):
+E               def parse(text: str) -&gt; int:
+E                   if not re.fullmatch(r"(?:0|[1-9][0-9]*)", text):
+E                       raise argparse.ArgumentTypeError("must be a whole number")
+E                   value = int(text)
+E                   if value &gt; maximum:
+E                       raise argparse.ArgumentTypeError(f"must be at most {maximum}")
+E                   return value
+E               return parse
+E           
+E           
+E           def _threshold(text: str) -&gt; float:
+E               try:
+E                   value = float(text)
+E               except ValueError as exc:
+E                   raise argparse.ArgumentTypeError("must be a number") from exc
+E               if not math.isfinite(value) or not 0 &lt;= value &lt;= 1:
+E                   raise argparse.ArgumentTypeError("must be from 0 to 1")
+E               return value
+E           
+E           
+E           def build_parser() -&gt; argparse.ArgumentParser:
+E               common = argparse.ArgumentParser(add_help=False, allow_abbrev=False)
+E               common.add_argument("--json", action="store_true", help="write the JSON document to stdout")
+E               common.add_argument("--out", help="write the JSON document to this path; the parent directory must exist")
+E               parser = argparse.ArgumentParser(prog="page_inspect.py", description=__doc__.split("\n\n")[0], allow_abbrev=False)
+E               sub = parser.add_subparsers(dest="command", required=True)
+E               observe = sub.add_parser("observe", parents=[common], help="passive CDP snapshot of a loopback page", allow_abbrev=False)
+E               observe.add_argument("target", help="http://127.0.0.1:PORT/path or http://[::1]:PORT/path")
+E               observe.add_argument("--browser", choices=("chromium", "firefox", "webkit"), default="chromium")
+E               observe.add_argument("--profile", choices=tuple(PROFILES), default="desktop")
+E               observe.add_argument("--channel", help="branded browser channel, for example chrome")
+E               observe.add_argument("--headed", action="store_true", help="launch the full browser instead of headless")
+E               observe.add_argument("--include-hidden", action="store_true", help="keep controls the accessibility tree ignored")
+E               observe.add_argument("--include-storage-keys", action="store_true", help="record storage key names, never values")
+E               observe.add_argument("--include-storage-fingerprints", action="store_true", help="add SHA-256 fingerprints; requires keys")
+E               observe.add_argument("--role", default="", help="only this role")
+E               observe.add_argument("--start", type=_bounded(100000), default=0)
+E               observe.add_argument("--limit", type=_bounded(SURVEY_LIMIT_MAX), default=SURVEY_LIMIT_DEFAULT)
+E               observe.add_argument("--after-click", metavar="LOCATOR", help="click this id:, testid:, role:, or css: address once, then take a second snapshot")
+E               observe.add_argument("--after-out", help="write the second snapshot here; requires --after-click and --out")
+E               observe.add_argument("--step", action="append", default=[], metavar="'ACTION LOCATOR [TEXT]'",
+E                                    help="one action, then a snapshot; repeat for a sequence. LOCATOR - means none. Use with --out-dir")
+E               observe.add_argument("--out-dir", help="write 00-initial.json and one NN-action.json per --step here")
+E               act = sub.add_parser("act", parents=[common], help="one declared action that re-queries a locator", allow_abbrev=False)
+E               act.add_argument("target", help="loopback URL; a snapshot ordinal is not accepted")
+E               act.add_argument("--action", required=True, choices=tuple(sorted(ACT_ACTIONS)))
+E               act.add_argument("--locator", default="", help="id:, testid:, role:, or css: from observe")
+E               act.add_argument("--text", default=None, help="literal text for fill, key name for press (Playwright names, for example Enter or ControlOrMeta+A), option value for select")
+E               act.add_argument("--timeout-ms", type=_bounded(120000), default=5000)
+E               act.add_argument("--browser", choices=("chromium", "firefox", "webkit"), default="chromium")
+E               act.add_argument("--profile", choices=tuple(PROFILES), default="desktop")
+E               act.add_argument("--channel", help="branded browser channel, for example chrome")
+E               act.add_argument("--headed", action="store_true")
+E               locate_parser = sub.add_parser("locate", parents=[common], help="rank controls in a snapshot", allow_abbrev=False)
+E               locate_parser.add_argument("snapshot")
+E               locate_parser.add_argument("--query", default="")
+E               locate_parser.add_argument("--role", default="")
+E               locate_parser.add_argument("--threshold", type=_threshold, default=THRESHOLD_DEFAULT)
+E               locate_parser.add_argument("--start", type=_bounded(100000), default=0)
+E               locate_parser.add_argument("--limit", type=_bounded(PAGE_LIMIT_MAX), default=PAGE_LIMIT_DEFAULT)
+E               locate_parser.add_argument("--unique", action="store_true", help="fail when the top score is shared")
+E               count_parser = sub.add_parser("count", parents=[common], help="count controls without listing them", allow_abbrev=False)
+E               count_parser.add_argument("snapshot")
+E               count_parser.add_argument("--query", default="")
+E               count_parser.add_argument("--role", default="")
+E               count_parser.add_argument("--threshold", type=_threshold, default=THRESHOLD_DEFAULT)
+E               describe_parser = sub.add_parser("describe", parents=[common], help="one control and neighbor lines", allow_abbrev=False)
+E               describe_parser.add_argument("snapshot")
+E               describe_parser.add_argument("--target", required=True)
+E               describe_parser.add_argument("--context", type=_bounded(CONTEXT_MAX), default=CONTEXT_DEFAULT)
+E               compare_parser = sub.add_parser("compare", parents=[common], help="compare two observe snapshots", allow_abbrev=False)
+E               compare_parser.add_argument("left")
+E               compare_parser.add_argument("right")
+E               sub.add_parser("operations", parents=[common], help="list commands", allow_abbrev=False)
+E               return parser
+E           
+E           
+E           def _check_action_locator(locator: str | None) -&gt; None:
+E               """Shared by act and observe --after-click: an address from observe, never a snapshot ordinal."""
+E               text = (locator or "").strip()
+E               if not text or text.startswith("h:"):
+E                   raise InspectError(
+E                       "act does not accept a snapshot ordinal",
+E                       "pass id:, testid:, role:, or css: so the control is queried again",
+E                   )
+E               if not text.startswith(("id:", "testid:", "role:", "css:")):
+E                   raise InspectError(
+E                       "act locator must be id:, testid:, role:, or css:",
+E                       "observe prints those addresses; h:N is not accepted",
+E                   )
+E           
+E           
+E           def _check_sequence_args(args: argparse.Namespace) -&gt; None:
+E               if args.after_click is None or args.after_out is None or not args.out:
+E                   raise InspectError(
+E                       "after-click needs --out for the first snapshot and --after-out for the second",
+E                       "pass both file paths; each file is a btk-page-observe/1 snapshot",
+E                   )
+E               _check_action_locator(args.after_click)
+E               if Path(args.out).resolve() == Path(args.after_out).resolve():
+E                   raise InspectError("--out and --after-out must be different files", "give each snapshot its own path")
+E               for path in (args.out, args.after_out):
+E                   if not Path(path).parent.is_dir():
+E                       raise InspectError(f"directory does not exist: {Path(path).parent}", "create the directory before --out or --after-out")
+E           
+E           
+E           def _parse_step(raw: str, index: int) -&gt; dict:
+E               parts = raw.strip().split(None, 2)
+E               if not parts:
+E                   raise InspectError(f"step {index} is empty", "use ACTION LOCATOR [TEXT]; LOCATOR - means none")
+E               action = parts[0]
+E               if action not in ACT_ACTIONS:
+E                   raise InspectError(f"step {index}: unknown action {action}", "use one of " + ", ".join(sorted(ACT_ACTIONS)))
+E               locator = "" if len(parts) &lt; 2 or parts[1] == "-" else parts[1]
+E               text = parts[2] if len(parts) == 3 else None
+E               if action in ACT_TEXT_ACTIONS and text is None:
+E                   raise InspectError(f"step {index}: {action} needs TEXT", "write ACTION LOCATOR TEXT; text is not recorded in the output")
+E               if action == "wait_for_timeout":
+E                   if text is None or not re.fullmatch(r"[0-9]{1,6}", text) or int(text) &gt; 120000:
+E                       raise InspectError(f"step {index}: wait_for_timeout needs milliseconds 0..120000 as TEXT", "write wait_for_timeout - 500")
+E               elif action != "settle" and not (action == "press" and not locator):
+E                   _check_action_locator(locator)
+E               return {"action": action, "locator": locator, "text": text}
+E           
+E           
+E           def _check_step_args(args: argparse.Namespace) -&gt; None:
+E               if args.after_click is not None or args.after_out is not None:
+E                   raise InspectError("--step and --after-click cannot be combined", "use --step for every action")
+E               if args.out or not args.out_dir:
+E                   raise InspectError("--step writes one file per snapshot, so it needs --out-dir and not --out", "pass --out-dir")
+E               if not Path(args.out_dir).is_dir():
+E                   raise InspectError(f"directory does not exist: {args.out_dir}", "create the directory before --out-dir")
+E               if len(args.step) &gt; MAX_STEPS:
+E                   raise InspectError(f"at most {MAX_STEPS} steps", "split the sequence into more than one observe")
+E           
+E           
+E           def _write_snapshot(path: str, payload: dict) -&gt; None:
+E               try:
+E                   Path(path).write_text(dumps(payload), encoding="utf-8", newline="\n")
+E               except OSError as exc:
+E                   raise InspectError(f"cannot write {path}: {exc}", "choose a writable file path") from exc
+E           
+E           
+E           def dispatch(args: argparse.Namespace) -&gt; tuple[dict, str, int]:
+E               if args.command == "operations":
+E                   payload = operations()
+E                   return payload, operations_text(payload), 0
+E               if args.command == "observe":
+E                   if args.limit &lt; 1:
+E                       raise InspectError("limit must be at least 1", f"use 1..{SURVEY_LIMIT_MAX}")
+E                   steps = None
+E                   if args.after_click is not None or args.after_out is not None:
+E                       _check_sequence_args(args)
+E                       steps = [{"action": "click", "locator": args.after_click.strip(), "text": None}]
+E                   if args.step:
+E                       _check_step_args(args)
+E                       steps = [_parse_step(raw, index) for index, raw in enumerate(args.step, start=1)]
+E                   results = observe_page(
+E                       url=args.target, browser_name=args.browser, profile=args.profile, headed=args.headed,
+E                       channel=args.channel or None, include_hidden=args.include_hidden,
+E                       include_storage_keys=args.include_storage_keys,
+E                       include_storage_fingerprints=args.include_storage_fingerprints,
+E                       role=args.role, start=args.start, limit=args.limit, steps=steps,
+E                   )
+E                   if args.step:
+E                       names = ["00-initial.json"] + [
+E                           f"{index:02d}-{step['action']}.json" for index, step in enumerate(steps, start=1)
+E                       ]
+E                       files = []
+E                       for name, snapshot in zip(names, results):
+E                           target = str(Path(args.out_dir) / name)
+E                           _write_snapshot(target, snapshot)
+E                           files.append(target)
+E                       payload = {
+E                           "schema": "btk-page-observe-steps/1",
+E                           "ok": True,
+E                           "files": files,
+E                           "steps": [{"index": i, "action": step["action"], "locator": step["locator"]} for i, step in enumerate(steps, start=1)],
+E                           "hint": "each file is a btk-page-observe/1 snapshot; compare any two. step text is not recorded",
+E                       }
+E                       return payload, "".join(f"wrote {name}\n" for name in files), 0
+E                   payload = results[0]
+E                   text_out = observe_text(payload)
+E                   if len(results) == 2:
+E                       _write_snapshot(args.after_out, results[1])
+E                       text_out += f"after-click {args.after_click}: second snapshot written to {args.after_out}\n"
+E                   return payload, text_out, 0
+E               if args.command == "act":
+E                   if args.timeout_ms &lt; 1:
+E                       raise InspectError("timeout-ms must be at least 1", "use 1..120000")
+E                   payload = act_page(
+E                       url=args.target, browser_name=args.browser, profile=args.profile, headed=args.headed,
+E                       channel=args.channel or None, action=args.action, locator=args.locator,
+E                       text=args.text, timeout_ms=args.timeout_ms,
+E                   )
+E                   text_out = f"action={payload['action']} url={payload['url']}\nhint: {payload['hint']}\n"
+E                   return payload, text_out, 0
+E               if args.command == "compare":
+E                   payload = compare_snapshots(read_snapshot(args.left), read_snapshot(args.right))
+E                   return payload, compare_text(payload), 0
+E               snapshot = read_snapshot(args.snapshot)
+E               elements = snapshot["elements"]
+E               if args.command == "count":
+E                   payload = count_elements(elements, query=args.query, role=args.role, threshold=args.threshold)
+E                   return payload, count_text(payload), 0
+E               if args.command == "locate":
+E                   if args.limit &lt; 1:
+E                       raise InspectError("limit must be at least 1", f"use 1..{PAGE_LIMIT_MAX}")
+E                   payload = locate(
+E                       elements, query=args.query, role=args.role, threshold=args.threshold,
+E                       start=args.start, limit=args.limit, unique=args.unique,
+E                   )
+E                   return payload, locate_text(payload), 0 if payload["ok"] else 1
+E               if args.context &lt; 0:
+E                   raise InspectError("context must be at least 0", f"use 0..{CONTEXT_MAX}")
+E               payload = describe_element(elements, args.target, context=args.context)
+E               return payload, describe_text(payload), 0 if payload["ok"] else 1
+E           
+E           
+E           def emit(payload: dict, text: str, code: int, args: argparse.Namespace) -&gt; int:
+E               raw = dumps(payload)
+E               if args.out:
+E                   path = Path(args.out)
+E                   if not path.parent.exists():
+E                       sys.stderr.write(f"error: directory does not exist: {path.parent}\nhint: create the directory before --out\n")
+E                       return 2
+E                   try:
+E                       path.write_text(raw, encoding="utf-8", newline="\n")
+E                   except OSError as exc:
+E                       sys.stderr.write(f"error: cannot write {path}: {exc}\nhint: choose a writable file path\n")
+E                       return 2
+E               if args.json or not payload.get("ok", True):
+E                   if args.json:
+E                       sys.stdout.write(raw)
+E                   else:
+E                       sys.stderr.write(text)
+E               else:
+E                   sys.stdout.write(text)
+E               return code
+E           
+E           
+E           def main(argv: list[str] | None = None) -&gt; int:
+E               parser = build_parser()
+E               try:
+E                   args = parser.parse_args(argv)
+E               except SystemExit as exc:
+E                   code = exc.code
+E                   return 0 if code is None else int(code)
+E               try:
+E                   payload, text, code = dispatch(args)
+E               except InspectError as exc:
+E                   payload = error_envelope(args.command, exc)
+E                   return emit(payload, error_text(payload), exc.code, args)
+E               return emit(payload, text, code, args)
+E           
+E           
+E           if __name__ == "__main__":
+E               raise SystemExit(main())
+
+tests/python/test_page_inspect.py:190: AssertionError</failure></testcase></testsuite></testsuites>

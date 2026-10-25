@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="1" failures="0" skipped="0" tests="1" time="0.354" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="" name="tests.test_collection_filter" time="0.000"><error message="collection failure">tests/test_collection_filter.py::test_invalid_request_fails_closed: 'request' is a reserved name and cannot be used in @pytest.mark.parametrize</error></testcase></testsuite></testsuites>

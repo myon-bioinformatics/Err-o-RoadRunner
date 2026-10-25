@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="53" tests="2127" time="234.208" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_bench_flutter" name="test_flutter_core_benchmark_short_stdout_matches_golden" time="0.136"><failure message="assert &quot;F sh -c 'exi... in &lt;t&gt;s ==\n&quot; == &quot;F sh -c 'exi... in &lt;t&gt;s ==\n&quot;&#10;  &#10;  Skipping 780 identical leading characters in diff, use -v to show&#10;  Skipping 153 identical trailing characters in diff, use -v to show&#10;  - rsion: 3.12.3 (cpython&#10;  ?           ^ ^&#10;  + rsion: 3.15.1 (cpython&#10;  ?           ^ ^">@pytest.mark.sentinel
+    def test_flutter_core_benchmark_short_stdout_matches_golden() -&gt; None:
+        short_text, _report = run_benchmark(_flutter_core_paths())
+        golden = normalize_short_timing(
+            (GOLDEN_DIR / "short.txt").read_text(encoding="utf-8")
+        )
+&gt;       assert normalize_short_timing(short_text) == golden
+E       assert "F sh -c 'exi... in &lt;t&gt;s ==\n" == "F sh -c 'exi... in &lt;t&gt;s ==\n"
+E         
+E         Skipping 780 identical leading characters in diff, use -v to show
+E         Skipping 153 identical trailing characters in diff, use -v to show
+E         - rsion: 3.12.3 (cpython
+E         ?           ^ ^
+E         + rsion: 3.15.1 (cpython
+E         ?           ^ ^
+
+tests/test_bench_flutter.py:43: AssertionError</failure></testcase><testcase classname="tests.test_bench_windows" name="test_windows_cli_args_benchmark_short_stdout_matches_golden" time="0.119"><failure message="assert &quot;F sh -c 'exi... in &lt;t&gt;s ==\n&quot; == &quot;F sh -c 'exi... in &lt;t&gt;s ==\n&quot;&#10;  &#10;  Skipping 605 identical leading characters in diff, use -v to show&#10;  Skipping 161 identical trailing characters in diff, use -v to show&#10;  - rsion: 3.12.3 (cpython)&#10;  ?           ^ ^&#10;  + rsion: 3.15.1 (cpython)&#10;  ?           ^ ^&#10;  -   node version: v22.23.4&#10;  ?                        ^&#10;  +   node version: v22.23.3&#10;  ?                        ^&#10;    fix: [F1">@pytest.mark.sentinel
+    def test_windows_cli_args_benchmark_short_stdout_matches_golden() -&gt; None:
+        short_text, _report = run_benchmark(_windows_paths())
+        golden = normalize_short_timing(
+            (GOLDEN_DIR / "short.txt").read_text(encoding="utf-8")
+        )
+&gt;       assert normalize_short_timing(short_text) == golden
+E       assert "F sh -c 'exi... in &lt;t&gt;s ==\n" == "F sh -c 'exi... in &lt;t&gt;s ==\n"
+E         
+E         Skipping 605 identical leading characters in diff, use -v to show
+E         Skipping 161 identical trailing characters in diff, use -v to show
+E         - rsion: 3.12.3 (cpython)
+E         ?           ^ ^
+E         + rsion: 3.15.1 (cpython)
+E         ?           ^ ^
+E         -   node version: v22.23.4
+E         ?                        ^
+E         +   node version: v22.23.3
+E         ?                        ^
+E           fix: [F1
+
+tests/test_bench_windows.py:42: AssertionError</failure></testcase></testsuite></testsuites>
