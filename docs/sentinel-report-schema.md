@@ -68,7 +68,10 @@ Built from a static rule table over triage lines. Deduped by `(kind, loc)`, sort
 | `assert_left` | string | Optional. Redacted left-hand pytest assert operand (max 80 chars). |
 | `assert_right` | string | Optional. Redacted right-hand operand or `None` / `not None` for `is` asserts. |
 
-Records with the same `(signature, test_id)` are merged; `variants` lists all artifact variants.
+Records with the same `test_id` remain grouped for compatibility, with representative
+failure fields; `variants` lists all artifact variants. Matrix classification tracks
+each `(error_type, normalized signature)` separately within that testcase. Different
+failures on different variants do not establish one matrix-invariant failure.
 
 ## `matrix` (CI variant summary)
 

@@ -607,6 +607,14 @@ def merge_failure_records(
                 if path_axes:
                     _merge_variant_axes(copy, path_axes)
                 merged[key] = copy
+            # Keep public testcase grouping unchanged, but do not combine distinct
+            # failures when deciding whether one failure spans every matrix cell.
+            failure_key = json.dumps([rec.get("error_type"), rec.get("signature")])
+            failures = merged[key].setdefault("matrix_failure_cells", {})
+            failure_cells = failures.setdefault(failure_key, [])
+            for cell in rec.get("matrix_cells") or []:
+                if cell not in failure_cells:
+                    failure_cells.append(dict(cell))
     for entry in merged.values():
         entry["variants"] = sorted(set(entry.get("variants") or []))
         axes = entry.get("variant_axes")
@@ -669,7 +677,9 @@ def records_for_report(records: Sequence[Mapping[str, Any]]) -> list[dict[str, A
             {
                 key: value
                 for key, value in rec.items()
-                if key not in ("matrix_cells", "matrix_total", "matrix_axes")
+                if key not in (
+                    "matrix_cells", "matrix_total", "matrix_axes", "matrix_failure_cells"
+                )
             }
         )
     return public
@@ -954,10 +964,16 @@ def rule_matrix_invariance(
         test_id = str(rec.get("test_id") or "")
         if not test_id:
             continue
-        cells = rec.get("matrix_cells") or []
-        classification = _classify_matrix_record(cells, matrix_total, matrix_axes)
-        if classification and classification in buckets:
-            buckets[classification].append(test_id)
+        failures = rec.get("matrix_failure_cells")
+        cell_groups = (
+            failures.values()
+            if isinstance(failures, dict)
+            else [rec.get("matrix_cells") or []]
+        )
+        for cells in cell_groups:
+            classification = _classify_matrix_record(cells, matrix_total, matrix_axes)
+            if classification and classification in buckets:
+                buckets[classification].append(test_id)
     hypotheses: list[dict[str, Any]] = []
     summary_map = {
         "invariant": "matrix-invariant failure",

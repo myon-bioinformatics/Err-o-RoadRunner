@@ -1532,15 +1532,11 @@ def build_escalation_report(
             squad_mod.enrich_fix_candidates(fix_candidates, squad_pack.get("hypotheses") or [])
         )
     elif all_failure_records and squad_mod is not None:
-        squad_pack["hypotheses"] = [
-            hyp
-            for hyp in squad_mod.build_cascade_hypotheses(
-                all_failure_records,
-                project_root,
-                [],
-            )
-            if str(hyp.get("summary") or "").startswith("matrix-")
-        ]
+        squad_pack["hypotheses"] = squad_mod.rule_matrix_invariance(
+            all_failure_records,
+            project_root,
+            [],
+        )
 
     doc: dict[str, Any] = {
         "schema": SCHEMA_VERSION,
