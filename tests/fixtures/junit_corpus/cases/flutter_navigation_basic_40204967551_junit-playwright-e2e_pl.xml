@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites id="" name="" tests="300" failures="5" skipped="13" errors="1" time="1156.0791050000003"><testsuite name="screen_navigation.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="10" failures="2" skipped="0" time="102.519" errors="0"><testcase name="Screen6 search stays inside body 390x500 keyboard @portable" classname="screen_navigation.spec.ts" time="11.583"><system-out>
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen6--08f66-y-390x500-keyboard-portable-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen6--08f66-y-390x500-keyboard-portable-webkit/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen6--08f66-y-390x500-keyboard-portable-webkit/error-context.md]]
+
+</system-out>
+<failure message="expect(locator).toBeFocused() failed" type="expect.toBeFocused">
+  [webkit] › screen_navigation.spec.ts:266:9 › Screen6 search stays inside body 390x500 keyboard @portable 
+
+    Error: expect(locator).toBeFocused() failed
+
+    Locator:  locator('[flt-semantics-identifier="screen6-search"]').getByRole('textbox')
+    Expected: focused
+    Received: inactive
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeFocused" locator('[flt-semantics-identifier="screen6-search"]').getByRole('textbox') with timeout 5000ms
+      - waiting for locator('[flt-semantics-identifier="screen6-search"]').getByRole('textbox')
+        13 × locator resolved to &lt;input type="text" autocorrect="off" spellcheck="false" autocomplete="off" aria-label="Search screens…" data-semantics-role="text-field"/&gt;
+           - unexpected value "inactive"
+
+
+      287 |           await page.keyboard.press('Tab');
+      288 |         }
+    &gt; 289 |         await expect(search).toBeFocused();
+          |                              ^
+      290 |       }
+      291 |
+      292 |       const measure = async () =&gt; ({
+        at &lt;runner-work&gt;/e2e/tests/screen_navigation.spec.ts:289:30
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/screen_navigation-Screen6--08f66-y-390x500-keyboard-portable-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/screen_navigation-Screen6--08f66-y-390x500-keyboard-portable-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/screen_navigation-Screen6--08f66-y-390x500-keyboard-portable-webkit/error-context.md
+
+</failure>
+</testcase><testcase name="Screen6 search stays inside body 1180x757 keyboard @portable" classname="screen_navigation.spec.ts" time="14.573"><system-out>
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen6--17e45--1180x757-keyboard-portable-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen6--17e45--1180x757-keyboard-portable-webkit/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen6--17e45--1180x757-keyboard-portable-webkit/error-context.md]]
+
+</system-out>
+<failure message="expect(locator).toBeFocused() failed" type="expect.toBeFocused">
+  [webkit] › screen_navigation.spec.ts:266:9 › Screen6 search stays inside body 1180x757 keyboard @portable 
+
+    Error: expect(locator).toBeFocused() failed
+
+    Locator:  locator('[flt-semantics-identifier="screen6-search"]').getByRole('textbox')
+    Expected: focused
+    Received: inactive
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeFocused" locator('[flt-semantics-identifier="screen6-search"]').getByRole('textbox') with timeout 5000ms
+      - waiting for locator('[flt-semantics-identifier="screen6-search"]').getByRole('textbox')
+        13 × locator resolved to &lt;input type="text" autocorrect="off" spellcheck="false" autocomplete="off" aria-label="Search screens…" data-semantics-role="text-field"/&gt;
+           - unexpected value "inactive"
+
+
+      287 |           await page.keyboard.press('Tab');
+      288 |         }
+    &gt; 289 |         await expect(search).toBeFocused();
+          |                              ^
+      290 |       }
+      291 |
+      292 |       const measure = async () =&gt; ({
+        at &lt;runner-work&gt;/e2e/tests/screen_navigation.spec.ts:289:30
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/screen_navigation-Screen6--17e45--1180x757-keyboard-portable-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/screen_navigation-Screen6--17e45--1180x757-keyboard-portable-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/screen_navigation-Screen6--17e45--1180x757-keyboard-portable-webkit/error-context.md
+
+</failure>
+</testcase></testsuite><testsuite name="screen_navigation.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="10" failures="1" skipped="0" time="81.867" errors="0"><testcase name="Screen6 search stays inside body 390x500 mouse @portable" classname="screen_navigation.spec.ts" time="8.241"><system-out>
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen6--28817-body-390x500-mouse-portable-mobile-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen6--28817-body-390x500-mouse-portable-mobile-chromium/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen6--28817-body-390x500-mouse-portable-mobile-chromium/error-context.md]]
+
+</system-out>
+<failure message="expect(received).toBe(expected) // Object.is equality" type="expect.toBe">
+  [mobile-chromium] › screen_navigation.spec.ts:266:9 › Screen6 search stays inside body 390x500 mouse @portable 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: true
+    Received: false
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      303 |           box.y + box.height &lt;= boxes.body!.y + boxes.body!.height + 1 &amp;&amp;
+      304 |           box.height &gt; 0);
+    &gt; 305 |       }).toBe(true);
+          |          ^
+      306 |       if (input === 'mouse') await search.click();
+      307 |       await expect(search).toBeFocused();
+      308 |       await expect(search).toHaveAttribute('autocorrect', 'on');
+        at &lt;runner-work&gt;/e2e/tests/screen_navigation.spec.ts:305:10
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/screen_navigation-Screen6--28817-body-390x500-mouse-portable-mobile-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/screen_navigation-Screen6--28817-body-390x500-mouse-portable-mobile-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/screen_navigation-Screen6--28817-body-390x500-mouse-portable-mobile-chromium/error-context.md
+
+</failure>
+</testcase></testsuite><testsuite name="home_discovery_journeys.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="4" failures="1" skipped="0" time="59.05" errors="0"><testcase name="Photo Studio dirty Door preserves Cancel and Discard @portable" classname="home_discovery_journeys.spec.ts" time="11.798"><system-out>
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ph-7521f-Cancel-and-Discard-portable-mobile-webkit/attachments/photo-dirty-door-png-b822caf149a85db2ff623eeda8b0c19f3b16c260.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ph-7521f-Cancel-and-Discard-portable-mobile-webkit/attachments/photo-door-audit-json-954f4c600f00c98b5162000e5c3024a2a94a4d82.json]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ph-7521f-Cancel-and-Discard-portable-mobile-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ph-7521f-Cancel-and-Discard-portable-mobile-webkit/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ph-7521f-Cancel-and-Discard-portable-mobile-webkit/error-context.md]]
+
+</system-out>
+<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
+  [mobile-webkit] › home_discovery_journeys.spec.ts:335:5 › Photo Studio dirty Door preserves Cancel and Discard @portable 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('[role="menuitem"]').first()
+    Expected: visible
+    Timeout: 3000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('[role="menuitem"]').first() with timeout 3000ms
+      - waiting for locator('[role="menuitem"]').first()
+
+
+      125 |   const attempt = { via: 'button-press', opened: false, record };
+      126 |   attempts.push(attempt);
+    &gt; 127 |   await expect(items.first()).toBeVisible({ timeout: 3_000 });
+          |                               ^
+      128 |   attempt.opened = true;
+      129 | }
+      130 |
+        at openDoor (&lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:127:31)
+        at &lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:381:7
+
+    attachment #1: photo-dirty-door.png (image/png) ────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ph-7521f-Cancel-and-Discard-portable-mobile-webkit/attachments/photo-dirty-door-png-b822caf149a85db2ff623eeda8b0c19f3b16c260.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: photo-door-audit.json (application/json) ────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ph-7521f-Cancel-and-Discard-portable-mobile-webkit/attachments/photo-door-audit-json-954f4c600f00c98b5162000e5c3024a2a94a4d82.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ph-7521f-Cancel-and-Discard-portable-mobile-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ph-7521f-Cancel-and-Discard-portable-mobile-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/home_discovery_journeys-Ph-7521f-Cancel-and-Discard-portable-mobile-webkit/error-context.md
+
+</failure>
+</testcase></testsuite><testsuite name="screen_navigation.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="10" failures="1" skipped="0" time="83.327" errors="1"><testcase name="Screen6 search stays inside body 390x500 mouse @portable" classname="screen_navigation.spec.ts" time="5.277"><system-out>
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen6--28817-body-390x500-mouse-portable-mobile-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen6--28817-body-390x500-mouse-portable-mobile-webkit/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen6--28817-body-390x500-mouse-portable-mobile-webkit/error-context.md]]
+
+</system-out>
+<error message="mouse.wheel: Mouse wheel is not supported in mobile WebKit" type="Error">
+  [mobile-webkit] › screen_navigation.spec.ts:266:9 › Screen6 search stays inside body 390x500 mouse @portable 
+
+    Error: mouse.wheel: Mouse wheel is not supported in mobile WebKit
+
+      279 |         // Real wheel input over the body, not DOM scrollIntoView or forced tap.
+      280 |         await page.mouse.move(initialBody!.x + 20, initialBody!.y + initialBody!.height / 2);
+    &gt; 281 |         if (viewport.width === 390) await page.mouse.wheel(0, 350);
+          |                                                      ^
+      282 |       } else {
+      283 |         // Start cold and reach the editable via real tab traversal. Do not
+      284 |         // focus it with evaluate(), locator.focus(), or a preceding mouse click.
+        at &lt;runner-work&gt;/e2e/tests/screen_navigation.spec.ts:281:54
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/screen_navigation-Screen6--28817-body-390x500-mouse-portable-mobile-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/screen_navigation-Screen6--28817-body-390x500-mouse-portable-mobile-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/screen_navigation-Screen6--28817-body-390x500-mouse-portable-mobile-webkit/error-context.md
+
+</error>
+</testcase><testcase name="Screen6 search stays inside body 1180x757 keyboard @portable" classname="screen_navigation.spec.ts" time="11.126"><system-out>
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen6--17e45--1180x757-keyboard-portable-mobile-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen6--17e45--1180x757-keyboard-portable-mobile-webkit/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen6--17e45--1180x757-keyboard-portable-mobile-webkit/error-context.md]]
+
+</system-out>
+<failure message="expect(locator).toBeFocused() failed" type="expect.toBeFocused">
+  [mobile-webkit] › screen_navigation.spec.ts:266:9 › Screen6 search stays inside body 1180x757 keyboard @portable 
+
+    Error: expect(locator).toBeFocused() failed
+
+    Locator:  locator('[flt-semantics-identifier="screen6-search"]').getByRole('textbox')
+    Expected: focused
+    Received: inactive
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeFocused" locator('[flt-semantics-identifier="screen6-search"]').getByRole('textbox') with timeout 5000ms
+      - waiting for locator('[flt-semantics-identifier="screen6-search"]').getByRole('textbox')
+        11 × locator resolved to &lt;input type="text" autocorrect="off" spellcheck="false" autocomplete="off" aria-label="Search screens…" data-semantics-role="text-field"/&gt;
+           - unexpected value "inactive"
+
+
+      287 |           await page.keyboard.press('Tab');
+      288 |         }
+    &gt; 289 |         await expect(search).toBeFocused();
+          |                              ^
+      290 |       }
+      291 |
+      292 |       const measure = async () =&gt; ({
+        at &lt;runner-work&gt;/e2e/tests/screen_navigation.spec.ts:289:30
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/screen_navigation-Screen6--17e45--1180x757-keyboard-portable-mobile-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/screen_navigation-Screen6--17e45--1180x757-keyboard-portable-mobile-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/screen_navigation-Screen6--17e45--1180x757-keyboard-portable-mobile-webkit/error-context.md
+
+</failure>
+</testcase></testsuite></testsuites>

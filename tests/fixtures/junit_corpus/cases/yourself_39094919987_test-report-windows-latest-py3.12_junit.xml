@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="1" tests="186" time="38.300" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_probes" name="test_hosts_shows_every_localhost_mapping" time="0.009"><failure message="assert True is False">tmp_path = WindowsPath('C:&lt;user-home&gt;/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_hosts_shows_every_localho0')
+
+    def test_hosts_shows_every_localhost_mapping(tmp_path):
+        (tmp_path / "hosts").write_text("127.0.0.1 localhost\n::1 localhost ip6-localhost # v6\n"
+                                        "192.168.65.254 host.docker.internal\n")
+        out = yourself.hosts_facts(etc_root=tmp_path)
+        assert out["names"]["localhost"] == ["127.0.0.1", "::1"]
+        assert out["names"]["host.docker.internal"] == ["192.168.65.254"]
+        facts = yourself.collect()
+        facts["hosts"] = out
+        text = yourself.to_text(facts)
+        assert "hosts.localhost: 127.0.0.1, ::1\n" in text and "hosts.host.docker.internal: 192.168.65.254" in text
+        assert "gateway.docker.internal" not in text
+&gt;       assert yourself.hosts_facts(etc_root=tmp_path / "none")["measured"] is False
+E       assert True is False
+
+tests\test_probes.py:88: AssertionError</failure></testcase></testsuite></testsuites>

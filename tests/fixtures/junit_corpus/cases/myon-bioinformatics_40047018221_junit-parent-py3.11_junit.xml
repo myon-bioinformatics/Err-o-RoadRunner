@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="31" tests="1697" time="90.016" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_uv_git_sources" name="test_workflow_resolves_main_and_skips_other_lanes" time="0.000"><failure message="assert 'node-version: &quot;24&quot;' in 'name: uv git sources\n\non:\n  pull_request:\n    paths:\n      - &quot;pilot/**&quot;\n      - &quot;vendor-catalog.json&quot;\n      - ... record commits into the catalog workspace\n        run: python pilot/vendor_dispatch.py --resolve-ref main --record\n'">def test_workflow_resolves_main_and_skips_other_lanes():
+        text = WORKFLOW.read_text(encoding="utf-8")
+        assert "actions/checkout@v7" in text
+        assert SETUP_PYTHON in text
+        assert SETUP_NODE in text
+        assert SETUP_UV in text
+&gt;       assert 'node-version: "24"' in text
+E       assert 'node-version: "24"' in 'name: uv git sources\n\non:\n  pull_request:\n    paths:\n      - "pilot/**"\n      - "vendor-catalog.json"\n      - ... record commits into the catalog workspace\n        run: python pilot/vendor_dispatch.py --resolve-ref main --record\n'
+
+tests/test_uv_git_sources.py:307: AssertionError</failure></testcase></testsuite></testsuites>

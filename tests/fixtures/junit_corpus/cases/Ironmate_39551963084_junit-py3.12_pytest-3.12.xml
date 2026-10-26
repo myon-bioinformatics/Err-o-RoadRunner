@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="15" tests="1111" time="206.969" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_studio_delivery" name="test_build_site_contains_only_public_client_assets_and_relative_paths" time="0.352"><failure message="AssertionError: assert {'.nojekyll',...udio.js', ...} == {'.nojekyll',...yle.css', ...}&#10;  &#10;  Extra items in the left set:&#10;  'brand'&#10;  &#10;  Full diff:&#10;    {&#10;        '.nojekyll',&#10;  +     'brand',&#10;        'core.js',&#10;        'index.html',&#10;        'slides',&#10;        'studio.js',&#10;        'style.css',&#10;        'tools',&#10;    }">tests/test_studio_delivery.py:24: in test_build_site_contains_only_public_client_assets_and_relative_paths
+    assert {p.name for p in target.iterdir()}=={'index.html','core.js','studio.js','style.css','.nojekyll','tools','slides'}
+E   AssertionError: assert {'.nojekyll',...udio.js', ...} == {'.nojekyll',...yle.css', ...}
+E     
+E     Extra items in the left set:
+E     'brand'
+E     
+E     Full diff:
+E       {
+E           '.nojekyll',
+E     +     'brand',
+E           'core.js',
+E           'index.html',
+E           'slides',
+E           'studio.js',
+E           'style.css',
+E           'tools',
+E       }</failure></testcase></testsuite></testsuites>

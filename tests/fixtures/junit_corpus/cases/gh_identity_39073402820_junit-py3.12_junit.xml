@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="1" tests="1296" time="56.745" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_duplicate_files" name="test_all_supported_lock_placements_provide_provenance[tool/python/vendor.lock.json]" time="0.002"><failure message="AssertionError: assert ['vendor.lock...or.lock.json'] == ['tool/python...or.lock.json']&#10;  &#10;  At index 0 diff: 'vendor.lock.json' != 'tool/python/vendor.lock.json'&#10;  Left contains one more item: 'tool/python/vendor.lock.json'&#10;  &#10;  Full diff:&#10;    [&#10;  +     'vendor.lock.json',&#10;        'tool/python/vendor.lock.json',&#10;    ]">placement = 'tool/python/vendor.lock.json'
+
+    @pytest.mark.parametrize("placement", [
+        "vendor.lock.json", "tool/python/vendor.lock.json", "python/vendor.lock.json",
+    ])
+    def test_all_supported_lock_placements_provide_provenance(placement):
+        trees = TREES[CC] + [blob(placement, b"lock bytes")]
+        def transport(method, path, **kw):
+            if path == f"repos/me/consumer/contents/{placement}?ref={CC}":
+                return lock([entry("vendor/tool.py", UP_OLD)])
+            return fake(method, path, **kw)
+        with patch.dict(TREES, {CC: trees}), patch.object(g, "pages", return_value=REPOS), \
+             patch.object(g, "request", side_effect=transport):
+            result = g.duplicate_files("me")
+        row = next(f for f in result["groups"][0]["files"] if f["repository"] == "me/consumer")
+        assert result["complete"] is True and result["errors"] == []
+&gt;       assert result["scanned"]["me/consumer"]["lock_paths"] == [placement]
+E       AssertionError: assert ['vendor.lock...or.lock.json'] == ['tool/python...or.lock.json']
+E         
+E         At index 0 diff: 'vendor.lock.json' != 'tool/python/vendor.lock.json'
+E         Left contains one more item: 'tool/python/vendor.lock.json'
+E         
+E         Full diff:
+E           [
+E         +     'vendor.lock.json',
+E               'tool/python/vendor.lock.json',
+E           ]
+
+tests/test_duplicate_files.py:208: AssertionError</failure></testcase><testcase classname="tests.test_duplicate_files" name="test_all_supported_lock_placements_provide_provenance[python/vendor.lock.json]" time="0.002"><failure message="AssertionError: assert ['vendor.lock...or.lock.json'] == ['python/vendor.lock.json']&#10;  &#10;  At index 0 diff: 'vendor.lock.json' != 'python/vendor.lock.json'&#10;  Left contains one more item: 'python/vendor.lock.json'&#10;  &#10;  Full diff:&#10;    [&#10;  +     'vendor.lock.json',&#10;        'python/vendor.lock.json',&#10;    ]">placement = 'python/vendor.lock.json'
+
+    @pytest.mark.parametrize("placement", [
+        "vendor.lock.json", "tool/python/vendor.lock.json", "python/vendor.lock.json",
+    ])
+    def test_all_supported_lock_placements_provide_provenance(placement):
+        trees = TREES[CC] + [blob(placement, b"lock bytes")]
+        def transport(method, path, **kw):
+            if path == f"repos/me/consumer/contents/{placement}?ref={CC}":
+                return lock([entry("vendor/tool.py", UP_OLD)])
+            return fake(method, path, **kw)
+        with patch.dict(TREES, {CC: trees}), patch.object(g, "pages", return_value=REPOS), \
+             patch.object(g, "request", side_effect=transport):
+            result = g.duplicate_files("me")
+        row = next(f for f in result["groups"][0]["files"] if f["repository"] == "me/consumer")
+        assert result["complete"] is True and result["errors"] == []
+&gt;       assert result["scanned"]["me/consumer"]["lock_paths"] == [placement]
+E       AssertionError: assert ['vendor.lock...or.lock.json'] == ['python/vendor.lock.json']
+E         
+E         At index 0 diff: 'vendor.lock.json' != 'python/vendor.lock.json'
+E         Left contains one more item: 'python/vendor.lock.json'
+E         
+E         Full diff:
+E           [
+E         +     'vendor.lock.json',
+E               'python/vendor.lock.json',
+E           ]
+
+tests/test_duplicate_files.py:208: AssertionError</failure></testcase><testcase classname="tests.test_duplicate_files" name="test_different_copy_sha_is_reported_separately_from_lock_provenance" time="0.001"><failure message="StopIteration">def test_different_copy_sha_is_reported_separately_from_lock_provenance():
+        trees = TREES[CC] + [blob("python/vendor.lock.json", b"lock")]
+        def transport(method, path, **kw):
+            if path == f"repos/me/consumer/contents/python/vendor.lock.json?ref={CC}":
+                return lock([entry("vendor/tool.py", UP_NEW)])
+            return fake(method, path, **kw)
+        with patch.dict(TREES, {CC: trees}), patch.object(g, "pages", return_value=REPOS), \
+             patch.object(g, "request", side_effect=transport):
+            result = g.duplicate_files("me")
+        group = next(grp for grp in result["groups"] if grp["basename"] == "tool.py")
+&gt;       row = next(f for f in group["files"] if f["repository"] == "me/consumer")
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       StopIteration
+
+tests/test_duplicate_files.py:296: StopIteration</failure></testcase></testsuite></testsuites>

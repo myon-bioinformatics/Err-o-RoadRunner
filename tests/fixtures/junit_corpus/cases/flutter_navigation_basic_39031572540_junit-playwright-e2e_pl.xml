@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites id="" name="" tests="205" failures="0" skipped="9" errors="3" time="668.648735"><testsuite name="screen_navigation.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="5" failures="0" skipped="0" time="107.9" errors="2"><testcase name="Screen Navigation › Hub use-case filtering, zero results, clear and Screen5 route @portable" classname="screen_navigation.spec.ts" time="32.289"><system-out>
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen-N-f6cd9--and-Screen5-route-portable-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen-N-f6cd9--and-Screen5-route-portable-webkit/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen-N-f6cd9--and-Screen5-route-portable-webkit/error-context.md]]
+
+</system-out>
+<error message="Test timeout of 30000ms exceeded." type="Error">
+  [webkit] › screen_navigation.spec.ts:159:7 › Screen Navigation › Hub use-case filtering, zero results, clear and Screen5 route @portable 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('[flt-semantics-identifier="hub-search"]').getByRole('textbox')
+        - locator resolved to &lt;input type="text" autocorrect="on" spellcheck="false" autocomplete="off" placeholder="Search screens…" data-semantics-role="text-field"/&gt;
+      - attempting click action
+        - waiting for element to be visible, enabled and stable
+
+
+       9 | // WebKit editing strategy. Re-focus before sending the next real key sequence.
+      10 | async function setCatalogQuery(search: Locator, query: string) {
+    &gt; 11 |   await search.click();
+         |                ^
+      12 |   await expect(search).toBeFocused();
+      13 |   await expect(search).toHaveAttribute('autocorrect', 'on');
+      14 |   await search.fill('');
+        at setCatalogQuery (&lt;runner-work&gt;/e2e/tests/screen_navigation.spec.ts:11:16)
+        at &lt;runner-work&gt;/e2e/tests/screen_navigation.spec.ts:181:11
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/screen_navigation-Screen-N-f6cd9--and-Screen5-route-portable-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/screen_navigation-Screen-N-f6cd9--and-Screen5-route-portable-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/screen_navigation-Screen-N-f6cd9--and-Screen5-route-portable-webkit/error-context.md
+
+</error>
+</testcase><testcase name="Screen Navigation › Screen6 excludes unrelated results, handles zero matches and clear @portable" classname="screen_navigation.spec.ts" time="33.059"><system-out>
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen-N-2c88d--matches-and-clear-portable-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen-N-2c88d--matches-and-clear-portable-webkit/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen-N-2c88d--matches-and-clear-portable-webkit/error-context.md]]
+
+</system-out>
+<error message="Test timeout of 30000ms exceeded." type="Error">
+  [webkit] › screen_navigation.spec.ts:190:7 › Screen Navigation › Screen6 excludes unrelated results, handles zero matches and clear @portable 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: expect(locator).toHaveText(expected) failed
+
+    Locator: locator('[flt-semantics-identifier="screen6-result-count"]')
+    Expected: "11 / 198"
+    Error: Test timeout of 30000ms exceeded.
+
+    Call log:
+      - Expect "toHaveText" locator('[flt-semantics-identifier="screen6-result-count"]') with timeout 5000ms
+      - waiting for locator('[flt-semantics-identifier="screen6-result-count"]')
+      - Test timeout of 30000ms exceeded.
+
+
+      211 |     await setCatalogQuery(search, 'screen6');
+      212 |     await expect(search).toHaveValue('screen6');
+    &gt; 213 |     await expect(resultCount).toHaveText('11 / 198');
+          |                               ^
+      214 |     await expect(result6).toBeVisible();
+      215 |     await clear.click();
+      216 |     await expect(search).toHaveValue('');
+        at &lt;runner-work&gt;/e2e/tests/screen_navigation.spec.ts:213:31
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/screen_navigation-Screen-N-2c88d--matches-and-clear-portable-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/screen_navigation-Screen-N-2c88d--matches-and-clear-portable-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/screen_navigation-Screen-N-2c88d--matches-and-clear-portable-webkit/error-context.md
+
+</error>
+</testcase></testsuite><testsuite name="screen_navigation.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="5" failures="0" skipped="0" time="91.801" errors="1"><testcase name="Screen Navigation › Hub use-case filtering, zero results, clear and Screen5 route @portable" classname="screen_navigation.spec.ts" time="30.827"><system-out>
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen-N-f6cd9--and-Screen5-route-portable-mobile-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen-N-f6cd9--and-Screen5-route-portable-mobile-webkit/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen-N-f6cd9--and-Screen5-route-portable-mobile-webkit/error-context.md]]
+
+</system-out>
+<error message="Test timeout of 30000ms exceeded." type="Error">
+  [mobile-webkit] › screen_navigation.spec.ts:159:7 › Screen Navigation › Hub use-case filtering, zero results, clear and Screen5 route @portable 
+
+    Test timeout of 30000ms exceeded.
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/screen_navigation-Screen-N-f6cd9--and-Screen5-route-portable-mobile-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/screen_navigation-Screen-N-f6cd9--and-Screen5-route-portable-mobile-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/screen_navigation-Screen-N-f6cd9--and-Screen5-route-portable-mobile-webkit/error-context.md
+
+</error>
+</testcase></testsuite></testsuites>

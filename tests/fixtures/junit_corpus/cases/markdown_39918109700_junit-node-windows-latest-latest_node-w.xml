@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="13" time="1.475" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_toml_node_fallback" name="test_node_20_is_rejected_as_reader" time="0.042"><failure message="AssertionError: Regex pattern did not match.&#10;  Expected regex: 'must be 24.*found 20'&#10;  Actual message: 'node_launch: node version probe failed: C:\\Users\\runneradmin\\AppData\\Local\\Temp\\pytest-of-runneradmin\\pytest-0\\test_node_20_is_rejected_as_re0\\fake_node.exe'">tmp_path = WindowsPath('C:&lt;user-home&gt;/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_node_20_is_rejected_as_re0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+
+    def test_node_20_is_rejected_as_reader(tmp_path, monkeypatch):
+        script = _write_fake_node(tmp_path, version="v20.0.0", on_eval="pass")
+        _use_fake_node(monkeypatch, script)
+        node_launch = md._node_launch_module()
+&gt;       with pytest.raises(node_launch.NodeNotFoundError, match=r"must be 24.*found 20"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'must be 24.*found 20'
+E         Actual message: 'node_launch: node version probe failed: C:\\Users\\runneradmin\\AppData\\Local\\Temp\\pytest-of-runneradmin\\pytest-0\\test_node_20_is_rejected_as_re0\\fake_node.exe'
+
+tests\test_toml_node_fallback.py:135: AssertionError</failure></testcase><testcase classname="tests.test_toml_node_fallback" name="test_toml_loads_stdin_closed_nonzero_surfaces_stderr" time="0.024"><failure message="_vendored_node_launch.NodeNotFoundError: node_launch: node version probe failed: C:\Users\runneradmin\AppData\Local\Temp\pytest-of-runneradmin\pytest-0\test_toml_loads_stdin_closed_n0\fake_node.exe">tmp_path = WindowsPath('C:&lt;user-home&gt;/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_toml_loads_stdin_closed_n0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+
+    def test_toml_loads_stdin_closed_nonzero_surfaces_stderr(tmp_path, monkeypatch):
+        script = _write_fake_node(
+            tmp_path,
+            version="v24.0.0",
+            on_eval='import sys; sys.stderr.write("boom\\n"); sys.exit(3)',
+        )
+        _use_fake_node(monkeypatch, script)
+        monkeypatch.setattr(md, "_TOML_READER", ["node"])
+        monkeypatch.setattr(md, "tomllib", None)
+        with pytest.raises(RuntimeError, match=r"Node TOML reader failed: boom"):
+&gt;           md.toml_to_markdown("a = 1\n")
+
+tests\test_toml_node_fallback.py:214: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+markdown.py:3062: in toml_to_markdown
+    value = _toml_loads(content)
+            ^^^^^^^^^^^^^^^^^^^^
+markdown.py:3042: in _toml_loads
+    done = _toml_node_run("-e", _TOML_NODE_SCRIPT, input=content, timeout=30, check=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+markdown.py:2964: in _toml_node_run
+    executable = node_launch.resolve_node(node=node, env_var=env_var)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+vendor\node_launch.py:191: in resolve_node
+    return _node_executable(
+vendor\node_launch.py:162: in _node_executable
+    return _probe_node_once(path, probe_timeout) if probe else path
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+path = 'C:\\Users\\runneradmin\\AppData\\Local\\Temp\\pytest-of-runneradmin\\pytest-0\\test_toml_loads_stdin_closed_n0\\fake_node.exe'
+probe_timeout = 5.0
+
+    def _probe_node_once(path: str, probe_timeout: float) -&gt; str:
+        cached = _NODE_PROBE_CACHE.get(path)
+        if cached is not None:
+            return cached
+        _reject_windows_batch_wrapper(path)
+        try:
+            completed = subprocess.run(
+                (path, "--version"),
+                capture_output=True,
+                timeout=probe_timeout,
+                shell=False,
+                check=False,
+            )
+        except FileNotFoundError as exc:
+            raise NodeNotFoundError("node_launch: node executable not found: " + path) from exc
+        except OSError as exc:
+            raise NodeNotFoundError("node_launch: node version probe failed: " + path) from exc
+        except subprocess.TimeoutExpired as exc:
+            raise NodeNotFoundError("node_launch: node version probe timed out: " + path) from exc
+        output = _decode(completed.stdout) + _decode(completed.stderr)
+        match = _NODE_VERSION.search(output)
+        if completed.returncode != 0 or match is None:
+&gt;           raise NodeNotFoundError("node_launch: node version probe failed: " + path)
+E           _vendored_node_launch.NodeNotFoundError: node_launch: node version probe failed: C:\Users\runneradmin\AppData\Local\Temp\pytest-of-runneradmin\pytest-0\test_toml_loads_stdin_closed_n0\fake_node.exe
+
+vendor\node_launch.py:137: NodeNotFoundError</failure></testcase></testsuite></testsuites>
