@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="41" tests="3093" time="650.892" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_epsilon_generality_window_crossing" name="test_form_at_labels_a_wave_that_kept_the_epsilon_decay_and_sse_of_scores_it_at_zero" time="0.002"><failure message="AssertionError: assert (('ε', 0.5) == ('ε', 0.5)&#10;  &#10;  Full diff:&#10;    (&#10;        'ε',&#10;        0.5,&#10;    ) and 7.105427357601002e-15 &lt; 1e-18)&#10; +  where 7.105427357601002e-15 = &lt;function sse_of at 0x&lt;addr&gt;&gt;(sa, trial, [0.0, 3.5729668614391796, 6.475449393205771, 5.31438252584641, 1.4478661460013953, -0.6034039502093975, ...], 0.001, ('ε', 0.5))&#10; +    where &lt;function sse_of at 0x&lt;addr&gt;&gt; = wc.sse_of">def test_form_at_labels_a_wave_that_kept_the_epsilon_decay_and_sse_of_scores_it_at_zero():
+        eps, per, n = 1e-3, 0.5, 12
+        w, lim, bb = 2 * math.pi / per, 3.0, 2.0                          # 始まりが 0 で、減衰が ε の波そのもの（ノイズなし）
+        ys = [lim + math.exp(-eps * i / (n - 1)) * ((0.0 - lim) * math.cos(w * i / (n - 1)) + bb * math.sin(w * i / (n - 1))) for i in range(n)]
+        f = wc.form_at(sa, trial, ys, eps)
+&gt;       assert f == ("ε", per) and wc.sse_of(sa, trial, ys, eps, f) &lt; 1e-18
+E       AssertionError: assert (('ε', 0.5) == ('ε', 0.5)
+E         
+E         Full diff:
+E           (
+E               'ε',
+E               0.5,
+E           ) and 7.105427357601002e-15 &lt; 1e-18)
+E        +  where 7.105427357601002e-15 = &lt;function sse_of at 0x&lt;addr&gt;&gt;(sa, trial, [0.0, 3.5729668614391796, 6.475449393205771, 5.31438252584641, 1.4478661460013953, -0.6034039502093975, ...], 0.001, ('ε', 0.5))
+E        +    where &lt;function sse_of at 0x&lt;addr&gt;&gt; = wc.sse_of
+
+tests/test_epsilon_generality_window_crossing.py:105: AssertionError</failure></testcase><testcase classname="dragowing.tests.test_export" name="test_export_draw_plotly_three_figures_in_one_session" time="32.023"><failure message="TimeoutError: Chrome did not answer within the timeout; the browser process is still running and has not answered&#10;d to connect to socket /tmp/chrome-pipe-qhyemc1h/no-bus.sock: No such file or directory&#10;[63018:63038:1027/005811.073246:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /tmp/chrome-pipe-qhyemc1h/no-bus.sock: No such file or directory&#10;[63018:63038:1027/005811.073278:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /tmp/chrome-pipe-qhyemc1h/no-bus.sock: No such file or directory&#10;[63018:63038:1027/005811.073296:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /tmp/chrome-pipe-qhyemc1h/no-bus.sock: No such file or directory&#10;[63018:63038:1027/005818.783345:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /tmp/chrome-pipe-qhyemc1h/no-bus.sock: No such file or directory">self = &lt;dragowing.chrome_pipe.Chrome object at 0x&lt;addr&gt;&gt;
+deadline = 644.770479514
+
+    def _recv(self, deadline: float) -&gt; dict:
+        if self._failure:
+            raise RuntimeError(self._failure)
+        remaining = deadline - time.monotonic()
+        if remaining &lt;= 0:
+            raise self._timeout_error("Chrome did not answer within the timeout")
+        try:
+&gt;           message = self._inbox.get(timeout=remaining)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+dragowing/chrome_pipe.py:350: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;queue.Queue object at 0x&lt;addr&gt;&gt;, block = True
+timeout = 29.999971297000002
+
+    def get(self, block=True, timeout=None):
+        '''Remove and return an item from the queue.
+    
+        If optional args 'block' is true and 'timeout' is None (the default),
+        block if necessary until an item is available. If 'timeout' is
+        a non-negative number, it blocks at most 'timeout' seconds and raises
+        the Empty exception if no item was available within that time.
+        Otherwise ('block' is false), return an item if one is immediately
+        available, else raise the Empty exception ('timeout' is ignored
+        in that case).
+        '''
+        with self.not_empty:
+            if not block:
+                if not self._qsize():
+                    raise Empty
+            elif timeout is None:
+                while not self._qsize():
+                    self.not_empty.wait()
+            elif timeout &lt; 0:
+                raise ValueError("'timeout' must be a non-negative number")
+            else:
+                endtime = time() + timeout
+                while not self._qsize():
+                    remaining = endtime - time()
+                    if remaining &lt;= 0.0:
+&gt;                       raise Empty
+E                       _queue.Empty
+
+&lt;toolcache&gt;/Python/3.11.17/x64/lib/python3.11/queue.py:179: Empty
+
+The above exception was the direct cause of the following exception:
+
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_export_draw_plotly_three_0')
+plotly_chrome_executable = '/usr/bin/chromium'
+
+    def test_export_draw_plotly_three_figures_in_one_session(tmp_path, plotly_chrome_executable):
+        evidence = os.environ.get("DRAGOWING_EXPORT_EVIDENCE_DIR")
+        if evidence:
+            tmp_path = Path(evidence)
+            tmp_path.mkdir(parents=True, exist_ok=True)
+        width, height, count, color, marker, timeouts = _figure_case()
+        figures = []
+        for index in range(3):
+            ys = [index, 1, 4]
+            while len(ys) &lt; count:
+                ys.append(ys[-1] + 2 + index)
+            figures.append({
+                "data": [{"type": "scatter", "x": list(range(1, count + 1)), "y": ys,
+                          "mode": "lines+markers", "name": "series-%d" % index,
+                          "marker": {"color": color, "size": marker}}],
+                "layout": {"width": width, "height": height, "showlegend": True,
+                           "title": {"text": "title-%d" % index}},
+            })
+&gt;       with RenderSession(chrome=plotly_chrome_executable, offline=True, timeouts=timeouts) as session:
+
+dragowing/tests/test_export.py:154: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+dragowing/render.py:109: in __enter__
+    self.start()
+dragowing/render.py:121: in start
+    self.browser.start()
+dragowing/chrome_pipe.py:136: in start
+    self.call("Browser.getVersion", timeout=self.timeout)
+dragowing/chrome_pipe.py:146: in call
+    message = self._recv(deadline)
+              ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;dragowing.chrome_pipe.Chrome object at 0x&lt;addr&gt;&gt;
+deadline = 644.770479514
+
+    def _recv(self, deadline: float) -&gt; dict:
+        if self._failure:
+            raise RuntimeError(self._failure)
+        remaining = deadline - time.monotonic()
+        if remaining &lt;= 0:
+            raise self._timeout_error("Chrome did not answer within the timeout")
+        try:
+            message = self._inbox.get(timeout=remaining)
+        except queue.Empty as exc:
+&gt;           raise self._timeout_error("Chrome did not answer within the timeout") from exc
+E           TimeoutError: Chrome did not answer within the timeout; the browser process is still running and has not answered
+E           d to connect to socket /tmp/chrome-pipe-qhyemc1h/no-bus.sock: No such file or directory
+E           [63018:63038:1027/005811.073246:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /tmp/chrome-pipe-qhyemc1h/no-bus.sock: No such file or directory
+E           [63018:63038:1027/005811.073278:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /tmp/chrome-pipe-qhyemc1h/no-bus.sock: No such file or directory
+E           [63018:63038:1027/005811.073296:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /tmp/chrome-pipe-qhyemc1h/no-bus.sock: No such file or directory
+E           [63018:63038:1027/005818.783345:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /tmp/chrome-pipe-qhyemc1h/no-bus.sock: No such file or directory
+
+dragowing/chrome_pipe.py:352: TimeoutError</failure></testcase></testsuite></testsuites>

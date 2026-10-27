@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites id="" name="" tests="270" failures="1" skipped="13" errors="0" time="1133.50266"><testsuite name="grid_semantics.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="2" failures="1" skipped="0" time="13.269" errors="0"><testcase name="screen173 semantics follow A/B/C through two grid swaps @portable" classname="grid_semantics.spec.ts" time="8.591"><system-out>
+
+[[ATTACHMENT|../../e2e/test-results/grid_semantics-screen173-s-d0ae9-ugh-two-grid-swaps-portable-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/grid_semantics-screen173-s-d0ae9-ugh-two-grid-swaps-portable-chromium/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/grid_semantics-screen173-s-d0ae9-ugh-two-grid-swaps-portable-chromium/error-context.md]]
+
+</system-out>
+<failure message="expect(locator).toBeInViewport() failed" type="expect.toBeInViewport">
+  [chromium] › grid_semantics.spec.ts:46:5 › screen173 semantics follow A/B/C through two grid swaps @portable 
+
+    Error: expect(locator).toBeInViewport() failed
+
+    Locator:  locator('[flt-semantics-identifier="interaction-item-C"]')
+    Expected: in viewport
+    Received: viewport ratio 0.9999998807907104
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeInViewport" locator('[flt-semantics-identifier="interaction-item-C"]') with timeout 5000ms
+      - waiting for locator('[flt-semantics-identifier="interaction-item-C"]')
+        14 × locator resolved to &lt;flt-semantics id="flt-semantic-node-14" flt-semantics-identifier="interaction-item-C"&gt;…&lt;/flt-semantics&gt;
+           - unexpected value "viewport ratio 0.9999998807907104"
+
+
+      28 |   await expect(b).toHaveCount(1);
+      29 |   await expect(a).toBeInViewport({ ratio: 1 });
+    &gt; 30 |   await expect(b).toBeInViewport({ ratio: 1 });
+         |                   ^
+      31 |   const start = (await a.boundingBox())!;
+      32 |   const end = (await b.boundingBox())!;
+      33 |   await page.mouse.move(start.x + start.width / 2, start.y + start.height / 2);
+        at swap (&lt;runner-work&gt;/e2e/tests/grid_semantics.spec.ts:30:19)
+        at &lt;runner-work&gt;/e2e/tests/grid_semantics.spec.ts:51:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/grid_semantics-screen173-s-d0ae9-ugh-two-grid-swaps-portable-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/grid_semantics-screen173-s-d0ae9-ugh-two-grid-swaps-portable-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/grid_semantics-screen173-s-d0ae9-ugh-two-grid-swaps-portable-chromium/error-context.md
+
+</failure>
+</testcase></testsuite></testsuites>

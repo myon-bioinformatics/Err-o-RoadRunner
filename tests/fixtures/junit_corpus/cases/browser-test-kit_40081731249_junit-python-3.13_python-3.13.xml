@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="3" tests="1011" time="37.392" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.python.test_browser_parity" name="test_direct_browser_test_imports_are_lazy_and_marked" time="0.024"><failure message="AssertionError: (PosixPath('&lt;runner-work&gt;/tests/python/test_page_inspect_scenarios_browser.py'), 'test_native_window_configuration_is_accepted')&#10;assert False&#10; +  where False = any(&lt;generator object test_direct_browser_test_imports_are_lazy_and_marked.&lt;locals&gt;.&lt;genexpr&gt; at 0x&lt;addr&gt;&gt;)">def test_direct_browser_test_imports_are_lazy_and_marked():
+        for path in (ROOT / 'tests/python').glob('test_*.py'):
+            tree = ast.parse(path.read_text())
+            for node in tree.body:
+                assert not (isinstance(node, ast.ImportFrom) and (node.module or '').startswith('playwright.')), path
+                if not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) or not node.name.startswith('test_'):
+                    continue
+                if any(isinstance(part, ast.ImportFrom) and (part.module or '').startswith('playwright.')
+                       for part in ast.walk(node)):
+&gt;                   assert any(ast.unparse(d) == 'pytest.mark.browser' for d in node.decorator_list), (path, node.name)
+E                   AssertionError: (PosixPath('&lt;runner-work&gt;/tests/python/test_page_inspect_scenarios_browser.py'), 'test_native_window_configuration_is_accepted')
+E                   assert False
+E                    +  where False = any(&lt;generator object test_direct_browser_test_imports_are_lazy_and_marked.&lt;locals&gt;.&lt;genexpr&gt; at 0x&lt;addr&gt;&gt;)
+
+tests/python/test_browser_parity.py:78: AssertionError</failure></testcase></testsuite></testsuites>

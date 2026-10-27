@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="630" time="46.411" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_load_config_node_launch" name="test_load_yaml_under_python_I_subprocess" time="0.156"><failure message="AssertionError: assert {'a': '1'} == {'a': 1}&#10;  &#10;  Differing items:&#10;  {'a': '1'} != {'a': 1}&#10;  &#10;  Full diff:&#10;    {&#10;  -     'a': 1,&#10;  +     'a': '1',&#10;  ?          + +&#10;    }">@pytest.mark.skipif(
+        not _load_config_mod._node_reader_ready(),
+        reason="Node 24+ and tests/js required",
+    )
+    def test_load_yaml_under_python_I_subprocess():
+        env = os.environ.copy()
+        env["NODE_PATH"] = str(JS)
+        code = (
+            "import pathlib, sys; "
+            f"sys.path.insert(0, {str(ROOT)!r}); "
+            "import xprobe; "
+            "print(xprobe.load_yaml('a: 1\\n'))"
+        )
+        done = subprocess.run(
+            [sys.executable, "-I", "-c", code],
+            cwd=str(ROOT),
+            env=env,
+            capture_output=True,
+            text=True,
+            timeout=60,
+            check=False,
+        )
+        assert done.returncode == 0, done.stderr
+&gt;       assert ast.literal_eval(done.stdout.strip()) == {"a": 1}
+E       AssertionError: assert {'a': '1'} == {'a': 1}
+E         
+E         Differing items:
+E         {'a': '1'} != {'a': 1}
+E         
+E         Full diff:
+E           {
+E         -     'a': 1,
+E         +     'a': '1',
+E         ?          + +
+E           }
+
+tests\test_load_config_node_launch.py:496: AssertionError</failure></testcase></testsuite></testsuites>

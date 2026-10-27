@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="31" tests="1668" time="91.009" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_duplicate_files_report" name="test_workflow_runs_offline_regressions_and_uploads_even_on_failure" time="0.001"><failure message="AssertionError: assert 'actions/checkout@v7' in '    name: Cross-repository duplicate files (read only)\n    # PR/push validate the adapter offline; scheduled/manual ....md\n            reports/duplicate-files.stderr.log\n          if-no-files-found: warn\n          retention-days: 14\n'">def test_workflow_runs_offline_regressions_and_uploads_even_on_failure():
+        workflow = WORKFLOW.read_text(encoding="utf-8")
+        assert "tests/test_duplicate_files_report.py" in workflow
+        job = workflow.split("\n  duplicate-files:\n", 1)[1]
+        assert "duplicate_files_report.py" in job
+        assert "--identity vendor/gh_identity.py" in job
+        assert "vendor_sync.py check --manifest vendor.lock.json" in job
+        assert "GH_IDENTITY_SHA" not in job
+        assert "repository: myon-bioinformatics/gh_identity" not in job
+        assert "if: always()" in job.split("- name: Upload duplicate-files report", 1)[1]
+        assert "reports/duplicate-files.json" in job
+        assert "reports/duplicate-files.md" in job
+        assert "reports/duplicate-files.stderr.log" in job
+        assert "--timeout 900" in job
+&gt;       assert "actions/checkout@v7" in job
+E       AssertionError: assert 'actions/checkout@v7' in '    name: Cross-repository duplicate files (read only)\n    # PR/push validate the adapter offline; scheduled/manual ....md\n            reports/duplicate-files.stderr.log\n          if-no-files-found: warn\n          retention-days: 14\n'
+
+tests/test_duplicate_files_report.py:152: AssertionError</failure></testcase><testcase classname="tests.test_uv_git_sources" name="test_workflow_resolves_main_and_skips_other_lanes" time="0.000"><failure message="assert 'actions/checkout@v7' in 'name: uv git sources\n\non:\n  pull_request:\n    paths:\n      - &quot;pilot/**&quot;\n      - &quot;vendor-catalog.json&quot;\n      - ... record commits into the catalog workspace\n        run: python pilot/vendor_dispatch.py --resolve-ref main --record\n'">def test_workflow_resolves_main_and_skips_other_lanes():
+        text = WORKFLOW.read_text(encoding="utf-8")
+&gt;       assert "actions/checkout@v7" in text
+E       assert 'actions/checkout@v7' in 'name: uv git sources\n\non:\n  pull_request:\n    paths:\n      - "pilot/**"\n      - "vendor-catalog.json"\n      - ... record commits into the catalog workspace\n        run: python pilot/vendor_dispatch.py --resolve-ref main --record\n'
+
+tests/test_uv_git_sources.py:253: AssertionError</failure></testcase></testsuite></testsuites>
