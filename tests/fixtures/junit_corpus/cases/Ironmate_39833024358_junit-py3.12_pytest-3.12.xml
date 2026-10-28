@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="15" tests="1667" time="224.680" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_junit_failure_identity" name="test_workflow_keeps_suite_failure_and_exact_reports" time="0.074"><failure message="assert 'uv run --loc...test-3.12.xml' == 'uv run --loc...test-3.12.xml'&#10;  &#10;  Skipping 39 identical leading characters in diff, use -v to show&#10;  - &quot;not heavy&quot; --junitxml=build/test-results/pytest-3.12.xml&#10;  + &quot;not heavy and not network&quot; --junitxml=build/test-results/pytest-3.12.xml&#10;  ?           ++++++++++++++++">tests/test_junit_failure_identity.py:111: in test_workflow_keeps_suite_failure_and_exact_reports
+    assert suite['run'] == (
+E   assert 'uv run --loc...test-3.12.xml' == 'uv run --loc...test-3.12.xml'
+E     
+E     Skipping 39 identical leading characters in diff, use -v to show
+E     - "not heavy" --junitxml=build/test-results/pytest-3.12.xml
+E     + "not heavy and not network" --junitxml=build/test-results/pytest-3.12.xml
+E     ?           ++++++++++++++++</failure></testcase><testcase classname="tests.test_repository_hygiene.RepositoryHygieneTest" name="test_python_dependency_manifests_keep_lower_bounds_only" time="0.002"><failure message="AssertionError: Lists differ: ['.github/workflows/vendor-catalog-audit.yml: pip install'] != []&#10;&#10;First list contains 1 additional elements.&#10;First extra element 0:&#10;'.github/workflows/vendor-catalog-audit.yml: pip install'&#10;&#10;- ['.github/workflows/vendor-catalog-audit.yml: pip install']&#10;+ [] : .github/workflows/vendor-catalog-audit.yml: pip install">tests/test_repository_hygiene.py:109: in test_python_dependency_manifests_keep_lower_bounds_only
+    self.assertEqual(failures, [], "\n".join(failures))
+E   AssertionError: Lists differ: ['.github/workflows/vendor-catalog-audit.yml: pip install'] != []
+E   
+E   First list contains 1 additional elements.
+E   First extra element 0:
+E   '.github/workflows/vendor-catalog-audit.yml: pip install'
+E   
+E   - ['.github/workflows/vendor-catalog-audit.yml: pip install']
+E   + [] : .github/workflows/vendor-catalog-audit.yml: pip install</failure></testcase></testsuite></testsuites>

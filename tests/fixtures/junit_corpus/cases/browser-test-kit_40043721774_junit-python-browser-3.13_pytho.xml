@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="50" time="94.403" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.python.test_page_inspect" name="test_observe_cdp_never_sends_runtime_evaluate_with_after_action" time="0.502"><failure message="NameError: name 'page_inspect' is not defined">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_observe_cdp_never_sends_r0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+
+    @pytest.mark.browser
+    def test_observe_cdp_never_sends_runtime_evaluate_with_after_action(tmp_path, monkeypatch):
+        import functools
+        import threading
+        from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
+    
+        from playwright.sync_api import BrowserContext
+    
+        (tmp_path / "page.html").write_text("&lt;!doctype html&gt;&lt;style&gt;body{height:3000px}&lt;/style&gt;", encoding="utf-8")
+        handler = functools.partial(SimpleHTTPRequestHandler, directory=str(tmp_path))
+        server = ThreadingHTTPServer(("127.0.0.1", 0), handler)
+        threading.Thread(target=server.serve_forever, daemon=True).start()
+        cdp_methods: list[str] = []
+        original = BrowserContext.new_cdp_session
+    
+        def tracking_new_cdp_session(self, page):
+            client = original(self, page)
+            real_send = client.send
+    
+            def send(method, params=None, **kwargs):
+                cdp_methods.append(method)
+                if method in ("Runtime.evaluate", "Runtime.callFunctionOn"):
+                    raise AssertionError(f"forbidden CDP method: {method}")
+                if kwargs:
+                    return real_send(method, params, **kwargs)
+                return real_send(method, params or {})
+    
+            client.send = send
+            return client
+    
+        monkeypatch.setattr(BrowserContext, "new_cdp_session", tracking_new_cdp_session)
+        try:
+            url = f"http://127.0.0.1:{server.server_port}/page.html"
+&gt;           session = page_inspect.observe_page(
+                      ^^^^^^^^^^^^
+                url=url,
+                browser_name="chromium",
+                profile="desktop",
+                headed=False,
+                channel=None,
+                include_hidden=False,
+                include_storage_keys=False,
+                include_storage_fingerprints=False,
+                role="",
+                start=0,
+                limit=50,
+                steps=[page_inspect.parse_step("scroll:0,800")],
+            )
+E           NameError: name 'page_inspect' is not defined
+
+tests/python/test_page_inspect.py:288: NameError</failure></testcase><testcase classname="tests.python.test_page_inspect_url_privacy" name="test_initial_goto_network_steps_and_compare_hide_values[python]" time="1.182"><failure message="assert False&#10; +  where False = any(&lt;generator object test_initial_goto_network_steps_and_compare_hide_values.&lt;locals&gt;.&lt;genexpr&gt; at 0x&lt;addr&gt;&gt;)">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_initial_goto_network_step0')
+private_site = ('http://127.0.0.1:43699', ['/start.html?q=private-query-42', '/asset.js?q=private-query-42', '/frame.html?q=private-query-42', '/result.html?q=private-query-42', '/asset.js?q=private-query-42', '/frame.html?q=private-query-42'])
+entrypoint = 'python'
+
+    @pytest.mark.browser
+    @pytest.mark.parametrize("entrypoint", ["python", "node"])
+    def test_initial_goto_network_steps_and_compare_hide_values(tmp_path, private_site, entrypoint):
+        base, received = private_site
+        out = tmp_path / "snapshots"
+        out.mkdir()
+        done = run_cli(entrypoint, ["observe", base + "/start.html" + SUFFIX,
+                                  "--step", "goto - " + base + "/result.html" + SUFFIX,
+                                  "--out-dir", str(out), "--json"])
+        assert done.returncode == 0, done.stdout + done.stderr
+        assert_private_absent(done.stdout + done.stderr)
+        summary = json.loads(done.stdout)
+        snapshots = [json.loads(Path(path).read_text(encoding="utf-8")) for path in summary["files"]]
+        initial, final = snapshots
+        for path in summary["files"]:
+            assert_private_absent(Path(path).read_text(encoding="utf-8"))
+        for snapshot, path in ((initial, "/start.html"), (final, "/result.html")):
+            assert snapshot["url"] == base + path
+            assert snapshot["title"] == "navigation-preserved"  # query AND fragment reached page script
+            assert snapshot["sections"]["dom"]["document_url"] == base + path
+            assert snapshot["sections"]["resources"]["document_url"] == base + path
+&gt;           assert any(row["url"] == base + "/asset.js" for row in snapshot["sections"]["scripts"]["items"])
+E           assert False
+E            +  where False = any(&lt;generator object test_initial_goto_network_steps_and_compare_hide_values.&lt;locals&gt;.&lt;genexpr&gt; at 0x&lt;addr&gt;&gt;)
+
+tests/python/test_page_inspect_url_privacy.py:136: AssertionError</failure></testcase><testcase classname="tests.python.test_page_inspect_url_privacy" name="test_initial_goto_network_steps_and_compare_hide_values[node]" time="1.245"><failure message="assert False&#10; +  where False = any(&lt;generator object test_initial_goto_network_steps_and_compare_hide_values.&lt;locals&gt;.&lt;genexpr&gt; at 0x&lt;addr&gt;&gt;)">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_initial_goto_network_step1')
+private_site = ('http://127.0.0.1:36191', ['/start.html?q=private-query-42', '/asset.js?q=private-query-42', '/frame.html?q=private-query-42', '/result.html?q=private-query-42', '/asset.js?q=private-query-42', '/frame.html?q=private-query-42'])
+entrypoint = 'node'
+
+    @pytest.mark.browser
+    @pytest.mark.parametrize("entrypoint", ["python", "node"])
+    def test_initial_goto_network_steps_and_compare_hide_values(tmp_path, private_site, entrypoint):
+        base, received = private_site
+        out = tmp_path / "snapshots"
+        out.mkdir()
+        done = run_cli(entrypoint, ["observe", base + "/start.html" + SUFFIX,
+                                  "--step", "goto - " + base + "/result.html" + SUFFIX,
+                                  "--out-dir", str(out), "--json"])
+        assert done.returncode == 0, done.stdout + done.stderr
+        assert_private_absent(done.stdout + done.stderr)
+        summary = json.loads(done.stdout)
+        snapshots = [json.loads(Path(path).read_text(encoding="utf-8")) for path in summary["files"]]
+        initial, final = snapshots
+        for path in summary["files"]:
+            assert_private_absent(Path(path).read_text(encoding="utf-8"))
+        for snapshot, path in ((initial, "/start.html"), (final, "/result.html")):
+            assert snapshot["url"] == base + path
+            assert snapshot["title"] == "navigation-preserved"  # query AND fragment reached page script
+            assert snapshot["sections"]["dom"]["document_url"] == base + path
+            assert snapshot["sections"]["resources"]["document_url"] == base + path
+&gt;           assert any(row["url"] == base + "/asset.js" for row in snapshot["sections"]["scripts"]["items"])
+E           assert False
+E            +  where False = any(&lt;generator object test_initial_goto_network_steps_and_compare_hide_values.&lt;locals&gt;.&lt;genexpr&gt; at 0x&lt;addr&gt;&gt;)
+
+tests/python/test_page_inspect_url_privacy.py:136: AssertionError</failure></testcase></testsuite></testsuites>

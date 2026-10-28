@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="3" tests="993" time="54.853" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_flutter_navigation_basic_repository_metadata" name="test_pages_generates_only_after_checkout_gate_and_embeds_asset" time="0.000"><failure message="ValueError: substring not found">def test_pages_generates_only_after_checkout_gate_and_embeds_asset():
+        workflow = (ROOT / ".github/workflows/flutter-pages.yml").read_text()
+        assert "github.event.workflow_run.head_branch == 'main'" in workflow
+        assert workflow.index("Verify checkout matches gated SHA") &lt; workflow.index("generate_repository_metadata.py --expected-sha")
+&gt;       assert workflow.index("generate_repository_metadata.py --expected-sha") &lt; workflow.index("meta --platform web --repository-metadata") &lt; workflow.index("flutter build web")
+                                                                                                                                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ValueError: substring not found
+
+tests/test_flutter_navigation_basic_repository_metadata.py:182: ValueError</failure></testcase><testcase classname="tests.test_playwright_browser_parity" name="test_auto_ci_and_docker_build_the_same_flutter_entrypoint" time="0.001"><failure message="AssertionError: explicit Flutter web entrypoint not found&#10;assert None is not None">def test_auto_ci_and_docker_build_the_same_flutter_entrypoint() -&gt; None:
+        workflow = (ROOT / ".github" / "workflows" / "non-dart.yml").read_text(encoding="utf-8")
+        dockerfile = (ROOT / "Dockerfile.e2e").read_text(encoding="utf-8")
+    
+&gt;       ci_target = _flutter_web_target(workflow)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_playwright_browser_parity.py:46: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+text = 'name: Non-Dart checks\n\n# Python stdlib / pytest oracles, Docker-friendly smoke, and change-selected\n# Playwright. ...: ${{ needs.junit-plan.outputs.reports }}\n      commit-sha: ${{ github.event.pull_request.head.sha || github.sha }}\n'
+
+    def _flutter_web_target(text: str) -&gt; str:
+        match = re.search(r"flutter build web[^\n]*?-t\s+(lib/[^\s]+\.dart)", text)
+&gt;       assert match is not None, "explicit Flutter web entrypoint not found"
+E       AssertionError: explicit Flutter web entrypoint not found
+E       assert None is not None
+
+tests/test_playwright_browser_parity.py:33: AssertionError</failure></testcase><testcase classname="tests.test_playwright_browser_parity" name="test_e2e_semantics_define_is_pinned_to_browser_builds" time="0.001"><failure message="assert 'flutter build web --release -t lib/main.dart --dart-define=E2E=true --base-href &quot;/&quot;' in 'name: Non-Dart checks\n\n# Python stdlib / pytest oracles, Docker-friendly smoke, and change-selected\n# Playwright. ...: ${{ needs.junit-plan.outputs.reports }}\n      commit-sha: ${{ github.event.pull_request.head.sha || github.sha }}\n'">def test_e2e_semantics_define_is_pinned_to_browser_builds() -&gt; None:
+        workflow = (ROOT / ".github" / "workflows" / "non-dart.yml").read_text(encoding="utf-8")
+        dockerfile = (ROOT / "Dockerfile.e2e").read_text(encoding="utf-8")
+        dart_workflow = (ROOT / ".github" / "workflows" / "dart.yml").read_text(encoding="utf-8")
+        pages_workflow = (ROOT / ".github" / "workflows" / "flutter-pages.yml").read_text(encoding="utf-8")
+        main = (ROOT / "lib" / "main.dart").read_text(encoding="utf-8")
+    
+        expected_build = (
+            'flutter build web --release -t lib/main.dart '
+            '--dart-define=E2E=true --base-href "/"'
+        )
+&gt;       assert expected_build in workflow
+E       assert 'flutter build web --release -t lib/main.dart --dart-define=E2E=true --base-href "/"' in 'name: Non-Dart checks\n\n# Python stdlib / pytest oracles, Docker-friendly smoke, and change-selected\n# Playwright. ...: ${{ needs.junit-plan.outputs.reports }}\n      commit-sha: ${{ github.event.pull_request.head.sha || github.sha }}\n'
+
+tests/test_playwright_browser_parity.py:63: AssertionError</failure></testcase><testcase classname="tests.test_validation_links_ref" name="test_pages_build_passes_the_gated_commit_as_source_ref" time="0.008"><failure message="KeyError: 'run'">def test_pages_build_passes_the_gated_commit_as_source_ref():
+        workflow = yaml.safe_load((ROOT / ".github/workflows/flutter-pages.yml").read_text(encoding="utf-8"))
+        steps = [step for job in workflow["jobs"].values() for step in job.get("steps", [])]
+        build = [step for step in steps if step.get("name") == "Build Flutter web"]
+        assert len(build) == 1
+        assert build[0]["env"]["GATED_SHA"] == "${{ steps.gated.outputs.sha }}"
+&gt;       assert '--dart-define=SOURCE_REF="$GATED_SHA"' in build[0]["run"].split()
+                                                          ^^^^^^^^^^^^^^^
+E       KeyError: 'run'
+
+tests/test_validation_links_ref.py:22: KeyError</failure></testcase></testsuite></testsuites>

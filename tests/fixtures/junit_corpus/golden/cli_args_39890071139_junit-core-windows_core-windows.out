@@ -1,0 +1,20 @@
+FOUND: exit code: 1
+FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/cli_args_39890071139_junit-core-windows_core-windows.xml): 1
+FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/cli_args_39890071139_junit-core-windows_core-windows.xml): AssertionError: assert '' == '日本語\n'\n  \n  - 日本語\ntests\test_cli_args_main.py:120: in test_run_japanese_argv_and_output\n    assert body["stdout"] == "日本語\n"\nE   AssertionError: assert '' == '日本語\n'\nE     \nE     - 日本語
+FOUND: junit failure groups (<repo>/tests/fixtures/junit_corpus/cases/cli_args_39890071139_junit-core-windows_core-windows.xml): 1 failure in 1 group
+FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/cli_args_39890071139_junit-core-windows_core-windows.xml): tests.test_cli_args_main
+FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/cli_args_39890071139_junit-core-windows_core-windows.xml): AssertionError
+FOUND: python version: 3.12.15 (cpython)
+FOUND: node version: v24.22.1
+FOUND: gh version: gh version 2.103.2 (2026-10-23)
+FOUND: environment variable count: 123
+FOUND: environment variable names: ACCEPT_EULA, ACTIONS_ORCHESTRATION_ID, ACTIONS_RUNNER_ACTION_ARCHIVE_CACHE, ACTIONS_RUNNER_RETURN_JOB_RESULT_FOR_HOSTED, AGENT_TOOLSDIRECTORY, ANDROID_HOME, ANDROID_NDK, ANDROID_NDK_HOME, ANDROID_NDK_LATEST_HOME, ANDROID_NDK_ROOT, ANDROID_SDK_ROOT, ANT_HOME, AZURE_EXTENSION_DIR, BOOTSTRAP_HASKELL_NONINTERACTIVE, CHROMEWEBDRIVER, CHROME_BIN, CI, DEBIAN_FRONTEND, DOTNET_MULTILEVEL_LOOKUP, DOTNET_NOLOGO, DOTNET_SKIP_FIRST_TIME_EXPERIENCE, EDGEWEBDRIVER, ENABLE_RUNNER_TRACING, GECKOWEBDRIVER, GHCUP_INSTALL_BASE_PREFIX, GITHUB_ACTION, GITHUB_ACTIONS, GITHUB_ACTION_REF, GITHUB_ACTION_REPOSITORY, GITHUB_ACTOR, GITHUB_ACTOR_ID, GITHUB_API_URL, GITHUB_ARTIFACTS, GITHUB_ARTIFACTS_LIST, GITHUB_BASE_REF, GITHUB_ENV, GITHUB_EVENT_NAME, GITHUB_EVENT_PATH, GITHUB_GRAPHQL_URL, GITHUB_HEAD_REF, ...
+NOT FOUND: junit errors (<repo>/tests/fixtures/junit_corpus/cases/cli_args_39890071139_junit-core-windows_core-windows.xml)
+NOT FOUND: junit skipped (<repo>/tests/fixtures/junit_corpus/cases/cli_args_39890071139_junit-core-windows_core-windows.xml)
+NOT FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/cli_args_39890071139_junit-core-windows_core-windows.xml)
+NOT FOUND: junit system-err (<repo>/tests/fixtures/junit_corpus/cases/cli_args_39890071139_junit-core-windows_core-windows.xml)
+NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/cli_args_39890071139_junit-core-windows_core-windows.xml)
+NOT FOUND: lock files in project root
+HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/cli_args_39890071139_junit-core-windows_core-windows.xml): pytest/python
+HINT: junit assertion diff (<repo>/tests/fixtures/junit_corpus/cases/cli_args_39890071139_junit-core-windows_core-windows.xml):   - 日本語
+HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/cli_args_39890071139_junit-core-windows_core-windows.xml): AssertionError: assert '' == '日本語\n'\n  \n  - 日本語\ntests\test_cli_args_main.py:120: in test_run_japanese_argv_and_output\n    assert body["stdout"] == "日本語\n"\nE   AssertionError: assert '' == '日本語\n'\nE     \nE     - 日本語

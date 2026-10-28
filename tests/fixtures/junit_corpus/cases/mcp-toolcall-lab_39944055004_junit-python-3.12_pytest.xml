@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="6" tests="1201" time="69.766" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_portable_execution_node_launch" name="test_stdin_closed_nonzero_matches_legacy" time="0.002"><failure message="AssertionError: assert (3, b'', b'') == (3, b'', b'boom\n')&#10;  &#10;  At index 2 diff: b'' != b'boom\n'&#10;  &#10;  Full diff:&#10;    (&#10;        3,&#10;        b'',&#10;  -     b'boom\n',&#10;  +     b'',&#10;    )">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_stdin_closed_nonzero_matc0')
+
+    def test_stdin_closed_nonzero_matches_legacy(tmp_path):
+        script = _write_fake_node(tmp_path, version="v24.0.0", close_stdin_unread=True)
+        payload = _STDIN_CLOSED_PAYLOAD
+    
+        def old():
+            return _legacy_portable_node_run(payload, node=script, check=False)
+    
+        def new():
+            return pe._portable_node_run(payload, node=script, check=False)
+    
+        old_proc = old()
+        new_proc = new()
+&gt;       assert _proc_bytes(old_proc) == _proc_bytes(new_proc)
+E       AssertionError: assert (3, b'', b'') == (3, b'', b'boom\n')
+E         
+E         At index 2 diff: b'' != b'boom\n'
+E         
+E         Full diff:
+E           (
+E               3,
+E               b'',
+E         -     b'boom\n',
+E         +     b'',
+E           )
+
+tests/test_portable_execution_node_launch.py:535: AssertionError</failure></testcase></testsuite></testsuites>

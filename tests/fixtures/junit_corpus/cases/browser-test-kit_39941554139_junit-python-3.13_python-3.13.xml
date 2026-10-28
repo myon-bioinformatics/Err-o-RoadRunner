@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="3" tests="962" time="37.833" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.python.test_browser_parity" name="test_browser_install_and_config_parity" time="0.020"><failure message="AssertionError: assert 2 == 1&#10; +  where 2 = len(['--only-shell chromium firefox webkit', '--only-shell chromium firefox webkit'])">def test_browser_install_and_config_parity() -&gt; None:
+        config = (ROOT / "playwright.config.ts").read_text(encoding="utf-8")
+        workflow = (ROOT / ".github" / "workflows" / "playwright.yml").read_text(encoding="utf-8")
+        engines = {"chromium", "firefox", "webkit"}
+        assert engines &lt;= set(re.findall(r"name: '(chromium|firefox|webkit)'", config))
+        jobs = yaml.load(workflow, Loader=yaml.BaseLoader)["jobs"]
+        installs = {
+            name: re.findall(r"playwright install --with-deps ([^\n]+)",
+                             "\n".join(step.get("run", "") for step in job.get("steps", [])))
+            for name, job in jobs.items()
+        }
+        assert {name for name, lines in installs.items() if lines} == {"node", "python-browser"}
+        for name in ("node", "python-browser"):
+&gt;           assert len(installs[name]) == 1
+E           AssertionError: assert 2 == 1
+E            +  where 2 = len(['--only-shell chromium firefox webkit', '--only-shell chromium firefox webkit'])
+
+tests/python/test_browser_parity.py:22: AssertionError</failure></testcase></testsuite></testsuites>

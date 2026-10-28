@@ -10,11 +10,11 @@ FOUND: junit failure group 2/2 (<repo>/tests/fixtures/junit_corpus/cases/Ironmat
 FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38025765558_junit-controlled-py3.12_43.xml): test_controlled
 FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38025765558_junit-controlled-py3.12_43.xml): AssertionError
 FOUND: junit system-err (first line) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38025765558_junit-controlled-py3.12_43.xml): --------------------------------- Captured Err ---------------------------------
-FOUND: python version: 3.12.3 (cpython)
-FOUND: node version: v22.14.0
-FOUND: gh version: gh version 2.102.0 (2026-09-30)
-FOUND: environment variable count: 38
-FOUND: environment variable names: AGENT_TRANSCRIPTS, CARGO_HOME, CURSOR_AGENT, CURSOR_AGENT_SOCKET, CURSOR_CONVERSATION_ID, CURSOR_REQUEST_ID, CURSOR_RIPGREP_PATH, CURSOR_SPAWN_CWD_HOP, CURSOR_WORKLOAD_CGROUP, DISPLAY, EXEC_DAEMON_STARTUP_TRACEPARENT, FORCE_COLOR, GH_TELEMETRY, GIT_DISCOVERY_ACROSS_FILESYSTEM, GIT_LFS_SKIP_SMUDGE, HOME, LANG, LC_ALL, NO_COLOR, NVM_BIN, NVM_CD_FLAGS, NVM_DIR, NVM_INC, OLDPWD, PATH, PS1, PWD, RUSTUP_HOME, RUST_VERSION, SHELL, SHLVL, TERM, USER, VNC_DPI, VNC_RESOLUTION, _, _ZO_DOCTOR, __CURSOR_SANDBOX_ENV_RESTORE
+FOUND: python version: 3.12.15 (cpython)
+FOUND: node version: v24.22.1
+FOUND: gh version: gh version 2.103.2 (2026-10-23)
+FOUND: environment variable count: 123
+FOUND: environment variable names: ACCEPT_EULA, ACTIONS_ORCHESTRATION_ID, ACTIONS_RUNNER_ACTION_ARCHIVE_CACHE, ACTIONS_RUNNER_RETURN_JOB_RESULT_FOR_HOSTED, AGENT_TOOLSDIRECTORY, ANDROID_HOME, ANDROID_NDK, ANDROID_NDK_HOME, ANDROID_NDK_LATEST_HOME, ANDROID_NDK_ROOT, ANDROID_SDK_ROOT, ANT_HOME, AZURE_EXTENSION_DIR, BOOTSTRAP_HASKELL_NONINTERACTIVE, CHROMEWEBDRIVER, CHROME_BIN, CI, DEBIAN_FRONTEND, DOTNET_MULTILEVEL_LOOKUP, DOTNET_NOLOGO, DOTNET_SKIP_FIRST_TIME_EXPERIENCE, EDGEWEBDRIVER, ENABLE_RUNNER_TRACING, GECKOWEBDRIVER, GHCUP_INSTALL_BASE_PREFIX, GITHUB_ACTION, GITHUB_ACTIONS, GITHUB_ACTION_REF, GITHUB_ACTION_REPOSITORY, GITHUB_ACTOR, GITHUB_ACTOR_ID, GITHUB_API_URL, GITHUB_ARTIFACTS, GITHUB_ARTIFACTS_LIST, GITHUB_BASE_REF, GITHUB_ENV, GITHUB_EVENT_NAME, GITHUB_EVENT_PATH, GITHUB_GRAPHQL_URL, GITHUB_HEAD_REF, ...
 NOT FOUND: junit skipped (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38025765558_junit-controlled-py3.12_43.xml)
 NOT FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38025765558_junit-controlled-py3.12_43.xml)
 NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_38025765558_junit-controlled-py3.12_43.xml)

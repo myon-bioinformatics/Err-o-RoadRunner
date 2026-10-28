@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="13" time="1.353" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_toml_node_fallback" name="test_toml_loads_stdin_closed_nonzero_surfaces_stderr" time="0.009"><failure message="TypeError: test_toml_loads_stdin_closed_nonzero_surfaces_stderr.&lt;locals&gt;.stdin_closed() takes 0 positional arguments but 2 were given">tmp_path = WindowsPath('C:&lt;user-home&gt;/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_toml_loads_stdin_closed_n0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+
+    def test_toml_loads_stdin_closed_nonzero_surfaces_stderr(tmp_path, monkeypatch):
+        monkeypatch.setattr(md, "tomllib", None)
+        node_launch = md._node_launch_module()
+        if os.name == "nt":
+            monkeypatch.setattr(md, "_TOML_READER", ["node"])
+            monkeypatch.setattr(node_launch, "resolve_node", lambda **kwargs: "C:\\fake\\node.exe")
+    
+            def stdin_closed(**kwargs):
+                raise node_launch.LaunchError(
+                    "node_launch: Node stdin pipe closed unexpectedly",
+                    code="ELAUNCHSTDINCLOSED",
+                    status=3,
+                    stdout=b"",
+                    stderr=b"boom\n",
+                )
+    
+            monkeypatch.setattr(node_launch, "run", stdin_closed)
+        else:
+            script = _write_fake_node(
+                tmp_path,
+                version="v24.0.0",
+                on_eval='import sys; sys.stderr.write("boom\\n"); sys.exit(3)',
+            )
+            _use_fake_node(monkeypatch, script)
+            monkeypatch.setattr(md, "_TOML_READER", ["node"])
+        with pytest.raises(RuntimeError, match=r"Node TOML reader failed: boom"):
+&gt;           md.toml_to_markdown("a = 1\n")
+
+tests\test_toml_node_fallback.py:258: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+markdown.py:3062: in toml_to_markdown
+    value = _toml_loads(content)
+            ^^^^^^^^^^^^^^^^^^^^
+markdown.py:3042: in _toml_loads
+    done = _toml_node_run("-e", _TOML_NODE_SCRIPT, input=content, timeout=30, check=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+target = '-e', timeout = 30
+args = ("\nlet text = '';\nprocess.stdin.setEncoding('utf8');\nprocess.stdin.on('data', (c) =&gt; (text += c)).on('end', () =&gt; {...N.stringify(encode(value)));\n  } catch (e) { process.stderr.write('subset:' + e.message); process.exit(5); }\n});\n",)
+kwargs = {'input': 'a = 1\n', 'check': False}
+
+    def _toml_node_run(
+        target: str,
+        *args: Any,
+        timeout: float = 30,
+        **kwargs: Any,
+    ) -&gt; Any:
+        """Run vendored ``node_launch`` for TOML helpers with ``subprocess``-compatible errors."""
+        import subprocess
+    
+        node_launch = _node_launch_module()
+        node = kwargs.get("node")
+        env_var = kwargs.get("env_var", node_launch.DEFAULT_ENV_VAR)
+        executable = node_launch.resolve_node(node=node, env_var=env_var)
+        command = node_launch.node_command(
+            target, *args, node=executable, probe=False, env_var=env_var
+        )
+        try:
+&gt;           return node_launch.run(
+                target,
+                *args,
+                timeout=timeout,
+                node=executable,
+                probe=False,
+                **kwargs,
+            )
+E           TypeError: test_toml_loads_stdin_closed_nonzero_surfaces_stderr.&lt;locals&gt;.stdin_closed() takes 0 positional arguments but 2 were given
+
+markdown.py:2969: TypeError</failure></testcase></testsuite></testsuites>
