@@ -1,0 +1,21 @@
+FOUND: exit code: 1
+FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_39780240151_junit-py3.13_junit.xml): 1
+FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_39780240151_junit-py3.13_junit.xml): assert "F sh -c 'exi... in <t>s ==\n" == "F sh -c 'exi... in <t>s ==\n"\n  \n  Skipping 316 identical leading characters in diff, use -v to show\n  - runner 7.7.7'…\n  ?           ---\n  + runner 7.7…\n  -   junit failure (last) (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): pyproject_state = 'toml_version_unicode_escape'\n\n    @pytest.mark.parametr…\n  ?
+FOUND: junit failure groups (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_39780240151_junit-py3.13_junit.xml): 1 failure in 1 group
+FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_39780240151_junit-py3.13_junit.xml): tests.test_bench_large
+FOUND: python version: 3.12.15 (cpython)
+FOUND: node version: v24.22.1
+FOUND: gh version: gh version 2.103.2 (2026-10-23)
+FOUND: environment variable count: 123
+FOUND: environment variable names: ACCEPT_EULA, ACTIONS_ORCHESTRATION_ID, ACTIONS_RUNNER_ACTION_ARCHIVE_CACHE, ACTIONS_RUNNER_RETURN_JOB_RESULT_FOR_HOSTED, AGENT_TOOLSDIRECTORY, ANDROID_HOME, ANDROID_NDK, ANDROID_NDK_HOME, ANDROID_NDK_LATEST_HOME, ANDROID_NDK_ROOT, ANDROID_SDK_ROOT, ANT_HOME, AZURE_EXTENSION_DIR, BOOTSTRAP_HASKELL_NONINTERACTIVE, CHROMEWEBDRIVER, CHROME_BIN, CI, DEBIAN_FRONTEND, DOTNET_MULTILEVEL_LOOKUP, DOTNET_NOLOGO, DOTNET_SKIP_FIRST_TIME_EXPERIENCE, EDGEWEBDRIVER, ENABLE_RUNNER_TRACING, GECKOWEBDRIVER, GHCUP_INSTALL_BASE_PREFIX, GITHUB_ACTION, GITHUB_ACTIONS, GITHUB_ACTION_REF, GITHUB_ACTION_REPOSITORY, GITHUB_ACTOR, GITHUB_ACTOR_ID, GITHUB_API_URL, GITHUB_ARTIFACTS, GITHUB_ARTIFACTS_LIST, GITHUB_BASE_REF, GITHUB_ENV, GITHUB_EVENT_NAME, GITHUB_EVENT_PATH, GITHUB_GRAPHQL_URL, GITHUB_HEAD_REF, ...
+NOT FOUND: junit errors (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_39780240151_junit-py3.13_junit.xml)
+NOT FOUND: junit skipped (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_39780240151_junit-py3.13_junit.xml)
+NOT FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_39780240151_junit-py3.13_junit.xml)
+NOT FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_39780240151_junit-py3.13_junit.xml)
+NOT FOUND: junit system-err (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_39780240151_junit-py3.13_junit.xml)
+NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_39780240151_junit-py3.13_junit.xml)
+NOT FOUND: lock files in project root
+HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_39780240151_junit-py3.13_junit.xml): pytest/python
+HINT: junit pytest assert line (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_39780240151_junit-py3.13_junit.xml): E       assert "F sh -c 'exi... in <t>s ==\n" == "F sh -c 'exi... in <t>s ==\n"
+HINT: junit assertion diff (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_39780240151_junit-py3.13_junit.xml):   - runner 7.7.7'…   + runner 7.7…   -   junit failure (last) (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): pyproject_state = 'toml_version_unicode_escape'\n\n    @pytest.mark.parametr…   +   junit failure (last) (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): pyproject_state = 'toml_version_unicode_escape'\n\n    
+HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_39780240151_junit-py3.13_junit.xml): assert "F sh -c 'exi... in <t>s ==\n" == "F sh -c 'exi... in <t>s ==\n"\n  \n  Skipping 316 identical leading characters in diff, use -v to show\n  - runner 7.7.7'…\n  ?           ---\n  + runner 7.7…\n  -   junit failure (last) (tests/fixtures/junit_corpus/cases/Err-o-RoadRunner_38216257471_junit-py3.10_junit.xml): pyproject_state = 'toml_version_unicode_escape'\n\n    @pytest.mark.parametr…\n  ?

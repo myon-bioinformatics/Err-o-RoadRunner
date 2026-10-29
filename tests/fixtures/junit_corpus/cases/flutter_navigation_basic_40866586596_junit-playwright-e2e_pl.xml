@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites id="" name="" tests="300" failures="1" skipped="17" errors="0" time="1209.02835"><testsuite name="screen_navigation.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="10" failures="1" skipped="2" time="82.145" errors="0"><testcase name="Screen6 search stays inside body 1180x757 keyboard @portable" classname="screen_navigation.spec.ts" time="19.058"><system-out>
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen6--17e45--1180x757-keyboard-portable-mobile-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen6--17e45--1180x757-keyboard-portable-mobile-webkit/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen6--17e45--1180x757-keyboard-portable-mobile-webkit/error-context.md]]
+
+</system-out>
+<failure message="expect(locator).toBeFocused() failed" type="expect.toBeFocused">
+  [mobile-webkit] › screen_navigation.spec.ts:266:9 › Screen6 search stays inside body 1180x757 keyboard @portable 
+
+    Error: expect(locator).toBeFocused() failed
+
+    Locator:  locator('[flt-semantics-identifier="screen6-search"]').getByRole('textbox')
+    Expected: focused
+    Received: inactive
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeFocused" locator('[flt-semantics-identifier="screen6-search"]').getByRole('textbox') with timeout 5000ms
+      - waiting for locator('[flt-semantics-identifier="screen6-search"]').getByRole('textbox')
+        14 × locator resolved to &lt;input type="text" autocorrect="off" spellcheck="false" autocomplete="off" aria-label="Search screens…" data-semantics-role="text-field"/&gt;
+           - unexpected value "inactive"
+
+
+      291 |           await page.waitForTimeout(100);
+      292 |         }
+    &gt; 293 |         await expect(search).toBeFocused();
+          |                              ^
+      294 |       }
+      295 |
+      296 |       const measure = async () =&gt; ({
+        at &lt;runner-work&gt;/e2e/tests/screen_navigation.spec.ts:293:30
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/screen_navigation-Screen6--17e45--1180x757-keyboard-portable-mobile-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/screen_navigation-Screen6--17e45--1180x757-keyboard-portable-mobile-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/screen_navigation-Screen6--17e45--1180x757-keyboard-portable-mobile-webkit/error-context.md
+
+</failure>
+</testcase></testsuite></testsuites>

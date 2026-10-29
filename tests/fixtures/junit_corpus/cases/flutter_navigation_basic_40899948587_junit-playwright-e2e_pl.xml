@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites id="" name="" tests="310" failures="2" skipped="17" errors="0" time="972.4586769999999"><testsuite name="screen_navigation.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="12" failures="2" skipped="2" time="74.995" errors="0"><testcase name="Screen6 preserves search across resize from 757 @portable" classname="screen_navigation.spec.ts" time="12.768"><system-out>
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen6--a858f-ss-resize-from-757-portable-mobile-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen6--a858f-ss-resize-from-757-portable-mobile-chromium/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen6--a858f-ss-resize-from-757-portable-mobile-chromium/error-context.md]]
+
+</system-out>
+<failure message="expect(received).toBeCloseTo(expected, precision)" type="expect.toBeCloseTo">
+  [mobile-chromium] › screen_navigation.spec.ts:339:7 › Screen6 preserves search across resize from 757 @portable 
+
+    Error: expect(received).toBeCloseTo(expected, precision)
+
+    Expected: 234
+    Received: 372
+
+    Expected precision:    1
+    Expected difference: &lt; 0.05
+    Received difference:   138
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      350 |     const expectBodyMode = async (height: number) =&gt; {
+      351 |       await expect.poll(async () =&gt; (await body.boundingBox())!.height)
+    &gt; 352 |         .toBeCloseTo(initialBody.height + height - initialHeight, 1);
+          |          ^
+      353 |     };
+      354 |     await expectBodyMode(initialHeight);
+      355 |     await focusCatalogViaKeyboard(page, search);
+        at expectBodyMode (&lt;runner-work&gt;/e2e/tests/screen_navigation.spec.ts:352:10)
+        at &lt;runner-work&gt;/e2e/tests/screen_navigation.spec.ts:368:13
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/screen_navigation-Screen6--a858f-ss-resize-from-757-portable-mobile-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/screen_navigation-Screen6--a858f-ss-resize-from-757-portable-mobile-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/screen_navigation-Screen6--a858f-ss-resize-from-757-portable-mobile-chromium/error-context.md
+
+</failure>
+</testcase><testcase name="Screen6 preserves search across resize from 500 @portable" classname="screen_navigation.spec.ts" time="12.19"><system-out>
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen6--820cc-ss-resize-from-500-portable-mobile-chromium/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen6--820cc-ss-resize-from-500-portable-mobile-chromium/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen6--820cc-ss-resize-from-500-portable-mobile-chromium/error-context.md]]
+
+</system-out>
+<failure message="expect(received).toBeCloseTo(expected, precision)" type="expect.toBeCloseTo">
+  [mobile-chromium] › screen_navigation.spec.ts:339:7 › Screen6 preserves search across resize from 500 @portable 
+
+    Error: expect(received).toBeCloseTo(expected, precision)
+
+    Expected: 491
+    Received: 234
+
+    Expected precision:    1
+    Expected difference: &lt; 0.05
+    Received difference:   257
+
+    Call Log:
+    - Timeout 5000ms exceeded while waiting on the predicate
+
+      350 |     const expectBodyMode = async (height: number) =&gt; {
+      351 |       await expect.poll(async () =&gt; (await body.boundingBox())!.height)
+    &gt; 352 |         .toBeCloseTo(initialBody.height + height - initialHeight, 1);
+          |          ^
+      353 |     };
+      354 |     await expectBodyMode(initialHeight);
+      355 |     await focusCatalogViaKeyboard(page, search);
+        at expectBodyMode (&lt;runner-work&gt;/e2e/tests/screen_navigation.spec.ts:352:10)
+        at &lt;runner-work&gt;/e2e/tests/screen_navigation.spec.ts:368:13
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/screen_navigation-Screen6--820cc-ss-resize-from-500-portable-mobile-chromium/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/screen_navigation-Screen6--820cc-ss-resize-from-500-portable-mobile-chromium/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/screen_navigation-Screen6--820cc-ss-resize-from-500-portable-mobile-chromium/error-context.md
+
+</failure>
+</testcase></testsuite></testsuites>

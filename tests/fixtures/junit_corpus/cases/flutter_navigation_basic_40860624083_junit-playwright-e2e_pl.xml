@@ -1,0 +1,664 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites id="" name="" tests="300" failures="5" skipped="17" errors="7" time="2042.4790679999999"><testsuite name="exceptional_chrome.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="8" failures="1" skipped="0" time="377.059" errors="0"><testcase name="exceptional chrome /screen173 retains controls in a short viewport @portable" classname="exceptional_chrome.spec.ts" time="46.718"><system-out>
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-webkit/attachments/standard-header-json-c4e07bf2eaa49d5fdfc5fe657347f25a8caea36f.json]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-webkit/attachments/standard-png-d88c1a7fc71ae4fadc78f1aeda611833f4f7736a.png]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-webkit/attachments/standard-short-header-json-1abea3f317ff6790dca2192863b101384d99ecdc.json]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-webkit/attachments/standard-short-png-f6ed728c208320aa939786fd4d86be6722b64186.png]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-webkit/attachments/exception-header-json-94c53a3d83412679660928efbf933db97408d779.json]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-webkit/attachments/exception-initial-png-ae40d5bf75ba5460d268c66653cdef6003ad8c00.png]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-webkit/attachments/short-header-json-a473845e40a2a3e2d961855e023aaadf115c9974.json]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-webkit/attachments/chrome-audit-json-2ced016e1c7ac000ca2521f66b03ebe85c92e465.json]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-webkit/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-webkit/error-context.md]]
+
+</system-out>
+<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
+  [webkit] › exceptional_chrome.spec.ts:144:7 › exceptional chrome /screen173 retains controls in a short viewport @portable 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('順序: B, A, C')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByText('順序: B, A, C') with timeout 5000ms
+      - waiting for getByText('順序: B, A, C')
+
+
+      204 |         receipt.inputs.push(await drag(page, node(page, 'interaction-item-A'),
+      205 |           node(page, 'interaction-item-B'), id === 173 ? 700 : 0));
+    &gt; 206 |         if (id === 173) await expect(page.getByText('順序: B, A, C')).toBeVisible();
+          |                                                                     ^
+      207 |         else await expect(page.getByText('順序: A, B, C')).toHaveCount(0);
+      208 |         receipt.result = await node(page, 'interaction-order').innerText();
+      209 |       } else if (id === 174) {
+        at &lt;runner-work&gt;/e2e/tests/exceptional_chrome.spec.ts:206:69
+
+    attachment #1: standard-header.json (application/json) ─────────────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-webkit/attachments/standard-header-json-c4e07bf2eaa49d5fdfc5fe657347f25a8caea36f.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: standard.png (image/png) ────────────────────────────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-webkit/attachments/standard-png-d88c1a7fc71ae4fadc78f1aeda611833f4f7736a.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: standard-short-header.json (application/json) ───────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-webkit/attachments/standard-short-header-json-1abea3f317ff6790dca2192863b101384d99ecdc.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: standard-short.png (image/png) ──────────────────────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-webkit/attachments/standard-short-png-f6ed728c208320aa939786fd4d86be6722b64186.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #5: exception-header.json (application/json) ────────────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-webkit/attachments/exception-header-json-94c53a3d83412679660928efbf933db97408d779.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #6: exception-initial.png (image/png) ───────────────────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-webkit/attachments/exception-initial-png-ae40d5bf75ba5460d268c66653cdef6003ad8c00.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #7: short-header.json (application/json) ────────────────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-webkit/attachments/short-header-json-a473845e40a2a3e2d961855e023aaadf115c9974.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #8: chrome-audit.json (application/json) ────────────────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-webkit/attachments/chrome-audit-json-2ced016e1c7ac000ca2521f66b03ebe85c92e465.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #9: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #10: video (video/webm) ─────────────────────────────────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-webkit/error-context.md
+
+</failure>
+</testcase></testsuite><testsuite name="grid_semantics.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="4" failures="1" skipped="0" time="28.374" errors="0"><testcase name="screen173 semantics follow A/B/C through two grid swaps @portable" classname="grid_semantics.spec.ts" time="17.56"><system-out>
+
+[[ATTACHMENT|../../e2e/test-results/grid_semantics-screen173-s-d0ae9-ugh-two-grid-swaps-portable-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/grid_semantics-screen173-s-d0ae9-ugh-two-grid-swaps-portable-webkit/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/grid_semantics-screen173-s-d0ae9-ugh-two-grid-swaps-portable-webkit/error-context.md]]
+
+</system-out>
+<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
+  [webkit] › grid_semantics.spec.ts:95:5 › screen173 semantics follow A/B/C through two grid swaps @portable 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('順序: B, A, C', { exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByText('順序: B, A, C', { exact: true }) with timeout 5000ms
+      - waiting for getByText('順序: B, A, C', { exact: true })
+
+
+      58 |
+      59 | async function assertGrid(page: Page, order: string[], visibleItems: string[] = ['A', 'B', 'C']) {
+    &gt; 60 |   await expect(page.getByText(`順序: ${order.join(', ')}`, { exact: true })).toBeVisible();
+         |                                                                            ^
+      61 |   for (const label of visibleItems) {
+      62 |     const target = item(page, label);
+      63 |     // A duplicated identifier is a regression even when the order label is correct.
+        at assertGrid (&lt;runner-work&gt;/e2e/tests/grid_semantics.spec.ts:60:76)
+        at &lt;runner-work&gt;/e2e/tests/grid_semantics.spec.ts:99:9
+
+    attachment #2: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/grid_semantics-screen173-s-d0ae9-ugh-two-grid-swaps-portable-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/grid_semantics-screen173-s-d0ae9-ugh-two-grid-swaps-portable-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/grid_semantics-screen173-s-d0ae9-ugh-two-grid-swaps-portable-webkit/error-context.md
+
+</failure>
+</testcase></testsuite><testsuite name="home_discovery_journeys.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="4" failures="0" skipped="0" time="306.295" errors="1"><testcase name="Photo Studio dirty Door preserves Cancel and Discard @portable" classname="home_discovery_journeys.spec.ts" time="93.532"><system-out>
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ph-7521f-Cancel-and-Discard-portable-webkit/attachments/photo-dirty-door-png-0c02eb8c8aeb317fc37723fc608c51a350062b56.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ph-7521f-Cancel-and-Discard-portable-webkit/attachments/photo-door-cancel-png-cf9a188bb3d2ba301d348681dc0e9ef1ddd55ee3.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ph-7521f-Cancel-and-Discard-portable-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ph-7521f-Cancel-and-Discard-portable-webkit/attachments/photo-door-audit-json-734effd4f6b650dd1dac2ac8bb561c90b376c60d.json]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ph-7521f-Cancel-and-Discard-portable-webkit/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ph-7521f-Cancel-and-Discard-portable-webkit/error-context.md]]
+
+</system-out>
+<error message="Test timeout of 90000ms exceeded." type="Error">
+  [webkit] › home_discovery_journeys.spec.ts:335:5 › Photo Studio dirty Door preserves Cancel and Discard @portable 
+
+    Test timeout of 90000ms exceeded.
+
+    Error: locator.scrollIntoViewIfNeeded: Test timeout of 90000ms exceeded.
+    Call log:
+      - waiting for getByRole('menuitem', { name: 'Clipboard Shelf', exact: true })
+
+
+       at ../utils/interaction.mjs:25
+
+      23 | // the real hit path (SYNTHETIC_DOM_CLICK).
+      24 | export async function press(page, target, {touch, ratio = 0.9, timeout = 10000} = {}) {
+    &gt; 25 |   await target.scrollIntoViewIfNeeded({timeout});
+         |                ^
+      26 |   await target.waitFor({state: 'visible', timeout});
+      27 |   const viewport = page.viewportSize() ?? await page.evaluate(() =&gt; ({width: innerWidth, height: innerHeight}));
+      28 |   const box = await target.boundingBox();
+        at press (&lt;runner-work&gt;/e2e/utils/interaction.mjs:25:16)
+        at press (&lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:27:18)
+        at &lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:382:27
+
+    attachment #1: photo-dirty-door.png (image/png) ────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ph-7521f-Cancel-and-Discard-portable-webkit/attachments/photo-dirty-door-png-0c02eb8c8aeb317fc37723fc608c51a350062b56.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: photo-door-cancel.png (image/png) ───────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ph-7521f-Cancel-and-Discard-portable-webkit/attachments/photo-door-cancel-png-cf9a188bb3d2ba301d348681dc0e9ef1ddd55ee3.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ph-7521f-Cancel-and-Discard-portable-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: photo-door-audit.json (application/json) ────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ph-7521f-Cancel-and-Discard-portable-webkit/attachments/photo-door-audit-json-734effd4f6b650dd1dac2ac8bb561c90b376c60d.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #5: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ph-7521f-Cancel-and-Discard-portable-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/home_discovery_journeys-Ph-7521f-Cancel-and-Discard-portable-webkit/error-context.md
+
+</error>
+</testcase></testsuite><testsuite name="screen_navigation.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="10" failures="0" skipped="0" time="212.26" errors="2"><testcase name="Screen Navigation › Hub use-case filtering, zero results, clear and Screen5 route @portable" classname="screen_navigation.spec.ts" time="34.014"><system-out>
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen-N-f6cd9--and-Screen5-route-portable-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen-N-f6cd9--and-Screen5-route-portable-webkit/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen-N-f6cd9--and-Screen5-route-portable-webkit/error-context.md]]
+
+</system-out>
+<error message="Test timeout of 30000ms exceeded." type="Error">
+  [webkit] › screen_navigation.spec.ts:160:7 › Screen Navigation › Hub use-case filtering, zero results, clear and Screen5 route @portable 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.pressSequentially: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('[flt-semantics-identifier="hub-search"]').getByRole('textbox')
+        - locator resolved to &lt;input type="text" autocorrect="on" spellcheck="false" autocomplete="off" aria-label="Search screens…" placeholder="Search screens…" data-semantics-role="text-field"/&gt;
+      - elementHandle.type("Transformed Result List")
+
+
+      19 |     await expect(search).toBeFocused();
+      20 |     await expect(search).toHaveAttribute('autocorrect', 'on');
+    &gt; 21 |     await search.pressSequentially(query, { delay: 50 });
+         |                  ^
+      22 |   }
+      23 |   await expect(search).toHaveValue(query);
+      24 | }
+        at setCatalogQuery (&lt;runner-work&gt;/e2e/tests/screen_navigation.spec.ts:21:18)
+        at &lt;runner-work&gt;/e2e/tests/screen_navigation.spec.ts:169:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/screen_navigation-Screen-N-f6cd9--and-Screen5-route-portable-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/screen_navigation-Screen-N-f6cd9--and-Screen5-route-portable-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/screen_navigation-Screen-N-f6cd9--and-Screen5-route-portable-webkit/error-context.md
+
+</error>
+</testcase><testcase name="Screen Navigation › Screen6 excludes unrelated results, handles zero matches and clear @portable" classname="screen_navigation.spec.ts" time="33.247"><system-out>
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen-N-2c88d--matches-and-clear-portable-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen-N-2c88d--matches-and-clear-portable-webkit/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen-N-2c88d--matches-and-clear-portable-webkit/error-context.md]]
+
+</system-out>
+<error message="Test timeout of 30000ms exceeded." type="Error">
+  [webkit] › screen_navigation.spec.ts:191:7 › Screen Navigation › Screen6 excludes unrelated results, handles zero matches and clear @portable 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.pressSequentially: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('[flt-semantics-identifier="screen6-search"]').getByRole('textbox')
+        - locator resolved to &lt;input type="text" autocorrect="on" spellcheck="false" autocomplete="off" aria-label="Search screens…" placeholder="Search screens…" data-semantics-role="text-field"/&gt;
+      - elementHandle.type("no_such_use_case_144")
+
+
+      19 |     await expect(search).toBeFocused();
+      20 |     await expect(search).toHaveAttribute('autocorrect', 'on');
+    &gt; 21 |     await search.pressSequentially(query, { delay: 50 });
+         |                  ^
+      22 |   }
+      23 |   await expect(search).toHaveValue(query);
+      24 | }
+        at setCatalogQuery (&lt;runner-work&gt;/e2e/tests/screen_navigation.spec.ts:21:18)
+        at &lt;runner-work&gt;/e2e/tests/screen_navigation.spec.ts:201:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/screen_navigation-Screen-N-2c88d--matches-and-clear-portable-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/screen_navigation-Screen-N-2c88d--matches-and-clear-portable-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/screen_navigation-Screen-N-2c88d--matches-and-clear-portable-webkit/error-context.md
+
+</error>
+</testcase></testsuite><testsuite name="exceptional_chrome.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="8" failures="1" skipped="0" time="482.208" errors="1"><testcase name="exceptional chrome /screen173 retains controls in a short viewport @portable" classname="exceptional_chrome.spec.ts" time="50.668"><system-out>
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-mobile-webkit/attachments/standard-header-json-c19d70ece6d8ee8a0ea25e16e9f181bac6366f35.json]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-mobile-webkit/attachments/standard-png-2044fe6009910e3b4c599bcd1394bdbd7bf65df8.png]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-mobile-webkit/attachments/standard-short-header-json-f26b647f2d18e13707c98d57f6cfbbda13d7f6d5.json]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-mobile-webkit/attachments/standard-short-png-b8de4106570c9d3536b8f9e8e8ba2ede346f8ce2.png]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-mobile-webkit/attachments/exception-header-json-84206c12934566f9bf6bbd0b96fdca8299da7092.json]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-mobile-webkit/attachments/exception-initial-png-70f00cfbca7b03ed0d2e048fa04117b35ba17411.png]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-mobile-webkit/attachments/short-header-json-1c11520a5aa69f3ab014ece80929d4f64e560790.json]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-mobile-webkit/attachments/exception-short-before-action-png-3b0c2eb31fd9d117acf6b1c4ddff91bc9680e849.png]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-mobile-webkit/attachments/chrome-audit-json-090e216e967506780ea25cb2adcf29d61a3010c8.json]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-mobile-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-mobile-webkit/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-mobile-webkit/error-context.md]]
+
+</system-out>
+<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
+  [mobile-webkit] › exceptional_chrome.spec.ts:144:7 › exceptional chrome /screen173 retains controls in a short viewport @portable 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByText('順序: B, A, C')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByText('順序: B, A, C') with timeout 5000ms
+      - waiting for getByText('順序: B, A, C')
+
+
+      204 |         receipt.inputs.push(await drag(page, node(page, 'interaction-item-A'),
+      205 |           node(page, 'interaction-item-B'), id === 173 ? 700 : 0));
+    &gt; 206 |         if (id === 173) await expect(page.getByText('順序: B, A, C')).toBeVisible();
+          |                                                                     ^
+      207 |         else await expect(page.getByText('順序: A, B, C')).toHaveCount(0);
+      208 |         receipt.result = await node(page, 'interaction-order').innerText();
+      209 |       } else if (id === 174) {
+        at &lt;runner-work&gt;/e2e/tests/exceptional_chrome.spec.ts:206:69
+
+    attachment #1: standard-header.json (application/json) ─────────────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-mobile-webkit/attachments/standard-header-json-c19d70ece6d8ee8a0ea25e16e9f181bac6366f35.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: standard.png (image/png) ────────────────────────────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-mobile-webkit/attachments/standard-png-2044fe6009910e3b4c599bcd1394bdbd7bf65df8.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: standard-short-header.json (application/json) ───────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-mobile-webkit/attachments/standard-short-header-json-f26b647f2d18e13707c98d57f6cfbbda13d7f6d5.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: standard-short.png (image/png) ──────────────────────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-mobile-webkit/attachments/standard-short-png-b8de4106570c9d3536b8f9e8e8ba2ede346f8ce2.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #5: exception-header.json (application/json) ────────────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-mobile-webkit/attachments/exception-header-json-84206c12934566f9bf6bbd0b96fdca8299da7092.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #6: exception-initial.png (image/png) ───────────────────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-mobile-webkit/attachments/exception-initial-png-70f00cfbca7b03ed0d2e048fa04117b35ba17411.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #7: short-header.json (application/json) ────────────────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-mobile-webkit/attachments/short-header-json-1c11520a5aa69f3ab014ece80929d4f64e560790.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #8: exception-short-before-action.png (image/png) ───────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-mobile-webkit/attachments/exception-short-before-action-png-3b0c2eb31fd9d117acf6b1c4ddff91bc9680e849.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #9: chrome-audit.json (application/json) ────────────────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-mobile-webkit/attachments/chrome-audit-json-090e216e967506780ea25cb2adcf29d61a3010c8.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #10: screenshot (image/png) ─────────────────────────────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-mobile-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #11: video (video/webm) ─────────────────────────────────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-mobile-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/exceptional_chrome-excepti-f9607-n-a-short-viewport-portable-mobile-webkit/error-context.md
+
+</failure>
+</testcase><testcase name="exceptional chrome /screen109 retains controls in a short viewport @portable" classname="exceptional_chrome.spec.ts" time="102.359"><system-out>
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-c9985-n-a-short-viewport-portable-mobile-webkit/attachments/standard-header-json-661558752eb73f6c708ce8270025bee7f2b5cb57.json]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-c9985-n-a-short-viewport-portable-mobile-webkit/attachments/standard-png-015bd4157791eb7c2ac8e0dc7eedcc8b8bcbcd95.png]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-c9985-n-a-short-viewport-portable-mobile-webkit/attachments/standard-short-header-json-68fc589cdf8b018577a8c764203ab360c3dd7b36.json]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-c9985-n-a-short-viewport-portable-mobile-webkit/attachments/standard-short-png-262872a0ad91ae6004a609f94485c412ede0953f.png]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-c9985-n-a-short-viewport-portable-mobile-webkit/attachments/chrome-audit-json-4fea1f91fbbd58ab9a659dbfa1b9549d436ea624.json]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-c9985-n-a-short-viewport-portable-mobile-webkit/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/exceptional_chrome-excepti-c9985-n-a-short-viewport-portable-mobile-webkit/error-context.md]]
+
+</system-out>
+<error message="Test timeout of 90000ms exceeded." type="Error">
+  [mobile-webkit] › exceptional_chrome.spec.ts:144:7 › exceptional chrome /screen109 retains controls in a short viewport @portable 
+
+    Test timeout of 90000ms exceeded.
+
+    Error: locator.boundingBox: Test timeout of 90000ms exceeded.
+    Call log:
+      - waiting for locator('[flt-semantics-identifier="shared-header-title"]')
+
+
+      31 |     await expect(node(page, id)).toHaveCount(1);
+      32 |     await expect(node(page, id)).toBeInViewport({ ratio: 1 });
+    &gt; 33 |     boxes[id] = await node(page, id).boundingBox();
+         |                                      ^
+      34 |   }
+      35 |   const snapshot = { schemaVersion: 1, route, requiresSecondary: false,
+      36 |     title: await node(page, 'shared-header-title').innerText(), viewport: page.viewportSize(), boxes };
+        at header (&lt;runner-work&gt;/e2e/tests/exceptional_chrome.spec.ts:33:38)
+        at &lt;runner-work&gt;/e2e/tests/exceptional_chrome.spec.ts:165:27
+
+    attachment #1: standard-header.json (application/json) ─────────────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-c9985-n-a-short-viewport-portable-mobile-webkit/attachments/standard-header-json-661558752eb73f6c708ce8270025bee7f2b5cb57.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: standard.png (image/png) ────────────────────────────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-c9985-n-a-short-viewport-portable-mobile-webkit/attachments/standard-png-015bd4157791eb7c2ac8e0dc7eedcc8b8bcbcd95.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: standard-short-header.json (application/json) ───────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-c9985-n-a-short-viewport-portable-mobile-webkit/attachments/standard-short-header-json-68fc589cdf8b018577a8c764203ab360c3dd7b36.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: standard-short.png (image/png) ──────────────────────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-c9985-n-a-short-viewport-portable-mobile-webkit/attachments/standard-short-png-262872a0ad91ae6004a609f94485c412ede0953f.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #5: chrome-audit.json (application/json) ────────────────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-c9985-n-a-short-viewport-portable-mobile-webkit/attachments/chrome-audit-json-4fea1f91fbbd58ab9a659dbfa1b9549d436ea624.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #6: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/exceptional_chrome-excepti-c9985-n-a-short-viewport-portable-mobile-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/exceptional_chrome-excepti-c9985-n-a-short-viewport-portable-mobile-webkit/error-context.md
+
+</error>
+</testcase></testsuite><testsuite name="grid_semantics.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="4" failures="0" skipped="0" time="24.38" errors="1"><testcase name="screen173 short viewport keeps distinct A/B targets after repeated swaps @portable" classname="grid_semantics.spec.ts" time="10.605"><system-out>
+
+[[ATTACHMENT|../../e2e/test-results/grid_semantics-screen173-s-435b2-ter-repeated-swaps-portable-mobile-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/grid_semantics-screen173-s-435b2-ter-repeated-swaps-portable-mobile-webkit/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/grid_semantics-screen173-s-435b2-ter-repeated-swaps-portable-mobile-webkit/error-context.md]]
+
+</system-out>
+<error message="Timeout 5000ms exceeded while waiting on the predicate" type="Error">
+  [mobile-webkit] › grid_semantics.spec.ts:126:5 › screen173 short viewport keeps distinct A/B targets after repeated swaps @portable 
+
+    Error: Timeout 5000ms exceeded while waiting on the predicate
+
+      53 |   // Retry the same strict geometry contract, never reduce its requirements.
+      54 |   await expect(async () =&gt; { point = await measureExposedPoint(page, target, yRatio); })
+    &gt; 55 |     .toPass({ timeout: 5000, intervals: [100, 250, 500] });
+         |      ^
+      56 |   return point!;
+      57 | }
+      58 |
+        at exposedPoint (&lt;runner-work&gt;/e2e/tests/grid_semantics.spec.ts:55:6)
+        at swap (&lt;runner-work&gt;/e2e/tests/grid_semantics.spec.ts:77:21)
+        at &lt;runner-work&gt;/e2e/tests/grid_semantics.spec.ts:132:3
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/grid_semantics-screen173-s-435b2-ter-repeated-swaps-portable-mobile-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/grid_semantics-screen173-s-435b2-ter-repeated-swaps-portable-mobile-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/grid_semantics-screen173-s-435b2-ter-repeated-swaps-portable-mobile-webkit/error-context.md
+
+</error>
+</testcase></testsuite><testsuite name="photo_studio_ingress.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="5" failures="1" skipped="2" time="39.234" errors="0"><testcase name="Clipboard image bridge › photo picker resizes PNG and displays a preview @portable" classname="photo_studio_ingress.spec.ts" time="16.183"><system-out>
+
+[[ATTACHMENT|../../e2e/test-results/photo_studio_ingress-Clipb-76820-displays-a-preview-portable-mobile-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/photo_studio_ingress-Clipb-76820-displays-a-preview-portable-mobile-webkit/attachments/web-observation-png-47e911e8a0a04e67da4eccf2e0299f1cbe3dbbde.png]]
+
+[[ATTACHMENT|../../e2e/test-results/photo_studio_ingress-Clipb-76820-displays-a-preview-portable-mobile-webkit/attachments/web-observation-json-86c64bdccbef36e1415dead39b7450158b23e48b.json]]
+
+[[ATTACHMENT|../../e2e/test-results/photo_studio_ingress-Clipb-76820-displays-a-preview-portable-mobile-webkit/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/photo_studio_ingress-Clipb-76820-displays-a-preview-portable-mobile-webkit/error-context.md]]
+
+</system-out>
+<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
+  [mobile-webkit] › photo_studio_ingress.spec.ts:57:7 › Clipboard image bridge › photo picker resizes PNG and displays a preview @portable 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('button', { name: 'Remove', exact: true })
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('button', { name: 'Remove', exact: true }) with timeout 5000ms
+      - waiting for getByRole('button', { name: 'Remove', exact: true })
+
+
+      61 |     await tapSemantics(page, 'Choose photo');
+      62 |     await (await chooserPromise).setFiles(pngFixture);
+    &gt; 63 |     await expect(page.getByRole('button', { name: 'Remove', exact: true })).toBeVisible();
+         |                                                                             ^
+      64 |     await expect(page.getByRole('group', { name: /image\/png · \d+ bytes/ })).toBeVisible();
+      65 |     await expect(page.getByText(/ImageDescriptor.*not supported|Image preview is unavailable/)).toHaveCount(0);
+      66 |     await page.screenshot({ path: test.info().outputPath('clipboard-image-preview.png') });
+        at &lt;runner-work&gt;/e2e/tests/photo_studio_ingress.spec.ts:63:77
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/photo_studio_ingress-Clipb-76820-displays-a-preview-portable-mobile-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: web-observation.png (image/png) ─────────────────────────────────────────────────
+    ../test-results/photo_studio_ingress-Clipb-76820-displays-a-preview-portable-mobile-webkit/attachments/web-observation-png-47e911e8a0a04e67da4eccf2e0299f1cbe3dbbde.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: web-observation.json (application/json) ─────────────────────────────────────────
+    ../test-results/photo_studio_ingress-Clipb-76820-displays-a-preview-portable-mobile-webkit/attachments/web-observation-json-86c64bdccbef36e1415dead39b7450158b23e48b.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/photo_studio_ingress-Clipb-76820-displays-a-preview-portable-mobile-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/photo_studio_ingress-Clipb-76820-displays-a-preview-portable-mobile-webkit/error-context.md
+
+</failure>
+</testcase></testsuite><testsuite name="screen_navigation.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="10" failures="1" skipped="2" time="155.18" errors="2"><testcase name="Screen Navigation › Hub use-case filtering, zero results, clear and Screen5 route @portable" classname="screen_navigation.spec.ts" time="35.442"><system-out>
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen-N-f6cd9--and-Screen5-route-portable-mobile-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen-N-f6cd9--and-Screen5-route-portable-mobile-webkit/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen-N-f6cd9--and-Screen5-route-portable-mobile-webkit/error-context.md]]
+
+</system-out>
+<error message="Test timeout of 30000ms exceeded." type="Error">
+  [mobile-webkit] › screen_navigation.spec.ts:160:7 › Screen Navigation › Hub use-case filtering, zero results, clear and Screen5 route @portable 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('[flt-semantics-identifier="hub-search"]').getByRole('textbox')
+        - locator resolved to &lt;input type="text" autocorrect="on" spellcheck="false" autocomplete="off" placeholder="Search screens…" data-semantics-role="text-field"/&gt;
+      - attempting click action
+        - waiting for element to be visible, enabled and stable
+
+
+      16 |   await expect(search).toHaveValue('');
+      17 |   if (query) {
+    &gt; 18 |     await search.click();
+         |                  ^
+      19 |     await expect(search).toBeFocused();
+      20 |     await expect(search).toHaveAttribute('autocorrect', 'on');
+      21 |     await search.pressSequentially(query, { delay: 50 });
+        at setCatalogQuery (&lt;runner-work&gt;/e2e/tests/screen_navigation.spec.ts:18:18)
+        at &lt;runner-work&gt;/e2e/tests/screen_navigation.spec.ts:182:5
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/screen_navigation-Screen-N-f6cd9--and-Screen5-route-portable-mobile-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/screen_navigation-Screen-N-f6cd9--and-Screen5-route-portable-mobile-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/screen_navigation-Screen-N-f6cd9--and-Screen5-route-portable-mobile-webkit/error-context.md
+
+</error>
+</testcase><testcase name="Screen Navigation › Screen6 excludes unrelated results, handles zero matches and clear @portable" classname="screen_navigation.spec.ts" time="32.862"><system-out>
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen-N-2c88d--matches-and-clear-portable-mobile-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen-N-2c88d--matches-and-clear-portable-mobile-webkit/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen-N-2c88d--matches-and-clear-portable-mobile-webkit/error-context.md]]
+
+</system-out>
+<error message="Test timeout of 30000ms exceeded." type="Error">
+  [mobile-webkit] › screen_navigation.spec.ts:191:7 › Screen Navigation › Screen6 excludes unrelated results, handles zero matches and clear @portable 
+
+    Test timeout of 30000ms exceeded.
+
+    Error: locator.click: Test timeout of 30000ms exceeded.
+    Call log:
+      - waiting for locator('[flt-semantics-identifier="screen6-search"]').getByRole('textbox')
+        - locator resolved to &lt;input type="text" autocorrect="on" spellcheck="false" autocomplete="off" aria-label="Search screens…" placeholder="Search screens…" data-semantics-role="text-field"/&gt;
+      - attempting click action
+        - waiting for element to be visible, enabled and stable
+
+
+      10 | // WebKit editing strategy. Re-focus before sending the next real key sequence.
+      11 | async function setCatalogQuery(search: Locator, query: string) {
+    &gt; 12 |   await search.click();
+         |                ^
+      13 |   await expect(search).toBeFocused();
+      14 |   await expect(search).toHaveAttribute('autocorrect', 'on');
+      15 |   await search.fill('');
+        at setCatalogQuery (&lt;runner-work&gt;/e2e/tests/screen_navigation.spec.ts:12:16)
+        at &lt;runner-work&gt;/e2e/tests/screen_navigation.spec.ts:212:11
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/screen_navigation-Screen-N-2c88d--matches-and-clear-portable-mobile-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/screen_navigation-Screen-N-2c88d--matches-and-clear-portable-mobile-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/screen_navigation-Screen-N-2c88d--matches-and-clear-portable-mobile-webkit/error-context.md
+
+</error>
+</testcase><testcase name="Screen6 search stays inside body 1180x757 keyboard @portable" classname="screen_navigation.spec.ts" time="22.371"><system-out>
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen6--17e45--1180x757-keyboard-portable-mobile-webkit/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/screen_navigation-Screen6--17e45--1180x757-keyboard-portable-mobile-webkit/error-context.md]]
+
+</system-out>
+<failure message="expect(locator).toBeFocused() failed" type="expect.toBeFocused">
+  [mobile-webkit] › screen_navigation.spec.ts:266:9 › Screen6 search stays inside body 1180x757 keyboard @portable 
+
+    Error: expect(locator).toBeFocused() failed
+
+    Locator:  locator('[flt-semantics-identifier="screen6-search"]').getByRole('textbox')
+    Expected: focused
+    Received: inactive
+    Timeout:  5000ms
+
+    Call log:
+      - Expect "toBeFocused" locator('[flt-semantics-identifier="screen6-search"]').getByRole('textbox') with timeout 5000ms
+      - waiting for locator('[flt-semantics-identifier="screen6-search"]').getByRole('textbox')
+        14 × locator resolved to &lt;input type="text" autocorrect="off" spellcheck="false" autocomplete="off" aria-label="Search screens…" data-semantics-role="text-field"/&gt;
+           - unexpected value "inactive"
+
+
+      291 |           await page.waitForTimeout(100);
+      292 |         }
+    &gt; 293 |         await expect(search).toBeFocused();
+          |                              ^
+      294 |       }
+      295 |
+      296 |       const measure = async () =&gt; ({
+        at &lt;runner-work&gt;/e2e/tests/screen_navigation.spec.ts:293:30
+
+    attachment #1: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/screen_navigation-Screen6--17e45--1180x757-keyboard-portable-mobile-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/screen_navigation-Screen6--17e45--1180x757-keyboard-portable-mobile-webkit/error-context.md
+
+</failure>
+</testcase></testsuite></testsuites>

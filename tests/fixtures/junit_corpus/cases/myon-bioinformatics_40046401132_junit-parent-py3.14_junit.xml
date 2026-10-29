@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="31" tests="1695" time="95.911" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_uv_git_sources" name="test_dispatch_installs_fetches_and_records" time="0.003"><failure message="AssertionError: assert ('fetch' == 'fetch'&#10;  &#10;    fetch and 'private' in 'source is not an exported packed Node entry; plain fetch')">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_dispatch_installs_fetches0')
+
+    def test_dispatch_installs_fetches_and_records(tmp_path):
+        module = _driver()
+        catalog = _catalog()
+        calls = []
+    
+        def install(repository, ref, modules):
+            calls.append((repository, ref, tuple(modules)))
+            return "c" * 40, {}
+    
+        results = module.dispatch(catalog, _env(module), "main", _opener, install, dry_run=False)
+        by_source = {row["source"]: row for row in results}
+        assert calls == [(
+            "myon-bioinformatics/browser-test-kit",
+            "main",
+            ("check_evidence",),
+        )]
+        uv_row = by_source["scripts/check_evidence.py"]
+        assert uv_row["action"] == "uv"
+        assert uv_row["commit"] == "c" * 40
+        assert uv_row["spec"].endswith("browser-test-kit@main")
+        assert by_source["gh_identity.py"]["action"] == "skip"
+        assert "package is false" in by_source["gh_identity.py"]["reason"]
+        assert by_source["src/mcp_toolcall_lab/github_public_resolver.py"]["action"] == "skip"
+        fetched = by_source["py_launch.cjs"]
+        assert fetched["action"] == "fetch" and fetched["commit"] == "b" * 40
+        assert fetched["sha256"]
+        private = by_source["scripts/interaction.mjs"]
+&gt;       assert private["action"] == "fetch" and "private" in private["reason"]
+E       AssertionError: assert ('fetch' == 'fetch'
+E         
+E           fetch and 'private' in 'source is not an exported packed Node entry; plain fetch')
+
+tests/test_uv_git_sources.py:173: AssertionError</failure></testcase></testsuite></testsuites>

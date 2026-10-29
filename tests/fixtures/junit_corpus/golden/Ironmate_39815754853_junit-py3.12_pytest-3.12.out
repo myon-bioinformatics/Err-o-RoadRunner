@@ -1,0 +1,21 @@
+FOUND: exit code: 1
+FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_39815754853_junit-py3.12_pytest-3.12.xml): 1
+FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_39815754853_junit-py3.12_pytest-3.12.xml): AssertionError: {\n    "schema": "vendor-consumer-comparison/1",\n    "consumer": "myon-bioinformatics/Ironmate",\n    "lock": "vendor.lock.json",\n    "matches": false,\n    "missing": [],\n    "unexpected": [\n      {\n        "repository": "myon-bioinformatics/myon-bioinformatics",\n        "source": "py_launch.cjs",\n        "destination": "vendor/py_launch.cjs"\n      }\n    ],\n    "bundle_m
+FOUND: junit failure groups (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_39815754853_junit-py3.12_pytest-3.12.xml): 1 failure in 1 group
+FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_39815754853_junit-py3.12_pytest-3.12.xml): tests.test_vendor_enrollment_audit
+FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_39815754853_junit-py3.12_pytest-3.12.xml): AssertionError
+FOUND: python version: 3.12.15 (cpython)
+FOUND: node version: v24.22.1
+FOUND: gh version: gh version 2.103.2 (2026-10-23)
+FOUND: environment variable count: 123
+FOUND: environment variable names: ACCEPT_EULA, ACTIONS_ORCHESTRATION_ID, ACTIONS_RUNNER_ACTION_ARCHIVE_CACHE, ACTIONS_RUNNER_RETURN_JOB_RESULT_FOR_HOSTED, AGENT_TOOLSDIRECTORY, ANDROID_HOME, ANDROID_NDK, ANDROID_NDK_HOME, ANDROID_NDK_LATEST_HOME, ANDROID_NDK_ROOT, ANDROID_SDK_ROOT, ANT_HOME, AZURE_EXTENSION_DIR, BOOTSTRAP_HASKELL_NONINTERACTIVE, CHROMEWEBDRIVER, CHROME_BIN, CI, DEBIAN_FRONTEND, DOTNET_MULTILEVEL_LOOKUP, DOTNET_NOLOGO, DOTNET_SKIP_FIRST_TIME_EXPERIENCE, EDGEWEBDRIVER, ENABLE_RUNNER_TRACING, GECKOWEBDRIVER, GHCUP_INSTALL_BASE_PREFIX, GITHUB_ACTION, GITHUB_ACTIONS, GITHUB_ACTION_REF, GITHUB_ACTION_REPOSITORY, GITHUB_ACTOR, GITHUB_ACTOR_ID, GITHUB_API_URL, GITHUB_ARTIFACTS, GITHUB_ARTIFACTS_LIST, GITHUB_BASE_REF, GITHUB_ENV, GITHUB_EVENT_NAME, GITHUB_EVENT_PATH, GITHUB_GRAPHQL_URL, GITHUB_HEAD_REF, ...
+NOT FOUND: junit errors (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_39815754853_junit-py3.12_pytest-3.12.xml)
+NOT FOUND: junit skipped (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_39815754853_junit-py3.12_pytest-3.12.xml)
+NOT FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_39815754853_junit-py3.12_pytest-3.12.xml)
+NOT FOUND: junit system-err (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_39815754853_junit-py3.12_pytest-3.12.xml)
+NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_39815754853_junit-py3.12_pytest-3.12.xml)
+NOT FOUND: lock files in project root
+HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_39815754853_junit-py3.12_pytest-3.12.xml): pytest/python
+HINT: junit pytest assert line (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_39815754853_junit-py3.12_pytest-3.12.xml): E   assert 1 == 0
+HINT: junit assertion diff (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_39815754853_junit-py3.12_pytest-3.12.xml):  +  where 1 = CompletedProcess(args=['<runner-work>/.venv/bin/python', '-S', '<runner-work> "py_launch.cjs",\n      "destination": "vendor/py_launch.cjs"\n    }\n  ],\n  "bundle_mismatch": []\n}\n', stderr='').returncode
+HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_39815754853_junit-py3.12_pytest-3.12.xml): AssertionError: {\n    "schema": "vendor-consumer-comparison/1",\n    "consumer": "myon-bioinformatics/Ironmate",\n    "lock": "vendor.lock.json",\n    "matches": false,\n    "missing": [],\n    "unexpected": [\n      {\n        "repository": "myon-bioinformatics/myon-bioinformatics",\n        "source": "py_launch.cjs",\n        "destination": "vendor/py_launch.cjs"\n      }\n    ],\n    "bundle_m
