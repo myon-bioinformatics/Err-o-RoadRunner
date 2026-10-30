@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="39" tests="3403" time="502.277" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_action_uses" name="test_live_workflows_match_parent_style" time="0.003"><failure message="AssertionError: assert ['.github/wor...81273ba90b1)'] == []&#10;  &#10;  Left contains one more item: '.github/workflows/ci-status-label.yml:21: actions/*（setup 以外）は @vN だけ (actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1)'&#10;  &#10;  Full diff:&#10;  - []&#10;  + [&#10;  +     '.github/workflows/ci-status-label.yml:21: actions/*（setup 以外）は @vN だけ '&#10;  +     '(actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1)',&#10;  + ]">def test_live_workflows_match_parent_style():
+&gt;       assert uses.style_problems(ROOT) == []
+E       AssertionError: assert ['.github/wor...81273ba90b1)'] == []
+E         
+E         Left contains one more item: '.github/workflows/ci-status-label.yml:21: actions/*（setup 以外）は @vN だけ (actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1)'
+E         
+E         Full diff:
+E         - []
+E         + [
+E         +     '.github/workflows/ci-status-label.yml:21: actions/*（setup 以外）は @vN だけ '
+E         +     '(actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1)',
+E         + ]
+
+tests/test_action_uses.py:20: AssertionError</failure></testcase><testcase classname="nagoyaction.tests.test_docs_masters" name="test_every_file_directly_under_docs_is_listed_as_a_master_file" time="0.001"><failure message="AssertionError: docs/ の直下にあるのに、マスターファイルの一覧（docs/README.md）にない&#10;assert {'ci-status-label.md'} == set()&#10;  &#10;  Extra items in the left set:&#10;  'ci-status-label.md'&#10;  &#10;  Full diff:&#10;  - set()&#10;  + {&#10;  +     'ci-status-label.md',&#10;  + }">def test_every_file_directly_under_docs_is_listed_as_a_master_file():
+        listed = set(re.findall(r"^\| \[([^\]]+\.md)\]\(\1\) \|", (DOCS / "README.md").read_text(encoding="utf-8"), re.M))
+        present = {p.name for p in DOCS.iterdir() if p.is_file() and p.name != "README.md"}
+&gt;       assert present - listed == set(), "docs/ の直下にあるのに、マスターファイルの一覧（docs/README.md）にない"
+E       AssertionError: docs/ の直下にあるのに、マスターファイルの一覧（docs/README.md）にない
+E       assert {'ci-status-label.md'} == set()
+E         
+E         Extra items in the left set:
+E         'ci-status-label.md'
+E         
+E         Full diff:
+E         - set()
+E         + {
+E         +     'ci-status-label.md',
+E         + }
+
+nagoyaction/tests/test_docs_masters.py:12: AssertionError</failure></testcase></testsuite></testsuites>

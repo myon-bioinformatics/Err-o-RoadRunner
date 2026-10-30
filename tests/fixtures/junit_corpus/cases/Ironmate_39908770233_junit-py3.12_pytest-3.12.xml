@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="15" tests="1676" time="138.657" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_cli_contract" name="test_render_does_not_wait_on_a_terminal_and_validates_a_file" time="0.031"><failure message="AssertionError: assert (b'hint:' in b'studio/render.cjs: stdin is a terminal\r\n')">tests/test_cli_contract.py:183: in test_render_does_not_wait_on_a_terminal_and_validates_a_file
+    assert b'hint:' in chunk and b'Traceback' not in chunk
+E   AssertionError: assert (b'hint:' in b'studio/render.cjs: stdin is a terminal\r\n')</failure></testcase></testsuite></testsuites>

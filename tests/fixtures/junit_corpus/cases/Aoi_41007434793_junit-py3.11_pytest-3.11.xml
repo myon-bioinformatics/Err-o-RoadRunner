@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="39" tests="3310" time="770.533" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_dragowing_browser_workflow" name="test_first_start_context_uses_fresh_jobs_and_unchanged_test_order" time="0.001"><failure message="AssertionError: assert '-p scripts.observe_dragowing_startup' in '    name: First actual startup (${{ matrix.context }}, Python 3.14)\n    runs-on: ubuntu-24.04\n    timeout-minutes: ... }}-py3.14\n          path: build/startup-context/\n          if-no-files-found: error\n          retention-days: 14\n'">def test_first_start_context_uses_fresh_jobs_and_unchanged_test_order():
+        text = (ROOT / ".github/workflows/browser-startup-validation.yml").read_text(encoding="utf-8")
+        job = text.split("\n  first-start-context:\n", 1)[1].split("\n  compare:\n", 1)[0]
+        assert "context: [normal, offline]" in job
+        assert "fail-fast: false" in job
+        assert "runs-on: ubuntu-24.04" in job
+        assert "python-version: '3.14'" in job
+        assert "uv sync --locked --python 3.14" in job
+        assert "sudo unshare --net --" in job
+        assert "diagnose_dragowing_browser.py" not in job
+        assert "--runs" not in job and "--timeout" not in job
+        assert '"$chromium" --version' in job
+&gt;       assert "-p scripts.observe_dragowing_startup" in job
+E       AssertionError: assert '-p scripts.observe_dragowing_startup' in '    name: First actual startup (${{ matrix.context }}, Python 3.14)\n    runs-on: ubuntu-24.04\n    timeout-minutes: ... }}-py3.14\n          path: build/startup-context/\n          if-no-files-found: error\n          retention-days: 14\n'
+
+tests/test_dragowing_browser_workflow.py:111: AssertionError</failure></testcase><testcase classname="tests.test_dragowing_browser_workflow" name="test_first_start_shell_only_changes_execution_context" time="0.014"><failure message="AssertionError: assert False&#10; +  where False = &lt;built-in method startswith of str object at 0x&lt;addr&gt;&gt;('-m\npytest\n-c\npyproject.toml\n-q\n')&#10; +    where &lt;built-in method startswith of str object at 0x&lt;addr&gt;&gt; = '-m\nscripts.run_browser_startup_ci\n--output\nbuild/startup-context\n'.startswith">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_first_start_shell_only_ch0')
+
+    def test_first_start_shell_only_changes_execution_context(tmp_path):
+        script = _selection_step(ROOT / ".github/workflows/browser-startup-validation.yml",
+                                 "Observe the actual tests without preceding browser launches", "first-start-context")
+        binary = tmp_path / "bin"
+        binary.mkdir()
+        python = tmp_path / ".venv/bin/python"
+        python.parent.mkdir(parents=True)
+        python.write_text('#!/bin/bash\nprintf "%s\\n" "$@" &gt; "$PWD/args"\nprintf "%s\\n" "$CHROME" "$DRAGOWING_REQUIRE_CHROME" "$DRAGOWING_PINNED_PLOTLY_JS" &gt; "$PWD/env"\n')
+        python.chmod(0o755)
+        for name, body in (("sudo", 'printf "%s\\n" "$@" &gt; "$PWD/sudo-args"; exec "$@"'),
+                           ("unshare", 'test "$1" = --net &amp;&amp; test "$2" = --; shift 2; exec "$@"')):
+            path = binary / name
+            path.write_text("#!/bin/bash\n" + body + "\n")
+            path.chmod(0o755)
+        results = []
+        for context in ("normal", "offline"):
+            result = subprocess.run(["/bin/bash", "-e", "-c", script], cwd=tmp_path, capture_output=True, text=True,
+                                    env={**os.environ, "STARTUP_CONTEXT": context, "CHROME": "/explicit/chromium",
+                                         "PATH": str(binary) + ":/usr/bin:/bin"})
+            assert result.returncode == 0, result.stderr
+            results.append(((tmp_path / "args").read_text(), (tmp_path / "env").read_text()))
+            assert (tmp_path / "sudo-args").exists() == (context == "offline")
+        assert results[0] == results[1]
+&gt;       assert results[0][0].startswith("-m\npytest\n-c\npyproject.toml\n-q\n")
+E       AssertionError: assert False
+E        +  where False = &lt;built-in method startswith of str object at 0x&lt;addr&gt;&gt;('-m\npytest\n-c\npyproject.toml\n-q\n')
+E        +    where &lt;built-in method startswith of str object at 0x&lt;addr&gt;&gt; = '-m\nscripts.run_browser_startup_ci\n--output\nbuild/startup-context\n'.startswith
+
+tests/test_dragowing_browser_workflow.py:145: AssertionError</failure></testcase><testcase classname="dragowing.tests.test_export" name="test_export_draw_plotly_three_figures_in_one_session" time="32.011"><failure message="TimeoutError: Chrome did not answer within the timeout; the browser process is still running and has not answered&#10;[63522:63543:1030/052803.590377:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /tmp/chrome-pipe-sufl27nk/no-bus.sock: No such file or directory&#10;[63522:63543:1030/052803.590471:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /tmp/chrome-pipe-sufl27nk/no-bus.sock: No such file or directory">self = &lt;scripts.observe_dragowing_startup.observe_browser_startup.&lt;locals&gt;.ObservedChrome object at 0x&lt;addr&gt;&gt;
+deadline = 1078.492974268
+
+    def _recv(self, deadline: float) -&gt; dict:
+        if self._failure:
+            raise RuntimeError(self._failure)
+        remaining = deadline - time.monotonic()
+        if remaining &lt;= 0:
+            raise self._timeout_error("Chrome did not answer within the timeout")
+        try:
+&gt;           message = self._inbox.get(timeout=remaining)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+dragowing/chrome_pipe.py:368: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;queue.Queue object at 0x&lt;addr&gt;&gt;, block = True
+timeout = 29.999665482999944
+
+    def get(self, block=True, timeout=None):
+        '''Remove and return an item from the queue.
+    
+        If optional args 'block' is true and 'timeout' is None (the default),
+        block if necessary until an item is available. If 'timeout' is
+        a non-negative number, it blocks at most 'timeout' seconds and raises
+        the Empty exception if no item was available within that time.
+        Otherwise ('block' is false), return an item if one is immediately
+        available, else raise the Empty exception ('timeout' is ignored
+        in that case).
+        '''
+        with self.not_empty:
+            if not block:
+                if not self._qsize():
+                    raise Empty
+            elif timeout is None:
+                while not self._qsize():
+                    self.not_empty.wait()
+            elif timeout &lt; 0:
+                raise ValueError("'timeout' must be a non-negative number")
+            else:
+                endtime = time() + timeout
+                while not self._qsize():
+                    remaining = endtime - time()
+                    if remaining &lt;= 0.0:
+&gt;                       raise Empty
+E                       _queue.Empty
+
+&lt;toolcache&gt;/Python/3.11.17/x64/lib/python3.11/queue.py:179: Empty
+
+The above exception was the direct cause of the following exception:
+
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_export_draw_plotly_three_0')
+plotly_chrome_executable = '/usr/bin/chromium'
+
+    def test_export_draw_plotly_three_figures_in_one_session(tmp_path, plotly_chrome_executable):
+        evidence = os.environ.get("DRAGOWING_EXPORT_EVIDENCE_DIR")
+        if evidence:
+            tmp_path = Path(evidence)
+            tmp_path.mkdir(parents=True, exist_ok=True)
+        width, height, count, color, marker, timeouts = _figure_case()
+        figures = []
+        for index in range(3):
+            ys = [index, 1, 4]
+            while len(ys) &lt; count:
+                ys.append(ys[-1] + 2 + index)
+            figures.append({
+                "data": [{"type": "scatter", "x": list(range(1, count + 1)), "y": ys,
+                          "mode": "lines+markers", "name": "series-%d" % index,
+                          "marker": {"color": color, "size": marker}}],
+                "layout": {"width": width, "height": height, "showlegend": True,
+                           "title": {"text": "title-%d" % index}},
+            })
+&gt;       with RenderSession(chrome=plotly_chrome_executable, offline=True, timeouts=timeouts) as session:
+
+dragowing/tests/test_export.py:154: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+dragowing/render.py:109: in __enter__
+    self.start()
+dragowing/render.py:121: in start
+    self.browser.start()
+scripts/observe_dragowing_startup.py:83: in start
+    return super().start()
+           ^^^^^^^^^^^^^^^
+scripts/diagnose_dragowing_browser.py:340: in start
+    super().start()
+dragowing/chrome_pipe.py:142: in start
+    self.call("Browser.getVersion", timeout=self.timeout)
+scripts/diagnose_dragowing_browser.py:370: in call
+    result = super().call(method, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+dragowing/chrome_pipe.py:152: in call
+    message = self._recv(deadline)
+              ^^^^^^^^^^^^^^^^^^^^
+scripts/diagnose_dragowing_browser.py:404: in _recv
+    result = super()._recv(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;scripts.observe_dragowing_startup.observe_browser_startup.&lt;locals&gt;.ObservedChrome object at 0x&lt;addr&gt;&gt;
+deadline = 1078.492974268
+
+    def _recv(self, deadline: float) -&gt; dict:
+        if self._failure:
+            raise RuntimeError(self._failure)
+        remaining = deadline - time.monotonic()
+        if remaining &lt;= 0:
+            raise self._timeout_error("Chrome did not answer within the timeout")
+        try:
+            message = self._inbox.get(timeout=remaining)
+        except queue.Empty as exc:
+&gt;           raise self._timeout_error("Chrome did not answer within the timeout") from exc
+E           TimeoutError: Chrome did not answer within the timeout; the browser process is still running and has not answered
+E           [63522:63543:1030/052803.590377:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /tmp/chrome-pipe-sufl27nk/no-bus.sock: No such file or directory
+E           [63522:63543:1030/052803.590471:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /tmp/chrome-pipe-sufl27nk/no-bus.sock: No such file or directory
+
+dragowing/chrome_pipe.py:370: TimeoutError</failure></testcase><testcase classname="dragowing.tests.test_export" name="test_export_failure_preserves_destination_and_releases_target" time="32.015"><failure message="TimeoutError: Chrome did not answer within the timeout; the browser process is still running and has not answered&#10;[63546:63559:1030/052806.196903:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /tmp/chrome-pipe-i48sqcw5/no-bus.sock: No such file or directory&#10;[63546:63559:1030/052806.197014:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /tmp/chrome-pipe-i48sqcw5/no-bus.sock: No such file or directory&#10;[63546:63559:1030/052819.061112:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /tmp/chrome-pipe-i48sqcw5/no-bus.sock: No such file or directory&#10;[63546:63559:1030/052819.061235:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /tmp/chrome-pipe-i48sqcw5/no-bus.sock: No such file or directory&#10;[63546:63559:1030/052819.061276:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /tmp/chrome-pipe-i48sqcw5/no-bus.sock: No such file or directory&#10;[63546:63559:1030/052819.061308:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /tmp/chrome-pipe-i48sqcw5/no-bus.sock: No such file or directory&#10;[63546:63559:1030/052819.061387:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /tmp/chrome-pipe-i48sqcw5/no-bus.sock: No such file or directory">self = &lt;scripts.observe_dragowing_startup.observe_browser_startup.&lt;locals&gt;.ObservedChrome object at 0x&lt;addr&gt;&gt;
+deadline = 1110.565260452
+
+    def _recv(self, deadline: float) -&gt; dict:
+        if self._failure:
+            raise RuntimeError(self._failure)
+        remaining = deadline - time.monotonic()
+        if remaining &lt;= 0:
+            raise self._timeout_error("Chrome did not answer within the timeout")
+        try:
+&gt;           message = self._inbox.get(timeout=remaining)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+dragowing/chrome_pipe.py:368: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;queue.Queue object at 0x&lt;addr&gt;&gt;, block = True
+timeout = 29.99970845300004
+
+    def get(self, block=True, timeout=None):
+        '''Remove and return an item from the queue.
+    
+        If optional args 'block' is true and 'timeout' is None (the default),
+        block if necessary until an item is available. If 'timeout' is
+        a non-negative number, it blocks at most 'timeout' seconds and raises
+        the Empty exception if no item was available within that time.
+        Otherwise ('block' is false), return an item if one is immediately
+        available, else raise the Empty exception ('timeout' is ignored
+        in that case).
+        '''
+        with self.not_empty:
+            if not block:
+                if not self._qsize():
+                    raise Empty
+            elif timeout is None:
+                while not self._qsize():
+                    self.not_empty.wait()
+            elif timeout &lt; 0:
+                raise ValueError("'timeout' must be a non-negative number")
+            else:
+                endtime = time() + timeout
+                while not self._qsize():
+                    remaining = endtime - time()
+                    if remaining &lt;= 0.0:
+&gt;                       raise Empty
+E                       _queue.Empty
+
+&lt;toolcache&gt;/Python/3.11.17/x64/lib/python3.11/queue.py:179: Empty
+
+The above exception was the direct cause of the following exception:
+
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_export_failure_preserves_0')
+plotly_chrome_executable = '/usr/bin/chromium'
+
+    def test_export_failure_preserves_destination_and_releases_target(tmp_path, plotly_chrome_executable):
+        out = tmp_path / "existing.png"
+        out.write_bytes(b"previous-result")
+&gt;       with RenderSession(chrome=plotly_chrome_executable, offline=True) as session:
+
+dragowing/tests/test_export.py:218: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+dragowing/render.py:109: in __enter__
+    self.start()
+dragowing/render.py:121: in start
+    self.browser.start()
+scripts/observe_dragowing_startup.py:83: in start
+    return super().start()
+           ^^^^^^^^^^^^^^^
+scripts/diagnose_dragowing_browser.py:340: in start
+    super().start()
+dragowing/chrome_pipe.py:142: in start
+    self.call("Browser.getVersion", timeout=self.timeout)
+scripts/diagnose_dragowing_browser.py:370: in call
+    result = super().call(method, *args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+dragowing/chrome_pipe.py:152: in call
+    message = self._recv(deadline)
+              ^^^^^^^^^^^^^^^^^^^^
+scripts/diagnose_dragowing_browser.py:404: in _recv
+    result = super()._recv(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;scripts.observe_dragowing_startup.observe_browser_startup.&lt;locals&gt;.ObservedChrome object at 0x&lt;addr&gt;&gt;
+deadline = 1110.565260452
+
+    def _recv(self, deadline: float) -&gt; dict:
+        if self._failure:
+            raise RuntimeError(self._failure)
+        remaining = deadline - time.monotonic()
+        if remaining &lt;= 0:
+            raise self._timeout_error("Chrome did not answer within the timeout")
+        try:
+            message = self._inbox.get(timeout=remaining)
+        except queue.Empty as exc:
+&gt;           raise self._timeout_error("Chrome did not answer within the timeout") from exc
+E           TimeoutError: Chrome did not answer within the timeout; the browser process is still running and has not answered
+E           [63546:63559:1030/052806.196903:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /tmp/chrome-pipe-i48sqcw5/no-bus.sock: No such file or directory
+E           [63546:63559:1030/052806.197014:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /tmp/chrome-pipe-i48sqcw5/no-bus.sock: No such file or directory
+E           [63546:63559:1030/052819.061112:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /tmp/chrome-pipe-i48sqcw5/no-bus.sock: No such file or directory
+E           [63546:63559:1030/052819.061235:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /tmp/chrome-pipe-i48sqcw5/no-bus.sock: No such file or directory
+E           [63546:63559:1030/052819.061276:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /tmp/chrome-pipe-i48sqcw5/no-bus.sock: No such file or directory
+E           [63546:63559:1030/052819.061308:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /tmp/chrome-pipe-i48sqcw5/no-bus.sock: No such file or directory
+E           [63546:63559:1030/052819.061387:ERROR:dbus/bus.cc:405] Failed to connect to the bus: Failed to connect to socket /tmp/chrome-pipe-i48sqcw5/no-bus.sock: No such file or directory
+
+dragowing/chrome_pipe.py:370: TimeoutError</failure></testcase></testsuite></testsuites>

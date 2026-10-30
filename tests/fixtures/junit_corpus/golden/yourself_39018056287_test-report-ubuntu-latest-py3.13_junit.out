@@ -1,0 +1,19 @@
+FOUND: exit code: 1
+FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/yourself_39018056287_test-report-ubuntu-latest-py3.13_junit.xml): 1
+FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/yourself_39018056287_test-report-ubuntu-latest-py3.13_junit.xml): def test_proxy_denied_with_reason_and_credentials_sent():\n        seen = []\n        port = serve_once(b"HTTP/1.1 403 Forbidden\r\nContent-Length: 20\r\n\r\nblocked:   no  rule\n", seen)\n        [row] = yourself.reach(["cdn.example.com"], environ={"HTTPS_PROXY": "http://u:p@127.0.0.1:%d" % port})\n        assert row["status"] == "proxy_denied" and row["detail"] == "403 blocked: no rule" and row[
+FOUND: junit failure groups (<repo>/tests/fixtures/junit_corpus/cases/yourself_39018056287_test-report-ubuntu-latest-py3.13_junit.xml): 1 failure in 1 group
+FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/yourself_39018056287_test-report-ubuntu-latest-py3.13_junit.xml): tests.test_yourself_reach_runtimes
+FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/yourself_39018056287_test-report-ubuntu-latest-py3.13_junit.xml): ValueError
+FOUND: python version: 3.12.15 (cpython)
+FOUND: node version: v24.22.1
+FOUND: gh version: gh version 2.103.2 (2026-10-23)
+FOUND: environment variable count: 123
+FOUND: environment variable names: ACCEPT_EULA, ACTIONS_ORCHESTRATION_ID, ACTIONS_RUNNER_ACTION_ARCHIVE_CACHE, ACTIONS_RUNNER_RETURN_JOB_RESULT_FOR_HOSTED, AGENT_TOOLSDIRECTORY, ANDROID_HOME, ANDROID_NDK, ANDROID_NDK_HOME, ANDROID_NDK_LATEST_HOME, ANDROID_NDK_ROOT, ANDROID_SDK_ROOT, ANT_HOME, AZURE_EXTENSION_DIR, BOOTSTRAP_HASKELL_NONINTERACTIVE, CHROMEWEBDRIVER, CHROME_BIN, CI, DEBIAN_FRONTEND, DOTNET_MULTILEVEL_LOOKUP, DOTNET_NOLOGO, DOTNET_SKIP_FIRST_TIME_EXPERIENCE, EDGEWEBDRIVER, ENABLE_RUNNER_TRACING, GECKOWEBDRIVER, GHCUP_INSTALL_BASE_PREFIX, GITHUB_ACTION, GITHUB_ACTIONS, GITHUB_ACTION_REF, GITHUB_ACTION_REPOSITORY, GITHUB_ACTOR, GITHUB_ACTOR_ID, GITHUB_API_URL, GITHUB_ARTIFACTS, GITHUB_ARTIFACTS_LIST, GITHUB_BASE_REF, GITHUB_ENV, GITHUB_EVENT_NAME, GITHUB_EVENT_PATH, GITHUB_GRAPHQL_URL, GITHUB_HEAD_REF, ...
+NOT FOUND: junit errors (<repo>/tests/fixtures/junit_corpus/cases/yourself_39018056287_test-report-ubuntu-latest-py3.13_junit.xml)
+NOT FOUND: junit skipped (<repo>/tests/fixtures/junit_corpus/cases/yourself_39018056287_test-report-ubuntu-latest-py3.13_junit.xml)
+NOT FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/yourself_39018056287_test-report-ubuntu-latest-py3.13_junit.xml)
+NOT FOUND: junit system-err (<repo>/tests/fixtures/junit_corpus/cases/yourself_39018056287_test-report-ubuntu-latest-py3.13_junit.xml)
+NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/yourself_39018056287_test-report-ubuntu-latest-py3.13_junit.xml)
+NOT FOUND: lock files in project root
+HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/yourself_39018056287_test-report-ubuntu-latest-py3.13_junit.xml): pytest/python
+HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/yourself_39018056287_test-report-ubuntu-latest-py3.13_junit.xml): def test_proxy_denied_with_reason_and_credentials_sent():\n        seen = []\n        port = serve_once(b"HTTP/1.1 403 Forbidden\r\nContent-Length: 20\r\n\r\nblocked:   no  rule\n", seen)\n        [row] = yourself.reach(["cdn.example.com"], environ={"HTTPS_PROXY": "http://u:p@127.0.0.1:%d" % port})\n        assert row["status"] == "proxy_denied" and row["detail"] == "403 blocked: no rule" and row[

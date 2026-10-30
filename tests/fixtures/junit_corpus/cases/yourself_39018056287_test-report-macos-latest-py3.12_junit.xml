@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="185" time="11.450" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_yourself_reach_runtimes" name="test_proxy_denied_with_reason_and_credentials_sent" time="0.005"><failure message="ValueError: unsupported format character 'b' (0x62) at index 11">def test_proxy_denied_with_reason_and_credentials_sent():
+        seen = []
+        port = serve_once(b"HTTP/1.1 403 Forbidden\r\nContent-Length: 20\r\n\r\nblocked:   no  rule\n", seen)
+        [row] = yourself.reach(["cdn.example.com"], environ={"HTTPS_PROXY": "http://u:p@127.0.0.1:%d" % port})
+        assert row["status"] == "proxy_denied" and row["detail"] == "403 blocked: no rule" and row["via"] == "proxy"
+        assert seen[0].startswith("CONNECT cdn.example.com:443 HTTP/1.1\r\n")
+        assert "Proxy-Authorization: Basic dTpw" in seen[0]
+        assert "u:p" not in json.dumps(row)
+        seen = []
+        port = serve_once(b"HTTP/1.1 403 Forbidden\r\n\r\n", seen)
+&gt;       yourself.reach(["cdn.example.com"], environ={"HTTPS_PROXY": "http://a%40b:p%3Aq@127.0.0.1:%d" % port})
+                                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ValueError: unsupported format character 'b' (0x62) at index 11
+
+tests/test_yourself_reach_runtimes.py:65: ValueError</failure></testcase></testsuite></testsuites>

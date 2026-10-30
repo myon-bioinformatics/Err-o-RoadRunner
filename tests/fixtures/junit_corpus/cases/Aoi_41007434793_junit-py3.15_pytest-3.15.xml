@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="39" tests="3310" time="731.318" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_dragowing_browser_workflow" name="test_first_start_context_uses_fresh_jobs_and_unchanged_test_order" time="0.001"><failure message="AssertionError: assert '-p scripts.observe_dragowing_startup' in '    name: First actual startup (${{ matrix.context }}, Python 3.14)\n    runs-on: ubuntu-24.04\n    timeout-minutes: ... }}-py3.14\n          path: build/startup-context/\n          if-no-files-found: error\n          retention-days: 14\n'">def test_first_start_context_uses_fresh_jobs_and_unchanged_test_order():
+        text = (ROOT / ".github/workflows/browser-startup-validation.yml").read_text(encoding="utf-8")
+        job = text.split("\n  first-start-context:\n", 1)[1].split("\n  compare:\n", 1)[0]
+        assert "context: [normal, offline]" in job
+        assert "fail-fast: false" in job
+        assert "runs-on: ubuntu-24.04" in job
+        assert "python-version: '3.14'" in job
+        assert "uv sync --locked --python 3.14" in job
+        assert "sudo unshare --net --" in job
+        assert "diagnose_dragowing_browser.py" not in job
+        assert "--runs" not in job and "--timeout" not in job
+        assert '"$chromium" --version' in job
+&gt;       assert "-p scripts.observe_dragowing_startup" in job
+E       AssertionError: assert '-p scripts.observe_dragowing_startup' in '    name: First actual startup (${{ matrix.context }}, Python 3.14)\n    runs-on: ubuntu-24.04\n    timeout-minutes: ... }}-py3.14\n          path: build/startup-context/\n          if-no-files-found: error\n          retention-days: 14\n'
+
+tests/test_dragowing_browser_workflow.py:111: AssertionError</failure></testcase><testcase classname="tests.test_dragowing_browser_workflow" name="test_first_start_shell_only_changes_execution_context" time="0.013"><failure message="AssertionError: assert False&#10; +  where False = &lt;built-in method startswith of str object at 0x&lt;addr&gt;&gt;('-m\npytest\n-c\npyproject.toml\n-q\n')&#10; +    where &lt;built-in method startswith of str object at 0x&lt;addr&gt;&gt; = '-m\nscripts.run_browser_startup_ci\n--output\nbuild/startup-context\n'.startswith">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_first_start_shell_only_ch0')
+
+    def test_first_start_shell_only_changes_execution_context(tmp_path):
+        script = _selection_step(ROOT / ".github/workflows/browser-startup-validation.yml",
+                                 "Observe the actual tests without preceding browser launches", "first-start-context")
+        binary = tmp_path / "bin"
+        binary.mkdir()
+        python = tmp_path / ".venv/bin/python"
+        python.parent.mkdir(parents=True)
+        python.write_text('#!/bin/bash\nprintf "%s\\n" "$@" &gt; "$PWD/args"\nprintf "%s\\n" "$CHROME" "$DRAGOWING_REQUIRE_CHROME" "$DRAGOWING_PINNED_PLOTLY_JS" &gt; "$PWD/env"\n')
+        python.chmod(0o755)
+        for name, body in (("sudo", 'printf "%s\\n" "$@" &gt; "$PWD/sudo-args"; exec "$@"'),
+                           ("unshare", 'test "$1" = --net &amp;&amp; test "$2" = --; shift 2; exec "$@"')):
+            path = binary / name
+            path.write_text("#!/bin/bash\n" + body + "\n")
+            path.chmod(0o755)
+        results = []
+        for context in ("normal", "offline"):
+            result = subprocess.run(["/bin/bash", "-e", "-c", script], cwd=tmp_path, capture_output=True, text=True,
+                                    env={**os.environ, "STARTUP_CONTEXT": context, "CHROME": "/explicit/chromium",
+                                         "PATH": str(binary) + ":/usr/bin:/bin"})
+            assert result.returncode == 0, result.stderr
+            results.append(((tmp_path / "args").read_text(), (tmp_path / "env").read_text()))
+            assert (tmp_path / "sudo-args").exists() == (context == "offline")
+        assert results[0] == results[1]
+&gt;       assert results[0][0].startswith("-m\npytest\n-c\npyproject.toml\n-q\n")
+E       AssertionError: assert False
+E        +  where False = &lt;built-in method startswith of str object at 0x&lt;addr&gt;&gt;('-m\npytest\n-c\npyproject.toml\n-q\n')
+E        +    where &lt;built-in method startswith of str object at 0x&lt;addr&gt;&gt; = '-m\nscripts.run_browser_startup_ci\n--output\nbuild/startup-context\n'.startswith
+
+tests/test_dragowing_browser_workflow.py:145: AssertionError</failure></testcase></testsuite></testsuites>

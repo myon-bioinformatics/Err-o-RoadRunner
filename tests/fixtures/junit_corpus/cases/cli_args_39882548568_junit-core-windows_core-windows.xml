@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="5" skipped="0" tests="160" time="13.016" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_node_bridge" name="test_node_command_argv_order_and_passthrough" time="0.004"><failure message="cli_args.NodeNotFoundError: cli_args: node version probe failed: C:\Users\runneradmin\AppData\Local\Temp\pytest-of-runneradmin\pytest-0\test_node_command_argv_order_a0\node-bin">cli_args.py:403: in _probe_node_once
+    completed = subprocess.run(
+C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\subprocess.py:548: in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\subprocess.py:1026: in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\subprocess.py:1538: in _execute_child
+    hp, ht, pid, tid = _winapi.CreateProcess(executable, args,
+E   OSError: [WinError 193] %1 is not a valid Win32 application
+
+The above exception was the direct cause of the following exception:
+tests\test_node_bridge.py:62: in test_node_command_argv_order_and_passthrough
+    command = node_command(
+cli_args.py:461: in node_command
+    executable = resolve_node(node)
+                 ^^^^^^^^^^^^^^^^^^
+cli_args.py:436: in resolve_node
+    return _probe_node_once(path)
+           ^^^^^^^^^^^^^^^^^^^^^^
+cli_args.py:409: in _probe_node_once
+    raise NodeNotFoundError("cli_args: node version probe failed: " + path) from exc
+E   cli_args.NodeNotFoundError: cli_args: node version probe failed: C:\Users\runneradmin\AppData\Local\Temp\pytest-of-runneradmin\pytest-0\test_node_command_argv_order_a0\node-bin</failure></testcase><testcase classname="tests.test_node_bridge" name="test_add_node_arguments_and_parser_integration" time="0.005"><failure message="cli_args.NodeNotFoundError: cli_args: node version probe failed: C:\Users\runneradmin\AppData\Local\Temp\pytest-of-runneradmin\pytest-0\test_add_node_arguments_and_pa0\node-bin">cli_args.py:403: in _probe_node_once
+    completed = subprocess.run(
+C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\subprocess.py:548: in run
+    with Popen(*popenargs, **kwargs) as process:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\subprocess.py:1026: in __init__
+    self._execute_child(args, executable, preexec_fn, close_fds,
+C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\subprocess.py:1538: in _execute_child
+    hp, ht, pid, tid = _winapi.CreateProcess(executable, args,
+E   OSError: [WinError 193] %1 is not a valid Win32 application
+
+The above exception was the direct cause of the following exception:
+tests\test_node_bridge.py:92: in test_add_node_arguments_and_parser_integration
+    command = node_or_command(("tool.js", "run"), node=args.node, node_flags=args.node_flags)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cli_args.py:482: in node_or_command
+    return node_command(tokens[0], *tokens[1:], node=node, node_flags=node_flags)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cli_args.py:461: in node_command
+    executable = resolve_node(node)
+                 ^^^^^^^^^^^^^^^^^^
+cli_args.py:436: in resolve_node
+    return _probe_node_once(path)
+           ^^^^^^^^^^^^^^^^^^^^^^
+cli_args.py:409: in _probe_node_once
+    raise NodeNotFoundError("cli_args: node version probe failed: " + path) from exc
+E   cli_args.NodeNotFoundError: cli_args: node version probe failed: C:\Users\runneradmin\AppData\Local\Temp\pytest-of-runneradmin\pytest-0\test_add_node_arguments_and_pa0\node-bin</failure></testcase><testcase classname="tests.test_node_bridge" name="test_resolve_node_rejects_old_version" time="0.004"><failure message="AssertionError: Regex pattern did not match.&#10;  Expected regex: '18'&#10;  Actual message: 'cli_args: node version probe failed: C:\\Users\\runneradmin\\AppData\\Local\\Temp\\pytest-of-runneradmin\\pytest-0\\test_resolve_node_rejects_old_0\\fake-node'">tests\test_node_bridge.py:127: in test_resolve_node_rejects_old_version
+    with pytest.raises(NodeNotFoundError, match="18"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AssertionError: Regex pattern did not match.
+E     Expected regex: '18'
+E     Actual message: 'cli_args: node version probe failed: C:\\Users\\runneradmin\\AppData\\Local\\Temp\\pytest-of-runneradmin\\pytest-0\\test_resolve_node_rejects_old_0\\fake-node'</failure></testcase><testcase classname="tests.test_node_bridge" name="test_resolve_node_probe_timeout" time="0.004"><failure message="AssertionError: Regex pattern did not match.&#10;  Expected regex: 'timed out'&#10;  Actual message: 'cli_args: node version probe failed: C:\\Users\\runneradmin\\AppData\\Local\\Temp\\pytest-of-runneradmin\\pytest-0\\test_resolve_node_probe_timeou0\\slow-node'">tests\test_node_bridge.py:136: in test_resolve_node_probe_timeout
+    with pytest.raises(NodeNotFoundError, match="timed out"):
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AssertionError: Regex pattern did not match.
+E     Expected regex: 'timed out'
+E     Actual message: 'cli_args: node version probe failed: C:\\Users\\runneradmin\\AppData\\Local\\Temp\\pytest-of-runneradmin\\pytest-0\\test_resolve_node_probe_timeou0\\slow-node'</failure></testcase><testcase classname="tests.test_node_bridge" name="test_resolve_node_discovery_order" time="0.027"><failure message="AssertionError: assert 'C:\\hostedto...x64\\node.EXE' == 'C:\\Users\\r...\primary-node'&#10;  &#10;  - C:\Users\runneradmin\AppData\Local\Temp\pytest-of-runneradmin\pytest-0\test_resolve_node_discovery_or0\primary-node&#10;  + C:\hostedtoolcache\windows\node\26.12.1\x64\node.EXE">tests\test_node_bridge.py:147: in test_resolve_node_discovery_order
+    assert resolve_node() == str(primary)
+E   AssertionError: assert 'C:\\hostedto...x64\\node.EXE' == 'C:\\Users\\r...\primary-node'
+E     
+E     - C:\Users\runneradmin\AppData\Local\Temp\pytest-of-runneradmin\pytest-0\test_resolve_node_discovery_or0\primary-node
+E     + C:\hostedtoolcache\windows\node\26.12.1\x64\node.EXE</failure></testcase></testsuite></testsuites>

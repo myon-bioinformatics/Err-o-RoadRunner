@@ -1,0 +1,21 @@
+FOUND: exit code: 1
+FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/mcp-toolcall-lab_40230794825_junit-python-3.12.15-node-24.22.xml): 1
+FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/mcp-toolcall-lab_40230794825_junit-python-3.12.15-node-24.22.xml): assert 400 == 202\n +  where 400 = <Response [400 Bad Request]>.status_code\ndef test_deno_session_expires_after_ttl() -> None:\n        with running_wikipedia_mcp(extra_env={"MCP_SESSION_TTL_SECONDS": "1"}) as server:\n            session = DenoMcpSession(server.url)\n            try:\n>               session.initialize()\n\ntests/test_wikipedia_mcp_deno.py:570: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+FOUND: junit failure groups (<repo>/tests/fixtures/junit_corpus/cases/mcp-toolcall-lab_40230794825_junit-python-3.12.15-node-24.22.xml): 1 failure in 1 group
+FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/mcp-toolcall-lab_40230794825_junit-python-3.12.15-node-24.22.xml): tests.test_wikipedia_mcp_deno
+FOUND: python version: 3.12.15 (cpython)
+FOUND: node version: v24.22.1
+FOUND: gh version: gh version 2.103.2 (2026-10-23)
+FOUND: environment variable count: 123
+FOUND: environment variable names: ACCEPT_EULA, ACTIONS_ORCHESTRATION_ID, ACTIONS_RUNNER_ACTION_ARCHIVE_CACHE, ACTIONS_RUNNER_RETURN_JOB_RESULT_FOR_HOSTED, AGENT_TOOLSDIRECTORY, ANDROID_HOME, ANDROID_NDK, ANDROID_NDK_HOME, ANDROID_NDK_LATEST_HOME, ANDROID_NDK_ROOT, ANDROID_SDK_ROOT, ANT_HOME, AZURE_EXTENSION_DIR, BOOTSTRAP_HASKELL_NONINTERACTIVE, CHROMEWEBDRIVER, CHROME_BIN, CI, DEBIAN_FRONTEND, DOTNET_MULTILEVEL_LOOKUP, DOTNET_NOLOGO, DOTNET_SKIP_FIRST_TIME_EXPERIENCE, EDGEWEBDRIVER, ENABLE_RUNNER_TRACING, GECKOWEBDRIVER, GHCUP_INSTALL_BASE_PREFIX, GITHUB_ACTION, GITHUB_ACTIONS, GITHUB_ACTION_REF, GITHUB_ACTION_REPOSITORY, GITHUB_ACTOR, GITHUB_ACTOR_ID, GITHUB_API_URL, GITHUB_ARTIFACTS, GITHUB_ARTIFACTS_LIST, GITHUB_BASE_REF, GITHUB_ENV, GITHUB_EVENT_NAME, GITHUB_EVENT_PATH, GITHUB_GRAPHQL_URL, GITHUB_HEAD_REF, ...
+NOT FOUND: junit errors (<repo>/tests/fixtures/junit_corpus/cases/mcp-toolcall-lab_40230794825_junit-python-3.12.15-node-24.22.xml)
+NOT FOUND: junit skipped (<repo>/tests/fixtures/junit_corpus/cases/mcp-toolcall-lab_40230794825_junit-python-3.12.15-node-24.22.xml)
+NOT FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/mcp-toolcall-lab_40230794825_junit-python-3.12.15-node-24.22.xml)
+NOT FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/mcp-toolcall-lab_40230794825_junit-python-3.12.15-node-24.22.xml)
+NOT FOUND: junit system-err (<repo>/tests/fixtures/junit_corpus/cases/mcp-toolcall-lab_40230794825_junit-python-3.12.15-node-24.22.xml)
+NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/mcp-toolcall-lab_40230794825_junit-python-3.12.15-node-24.22.xml)
+NOT FOUND: lock files in project root
+HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/mcp-toolcall-lab_40230794825_junit-python-3.12.15-node-24.22.xml): pytest/python
+HINT: junit pytest assert line (<repo>/tests/fixtures/junit_corpus/cases/mcp-toolcall-lab_40230794825_junit-python-3.12.15-node-24.22.xml): E       assert 400 == 202
+HINT: junit assertion diff (<repo>/tests/fixtures/junit_corpus/cases/mcp-toolcall-lab_40230794825_junit-python-3.12.15-node-24.22.xml):  +  where 400 = <Response [400 Bad Request]>.status_code
+HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/mcp-toolcall-lab_40230794825_junit-python-3.12.15-node-24.22.xml): assert 400 == 202\n +  where 400 = <Response [400 Bad Request]>.status_code\ndef test_deno_session_expires_after_ttl() -> None:\n        with running_wikipedia_mcp(extra_env={"MCP_SESSION_TTL_SECONDS": "1"}) as server:\n            session = DenoMcpSession(server.url)\n            try:\n>               session.initialize()\n\ntests/test_wikipedia_mcp_deno.py:570: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 

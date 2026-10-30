@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="15" tests="1083" time="157.669" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_junit_failure_identity" name="test_workflow_keeps_suite_failure_and_exact_reports" time="0.053"><failure message="StopIteration">tests/test_junit_failure_identity.py:107: in test_workflow_keeps_suite_failure_and_exact_reports
+    unittest_index = next(i for i, s in enumerate(steps) if 'python -m unittest ' in s.get('run', ''))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   StopIteration</failure></testcase></testsuite></testsuites>
