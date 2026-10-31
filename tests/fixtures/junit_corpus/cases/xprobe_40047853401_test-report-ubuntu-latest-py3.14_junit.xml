@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="2" failures="3" skipped="2" tests="9" time="0.047" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="test_example" name="test_bad[SECRET_ONE]" time="0.001"><failure message="AssertionError: SECRET_ONE&#10;assert False">value = 'SECRET_ONE'
+
+    @pytest.mark.parametrize("value", ["SECRET_ONE", "SECRET_TWO"])
+    def test_bad(value):
+        print("SECRET_STDOUT")
+        print("SECRET_STDERR", file=sys.stderr)
+&gt;       assert False, value
+E       AssertionError: SECRET_ONE
+E       assert False
+
+test_example.py:7: AssertionError</failure><system-out>--------------------------------- Captured Log ---------------------------------
+
+--------------------------------- Captured Out ---------------------------------
+SECRET_STDOUT
+
+</system-out><system-err>--------------------------------- Captured Err ---------------------------------
+SECRET_STDERR
+
+</system-err></testcase><testcase classname="test_example" name="test_bad[SECRET_TWO]" time="0.001"><failure message="AssertionError: SECRET_TWO&#10;assert False">value = 'SECRET_TWO'
+
+    @pytest.mark.parametrize("value", ["SECRET_ONE", "SECRET_TWO"])
+    def test_bad(value):
+        print("SECRET_STDOUT")
+        print("SECRET_STDERR", file=sys.stderr)
+&gt;       assert False, value
+E       AssertionError: SECRET_TWO
+E       assert False
+
+test_example.py:7: AssertionError</failure><system-out>--------------------------------- Captured Log ---------------------------------
+
+--------------------------------- Captured Out ---------------------------------
+SECRET_STDOUT
+
+</system-out><system-err>--------------------------------- Captured Err ---------------------------------
+SECRET_STDERR
+
+</system-err></testcase><testcase classname="test_example" name="test_strict" time="0.000"><failure message="[XPASS(strict)] SECRET_STRICT">[XPASS(strict)] SECRET_STRICT</failure><system-out>--------------------------------- Captured Log ---------------------------------
+
+--------------------------------- Captured Out ---------------------------------
+
+</system-out><system-err>--------------------------------- Captured Err ---------------------------------
+
+</system-err></testcase><testcase classname="test_example" name="test_setup" time="0.000"><error message="failed on setup with &quot;RuntimeError: SECRET_SETUP&quot;">@pytest.fixture
+&gt;   def broken(): raise RuntimeError("SECRET_SETUP")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   RuntimeError: SECRET_SETUP
+
+test_example.py:17: RuntimeError</error><system-out>--------------------------------- Captured Log ---------------------------------
+
+--------------------------------- Captured Out ---------------------------------
+
+</system-out><system-err>--------------------------------- Captured Err ---------------------------------
+
+</system-err></testcase><testcase classname="test_example" name="test_teardown" time="0.000"><error message="failed on teardown with &quot;RuntimeError: SECRET_TEARDOWN&quot;">@pytest.fixture
+    def teardown():
+        yield
+&gt;       raise RuntimeError("SECRET_TEARDOWN")
+E       RuntimeError: SECRET_TEARDOWN
+
+test_example.py:22: RuntimeError</error><system-out>--------------------------------- Captured Log ---------------------------------
+
+--------------------------------- Captured Out ---------------------------------
+
+</system-out><system-err>--------------------------------- Captured Err ---------------------------------
+
+</system-err></testcase></testsuite></testsuites>

@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="17" skipped="12" tests="1755" time="92.091" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_flutter_vendor_registry_sync" name="test_real_reviewed_workflow_acceptance_and_refresh_rejections[None-current]" time="0.002"><failure message="AssertionError: assert '075e08530e6c...244ff047ab23f' == '5a647a52c969...857c86d19cea7'&#10;  &#10;  - 5a647a52c96976b4318764fdaa4857c86d19cea7&#10;  + 075e08530e6c02b9f0b2194922f244ff047ab23f">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+fault = None, baseline = 'current'
+
+    @pytest.mark.parametrize("baseline", ["historical", "current"])
+    @pytest.mark.parametrize("fault", [None, "removed", "disabled", "ignored", "command",
+                                      "trigger", "digest", "revision", "missing"])
+    def test_real_reviewed_workflow_acceptance_and_refresh_rejections(monkeypatch, fault, baseline):
+        if baseline == "current":
+            registry = json.loads((ROOT / "vendor-consumers.json").read_text())
+            heads = json.loads((ROOT / "child-heads.json").read_text())
+            workflow_fixture = "tests/fixtures/flutter_non_dart_20261029.yml"
+            expected_sha = "5a647a52c96976b4318764fdaa4857c86d19cea7"
+        else:
+            registry = load("vendor-consumers.json")
+            heads = load("child-heads.json")
+            workflow_fixture = WORKFLOW_FIXTURE
+            expected_sha = "4b0fbfbc14eb2d478af1c7bc8d5a1942a4dad454"
+        consumer = vendor_consumers.get_consumer(registry, FLUTTER)
+        contract = consumer["locked_ci"]
+        approved = (ROOT / workflow_fixture).read_bytes()
+        assert hashlib.sha256(approved).hexdigest() == contract["sha256"]
+        recorded = heads["heads"][FLUTTER]
+        assert recorded["repository_id"] == 739348522
+&gt;       assert recorded["sha"] == expected_sha
+E       AssertionError: assert '075e08530e6c...244ff047ab23f' == '5a647a52c969...857c86d19cea7'
+E         
+E         - 5a647a52c96976b4318764fdaa4857c86d19cea7
+E         + 075e08530e6c02b9f0b2194922f244ff047ab23f
+
+tests/test_flutter_vendor_registry_sync.py:150: AssertionError</failure></testcase><testcase classname="tests.test_flutter_vendor_registry_sync" name="test_real_reviewed_workflow_acceptance_and_refresh_rejections[removed-current]" time="0.002"><failure message="AssertionError: assert '075e08530e6c...244ff047ab23f' == '5a647a52c969...857c86d19cea7'&#10;  &#10;  - 5a647a52c96976b4318764fdaa4857c86d19cea7&#10;  + 075e08530e6c02b9f0b2194922f244ff047ab23f">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+fault = 'removed', baseline = 'current'
+
+    @pytest.mark.parametrize("baseline", ["historical", "current"])
+    @pytest.mark.parametrize("fault", [None, "removed", "disabled", "ignored", "command",
+                                      "trigger", "digest", "revision", "missing"])
+    def test_real_reviewed_workflow_acceptance_and_refresh_rejections(monkeypatch, fault, baseline):
+        if baseline == "current":
+            registry = json.loads((ROOT / "vendor-consumers.json").read_text())
+            heads = json.loads((ROOT / "child-heads.json").read_text())
+            workflow_fixture = "tests/fixtures/flutter_non_dart_20261029.yml"
+            expected_sha = "5a647a52c96976b4318764fdaa4857c86d19cea7"
+        else:
+            registry = load("vendor-consumers.json")
+            heads = load("child-heads.json")
+            workflow_fixture = WORKFLOW_FIXTURE
+            expected_sha = "4b0fbfbc14eb2d478af1c7bc8d5a1942a4dad454"
+        consumer = vendor_consumers.get_consumer(registry, FLUTTER)
+        contract = consumer["locked_ci"]
+        approved = (ROOT / workflow_fixture).read_bytes()
+        assert hashlib.sha256(approved).hexdigest() == contract["sha256"]
+        recorded = heads["heads"][FLUTTER]
+        assert recorded["repository_id"] == 739348522
+&gt;       assert recorded["sha"] == expected_sha
+E       AssertionError: assert '075e08530e6c...244ff047ab23f' == '5a647a52c969...857c86d19cea7'
+E         
+E         - 5a647a52c96976b4318764fdaa4857c86d19cea7
+E         + 075e08530e6c02b9f0b2194922f244ff047ab23f
+
+tests/test_flutter_vendor_registry_sync.py:150: AssertionError</failure></testcase><testcase classname="tests.test_flutter_vendor_registry_sync" name="test_real_reviewed_workflow_acceptance_and_refresh_rejections[disabled-current]" time="0.002"><failure message="AssertionError: assert '075e08530e6c...244ff047ab23f' == '5a647a52c969...857c86d19cea7'&#10;  &#10;  - 5a647a52c96976b4318764fdaa4857c86d19cea7&#10;  + 075e08530e6c02b9f0b2194922f244ff047ab23f">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+fault = 'disabled', baseline = 'current'
+
+    @pytest.mark.parametrize("baseline", ["historical", "current"])
+    @pytest.mark.parametrize("fault", [None, "removed", "disabled", "ignored", "command",
+                                      "trigger", "digest", "revision", "missing"])
+    def test_real_reviewed_workflow_acceptance_and_refresh_rejections(monkeypatch, fault, baseline):
+        if baseline == "current":
+            registry = json.loads((ROOT / "vendor-consumers.json").read_text())
+            heads = json.loads((ROOT / "child-heads.json").read_text())
+            workflow_fixture = "tests/fixtures/flutter_non_dart_20261029.yml"
+            expected_sha = "5a647a52c96976b4318764fdaa4857c86d19cea7"
+        else:
+            registry = load("vendor-consumers.json")
+            heads = load("child-heads.json")
+            workflow_fixture = WORKFLOW_FIXTURE
+            expected_sha = "4b0fbfbc14eb2d478af1c7bc8d5a1942a4dad454"
+        consumer = vendor_consumers.get_consumer(registry, FLUTTER)
+        contract = consumer["locked_ci"]
+        approved = (ROOT / workflow_fixture).read_bytes()
+        assert hashlib.sha256(approved).hexdigest() == contract["sha256"]
+        recorded = heads["heads"][FLUTTER]
+        assert recorded["repository_id"] == 739348522
+&gt;       assert recorded["sha"] == expected_sha
+E       AssertionError: assert '075e08530e6c...244ff047ab23f' == '5a647a52c969...857c86d19cea7'
+E         
+E         - 5a647a52c96976b4318764fdaa4857c86d19cea7
+E         + 075e08530e6c02b9f0b2194922f244ff047ab23f
+
+tests/test_flutter_vendor_registry_sync.py:150: AssertionError</failure></testcase><testcase classname="tests.test_flutter_vendor_registry_sync" name="test_real_reviewed_workflow_acceptance_and_refresh_rejections[ignored-current]" time="0.002"><failure message="AssertionError: assert '075e08530e6c...244ff047ab23f' == '5a647a52c969...857c86d19cea7'&#10;  &#10;  - 5a647a52c96976b4318764fdaa4857c86d19cea7&#10;  + 075e08530e6c02b9f0b2194922f244ff047ab23f">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+fault = 'ignored', baseline = 'current'
+
+    @pytest.mark.parametrize("baseline", ["historical", "current"])
+    @pytest.mark.parametrize("fault", [None, "removed", "disabled", "ignored", "command",
+                                      "trigger", "digest", "revision", "missing"])
+    def test_real_reviewed_workflow_acceptance_and_refresh_rejections(monkeypatch, fault, baseline):
+        if baseline == "current":
+            registry = json.loads((ROOT / "vendor-consumers.json").read_text())
+            heads = json.loads((ROOT / "child-heads.json").read_text())
+            workflow_fixture = "tests/fixtures/flutter_non_dart_20261029.yml"
+            expected_sha = "5a647a52c96976b4318764fdaa4857c86d19cea7"
+        else:
+            registry = load("vendor-consumers.json")
+            heads = load("child-heads.json")
+            workflow_fixture = WORKFLOW_FIXTURE
+            expected_sha = "4b0fbfbc14eb2d478af1c7bc8d5a1942a4dad454"
+        consumer = vendor_consumers.get_consumer(registry, FLUTTER)
+        contract = consumer["locked_ci"]
+        approved = (ROOT / workflow_fixture).read_bytes()
+        assert hashlib.sha256(approved).hexdigest() == contract["sha256"]
+        recorded = heads["heads"][FLUTTER]
+        assert recorded["repository_id"] == 739348522
+&gt;       assert recorded["sha"] == expected_sha
+E       AssertionError: assert '075e08530e6c...244ff047ab23f' == '5a647a52c969...857c86d19cea7'
+E         
+E         - 5a647a52c96976b4318764fdaa4857c86d19cea7
+E         + 075e08530e6c02b9f0b2194922f244ff047ab23f
+
+tests/test_flutter_vendor_registry_sync.py:150: AssertionError</failure></testcase><testcase classname="tests.test_flutter_vendor_registry_sync" name="test_real_reviewed_workflow_acceptance_and_refresh_rejections[command-current]" time="0.001"><failure message="AssertionError: assert '075e08530e6c...244ff047ab23f' == '5a647a52c969...857c86d19cea7'&#10;  &#10;  - 5a647a52c96976b4318764fdaa4857c86d19cea7&#10;  + 075e08530e6c02b9f0b2194922f244ff047ab23f">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+fault = 'command', baseline = 'current'
+
+    @pytest.mark.parametrize("baseline", ["historical", "current"])
+    @pytest.mark.parametrize("fault", [None, "removed", "disabled", "ignored", "command",
+                                      "trigger", "digest", "revision", "missing"])
+    def test_real_reviewed_workflow_acceptance_and_refresh_rejections(monkeypatch, fault, baseline):
+        if baseline == "current":
+            registry = json.loads((ROOT / "vendor-consumers.json").read_text())
+            heads = json.loads((ROOT / "child-heads.json").read_text())
+            workflow_fixture = "tests/fixtures/flutter_non_dart_20261029.yml"
+            expected_sha = "5a647a52c96976b4318764fdaa4857c86d19cea7"
+        else:
+            registry = load("vendor-consumers.json")
+            heads = load("child-heads.json")
+            workflow_fixture = WORKFLOW_FIXTURE
+            expected_sha = "4b0fbfbc14eb2d478af1c7bc8d5a1942a4dad454"
+        consumer = vendor_consumers.get_consumer(registry, FLUTTER)
+        contract = consumer["locked_ci"]
+        approved = (ROOT / workflow_fixture).read_bytes()
+        assert hashlib.sha256(approved).hexdigest() == contract["sha256"]
+        recorded = heads["heads"][FLUTTER]
+        assert recorded["repository_id"] == 739348522
+&gt;       assert recorded["sha"] == expected_sha
+E       AssertionError: assert '075e08530e6c...244ff047ab23f' == '5a647a52c969...857c86d19cea7'
+E         
+E         - 5a647a52c96976b4318764fdaa4857c86d19cea7
+E         + 075e08530e6c02b9f0b2194922f244ff047ab23f
+
+tests/test_flutter_vendor_registry_sync.py:150: AssertionError</failure></testcase><testcase classname="tests.test_flutter_vendor_registry_sync" name="test_real_reviewed_workflow_acceptance_and_refresh_rejections[trigger-current]" time="0.002"><failure message="AssertionError: assert '075e08530e6c...244ff047ab23f' == '5a647a52c969...857c86d19cea7'&#10;  &#10;  - 5a647a52c96976b4318764fdaa4857c86d19cea7&#10;  + 075e08530e6c02b9f0b2194922f244ff047ab23f">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+fault = 'trigger', baseline = 'current'
+
+    @pytest.mark.parametrize("baseline", ["historical", "current"])
+    @pytest.mark.parametrize("fault", [None, "removed", "disabled", "ignored", "command",
+                                      "trigger", "digest", "revision", "missing"])
+    def test_real_reviewed_workflow_acceptance_and_refresh_rejections(monkeypatch, fault, baseline):
+        if baseline == "current":
+            registry = json.loads((ROOT / "vendor-consumers.json").read_text())
+            heads = json.loads((ROOT / "child-heads.json").read_text())
+            workflow_fixture = "tests/fixtures/flutter_non_dart_20261029.yml"
+            expected_sha = "5a647a52c96976b4318764fdaa4857c86d19cea7"
+        else:
+            registry = load("vendor-consumers.json")
+            heads = load("child-heads.json")
+            workflow_fixture = WORKFLOW_FIXTURE
+            expected_sha = "4b0fbfbc14eb2d478af1c7bc8d5a1942a4dad454"
+        consumer = vendor_consumers.get_consumer(registry, FLUTTER)
+        contract = consumer["locked_ci"]
+        approved = (ROOT / workflow_fixture).read_bytes()
+        assert hashlib.sha256(approved).hexdigest() == contract["sha256"]
+        recorded = heads["heads"][FLUTTER]
+        assert recorded["repository_id"] == 739348522
+&gt;       assert recorded["sha"] == expected_sha
+E       AssertionError: assert '075e08530e6c...244ff047ab23f' == '5a647a52c969...857c86d19cea7'
+E         
+E         - 5a647a52c96976b4318764fdaa4857c86d19cea7
+E         + 075e08530e6c02b9f0b2194922f244ff047ab23f
+
+tests/test_flutter_vendor_registry_sync.py:150: AssertionError</failure></testcase><testcase classname="tests.test_flutter_vendor_registry_sync" name="test_real_reviewed_workflow_acceptance_and_refresh_rejections[digest-current]" time="0.001"><failure message="AssertionError: assert '075e08530e6c...244ff047ab23f' == '5a647a52c969...857c86d19cea7'&#10;  &#10;  - 5a647a52c96976b4318764fdaa4857c86d19cea7&#10;  + 075e08530e6c02b9f0b2194922f244ff047ab23f">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+fault = 'digest', baseline = 'current'
+
+    @pytest.mark.parametrize("baseline", ["historical", "current"])
+    @pytest.mark.parametrize("fault", [None, "removed", "disabled", "ignored", "command",
+                                      "trigger", "digest", "revision", "missing"])
+    def test_real_reviewed_workflow_acceptance_and_refresh_rejections(monkeypatch, fault, baseline):
+        if baseline == "current":
+            registry = json.loads((ROOT / "vendor-consumers.json").read_text())
+            heads = json.loads((ROOT / "child-heads.json").read_text())
+            workflow_fixture = "tests/fixtures/flutter_non_dart_20261029.yml"
+            expected_sha = "5a647a52c96976b4318764fdaa4857c86d19cea7"
+        else:
+            registry = load("vendor-consumers.json")
+            heads = load("child-heads.json")
+            workflow_fixture = WORKFLOW_FIXTURE
+            expected_sha = "4b0fbfbc14eb2d478af1c7bc8d5a1942a4dad454"
+        consumer = vendor_consumers.get_consumer(registry, FLUTTER)
+        contract = consumer["locked_ci"]
+        approved = (ROOT / workflow_fixture).read_bytes()
+        assert hashlib.sha256(approved).hexdigest() == contract["sha256"]
+        recorded = heads["heads"][FLUTTER]
+        assert recorded["repository_id"] == 739348522
+&gt;       assert recorded["sha"] == expected_sha
+E       AssertionError: assert '075e08530e6c...244ff047ab23f' == '5a647a52c969...857c86d19cea7'
+E         
+E         - 5a647a52c96976b4318764fdaa4857c86d19cea7
+E         + 075e08530e6c02b9f0b2194922f244ff047ab23f
+
+tests/test_flutter_vendor_registry_sync.py:150: AssertionError</failure></testcase><testcase classname="tests.test_flutter_vendor_registry_sync" name="test_real_reviewed_workflow_acceptance_and_refresh_rejections[revision-current]" time="0.001"><failure message="AssertionError: assert '075e08530e6c...244ff047ab23f' == '5a647a52c969...857c86d19cea7'&#10;  &#10;  - 5a647a52c96976b4318764fdaa4857c86d19cea7&#10;  + 075e08530e6c02b9f0b2194922f244ff047ab23f">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+fault = 'revision', baseline = 'current'
+
+    @pytest.mark.parametrize("baseline", ["historical", "current"])
+    @pytest.mark.parametrize("fault", [None, "removed", "disabled", "ignored", "command",
+                                      "trigger", "digest", "revision", "missing"])
+    def test_real_reviewed_workflow_acceptance_and_refresh_rejections(monkeypatch, fault, baseline):
+        if baseline == "current":
+            registry = json.loads((ROOT / "vendor-consumers.json").read_text())
+            heads = json.loads((ROOT / "child-heads.json").read_text())
+            workflow_fixture = "tests/fixtures/flutter_non_dart_20261029.yml"
+            expected_sha = "5a647a52c96976b4318764fdaa4857c86d19cea7"
+        else:
+            registry = load("vendor-consumers.json")
+            heads = load("child-heads.json")
+            workflow_fixture = WORKFLOW_FIXTURE
+            expected_sha = "4b0fbfbc14eb2d478af1c7bc8d5a1942a4dad454"
+        consumer = vendor_consumers.get_consumer(registry, FLUTTER)
+        contract = consumer["locked_ci"]
+        approved = (ROOT / workflow_fixture).read_bytes()
+        assert hashlib.sha256(approved).hexdigest() == contract["sha256"]
+        recorded = heads["heads"][FLUTTER]
+        assert recorded["repository_id"] == 739348522
+&gt;       assert recorded["sha"] == expected_sha
+E       AssertionError: assert '075e08530e6c...244ff047ab23f' == '5a647a52c969...857c86d19cea7'
+E         
+E         - 5a647a52c96976b4318764fdaa4857c86d19cea7
+E         + 075e08530e6c02b9f0b2194922f244ff047ab23f
+
+tests/test_flutter_vendor_registry_sync.py:150: AssertionError</failure></testcase><testcase classname="tests.test_flutter_vendor_registry_sync" name="test_real_reviewed_workflow_acceptance_and_refresh_rejections[missing-current]" time="0.001"><failure message="AssertionError: assert '075e08530e6c...244ff047ab23f' == '5a647a52c969...857c86d19cea7'&#10;  &#10;  - 5a647a52c96976b4318764fdaa4857c86d19cea7&#10;  + 075e08530e6c02b9f0b2194922f244ff047ab23f">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+fault = 'missing', baseline = 'current'
+
+    @pytest.mark.parametrize("baseline", ["historical", "current"])
+    @pytest.mark.parametrize("fault", [None, "removed", "disabled", "ignored", "command",
+                                      "trigger", "digest", "revision", "missing"])
+    def test_real_reviewed_workflow_acceptance_and_refresh_rejections(monkeypatch, fault, baseline):
+        if baseline == "current":
+            registry = json.loads((ROOT / "vendor-consumers.json").read_text())
+            heads = json.loads((ROOT / "child-heads.json").read_text())
+            workflow_fixture = "tests/fixtures/flutter_non_dart_20261029.yml"
+            expected_sha = "5a647a52c96976b4318764fdaa4857c86d19cea7"
+        else:
+            registry = load("vendor-consumers.json")
+            heads = load("child-heads.json")
+            workflow_fixture = WORKFLOW_FIXTURE
+            expected_sha = "4b0fbfbc14eb2d478af1c7bc8d5a1942a4dad454"
+        consumer = vendor_consumers.get_consumer(registry, FLUTTER)
+        contract = consumer["locked_ci"]
+        approved = (ROOT / workflow_fixture).read_bytes()
+        assert hashlib.sha256(approved).hexdigest() == contract["sha256"]
+        recorded = heads["heads"][FLUTTER]
+        assert recorded["repository_id"] == 739348522
+&gt;       assert recorded["sha"] == expected_sha
+E       AssertionError: assert '075e08530e6c...244ff047ab23f' == '5a647a52c969...857c86d19cea7'
+E         
+E         - 5a647a52c96976b4318764fdaa4857c86d19cea7
+E         + 075e08530e6c02b9f0b2194922f244ff047ab23f
+
+tests/test_flutter_vendor_registry_sync.py:150: AssertionError</failure></testcase><testcase classname="tests.test_vendor_baseline_rollout" name="test_observed_lock_topology_and_immutable_revision[myon-bioinformatics/Aoi]" time="0.001"><failure message="AssertionError: assert 'dbc836caaf12...fb56b968ad1a1' == '0974142485db...418cf3badd8bd'&#10;  &#10;  - 0974142485dba4c236ae71b0d4e418cf3badd8bd&#10;  + dbc836caaf12d63ca885a7d720cfb56b968ad1a1">name = 'myon-bioinformatics/Aoi'
+
+    @pytest.mark.parametrize("name", sorted(FIXTURES))
+    def test_observed_lock_topology_and_immutable_revision(name):
+        registry = json.loads((ROOT / "vendor-consumers.json").read_text())
+        heads = vendor_sync.validate_child_heads(json.loads((ROOT / "child-heads.json").read_text()))
+        fixture = FIXTURES[name]
+        lock = vendor_sync.validate(fixture["lock"])
+&gt;       assert heads["heads"][name]["sha"] == fixture["sha"]
+E       AssertionError: assert 'dbc836caaf12...fb56b968ad1a1' == '0974142485db...418cf3badd8bd'
+E         
+E         - 0974142485dba4c236ae71b0d4e418cf3badd8bd
+E         + dbc836caaf12d63ca885a7d720cfb56b968ad1a1
+
+tests/test_vendor_baseline_rollout.py:26: AssertionError</failure></testcase><testcase classname="tests.test_vendor_baseline_rollout" name="test_observed_lock_topology_and_immutable_revision[myon-bioinformatics/cli_args]" time="0.001"><failure message="AssertionError: assert 'b4ac50d78dd9...4c00cebb2a924' == 'a6bb795df12e...980c5ecc142df'&#10;  &#10;  - a6bb795df12ec584dd0794b1d27980c5ecc142df&#10;  + b4ac50d78dd9249c0e142dde9834c00cebb2a924">name = 'myon-bioinformatics/cli_args'
+
+    @pytest.mark.parametrize("name", sorted(FIXTURES))
+    def test_observed_lock_topology_and_immutable_revision(name):
+        registry = json.loads((ROOT / "vendor-consumers.json").read_text())
+        heads = vendor_sync.validate_child_heads(json.loads((ROOT / "child-heads.json").read_text()))
+        fixture = FIXTURES[name]
+        lock = vendor_sync.validate(fixture["lock"])
+&gt;       assert heads["heads"][name]["sha"] == fixture["sha"]
+E       AssertionError: assert 'b4ac50d78dd9...4c00cebb2a924' == 'a6bb795df12e...980c5ecc142df'
+E         
+E         - a6bb795df12ec584dd0794b1d27980c5ecc142df
+E         + b4ac50d78dd9249c0e142dde9834c00cebb2a924
+
+tests/test_vendor_baseline_rollout.py:26: AssertionError</failure></testcase><testcase classname="tests.test_vendor_baseline_rollout" name="test_observed_lock_topology_and_immutable_revision[myon-bioinformatics/flutter_navigation_basic]" time="0.001"><failure message="AssertionError: assert '075e08530e6c...244ff047ab23f' == '5a647a52c969...857c86d19cea7'&#10;  &#10;  - 5a647a52c96976b4318764fdaa4857c86d19cea7&#10;  + 075e08530e6c02b9f0b2194922f244ff047ab23f">name = 'myon-bioinformatics/flutter_navigation_basic'
+
+    @pytest.mark.parametrize("name", sorted(FIXTURES))
+    def test_observed_lock_topology_and_immutable_revision(name):
+        registry = json.loads((ROOT / "vendor-consumers.json").read_text())
+        heads = vendor_sync.validate_child_heads(json.loads((ROOT / "child-heads.json").read_text()))
+        fixture = FIXTURES[name]
+        lock = vendor_sync.validate(fixture["lock"])
+&gt;       assert heads["heads"][name]["sha"] == fixture["sha"]
+E       AssertionError: assert '075e08530e6c...244ff047ab23f' == '5a647a52c969...857c86d19cea7'
+E         
+E         - 5a647a52c96976b4318764fdaa4857c86d19cea7
+E         + 075e08530e6c02b9f0b2194922f244ff047ab23f
+
+tests/test_vendor_baseline_rollout.py:26: AssertionError</failure></testcase><testcase classname="tests.test_vendor_baseline_rollout" name="test_observed_lock_topology_and_immutable_revision[myon-bioinformatics/gh_identity]" time="0.001"><failure message="AssertionError: assert 'e70eb0080c7e...9d48ce937d942' == '46a7078040d6...723064694ee9a'&#10;  &#10;  - 46a7078040d672880dc2c786185723064694ee9a&#10;  + e70eb0080c7e1aa42212439d6b69d48ce937d942">name = 'myon-bioinformatics/gh_identity'
+
+    @pytest.mark.parametrize("name", sorted(FIXTURES))
+    def test_observed_lock_topology_and_immutable_revision(name):
+        registry = json.loads((ROOT / "vendor-consumers.json").read_text())
+        heads = vendor_sync.validate_child_heads(json.loads((ROOT / "child-heads.json").read_text()))
+        fixture = FIXTURES[name]
+        lock = vendor_sync.validate(fixture["lock"])
+&gt;       assert heads["heads"][name]["sha"] == fixture["sha"]
+E       AssertionError: assert 'e70eb0080c7e...9d48ce937d942' == '46a7078040d6...723064694ee9a'
+E         
+E         - 46a7078040d672880dc2c786185723064694ee9a
+E         + e70eb0080c7e1aa42212439d6b69d48ce937d942
+
+tests/test_vendor_baseline_rollout.py:26: AssertionError</failure></testcase><testcase classname="tests.test_vendor_baseline_rollout" name="test_observed_lock_topology_and_immutable_revision[myon-bioinformatics/mcp-toolcall-lab]" time="0.001"><failure message="AssertionError: assert '1184ba449e14...49eb71a1afeb9' == '5b28a92c0485...64f765388d609'&#10;  &#10;  - 5b28a92c0485451198cb76050a164f765388d609&#10;  + 1184ba449e146cb8f101aaa743449eb71a1afeb9">name = 'myon-bioinformatics/mcp-toolcall-lab'
+
+    @pytest.mark.parametrize("name", sorted(FIXTURES))
+    def test_observed_lock_topology_and_immutable_revision(name):
+        registry = json.loads((ROOT / "vendor-consumers.json").read_text())
+        heads = vendor_sync.validate_child_heads(json.loads((ROOT / "child-heads.json").read_text()))
+        fixture = FIXTURES[name]
+        lock = vendor_sync.validate(fixture["lock"])
+&gt;       assert heads["heads"][name]["sha"] == fixture["sha"]
+E       AssertionError: assert '1184ba449e14...49eb71a1afeb9' == '5b28a92c0485...64f765388d609'
+E         
+E         - 5b28a92c0485451198cb76050a164f765388d609
+E         + 1184ba449e146cb8f101aaa743449eb71a1afeb9
+
+tests/test_vendor_baseline_rollout.py:26: AssertionError</failure></testcase><testcase classname="tests.test_vendor_baseline_rollout" name="test_observed_lock_topology_and_immutable_revision[myon-bioinformatics/myon-bioinformatics]" time="0.001"><failure message="AssertionError: assert '385ba1474baa...e8c1dfb2e1382' == '96cb6b7bff46...7a78462384588'&#10;  &#10;  - 96cb6b7bff461070d85668955c77a78462384588&#10;  + 385ba1474baa294114d1c676d81e8c1dfb2e1382">name = 'myon-bioinformatics/myon-bioinformatics'
+
+    @pytest.mark.parametrize("name", sorted(FIXTURES))
+    def test_observed_lock_topology_and_immutable_revision(name):
+        registry = json.loads((ROOT / "vendor-consumers.json").read_text())
+        heads = vendor_sync.validate_child_heads(json.loads((ROOT / "child-heads.json").read_text()))
+        fixture = FIXTURES[name]
+        lock = vendor_sync.validate(fixture["lock"])
+&gt;       assert heads["heads"][name]["sha"] == fixture["sha"]
+E       AssertionError: assert '385ba1474baa...e8c1dfb2e1382' == '96cb6b7bff46...7a78462384588'
+E         
+E         - 96cb6b7bff461070d85668955c77a78462384588
+E         + 385ba1474baa294114d1c676d81e8c1dfb2e1382
+
+tests/test_vendor_baseline_rollout.py:26: AssertionError</failure></testcase><testcase classname="tests.test_vendor_baseline_rollout" name="test_observed_lock_topology_and_immutable_revision[myon-bioinformatics/myon-bioinformatics.github.io]" time="0.001"><failure message="AssertionError: assert 'b4fc7749dc5a...219f940751748' == 'd780e20af30b...068187c82b117'&#10;  &#10;  - d780e20af30b44c86b66367afb6068187c82b117&#10;  + b4fc7749dc5adee07a99ec12483219f940751748">name = 'myon-bioinformatics/myon-bioinformatics.github.io'
+
+    @pytest.mark.parametrize("name", sorted(FIXTURES))
+    def test_observed_lock_topology_and_immutable_revision(name):
+        registry = json.loads((ROOT / "vendor-consumers.json").read_text())
+        heads = vendor_sync.validate_child_heads(json.loads((ROOT / "child-heads.json").read_text()))
+        fixture = FIXTURES[name]
+        lock = vendor_sync.validate(fixture["lock"])
+&gt;       assert heads["heads"][name]["sha"] == fixture["sha"]
+E       AssertionError: assert 'b4fc7749dc5a...219f940751748' == 'd780e20af30b...068187c82b117'
+E         
+E         - d780e20af30b44c86b66367afb6068187c82b117
+E         + b4fc7749dc5adee07a99ec12483219f940751748
+
+tests/test_vendor_baseline_rollout.py:26: AssertionError</failure></testcase><testcase classname="tests.test_vendor_baseline_rollout" name="test_observed_lock_topology_and_immutable_revision[myon-bioinformatics/xprobe]" time="0.001"><failure message="AssertionError: assert 'ca03a165db2d...21de193c120c9' == '3c16f5cf1264...88925c6f585d6'&#10;  &#10;  - 3c16f5cf1264812560d9198c28888925c6f585d6&#10;  + ca03a165db2d675513b69e6980821de193c120c9">name = 'myon-bioinformatics/xprobe'
+
+    @pytest.mark.parametrize("name", sorted(FIXTURES))
+    def test_observed_lock_topology_and_immutable_revision(name):
+        registry = json.loads((ROOT / "vendor-consumers.json").read_text())
+        heads = vendor_sync.validate_child_heads(json.loads((ROOT / "child-heads.json").read_text()))
+        fixture = FIXTURES[name]
+        lock = vendor_sync.validate(fixture["lock"])
+&gt;       assert heads["heads"][name]["sha"] == fixture["sha"]
+E       AssertionError: assert 'ca03a165db2d...21de193c120c9' == '3c16f5cf1264...88925c6f585d6'
+E         
+E         - 3c16f5cf1264812560d9198c28888925c6f585d6
+E         + ca03a165db2d675513b69e6980821de193c120c9
+
+tests/test_vendor_baseline_rollout.py:26: AssertionError</failure></testcase></testsuite></testsuites>

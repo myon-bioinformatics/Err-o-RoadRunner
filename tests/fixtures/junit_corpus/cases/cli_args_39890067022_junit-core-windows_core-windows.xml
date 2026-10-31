@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="199" time="16.724" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_cli_args_main" name="test_run_japanese_argv_and_output" time="0.140"><failure message="AssertionError: assert '' == '日本語\n'&#10;  &#10;  - 日本語">tests\test_cli_args_main.py:120: in test_run_japanese_argv_and_output
+    assert body["stdout"] == "日本語\n"
+E   AssertionError: assert '' == '日本語\n'
+E     
+E     - 日本語</failure></testcase></testsuite></testsuites>

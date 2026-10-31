@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="462" time="1.950" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_blueprobe_parent_workflow_pins" name="test_setup_actions_use_latest_full_shas_and_other_actions_use_major_tags" time="0.001"><failure message="AssertionError: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1&#10;assert None&#10; +  where None = &lt;function fullmatch at 0x&lt;addr&gt;&gt;('actions/[A-Za-z0-9_-]+@v[0-9]+', 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1')&#10; +    where &lt;function fullmatch at 0x&lt;addr&gt;&gt; = re.fullmatch">def test_setup_actions_use_latest_full_shas_and_other_actions_use_major_tags():
+        for line in _workflow_text().splitlines():
+            stripped = line.strip()
+            if not stripped.startswith("- uses:") and not stripped.startswith("uses:"):
+                continue
+            use = stripped.split("uses:", 1)[1].strip()
+            action = use.split()[0]
+            if "setup-" in action:
+                name, pin = action.split("@", 1)
+                comment = use[len(action):].strip()
+                assert LATEST_SETUP[name] == pin + " " + comment, use
+                assert re.fullmatch(r"[0-9a-f]{40}", pin)
+            elif action.startswith("actions/"):
+&gt;               assert re.fullmatch(r"actions/[A-Za-z0-9_-]+@v[0-9]+", action), action
+E               AssertionError: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+E               assert None
+E                +  where None = &lt;function fullmatch at 0x&lt;addr&gt;&gt;('actions/[A-Za-z0-9_-]+@v[0-9]+', 'actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1')
+E                +    where &lt;function fullmatch at 0x&lt;addr&gt;&gt; = re.fullmatch
+
+tests/test_blueprobe_parent_workflow_pins.py:69: AssertionError</failure></testcase></testsuite></testsuites>

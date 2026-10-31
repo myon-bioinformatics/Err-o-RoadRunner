@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites id="" name="" tests="320" failures="1" skipped="17" errors="0" time="1240.2832580000002"><testsuite name="home_discovery_journeys.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="4" failures="1" skipped="0" time="55.321" errors="0"><testcase name="Photo Studio dirty Door preserves Cancel and Discard @portable" classname="home_discovery_journeys.spec.ts" time="11.735"><system-out>
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ph-7521f-Cancel-and-Discard-portable-mobile-webkit/attachments/photo-dirty-door-png-b822caf149a85db2ff623eeda8b0c19f3b16c260.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ph-7521f-Cancel-and-Discard-portable-mobile-webkit/attachments/photo-door-audit-json-954f4c600f00c98b5162000e5c3024a2a94a4d82.json]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ph-7521f-Cancel-and-Discard-portable-mobile-webkit/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ph-7521f-Cancel-and-Discard-portable-mobile-webkit/video.webm]]
+
+[[ATTACHMENT|../../e2e/test-results/home_discovery_journeys-Ph-7521f-Cancel-and-Discard-portable-mobile-webkit/error-context.md]]
+
+</system-out>
+<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
+  [mobile-webkit] › home_discovery_journeys.spec.ts:335:5 › Photo Studio dirty Door preserves Cancel and Discard @portable 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: locator('[role="menuitem"]').first()
+    Expected: visible
+    Timeout: 3000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" locator('[role="menuitem"]').first() with timeout 3000ms
+      - waiting for locator('[role="menuitem"]').first()
+
+
+      125 |   const attempt = { via: 'button-press', opened: false, record };
+      126 |   attempts.push(attempt);
+    &gt; 127 |   await expect(items.first()).toBeVisible({ timeout: 3_000 });
+          |                               ^
+      128 |   attempt.opened = true;
+      129 | }
+      130 |
+        at openDoor (&lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:127:31)
+        at &lt;runner-work&gt;/e2e/tests/home_discovery_journeys.spec.ts:381:7
+
+    attachment #1: photo-dirty-door.png (image/png) ────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ph-7521f-Cancel-and-Discard-portable-mobile-webkit/attachments/photo-dirty-door-png-b822caf149a85db2ff623eeda8b0c19f3b16c260.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: photo-door-audit.json (application/json) ────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ph-7521f-Cancel-and-Discard-portable-mobile-webkit/attachments/photo-door-audit-json-954f4c600f00c98b5162000e5c3024a2a94a4d82.json
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #3: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ph-7521f-Cancel-and-Discard-portable-mobile-webkit/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #4: video (video/webm) ──────────────────────────────────────────────────────────────
+    ../test-results/home_discovery_journeys-Ph-7521f-Cancel-and-Discard-portable-mobile-webkit/video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../test-results/home_discovery_journeys-Ph-7521f-Cancel-and-Discard-portable-mobile-webkit/error-context.md
+
+</failure>
+</testcase></testsuite></testsuites>

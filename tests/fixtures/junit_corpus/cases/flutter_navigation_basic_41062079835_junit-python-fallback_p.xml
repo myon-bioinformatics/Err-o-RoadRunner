@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="3" tests="1026" time="59.926" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_upload_artifact_version" name="test_all_workflow_upload_artifact_references_use_one_modern_major" time="0.005"><failure message="AssertionError: Expected a major-version tag: [('.github/workflows/flutter-audit-focused-diagnostic.yml', 'cf430e030ddbb5b0abf93d22962f4752f3646cd9')]&#10;assert not [('.github/workflows/flutter-audit-focused-diagnostic.yml', 'cf430e030ddbb5b0abf93d22962f4752f3646cd9')]">def test_all_workflow_upload_artifact_references_use_one_modern_major():
+        references = collect_upload_versions()
+        assert references, "no artifact upload actions found"
+        invalid = [(path, version) for path, version in references
+                   if not MAJOR.fullmatch(version)]
+&gt;       assert not invalid, f"Expected a major-version tag: {invalid}"
+E       AssertionError: Expected a major-version tag: [('.github/workflows/flutter-audit-focused-diagnostic.yml', 'cf430e030ddbb5b0abf93d22962f4752f3646cd9')]
+E       assert not [('.github/workflows/flutter-audit-focused-diagnostic.yml', 'cf430e030ddbb5b0abf93d22962f4752f3646cd9')]
+
+tests/test_upload_artifact_version.py:29: AssertionError</failure></testcase></testsuite></testsuites>
