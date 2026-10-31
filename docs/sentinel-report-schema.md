@@ -156,10 +156,10 @@ Inside `triage.found`, `triage.not_found`, and `triage.hints`, strings match the
 ## CLI
 
 ```bash
-err-o-roadrunner sentinel --report-json /tmp/sentinel.json --print-triage --format short --group-by error_type,language -- \
+uv run err-o-roadrunner sentinel --report-json /tmp/sentinel.json --print-triage --format short --group-by error_type,language -- \
   uv run pytest -q tests/test_example.py
 
-err-o-roadrunner sentinel --timeout 600 --junit reports/junit.xml --summary -- \
+uv run err-o-roadrunner sentinel --timeout 600 --junit reports/junit.xml --summary -- \
   make test
 ```
 
