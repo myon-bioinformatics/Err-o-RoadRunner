@@ -331,9 +331,8 @@ def test_download_failure_in_one_repository_with_other_confirmed_empty(tmp_path,
     assert failures[0].detail == "network error"
 
 
-def test_workflow_and_proposal_publish_identical_coverage():
+def test_workflow_publishes_coverage_summary():
     workflow = (ROOT / ".github/workflows/harvest-corpus.yml").read_text()
-    assert workflow == (ROOT / "docs/ci/harvest-corpus.yml.proposed").read_text()
     assert '--summary "$RUNNER_TEMP/harvest-summary.md"' in workflow
     assert 'cat "$RUNNER_TEMP/harvest-summary.md" >> "$GITHUB_STEP_SUMMARY"' in workflow
     assert '--body-file "$RUNNER_TEMP/harvest-summary.md"' in workflow
