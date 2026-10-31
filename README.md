@@ -62,13 +62,13 @@ This complementary supplied panel shows the challenges, roles and intended outco
 Install the distribution as **`err-o-roadrunner`** (PyPI-style name; matches the `err-o-roadrunner` console script):
 
 ```bash
-pip install -e .
+uv sync
 ```
 
 After installing, run:
 
 ```bash
-err-o-roadrunner --exit-code "$?" --stderr /path/to/stderr.txt --junit reports/junit.xml
+uv run err-o-roadrunner --exit-code "$?" --stderr /path/to/stderr.txt --junit reports/junit.xml
 ```
 
 ### Version string policy
@@ -135,8 +135,8 @@ Logic is **inverted** from “treat non-zero as failure”:
 By default (`--exit-mode child`), the process exit code is still the **wrapped command’s** code (CI-safe; timeout → `124`, not found → `127`, not executable → `126`). For agents, `--exit-mode signal` uses RoadRunner codes: `0` = stop (no investigation), `1` = go (investigation ran). Exit `0` with only a traceback on stderr stays **stop** unless you pass **`--go-on-stderr-traceback`**. See **`docs/sentinel-exit-codes.md`**.
 
 ```bash
-err-o-roadrunner sentinel --report-json /tmp/sentinel.json --print-triage --summary -- \
-  pytest -q tests/test_triage.py
+uv run err-o-roadrunner sentinel --report-json /tmp/sentinel.json --print-triage --summary -- \
+  uv run pytest -q tests/test_triage.py
 ```
 
 See **`docs/sentinel-report-schema.md`** for the stable `sentinel-report/v1` JSON fields (written only on **go**), including optional `fix_candidates`, `groups`, `records`, `squads`, `hypotheses`, and stdout `--format` / `--tb` / `--group-by` options. Parallel **error squads** (`--squads`, default `code,history`) are documented in **`docs/sentinel-squads.md`** (Japanese). Pytest option alignment is documented in **`docs/pytest-options-survey.md`** (Japanese).
