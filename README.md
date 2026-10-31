@@ -492,7 +492,7 @@ More captured scenarios (JUnit mix, hostile symlink refusal, additional Node err
 
 Requires Python 3.11 or later.
 
-With uv (the lockfile is `uv.lock`, and CI runs the same commands):
+With uv (the lockfile is `uv.lock`, and CI runs the same commands; CI provisions Python with `astral-sh/setup-uv`, not `actions/setup-python`):
 
 ```bash
 uv sync --locked
