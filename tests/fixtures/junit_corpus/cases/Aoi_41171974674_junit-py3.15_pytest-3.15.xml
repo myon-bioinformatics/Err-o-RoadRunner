@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="41" tests="2307" time="611.362" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_staple_subscription_evidence.EvidenceTests" name="test_rebuild_is_byte_identical_and_gzip_matches" time="0.603"><failure message="AssertionError: {'adj[401287 chars]00\x00\xffadjacent_subscription_engel_shares_v[198023 chars]}\n'} != {'adj[401287 chars]00\x02\xffadjacent_subscription_engel_shares_v[196989 chars]}\n'}&#10;Diff is 2679261 characters long. Set self.maxDiff to None to see it.">self = &lt;&lt;run_path&gt;.EvidenceTests testMethod=test_rebuild_is_byte_identical_and_gzip_matches&gt;
+
+    def test_rebuild_is_byte_identical_and_gzip_matches(self):
+        outputs = [f'{builder.NAME}_vertical.csv', f'{builder.NAME}_vertical.csv.gz', '_build_stats.json', '_quality_report.json']
+        before = {p.name: p.read_bytes() for p in (HERE / 'raw').iterdir()}
+        with tempfile.TemporaryDirectory() as tmp, patch.object(builder, 'HERE', Path(tmp)):
+            with patch('sys.stdout', io.StringIO()):
+                builder.main()
+                first = {n: (Path(tmp) / n).read_bytes() for n in outputs}
+                builder.main()
+            self.assertEqual(first, {n: (Path(tmp) / n).read_bytes() for n in outputs})
+&gt;           self.assertEqual(first, {n: (HERE / n).read_bytes() for n in outputs})
+E           AssertionError: {'adj[401287 chars]00\x00\xffadjacent_subscription_engel_shares_v[198023 chars]}\n'} != {'adj[401287 chars]00\x02\xffadjacent_subscription_engel_shares_v[196989 chars]}\n'}
+E           Diff is 2679261 characters long. Set self.maxDiff to None to see it.
+
+research/staple-price-survey/adjacent_subscription_engel_shares/test_subscription_engel_shares.py:70: AssertionError</failure></testcase></testsuite></testsuites>

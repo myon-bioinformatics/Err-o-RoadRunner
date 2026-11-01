@@ -1,0 +1,20 @@
+FOUND: exit code: 1
+FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/myon-bioinformatics_41167092790_junit-parent-py3.14_junit.xml): 1
+FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/myon-bioinformatics_41167092790_junit-parent-py3.14_junit.xml): AssertionError: assert 'b6e3d851891b...8b397a368b6ab' == 'ba687c47f80d...333d0cee74a4b'\n  \n  - ba687c47f80d661a651af154dcc333d0cee74a4b\n  + b6e3d851891b5522eb95e73b8d38b397a368b6ab\ndef test_py_launch_worktree_source_identity():\n        data = (ROOT / SOURCE).read_bytes()\n>       assert vendor_sync.git_blob(data) == PY_LAUNCH_WORKTREE_BLOB_SHA\nE       AssertionError: assert 'b6e3d851891b...8
+FOUND: junit failure groups (<repo>/tests/fixtures/junit_corpus/cases/myon-bioinformatics_41167092790_junit-parent-py3.14_junit.xml): 1 failure in 1 group
+FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/myon-bioinformatics_41167092790_junit-parent-py3.14_junit.xml): tests.test_py_launch_catalog
+FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/myon-bioinformatics_41167092790_junit-parent-py3.14_junit.xml): AssertionError
+FOUND: python version: 3.15.2 (cpython)
+FOUND: node version: v24.22.1
+FOUND: gh version: gh version 2.103.2 (2026-10-23)
+FOUND: environment variable count: 117
+FOUND: environment variable names: ACCEPT_EULA, ACTIONS_ORCHESTRATION_ID, ACTIONS_RUNNER_ACTION_ARCHIVE_CACHE, ACTIONS_RUNNER_RETURN_JOB_RESULT_FOR_HOSTED, AGENT_TOOLSDIRECTORY, ANDROID_HOME, ANDROID_NDK, ANDROID_NDK_HOME, ANDROID_NDK_LATEST_HOME, ANDROID_NDK_ROOT, ANDROID_SDK_ROOT, ANT_HOME, AZURE_EXTENSION_DIR, BOOTSTRAP_HASKELL_NONINTERACTIVE, CHROMEWEBDRIVER, CHROME_BIN, CI, DEBIAN_FRONTEND, DOTNET_MULTILEVEL_LOOKUP, DOTNET_NOLOGO, DOTNET_SKIP_FIRST_TIME_EXPERIENCE, EDGEWEBDRIVER, ENABLE_RUNNER_TRACING, GECKOWEBDRIVER, GHCUP_INSTALL_BASE_PREFIX, GITHUB_ACTION, GITHUB_ACTIONS, GITHUB_ACTION_REF, GITHUB_ACTION_REPOSITORY, GITHUB_ACTOR, GITHUB_ACTOR_ID, GITHUB_API_URL, GITHUB_ARTIFACTS, GITHUB_ARTIFACTS_LIST, GITHUB_BASE_REF, GITHUB_ENV, GITHUB_EVENT_NAME, GITHUB_EVENT_PATH, GITHUB_GRAPHQL_URL, GITHUB_HEAD_REF, ...
+NOT FOUND: junit errors (<repo>/tests/fixtures/junit_corpus/cases/myon-bioinformatics_41167092790_junit-parent-py3.14_junit.xml)
+NOT FOUND: junit skipped (<repo>/tests/fixtures/junit_corpus/cases/myon-bioinformatics_41167092790_junit-parent-py3.14_junit.xml)
+NOT FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/myon-bioinformatics_41167092790_junit-parent-py3.14_junit.xml)
+NOT FOUND: junit system-err (<repo>/tests/fixtures/junit_corpus/cases/myon-bioinformatics_41167092790_junit-parent-py3.14_junit.xml)
+NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/myon-bioinformatics_41167092790_junit-parent-py3.14_junit.xml)
+NOT FOUND: lock files in project root
+HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/myon-bioinformatics_41167092790_junit-parent-py3.14_junit.xml): pytest/python
+HINT: junit assertion diff (<repo>/tests/fixtures/junit_corpus/cases/myon-bioinformatics_41167092790_junit-parent-py3.14_junit.xml):   - ba687c47f80d661a651af154dcc333d0cee74a4b   + b6e3d851891b5522eb95e73b8d38b397a368b6ab
+HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/myon-bioinformatics_41167092790_junit-parent-py3.14_junit.xml): AssertionError: assert 'b6e3d851891b...8b397a368b6ab' == 'ba687c47f80d...333d0cee74a4b'\n  \n  - ba687c47f80d661a651af154dcc333d0cee74a4b\n  + b6e3d851891b5522eb95e73b8d38b397a368b6ab\ndef test_py_launch_worktree_source_identity():\n        data = (ROOT / SOURCE).read_bytes()\n>       assert vendor_sync.git_blob(data) == PY_LAUNCH_WORKTREE_BLOB_SHA\nE       AssertionError: assert 'b6e3d851891b...8

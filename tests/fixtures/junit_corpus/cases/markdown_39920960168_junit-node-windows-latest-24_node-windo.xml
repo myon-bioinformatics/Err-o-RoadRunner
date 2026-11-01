@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="15" time="1.528" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_toml_node_fallback" name="test_toml_loads_stdin_closed_nonzero_surfaces_stderr" time="0.006"><failure message="AssertionError: Regex pattern did not match.&#10;  Expected regex: 'Node TOML reader failed: boom'&#10;  Actual message: 'node_launch: Node process failed: [Errno 22] Invalid argument'">tmp_path = WindowsPath('C:&lt;user-home&gt;/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_toml_loads_stdin_closed_n0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+
+    def test_toml_loads_stdin_closed_nonzero_surfaces_stderr(tmp_path, monkeypatch):
+        """``node_launch`` ``ELAUNCHSTDINCLOSED`` (unread stdin close + large payload) → ``RuntimeError``."""
+        script = _write_fake_node(tmp_path, version="v24.0.0", close_stdin_unread=True)
+        _use_fake_node(monkeypatch, script)
+        monkeypatch.setattr(md, "_TOML_READER", ["node"])
+&gt;       with pytest.raises(RuntimeError, match=r"Node TOML reader failed: boom"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'Node TOML reader failed: boom'
+E         Actual message: 'node_launch: Node process failed: [Errno 22] Invalid argument'
+
+tests\test_toml_node_fallback.py:375: AssertionError</failure></testcase></testsuite></testsuites>

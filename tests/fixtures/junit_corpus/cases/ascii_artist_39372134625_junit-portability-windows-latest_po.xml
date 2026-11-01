@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="1" tests="65" time="2.214" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_ascii_artist_repository_diagnostics.RepositoryDiagnosticsTests" name="test_checkout_identity_equivalence_refs_and_detached_head" time="0.983"><failure message="subprocess.CalledProcessError: Command '['D:\\a\\ascii_artist\\ascii_artist\\.venv\\Scripts\\python.exe', '-S', 'C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\tmpch9gf047\\standalone\\gh_identity.py', 'repo-metadata', '--format', 'v1', '--root', 'C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\tmpch9gf047\\checkout', '--repository', 'myon-bioinformatics/ascii_artist', '--output-dir', 'C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\tmpch9gf047\\output']' returned non-zero exit status 2.">self = &lt;test_ascii_artist_repository_diagnostics.RepositoryDiagnosticsTests testMethod=test_checkout_identity_equivalence_refs_and_detached_head&gt;
+
+    def test_checkout_identity_equivalence_refs_and_detached_head(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "checkout"
+            root.mkdir()
+    
+            def git(*args, env=None):
+                return subprocess.check_output(["git", *args], cwd=root, env=env, text=True).strip()
+    
+            git("init", "-q")
+            git("config", "user.name", "Metadata test")
+            git("config", "user.email", "metadata@example.invalid")
+            (root / "README.md").write_text("synthetic checkout\n", encoding="utf-8")
+            git("add", "README.md")
+            env = dict(
+                os.environ,
+                GIT_AUTHOR_DATE="2026-09-29T01:02:03+00:00",
+                GIT_COMMITTER_DATE="2026-09-29T01:02:03+00:00",
+            )
+            git("commit", "-qm", "feat: synthetic 日本語", env=env)
+            git("branch", "-M", "work")
+            head = git("rev-parse", "HEAD")
+            now = "2026-09-29T12:34:56Z"
+            scenarios = [
+                ({}, "work"),
+                ({"GITHUB_REF_NAME": "99/merge"}, "99/merge"),
+                ({
+                    "GITHUB_HEAD_REF": "feature/example",
+                    "GITHUB_REF_NAME": "99/merge",
+                    "GITHUB_SHA": "d" * 40,
+                    "REPOSITORY_DIAGNOSTICS_SHA": "c" * 40,
+                }, "feature/example"),
+            ]
+            for context, branch in scenarios:
+                with mock.patch.object(diagnostics, "ROOT", root):
+                    record = diagnostics.build_record(context, generated_at=now)
+                expected = diagnostics.GH_IDENTITY.repository_metadata_v1(
+                    root,
+                    repository=diagnostics.REPOSITORY,
+                    env=context,
+                    generated_at=now,
+                    measurements={"working_tree_bytes": len((root / "README.md").read_bytes())},
+                    tooling={"python": platform.python_version()},
+                )
+                expected["head"]["branch"] = branch
+                diagnostics.GH_IDENTITY.validate_repository_metadata_v1(expected)
+                self.assertEqual(record, expected)
+                self.assertEqual(
+                    json.loads(
+                        json.dumps(record, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+                    ),
+                    expected,
+                )
+            git("checkout", "--detach", "-q")
+            with mock.patch.object(diagnostics, "ROOT", root):
+                detached = diagnostics.build_record({}, generated_at=now)
+                with self.assertRaises(ValueError):
+                    diagnostics.build_record({}, generated_at="invalid timestamp")
+            self.assertEqual(detached["head"]["branch"], "detached")
+            self.assertEqual(detached["head"]["sha"], head)
+    
+            standalone = Path(tmp) / "standalone"
+            standalone.mkdir()
+            shutil.copyfile(ROOT / "vendor/gh_identity.py", standalone / "gh_identity.py")
+            output = Path(tmp) / "output"
+            env = os.environ.copy()
+            for name in ("PYTHONPATH", "GITHUB_HEAD_REF", "GITHUB_REF_NAME"):
+                env.pop(name, None)
+&gt;           subprocess.run(
+                [sys.executable, "-S", str(standalone / "gh_identity.py"), "repo-metadata", "--format", "v1",
+                 "--root", str(root), "--repository", diagnostics.REPOSITORY,
+                 "--output-dir", str(output)],
+                cwd=tmp, env=env, check=True,
+            )
+
+tests\test_ascii_artist_repository_diagnostics.py:166: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['D:\\a\\ascii_artist\\ascii_artist\\.venv\\Scripts\\python.exe', '-S', 'C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\tmpch9gf047\\standalone\\gh_identity.py', 'repo-metadata', '--format', 'v1', ...],)
+kwargs = {'cwd': 'C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\tmpch9gf047', 'env': {'ACTIONS_ORCHESTRATION_ID': '4e10a736-c5fa-8...e\\', 'ACTIONS_RUNNER_RETURN_JOB_RESULT_FOR_HOSTED': '1', 'AGENT_TOOLSDIRECTORY': 'C:\\hostedtoolcache\\windows', ...}}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output &amp; stderr attributes if those streams
+        were captured.
+    
+        If timeout is given, and the process takes too long, a TimeoutExpired
+        exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+&gt;               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command '['D:\\a\\ascii_artist\\ascii_artist\\.venv\\Scripts\\python.exe', '-S', 'C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\tmpch9gf047\\standalone\\gh_identity.py', 'repo-metadata', '--format', 'v1', '--root', 'C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\tmpch9gf047\\checkout', '--repository', 'myon-bioinformatics/ascii_artist', '--output-dir', 'C:\\Users\\RUNNER~1\\AppData\\Local\\Temp\\tmpch9gf047\\output']' returned non-zero exit status 2.
+
+C:\hostedtoolcache\windows\Python\3.11.9\x64\Lib\subprocess.py:571: CalledProcessError</failure></testcase></testsuite></testsuites>

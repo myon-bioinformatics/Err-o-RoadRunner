@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="12" tests="1749" time="103.771" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_py_launch_catalog" name="test_py_launch_worktree_source_identity" time="0.001"><failure message="AssertionError: assert 'b6e3d851891b...8b397a368b6ab' == 'ba687c47f80d...333d0cee74a4b'&#10;  &#10;  - ba687c47f80d661a651af154dcc333d0cee74a4b&#10;  + b6e3d851891b5522eb95e73b8d38b397a368b6ab">def test_py_launch_worktree_source_identity():
+        data = (ROOT / SOURCE).read_bytes()
+&gt;       assert vendor_sync.git_blob(data) == PY_LAUNCH_WORKTREE_BLOB_SHA
+E       AssertionError: assert 'b6e3d851891b...8b397a368b6ab' == 'ba687c47f80d...333d0cee74a4b'
+E         
+E         - ba687c47f80d661a651af154dcc333d0cee74a4b
+E         + b6e3d851891b5522eb95e73b8d38b397a368b6ab
+
+tests/test_py_launch_catalog.py:45: AssertionError</failure></testcase></testsuite></testsuites>

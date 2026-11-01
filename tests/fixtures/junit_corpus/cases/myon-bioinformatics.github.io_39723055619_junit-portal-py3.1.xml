@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="1" failures="0" skipped="0" tests="1" time="0.284" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="" name="tests.test_brand_assets" time="0.000"><error message="collection failure">ImportError while importing test module '&lt;runner-work&gt;/tests/test_brand_assets.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+&lt;toolcache&gt;/Python/3.12.15/x64/lib/python3.12/importlib/__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_brand_assets.py:5: in &lt;module&gt;
+    from PIL import Image
+E   ModuleNotFoundError: No module named 'PIL'</error></testcase></testsuite></testsuites>
