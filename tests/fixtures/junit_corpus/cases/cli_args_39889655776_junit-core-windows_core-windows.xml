@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="198" time="12.897" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_cli_args_main" name="test_run_japanese_argv_and_output" time="0.003"><failure message="UnicodeEncodeError: 'charmap' codec can't encode characters in position 87-89: character maps to &lt;undefined&gt;">tests\test_cli_args_main.py:107: in test_run_japanese_argv_and_output
+    proc = invoke("run", stdin=json.dumps(payload, ensure_ascii=False))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_cli_args_main.py:48: in invoke
+    return subprocess.run(
+C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\subprocess.py:550: in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\subprocess.py:1209: in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\subprocess.py:1622: in _communicate
+    self._stdin_write(input)
+C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\subprocess.py:1143: in _stdin_write
+    self.stdin.write(input)
+C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\encodings\cp1252.py:19: in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   UnicodeEncodeError: 'charmap' codec can't encode characters in position 87-89: character maps to &lt;undefined&gt;</failure></testcase><testcase classname="tests.test_cli_args_main" name="test_run_non_utf8_output_has_reversible_b64" time="0.096"><failure message="AssertionError: assert '�' in 'ï¿½ï¿½'">tests\test_cli_args_main.py:124: in test_run_non_utf8_output_has_reversible_b64
+    assert "\ufffd" in body["stdout"]
+E   AssertionError: assert '�' in 'ï¿½ï¿½'</failure></testcase><testcase classname="tests.test_cli_args_main" name="test_render_json_and_text" time="0.002"><failure message="UnicodeEncodeError: 'charmap' codec can't encode characters in position 11-13: character maps to &lt;undefined&gt;">tests\test_cli_args_main.py:233: in test_render_json_and_text
+    json_proc = invoke("render", "--format", "json", stdin=json.dumps(value, ensure_ascii=False))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\test_cli_args_main.py:48: in invoke
+    return subprocess.run(
+C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\subprocess.py:550: in run
+    stdout, stderr = process.communicate(input, timeout=timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\subprocess.py:1209: in communicate
+    stdout, stderr = self._communicate(input, endtime, timeout)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\subprocess.py:1622: in _communicate
+    self._stdin_write(input)
+C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\subprocess.py:1143: in _stdin_write
+    self.stdin.write(input)
+C:\hostedtoolcache\windows\Python\3.12.10\x64\Lib\encodings\cp1252.py:19: in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   UnicodeEncodeError: 'charmap' codec can't encode characters in position 11-13: character maps to &lt;undefined&gt;</failure></testcase></testsuite></testsuites>

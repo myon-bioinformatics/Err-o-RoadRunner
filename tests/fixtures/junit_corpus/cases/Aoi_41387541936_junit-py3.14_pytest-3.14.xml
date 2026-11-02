@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="6" skipped="113" tests="3957" time="853.927" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_numpy_linalg_min" name="test_ast_reaches_the_heavy_calls_and_not_bitmatrix_svd" time="2.128"><failure message="AssertionError: assert ('linalg.svd' in {})">def test_ast_reaches_the_heavy_calls_and_not_bitmatrix_svd():
+        found = lf.analyze(lf.ENTRIES)
+        suggest = found["queryu/ask/suggest.py:Index"]["uses"]
+&gt;       assert "linalg.svd" in suggest and "linalg.norm" in suggest
+E       AssertionError: assert ('linalg.svd' in {})
+
+tests/test_numpy_linalg_min.py:148: AssertionError</failure></testcase><testcase classname="tests.test_numpy_linalg_min" name="test_absent_probe_exits_on_missing_numpy_attribute" time="0.116"><failure message="AssertionError: absent-probe: Index ran without touching numpy&#10;  &#10;assert 1 == 0&#10; +  where 1 = CompletedProcess(args=['&lt;runner-work&gt;/.venv/bin/python', '&lt;runner-work&gt;/scripts/linalg_feasibility.py', 'absent'], returncode=1, stdout='', stderr='absent-probe: Index ran without touching numpy\n').returncode">def test_absent_probe_exits_on_missing_numpy_attribute():
+        proc = subprocess.run(
+            [sys.executable, str(ROOT / "scripts" / "linalg_feasibility.py"), "absent"],
+            cwd=ROOT, capture_output=True, text=True, check=False,
+        )
+&gt;       assert proc.returncode == 0, proc.stderr
+E       AssertionError: absent-probe: Index ran without touching numpy
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['&lt;runner-work&gt;/.venv/bin/python', '&lt;runner-work&gt;/scripts/linalg_feasibility.py', 'absent'], returncode=1, stdout='', stderr='absent-probe: Index ran without touching numpy\n').returncode
+
+tests/test_numpy_linalg_min.py:171: AssertionError</failure></testcase><testcase classname="tests.test_pkgmin_surface" name="test_committed_surface_matches_the_tree" time="4.641"><failure message="AssertionError: assert [{'file': 'bl...e': 119}, ...] == [{'file': 'bl...e': 119}, ...]&#10;  &#10;  At index 6 diff: {'file': 'dragowing/vendor/aoi/scripts/fetch_module.py', 'line': 394} != {'file': 'dragowing/vendor/aoi/scripts/fetch_module.py', 'line': 390}&#10;  Right contains one more item: {'file': 'scripts/shrink_polars.py', 'line': 515}&#10;  &#10;  Full diff:&#10;    [&#10;        {&#10;            'file': 'blueprobe/blueprobe.py',&#10;            'line': 65,&#10;        },&#10;        {&#10;            'file': 'dist/blueprobe_min.py',&#10;            'line': 118,&#10;        },&#10;        {&#10;            'file': 'dist/dragowing_min.py',&#10;            'line': 120,&#10;        },&#10;        {&#10;            'file': 'dist/pythdragoras_min.py',&#10;            'line': 120,&#10;        },&#10;        {&#10;            'file': 'dist/queryu_min.py',&#10;            'line': 117,&#10;        },&#10;        {&#10;            'file': 'dist/sakanalytics_min.py',&#10;            'line': 119,&#10;        },&#10;        {&#10;            'file': 'dragowing/vendor/aoi/scripts/fetch_module.py',&#10;  -         'line': 390,&#10;  ?                   ^&#10;  +         'line': 394,&#10;  ?                   ^&#10;  -     },&#10;  -     {&#10;  -         'file': 'nagoyaction/vendor/aoi/scripts/shrink_polars.py',&#10;  -         'line': 515,&#10;        },&#10;        {&#10;            'file': 'queryu/conftest.py',&#10;            'line': 49,&#10;        },&#10;        {&#10;            'file': 'scripts/fetch_module.py',&#10;            'line': 390,&#10;        },&#10;        {&#10;            'file': 'scripts/shrink_polars.py',&#10;            'line': 515,&#10;        },&#10;    ]">def test_committed_surface_matches_the_tree():
+        fresh = survey.scan(ROOT)
+        saved = json.loads(EVIDENCE.read_text(encoding="utf-8"))
+        assert saved["packages"] == fresh["packages"]
+&gt;       assert saved["dynamic_nonliteral"] == fresh["dynamic_nonliteral"]
+E       AssertionError: assert [{'file': 'bl...e': 119}, ...] == [{'file': 'bl...e': 119}, ...]
+E         
+E         At index 6 diff: {'file': 'dragowing/vendor/aoi/scripts/fetch_module.py', 'line': 394} != {'file': 'dragowing/vendor/aoi/scripts/fetch_module.py', 'line': 390}
+E         Right contains one more item: {'file': 'scripts/shrink_polars.py', 'line': 515}
+E         
+E         Full diff:
+E           [
+E               {
+E                   'file': 'blueprobe/blueprobe.py',
+E                   'line': 65,
+E               },
+E               {
+E                   'file': 'dist/blueprobe_min.py',
+E                   'line': 118,
+E               },
+E               {
+E                   'file': 'dist/dragowing_min.py',
+E                   'line': 120,
+E               },
+E               {
+E                   'file': 'dist/pythdragoras_min.py',
+E                   'line': 120,
+E               },
+E               {
+E                   'file': 'dist/queryu_min.py',
+E                   'line': 117,
+E               },
+E               {
+E                   'file': 'dist/sakanalytics_min.py',
+E                   'line': 119,
+E               },
+E               {
+E                   'file': 'dragowing/vendor/aoi/scripts/fetch_module.py',
+E         -         'line': 390,
+E         ?                   ^
+E         +         'line': 394,
+E         ?                   ^
+E         -     },
+E         -     {
+E         -         'file': 'nagoyaction/vendor/aoi/scripts/shrink_polars.py',
+E         -         'line': 515,
+E               },
+E               {
+E                   'file': 'queryu/conftest.py',
+E                   'line': 49,
+E               },
+E               {
+E                   'file': 'scripts/fetch_module.py',
+E                   'line': 390,
+E               },
+E               {
+E                   'file': 'scripts/shrink_polars.py',
+E                   'line': 515,
+E               },
+E           ]
+
+tests/test_pkgmin_surface.py:51: AssertionError</failure></testcase><testcase classname="tests.test_shrink_module" name="test_generated_file_is_current" time="0.143"><failure message="AssertionError: shrink/numpy_min.py が生成結果と違う。generate し直す&#10;  &#10;assert 1 == 0&#10; +  where 1 = CompletedProcess(args=['&lt;runner-work&gt;/.venv/bin/python', 'scripts/shrink_module.py', 'generate', 'numpy', ...out', 'shrink/numpy_min.py', '--check'], returncode=1, stdout='', stderr='shrink/numpy_min.py が生成結果と違う。generate し直す\n').returncode">def test_generated_file_is_current():
+        out = subprocess.run([sys.executable, "scripts/shrink_module.py", "generate", "numpy", *ENTRIES,
+                              "--out", "shrink/numpy_min.py", "--check"], cwd=ROOT, capture_output=True, text=True)
+&gt;       assert out.returncode == 0, out.stderr
+E       AssertionError: shrink/numpy_min.py が生成結果と違う。generate し直す
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['&lt;runner-work&gt;/.venv/bin/python', 'scripts/shrink_module.py', 'generate', 'numpy', ...out', 'shrink/numpy_min.py', '--check'], returncode=1, stdout='', stderr='shrink/numpy_min.py が生成結果と違う。generate し直す\n').returncode
+
+tests/test_shrink_module.py:34: AssertionError</failure></testcase><testcase classname="tests.test_shrink_module" name="test_analyze_reaches_suggest_index" time="0.058"><failure message="AssertionError: assert {'argsort', '...alg.svd', ...} &lt;= set()&#10;  &#10;  Extra items in the left set:&#10;  'nan_to_num'&#10;  'float32'&#10;  'packbits'&#10;  'argsort'&#10;  'linalg.norm'&#10;  'divide'&#10;  'int8'&#10;  'linalg.svd'">def test_analyze_reaches_suggest_index():
+        used, visited = sm.analyze("numpy", ["queryu/ask/suggest.py:suggest"])
+        assert "queryu/ask/suggest.py:Index" in visited
+&gt;       assert {"linalg.svd", "linalg.norm", "argsort", "packbits", "nan_to_num", "divide", "int8", "float32"} &lt;= set(used)
+E       AssertionError: assert {'argsort', '...alg.svd', ...} &lt;= set()
+E         
+E         Extra items in the left set:
+E         'nan_to_num'
+E         'float32'
+E         'packbits'
+E         'argsort'
+E         'linalg.norm'
+E         'divide'
+E         'int8'
+E         'linalg.svd'
+
+tests/test_shrink_module.py:45: AssertionError</failure></testcase><testcase classname="tests.test_survey_third_party" name="test_committed_inventory_matches_the_tree" time="3.943"><failure message="AssertionError: &lt;runner-work&gt;/docs/evidence/third-party-survey.json is stale. Re-run with --json &lt;runner-work&gt;/docs/evidence/third-party-survey.json&#10;  &#10;assert 1 == 0&#10; +  where 1 = CompletedProcess(args=['&lt;runner-work&gt;/.venv/bin/python', '&lt;runner-work&gt;/scripts/survey_third_p...hird-party-survey.json is stale. Re-run with --json &lt;runner-work&gt;/docs/evidence/third-party-survey.json\n').returncode">def test_committed_inventory_matches_the_tree():
+        proc = subprocess.run(
+            [sys.executable, str(SURVEY), "--check", str(ROOT / "docs" / "evidence" / "third-party-survey.json")],
+            cwd=ROOT, capture_output=True, text=True,
+        )
+&gt;       assert proc.returncode == 0, proc.stderr
+E       AssertionError: &lt;runner-work&gt;/docs/evidence/third-party-survey.json is stale. Re-run with --json &lt;runner-work&gt;/docs/evidence/third-party-survey.json
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['&lt;runner-work&gt;/.venv/bin/python', '&lt;runner-work&gt;/scripts/survey_third_p...hird-party-survey.json is stale. Re-run with --json &lt;runner-work&gt;/docs/evidence/third-party-survey.json\n').returncode
+
+tests/test_survey_third_party.py:144: AssertionError</failure></testcase></testsuite></testsuites>
