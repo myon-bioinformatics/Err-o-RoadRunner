@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="113" tests="3958" time="732.408" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_shared_tools_lock" name="test_lock_matches_shared_tool_bytes" time="0.001"><failure message="AssertionError: assert ['scripts/shr...d07be8b363ed'] == []&#10;  &#10;  Left contains one more item: 'scripts/shrink_module.py: sha256 が違う 6188891f84de0af786107fa3f0b10cf31dbd9abc397e715ac764b9c0531cdd98 != 8ccbaca8156708cd29dc5789ea7b0807c14af560e0b2fdbc5c11d07be8b363ed'&#10;  &#10;  Full diff:&#10;  - []&#10;  + [&#10;  +     'scripts/shrink_module.py: sha256 が違う '&#10;  +     '6188891f84de0af786107fa3f0b10cf31dbd9abc397e715ac764b9c0531cdd98 != '&#10;  +     '8ccbaca8156708cd29dc5789ea7b0807c14af560e0b2fdbc5c11d07be8b363ed',&#10;  + ]">def test_lock_matches_shared_tool_bytes():
+&gt;       assert lock.problems(ROOT) == []
+E       AssertionError: assert ['scripts/shr...d07be8b363ed'] == []
+E         
+E         Left contains one more item: 'scripts/shrink_module.py: sha256 が違う 6188891f84de0af786107fa3f0b10cf31dbd9abc397e715ac764b9c0531cdd98 != 8ccbaca8156708cd29dc5789ea7b0807c14af560e0b2fdbc5c11d07be8b363ed'
+E         
+E         Full diff:
+E         - []
+E         + [
+E         +     'scripts/shrink_module.py: sha256 が違う '
+E         +     '6188891f84de0af786107fa3f0b10cf31dbd9abc397e715ac764b9c0531cdd98 != '
+E         +     '8ccbaca8156708cd29dc5789ea7b0807c14af560e0b2fdbc5c11d07be8b363ed',
+E         + ]
+
+tests/test_shared_tools_lock.py:12: AssertionError</failure></testcase></testsuite></testsuites>

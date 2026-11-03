@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="7" tests="1548" time="214.765" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_wikipedia_mcp_deno" name="test_deno_session_expires_after_ttl" time="0.050"><failure message="assert 400 == 202&#10; +  where 400 = &lt;Response [400 Bad Request]&gt;.status_code">def test_deno_session_expires_after_ttl() -&gt; None:
+        with running_wikipedia_mcp(extra_env={"MCP_SESSION_TTL_SECONDS": "1"}) as server:
+            session = DenoMcpSession(server.url)
+            try:
+&gt;               session.initialize()
+
+tests/test_wikipedia_mcp_deno.py:570: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;tests.test_wikipedia_mcp_deno.DenoMcpSession object at 0x&lt;addr&gt;&gt;
+
+    def initialize(self) -&gt; dict:
+        response = self.post(
+            {
+                "jsonrpc": "2.0",
+                "id": self._next_id,
+                "method": "initialize",
+                "params": {
+                    "protocolVersion": "2025-06-18",
+                    "capabilities": {},
+                    "clientInfo": {"name": "wikipedia-mcp-test", "version": "0.0.1"},
+                },
+            }
+        )
+        self._next_id += 1
+        self.session_id = response.headers.get("mcp-session-id")
+        assert self.session_id, response.headers
+        notify = self.post({"jsonrpc": "2.0", "method": "notifications/initialized"})
+&gt;       assert notify.status_code == 202
+E       assert 400 == 202
+E        +  where 400 = &lt;Response [400 Bad Request]&gt;.status_code
+
+tests/test_wikipedia_mcp_deno.py:297: AssertionError</failure></testcase></testsuite></testsuites>

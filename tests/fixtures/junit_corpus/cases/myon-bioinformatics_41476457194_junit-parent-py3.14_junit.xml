@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="31" tests="2327" time="95.144" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_pytest_uv_ci" name="test_pytest_workflows_use_uv_run_pytest" time="0.001"><failure message="AssertionError: workflow-wrapper-tests.yml&#10;assert 'astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3' in 'name: Test GitHub workflow wrapper\non:\n  pull_request:\n    paths:\n      - &quot;gh_workflow.py&quot;\n      - &quot;tests/test_g...n }}\n          path: reports/workflow-wrapper.xml\n          if-no-files-found: error\n          retention-days: 14\n'">def test_pytest_workflows_use_uv_run_pytest():
+        for name in PYTEST_WORKFLOWS:
+            text = (WORKFLOWS / name).read_text(encoding="utf-8")
+            assert "uv run pytest" in text, name
+            assert "python -m pytest" not in text, name
+            assert "python -m pip install" not in text, name
+&gt;           assert SETUP_UV in text, name
+E           AssertionError: workflow-wrapper-tests.yml
+E           assert 'astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3' in 'name: Test GitHub workflow wrapper\non:\n  pull_request:\n    paths:\n      - "gh_workflow.py"\n      - "tests/test_g...n }}\n          path: reports/workflow-wrapper.xml\n          if-no-files-found: error\n          retention-days: 14\n'
+
+tests/test_pytest_uv_ci.py:41: AssertionError</failure></testcase></testsuite></testsuites>

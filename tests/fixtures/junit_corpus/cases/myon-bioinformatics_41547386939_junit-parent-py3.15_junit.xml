@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="31" tests="2340" time="91.314" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_vendor_baseline_rollout" name="test_observed_lock_topology_and_immutable_revision[myon-bioinformatics/myon-bioinformatics.github.io]" time="0.003"><failure message="assert False">name = 'myon-bioinformatics/myon-bioinformatics.github.io'
+
+    @pytest.mark.parametrize("name", sorted(FIXTURES))
+    def test_observed_lock_topology_and_immutable_revision(name):
+        registry = baseline_registry(json.loads((ROOT / "vendor-consumers.json").read_text()))
+        heads = vendor_sync.validate_child_heads(json.loads((ROOT / "child-heads.json").read_text()))
+        fixture = REFRESHED_FIXTURES.get(name, FIXTURES[name])
+        lock = vendor_sync.validate(fixture["lock"])
+        observed = json.loads((ROOT / "tests/fixtures/parent_observation_20261102.json").read_text())
+        expected_sha = fixture["sha"]
+        if name in observed:
+            digest = hashlib.sha256(json.dumps(lock, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+            assert digest == observed[name]["lock_sha256"]
+            expected_sha = observed[name]["sha"]
+        assert heads["heads"][name]["sha"] == expected_sha
+&gt;       assert vendor_consumers.compare(registry, lock, name)["matches"]
+E       assert False
+
+tests/test_vendor_baseline_rollout.py:67: AssertionError</failure></testcase></testsuite></testsuites>

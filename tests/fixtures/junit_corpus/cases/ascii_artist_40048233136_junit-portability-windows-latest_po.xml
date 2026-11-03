@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="17" tests="123" time="4.015" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_ascii_artist_node_entry" name="test_ci_executes_node_parity_instead_of_skipping" time="0.000"><failure message="AssertionError: Node 24+ is required in CI&#10;assert None is not None">def test_ci_executes_node_parity_instead_of_skipping():
+        flow = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+        job = flow.split("\n  test:\n", 1)[1].split("\n  failure-identity:", 1)[0]
+        assert "actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1" in job
+        assert "node-version: '26'" in job
+        assert "Require supported Node in parity CI" in job
+        locked = flow.split("\n  test-locked:\n", 1)[1]
+        assert "actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1" in locked
+        assert "node-version: '26'" in locked
+        assert "Require supported Node in locked parity CI" in locked
+        if os.environ.get("GITHUB_ACTIONS") == "true":
+&gt;           assert NODE is not None, "Node 24+ is required in CI"
+E           AssertionError: Node 24+ is required in CI
+E           assert None is not None
+
+tests\test_ascii_artist_node_entry.py:57: AssertionError</failure></testcase></testsuite></testsuites>

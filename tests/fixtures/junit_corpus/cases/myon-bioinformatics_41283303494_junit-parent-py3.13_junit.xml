@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="31" tests="2253" time="93.633" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_node_launch_catalog" name="test_node_launch_worktree_source_identity" time="0.001"><failure message="AssertionError: assert '08b4027bb5e3...c2484f2e184bb' == '5284dc7f99cd...541393ad2e8ae'&#10;  &#10;  - 5284dc7f99cd5434a0c9db51aec541393ad2e8ae&#10;  + 08b4027bb5e3e9248eb3be88de2c2484f2e184bb">def test_node_launch_worktree_source_identity():
+        data = (ROOT / SOURCE).read_bytes()
+&gt;       assert vendor_sync.git_blob(data) == NODE_LAUNCH_WORKTREE_BLOB_SHA
+E       AssertionError: assert '08b4027bb5e3...c2484f2e184bb' == '5284dc7f99cd...541393ad2e8ae'
+E         
+E         - 5284dc7f99cd5434a0c9db51aec541393ad2e8ae
+E         + 08b4027bb5e3e9248eb3be88de2c2484f2e184bb
+
+tests/test_node_launch_catalog.py:43: AssertionError</failure></testcase><testcase classname="tests.test_py_launch_catalog" name="test_py_launch_worktree_source_identity" time="0.001"><failure message="AssertionError: assert '4a35b158b4a4...37a138a44bbd2' == 'ca71c805f316...70aa8119cf3ac'&#10;  &#10;  - ca71c805f316c5cdd0753d55c2a70aa8119cf3ac&#10;  + 4a35b158b4a4cbd3a5d672ded1337a138a44bbd2">def test_py_launch_worktree_source_identity():
+        data = (ROOT / SOURCE).read_bytes()
+&gt;       assert vendor_sync.git_blob(data) == PY_LAUNCH_WORKTREE_BLOB_SHA
+E       AssertionError: assert '4a35b158b4a4...37a138a44bbd2' == 'ca71c805f316...70aa8119cf3ac'
+E         
+E         - ca71c805f316c5cdd0753d55c2a70aa8119cf3ac
+E         + 4a35b158b4a4cbd3a5d672ded1337a138a44bbd2
+
+tests/test_py_launch_catalog.py:45: AssertionError</failure></testcase></testsuite></testsuites>

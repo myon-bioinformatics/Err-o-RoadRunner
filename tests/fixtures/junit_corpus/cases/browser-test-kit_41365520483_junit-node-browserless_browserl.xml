@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites id="" name="" tests="14" failures="1" skipped="0" errors="0" time="6.562107"><testsuite name="page-inspect-scenario.spec.mjs" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="1" failures="1" skipped="0" time="0.151" errors="0"><testcase name="platform fixture state machines and Node runtime contract" classname="page-inspect-scenario.spec.mjs" time="0.151"><system-out>
+
+[[ATTACHMENT|../browserless-node/page-inspect-scenario-plat-3ec5d-s-and-Node-runtime-contract/error-context.md]]
+
+</system-out>
+<failure message="✖ workspace selects Node 24 and this test uses a supported runtime (5.536618ms)" type="expect.toBe">
+  page-inspect-scenario.spec.mjs:5:1 › platform fixture state machines and Node runtime contract ───
+
+    Error: ✖ workspace selects Node 24 and this test uses a supported runtime (5.536618ms)
+    ✔ notification and location queries do not request location coordinates (15.97905ms)
+    ✔ permission probe records each change with a new generation (1.182715ms)
+    ✔ unsupported and broken permission APIs are distinct (2.993873ms)
+    ✔ unknown permission values are never copied into evidence (1.163693ms)
+    ✔ fetch recovery cannot reuse the previous completed generation (1.309083ms)
+    ✔ upload supports selection, rejection and reset without reading contents (1.090507ms)
+    ℹ tests 7
+    ℹ suites 0
+    ℹ pass 6
+    ℹ fail 1
+    ℹ cancelled 0
+    ℹ skipped 0
+    ℹ todo 0
+    ℹ duration_ms 104.195706
+
+    ✖ failing tests:
+
+    test at tests/node-unit/page_inspect_scenario_fixture.test.mjs:29:1
+    ✖ workspace selects Node 24 and this test uses a supported runtime (5.536618ms)
+      AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:
+      
+      '26' !== '24'
+      
+          at TestContext.&lt;anonymous&gt; (file://&lt;runner-work&gt;/tests/node-unit/page_inspect_scenario_fixture.test.mjs:30:10)
+          at Test.runInAsyncScope (node:async_hooks:226:14)
+          at Test.run (node:internal/test_runner/test:1402:25)
+          at Test.start (node:internal/test_runner/test:1262:17)
+          at startSubtestAfterBootstrap (node:internal/test_runner/harness:387:17) {
+        generatedMessage: true,
+        code: 'ERR_ASSERTION',
+        actual: '26',
+        expected: '24',
+        operator: 'strictEqual',
+        diff: 'simple'
+      }
+
+
+    expect(received).toBe(expected) // Object.is equality
+
+    Expected: 0
+    Received: 1
+        at test at tests/node-unit/page_inspect_scenario_fixture.test.mjs:29:1
+        at &lt;runner-work&gt;/tests/browserless/page-inspect-scenario.spec.mjs:9:56
+
+    Error Context: ../../test-results/browserless-node/page-inspect-scenario-plat-3ec5d-s-and-Node-runtime-contract/error-context.md
+
+</failure>
+</testcase></testsuite></testsuites>

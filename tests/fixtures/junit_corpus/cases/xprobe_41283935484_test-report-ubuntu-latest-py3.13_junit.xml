@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="733" time="18.705" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_consumer_selection_experiment" name="test_saved_evidence_consistent_with_exact_replay" time="0.035"><failure message="AssertionError: assert '5e2b8eaa12cb...e9ec40af224af' == 'af46db5428f8...cdcd63dea9a32'&#10;  &#10;  - af46db5428f8ff2b2ff55ab2432207909823760949256874d35cdcd63dea9a32&#10;  + 5e2b8eaa12cb13ff7c49a8d1fde355a6bb0ee68d8774bd9946de9ec40af224af">def test_saved_evidence_consistent_with_exact_replay():
+        import gzip
+        import json
+        data = json.loads(gzip.decompress((ROOT/'docs/experiments/consumer-selection.json.gz').read_bytes()))
+        assert len(data['rows']) == 500
+        assert len({(r['size'],r['method'],r['budget'],r['seed']) for r in data['rows']}) == 500
+        for filename, digest in data['source_sha256'].items():
+            source = (ROOT/filename).read_bytes()
+            # Permit Git's LF/CRLF checkout translation for code, not fixture bytes.
+            if not filename.startswith('tests/fixtures/'):
+                source = source.replace(b'\r\n', b'\n')
+&gt;           assert hashlib.sha256(source).hexdigest() == digest
+E           AssertionError: assert '5e2b8eaa12cb...e9ec40af224af' == 'af46db5428f8...cdcd63dea9a32'
+E             
+E             - af46db5428f8ff2b2ff55ab2432207909823760949256874d35cdcd63dea9a32
+E             + 5e2b8eaa12cb13ff7c49a8d1fde355a6bb0ee68d8774bd9946de9ec40af224af
+
+tests/test_consumer_selection_experiment.py:93: AssertionError</failure></testcase></testsuite></testsuites>
