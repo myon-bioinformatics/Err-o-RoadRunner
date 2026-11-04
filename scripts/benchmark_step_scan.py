@@ -26,7 +26,8 @@ def main():
                 start=time.perf_counter_ns()
                 result=module._analyze_step('job','Run',body)
                 elapsed=time.perf_counter_ns()-start
-                assert asdict(result)==expected
+                if not (asdict(result)==expected):
+                    raise SystemExit('benchmark_step_scan: result mismatch')
                 if repeat:samples[name].append(elapsed)
         records.append({'kind':kind,'lines':len(body),'samples_ns':samples,
                         'median_ns':{k:statistics.median(v) for k,v in samples.items()}})
