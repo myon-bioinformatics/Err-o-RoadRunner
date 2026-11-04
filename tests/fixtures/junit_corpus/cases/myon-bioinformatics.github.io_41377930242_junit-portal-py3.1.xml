@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="103" time="1.562" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_html_import" name="test_exact_vendor_bytes" time="0.001"><failure message="AssertionError: assert '8e211583fcf3...4a773583d5d30' == 'f7464ad83498...cd621c80c225a'&#10;  &#10;  - f7464ad834989777cb4b2861949c3386f154299d5f740eb0d34cd621c80c225a&#10;  + 8e211583fcf35166d2f5189918518c98034cbbf563c5440e10b4a773583d5d30">def test_exact_vendor_bytes():
+        lock = json.loads((ROOT / 'tools/html-import/vendor.lock.json').read_text(encoding='utf-8'))
+        for item in lock['sources']:
+            assert len(item['commit']) == 40
+&gt;           assert hashlib.sha256((ROOT / item['path']).read_bytes()).hexdigest() == item['sha256']
+E           AssertionError: assert '8e211583fcf3...4a773583d5d30' == 'f7464ad83498...cd621c80c225a'
+E             
+E             - f7464ad834989777cb4b2861949c3386f154299d5f740eb0d34cd621c80c225a
+E             + 8e211583fcf35166d2f5189918518c98034cbbf563c5440e10b4a773583d5d30
+
+tests/test_html_import.py:41: AssertionError</failure></testcase><testcase classname="tests.test_myon_bioinformatics_github_io_vendor_lock" name="test_root_vendor_lock_agrees_with_html_import_lock" time="0.000"><failure message="AssertionError: tools/vendor/web-ui/web_ui.py&#10;assert '8e211583fcf3...4a773583d5d30' == 'f7464ad83498...cd621c80c225a'&#10;  &#10;  - f7464ad834989777cb4b2861949c3386f154299d5f740eb0d34cd621c80c225a&#10;  + 8e211583fcf35166d2f5189918518c98034cbbf563c5440e10b4a773583d5d30">def test_root_vendor_lock_agrees_with_html_import_lock() -&gt; None:
+        root_lock = json.loads((ROOT / "vendor.lock.json").read_text(encoding="utf-8"))
+        html_lock = json.loads((ROOT / "tools/html-import/vendor.lock.json").read_text(encoding="utf-8"))
+        assert html_lock["schema"] == "html-import-vendor/1"
+    
+        root_by_path = {entry["destination"]: entry for entry in root_lock["files"]}
+        html_by_path = {entry["path"]: entry for entry in html_lock["sources"]}
+    
+        assert set(root_by_path) == set(html_by_path)
+        for path in root_by_path:
+            root_entry = root_by_path[path]
+            html_entry = html_by_path[path]
+            assert root_entry["commit"] == html_entry["commit"], path
+&gt;           assert root_entry["sha256"] == html_entry["sha256"], path
+E           AssertionError: tools/vendor/web-ui/web_ui.py
+E           assert '8e211583fcf3...4a773583d5d30' == 'f7464ad83498...cd621c80c225a'
+E             
+E             - f7464ad834989777cb4b2861949c3386f154299d5f740eb0d34cd621c80c225a
+E             + 8e211583fcf35166d2f5189918518c98034cbbf563c5440e10b4a773583d5d30
+
+tests/test_myon_bioinformatics_github_io_vendor_lock.py:34: AssertionError</failure></testcase></testsuite></testsuites>

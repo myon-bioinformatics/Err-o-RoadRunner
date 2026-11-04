@@ -1,0 +1,436 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="19" failures="0" skipped="0" tests="19" time="2.722" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="" name="tests.test_capture_matrix" time="0.000"><error message="collection failure">.venv/lib/python3.15/site-packages/_pytest/python.py:508: in importtestmodule
+    mod = import_path(
+.venv/lib/python3.15/site-packages/_pytest/pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+../../_temp/uv-python-dir/cpython-3.15.2-linux-x86_64-gnu/lib/python3.15/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;frozen importlib._bootstrap&gt;:1389: in _gcd_import
+    ???
+&lt;frozen importlib._bootstrap&gt;:1353: in _find_and_load
+    ???
+&lt;frozen importlib._bootstrap&gt;:1249: in _find_and_load_unlocked
+    ???
+&lt;frozen importlib._bootstrap&gt;:857: in _load_unlocked
+    ???
+.venv/lib/python3.15/site-packages/_pytest/assertion/rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests/test_capture_matrix.py:11: in &lt;module&gt;
+    import capture_matrix as cm  # noqa: E402
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tool/capture_matrix.py:28: in &lt;module&gt;
+    import web_ui  # noqa: E402  (route table rules shared with navigation.js)
+    ^^^^^^^^^^^^^
+E     File "&lt;runner-work&gt;/web_ui.py", line 8215
+E       2: ("ログイン中ユーザーに紐づくアカウ
+E           ^
+E   SyntaxError: unterminated string literal (detected at line 8215)</error></testcase><testcase classname="" name="tests.test_controls" time="0.000"><error message="collection failure">.venv/lib/python3.15/site-packages/_pytest/python.py:508: in importtestmodule
+    mod = import_path(
+.venv/lib/python3.15/site-packages/_pytest/pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+../../_temp/uv-python-dir/cpython-3.15.2-linux-x86_64-gnu/lib/python3.15/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;frozen importlib._bootstrap&gt;:1389: in _gcd_import
+    ???
+&lt;frozen importlib._bootstrap&gt;:1353: in _find_and_load
+    ???
+&lt;frozen importlib._bootstrap&gt;:1249: in _find_and_load_unlocked
+    ???
+&lt;frozen importlib._bootstrap&gt;:857: in _load_unlocked
+    ???
+.venv/lib/python3.15/site-packages/_pytest/assertion/rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests/test_controls.py:8: in &lt;module&gt;
+    import web_ui as ui
+E     File "&lt;runner-work&gt;/web_ui.py", line 8215
+E       2: ("ログイン中ユーザーに紐づくアカウ
+E           ^
+E   SyntaxError: unterminated string literal (detected at line 8215)</error></testcase><testcase classname="" name="tests.test_embedded_modules" time="0.000"><error message="collection failure">.venv/lib/python3.15/site-packages/_pytest/python.py:508: in importtestmodule
+    mod = import_path(
+.venv/lib/python3.15/site-packages/_pytest/pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+../../_temp/uv-python-dir/cpython-3.15.2-linux-x86_64-gnu/lib/python3.15/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;frozen importlib._bootstrap&gt;:1389: in _gcd_import
+    ???
+&lt;frozen importlib._bootstrap&gt;:1353: in _find_and_load
+    ???
+&lt;frozen importlib._bootstrap&gt;:1249: in _find_and_load_unlocked
+    ???
+&lt;frozen importlib._bootstrap&gt;:857: in _load_unlocked
+    ???
+.venv/lib/python3.15/site-packages/_pytest/assertion/rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests/test_embedded_modules.py:8: in &lt;module&gt;
+    from web_ui import EMBEDDED_UI_JS, module_asset, module_script, module_csp_hash, render_document
+E     File "&lt;runner-work&gt;/web_ui.py", line 8215
+E       2: ("ログイン中ユーザーに紐づくアカウ
+E           ^
+E   SyntaxError: unterminated string literal (detected at line 8215)</error></testcase><testcase classname="" name="tests.test_font" time="0.000"><error message="collection failure">.venv/lib/python3.15/site-packages/_pytest/python.py:508: in importtestmodule
+    mod = import_path(
+.venv/lib/python3.15/site-packages/_pytest/pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+../../_temp/uv-python-dir/cpython-3.15.2-linux-x86_64-gnu/lib/python3.15/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;frozen importlib._bootstrap&gt;:1389: in _gcd_import
+    ???
+&lt;frozen importlib._bootstrap&gt;:1353: in _find_and_load
+    ???
+&lt;frozen importlib._bootstrap&gt;:1249: in _find_and_load_unlocked
+    ???
+&lt;frozen importlib._bootstrap&gt;:857: in _load_unlocked
+    ???
+.venv/lib/python3.15/site-packages/_pytest/assertion/rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests/test_font.py:7: in &lt;module&gt;
+    import web_ui
+E     File "&lt;runner-work&gt;/web_ui.py", line 8215
+E       2: ("ログイン中ユーザーに紐づくアカウ
+E           ^
+E   SyntaxError: unterminated string literal (detected at line 8215)</error></testcase><testcase classname="" name="tests.test_layout_presets" time="0.000"><error message="collection failure">.venv/lib/python3.15/site-packages/_pytest/python.py:508: in importtestmodule
+    mod = import_path(
+.venv/lib/python3.15/site-packages/_pytest/pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+../../_temp/uv-python-dir/cpython-3.15.2-linux-x86_64-gnu/lib/python3.15/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;frozen importlib._bootstrap&gt;:1389: in _gcd_import
+    ???
+&lt;frozen importlib._bootstrap&gt;:1353: in _find_and_load
+    ???
+&lt;frozen importlib._bootstrap&gt;:1249: in _find_and_load_unlocked
+    ???
+&lt;frozen importlib._bootstrap&gt;:857: in _load_unlocked
+    ???
+.venv/lib/python3.15/site-packages/_pytest/assertion/rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests/test_layout_presets.py:13: in &lt;module&gt;
+    import web_ui  # noqa: E402
+    ^^^^^^^^^^^^^
+E     File "&lt;runner-work&gt;/web_ui.py", line 8215
+E       2: ("ログイン中ユーザーに紐づくアカウ
+E           ^
+E   SyntaxError: unterminated string literal (detected at line 8215)</error></testcase><testcase classname="" name="tests.test_navigation" time="0.000"><error message="collection failure">.venv/lib/python3.15/site-packages/_pytest/python.py:508: in importtestmodule
+    mod = import_path(
+.venv/lib/python3.15/site-packages/_pytest/pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+../../_temp/uv-python-dir/cpython-3.15.2-linux-x86_64-gnu/lib/python3.15/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;frozen importlib._bootstrap&gt;:1389: in _gcd_import
+    ???
+&lt;frozen importlib._bootstrap&gt;:1353: in _find_and_load
+    ???
+&lt;frozen importlib._bootstrap&gt;:1249: in _find_and_load_unlocked
+    ???
+&lt;frozen importlib._bootstrap&gt;:857: in _load_unlocked
+    ???
+.venv/lib/python3.15/site-packages/_pytest/assertion/rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests/test_navigation.py:20: in &lt;module&gt;
+    spec=importlib.util.spec_from_file_location('web_ui_navigation',ROOT/'web_ui.py');ui=importlib.util.module_from_spec(spec);spec.loader.exec_module(ui)
+                                                                                                                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;frozen importlib._bootstrap_external&gt;:747: in exec_module
+    ???
+&lt;frozen importlib._bootstrap_external&gt;:881: in get_code
+    ???
+&lt;frozen importlib._bootstrap_external&gt;:810: in source_to_code
+    ???
+&lt;frozen importlib._bootstrap&gt;:491: in _call_with_frames_removed
+    ???
+E     File "&lt;runner-work&gt;/web_ui.py", line 8215
+E       2: ("ログイン中ユーザーに紐づくアカウ
+E           ^
+E   SyntaxError: unterminated string literal (detected at line 8215)</error></testcase><testcase classname="" name="tests.test_plotly_distribution" time="0.000"><error message="collection failure">.venv/lib/python3.15/site-packages/_pytest/python.py:508: in importtestmodule
+    mod = import_path(
+.venv/lib/python3.15/site-packages/_pytest/pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+../../_temp/uv-python-dir/cpython-3.15.2-linux-x86_64-gnu/lib/python3.15/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;frozen importlib._bootstrap&gt;:1389: in _gcd_import
+    ???
+&lt;frozen importlib._bootstrap&gt;:1353: in _find_and_load
+    ???
+&lt;frozen importlib._bootstrap&gt;:1249: in _find_and_load_unlocked
+    ???
+&lt;frozen importlib._bootstrap&gt;:857: in _load_unlocked
+    ???
+.venv/lib/python3.15/site-packages/_pytest/assertion/rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests/test_plotly_distribution.py:10: in &lt;module&gt;
+    import web_ui as ui
+E     File "&lt;runner-work&gt;/web_ui.py", line 8215
+E       2: ("ログイン中ユーザーに紐づくアカウ
+E           ^
+E   SyntaxError: unterminated string literal (detected at line 8215)</error></testcase><testcase classname="" name="tests.test_plotly_figure" time="0.000"><error message="collection failure">.venv/lib/python3.15/site-packages/_pytest/python.py:508: in importtestmodule
+    mod = import_path(
+.venv/lib/python3.15/site-packages/_pytest/pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+../../_temp/uv-python-dir/cpython-3.15.2-linux-x86_64-gnu/lib/python3.15/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;frozen importlib._bootstrap&gt;:1389: in _gcd_import
+    ???
+&lt;frozen importlib._bootstrap&gt;:1353: in _find_and_load
+    ???
+&lt;frozen importlib._bootstrap&gt;:1249: in _find_and_load_unlocked
+    ???
+&lt;frozen importlib._bootstrap&gt;:857: in _load_unlocked
+    ???
+.venv/lib/python3.15/site-packages/_pytest/assertion/rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests/test_plotly_figure.py:7: in &lt;module&gt;
+    from web_ui import (
+E     File "&lt;runner-work&gt;/web_ui.py", line 8215
+E       2: ("ログイン中ユーザーに紐づくアカウ
+E           ^
+E   SyntaxError: unterminated string literal (detected at line 8215)</error></testcase><testcase classname="" name="tests.test_pptx_presentation" time="0.000"><error message="collection failure">.venv/lib/python3.15/site-packages/_pytest/python.py:508: in importtestmodule
+    mod = import_path(
+.venv/lib/python3.15/site-packages/_pytest/pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+../../_temp/uv-python-dir/cpython-3.15.2-linux-x86_64-gnu/lib/python3.15/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;frozen importlib._bootstrap&gt;:1389: in _gcd_import
+    ???
+&lt;frozen importlib._bootstrap&gt;:1353: in _find_and_load
+    ???
+&lt;frozen importlib._bootstrap&gt;:1249: in _find_and_load_unlocked
+    ???
+&lt;frozen importlib._bootstrap&gt;:857: in _load_unlocked
+    ???
+.venv/lib/python3.15/site-packages/_pytest/assertion/rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests/test_pptx_presentation.py:8: in &lt;module&gt;
+    from web_ui import (
+E     File "&lt;runner-work&gt;/web_ui.py", line 8215
+E       2: ("ログイン中ユーザーに紐づくアカウ
+E           ^
+E   SyntaxError: unterminated string literal (detected at line 8215)</error></testcase><testcase classname="" name="tests.test_python_generation_regressions" time="0.000"><error message="collection failure">.venv/lib/python3.15/site-packages/_pytest/python.py:508: in importtestmodule
+    mod = import_path(
+.venv/lib/python3.15/site-packages/_pytest/pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+../../_temp/uv-python-dir/cpython-3.15.2-linux-x86_64-gnu/lib/python3.15/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;frozen importlib._bootstrap&gt;:1389: in _gcd_import
+    ???
+&lt;frozen importlib._bootstrap&gt;:1353: in _find_and_load
+    ???
+&lt;frozen importlib._bootstrap&gt;:1249: in _find_and_load_unlocked
+    ???
+&lt;frozen importlib._bootstrap&gt;:857: in _load_unlocked
+    ???
+.venv/lib/python3.15/site-packages/_pytest/assertion/rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests/test_python_generation_regressions.py:8: in &lt;module&gt;
+    import web_ui
+E     File "&lt;runner-work&gt;/web_ui.py", line 8215
+E       2: ("ログイン中ユーザーに紐づくアカウ
+E           ^
+E   SyntaxError: unterminated string literal (detected at line 8215)</error></testcase><testcase classname="" name="tests.test_python_wrapper" time="0.000"><error message="collection failure">.venv/lib/python3.15/site-packages/_pytest/python.py:508: in importtestmodule
+    mod = import_path(
+.venv/lib/python3.15/site-packages/_pytest/pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+../../_temp/uv-python-dir/cpython-3.15.2-linux-x86_64-gnu/lib/python3.15/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;frozen importlib._bootstrap&gt;:1389: in _gcd_import
+    ???
+&lt;frozen importlib._bootstrap&gt;:1353: in _find_and_load
+    ???
+&lt;frozen importlib._bootstrap&gt;:1249: in _find_and_load_unlocked
+    ???
+&lt;frozen importlib._bootstrap&gt;:857: in _load_unlocked
+    ???
+.venv/lib/python3.15/site-packages/_pytest/assertion/rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests/test_python_wrapper.py:20: in &lt;module&gt;
+    import web_ui
+E     File "&lt;runner-work&gt;/web_ui.py", line 8215
+E       2: ("ログイン中ユーザーに紐づくアカウ
+E           ^
+E   SyntaxError: unterminated string literal (detected at line 8215)</error></testcase><testcase classname="" name="tests.test_static_contract" time="0.000"><error message="collection failure">.venv/lib/python3.15/site-packages/_pytest/python.py:508: in importtestmodule
+    mod = import_path(
+.venv/lib/python3.15/site-packages/_pytest/pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+../../_temp/uv-python-dir/cpython-3.15.2-linux-x86_64-gnu/lib/python3.15/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;frozen importlib._bootstrap&gt;:1389: in _gcd_import
+    ???
+&lt;frozen importlib._bootstrap&gt;:1353: in _find_and_load
+    ???
+&lt;frozen importlib._bootstrap&gt;:1249: in _find_and_load_unlocked
+    ???
+&lt;frozen importlib._bootstrap&gt;:857: in _load_unlocked
+    ???
+.venv/lib/python3.15/site-packages/_pytest/assertion/rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests/test_static_contract.py:12: in &lt;module&gt;
+    import web_ui  # noqa: E402
+    ^^^^^^^^^^^^^
+E     File "&lt;runner-work&gt;/web_ui.py", line 8215
+E       2: ("ログイン中ユーザーに紐づくアカウ
+E           ^
+E   SyntaxError: unterminated string literal (detected at line 8215)</error></testcase><testcase classname="" name="tests.test_successor_tools" time="0.000"><error message="collection failure">.venv/lib/python3.15/site-packages/_pytest/python.py:508: in importtestmodule
+    mod = import_path(
+.venv/lib/python3.15/site-packages/_pytest/pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+../../_temp/uv-python-dir/cpython-3.15.2-linux-x86_64-gnu/lib/python3.15/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;frozen importlib._bootstrap&gt;:1389: in _gcd_import
+    ???
+&lt;frozen importlib._bootstrap&gt;:1353: in _find_and_load
+    ???
+&lt;frozen importlib._bootstrap&gt;:1249: in _find_and_load_unlocked
+    ???
+&lt;frozen importlib._bootstrap&gt;:857: in _load_unlocked
+    ???
+.venv/lib/python3.15/site-packages/_pytest/assertion/rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests/test_successor_tools.py:13: in &lt;module&gt;
+    import web_ui as u
+E     File "&lt;runner-work&gt;/web_ui.py", line 8215
+E       2: ("ログイン中ユーザーに紐づくアカウ
+E           ^
+E   SyntaxError: unterminated string literal (detected at line 8215)</error></testcase><testcase classname="" name="tests.test_web_ui_node_launch" time="0.000"><error message="collection failure">.venv/lib/python3.15/site-packages/_pytest/python.py:508: in importtestmodule
+    mod = import_path(
+.venv/lib/python3.15/site-packages/_pytest/pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+../../_temp/uv-python-dir/cpython-3.15.2-linux-x86_64-gnu/lib/python3.15/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;frozen importlib._bootstrap&gt;:1389: in _gcd_import
+    ???
+&lt;frozen importlib._bootstrap&gt;:1353: in _find_and_load
+    ???
+&lt;frozen importlib._bootstrap&gt;:1249: in _find_and_load_unlocked
+    ???
+&lt;frozen importlib._bootstrap&gt;:857: in _load_unlocked
+    ???
+.venv/lib/python3.15/site-packages/_pytest/assertion/rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests/test_web_ui_node_launch.py:16: in &lt;module&gt;
+    import web_ui as ui
+E     File "&lt;runner-work&gt;/web_ui.py", line 8215
+E       2: ("ログイン中ユーザーに紐づくアカウ
+E           ^
+E   SyntaxError: unterminated string literal (detected at line 8215)</error></testcase><testcase classname="" name="tests.test_web_ui_pinned_assets" time="0.000"><error message="collection failure">.venv/lib/python3.15/site-packages/_pytest/python.py:508: in importtestmodule
+    mod = import_path(
+.venv/lib/python3.15/site-packages/_pytest/pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+../../_temp/uv-python-dir/cpython-3.15.2-linux-x86_64-gnu/lib/python3.15/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;frozen importlib._bootstrap&gt;:1389: in _gcd_import
+    ???
+&lt;frozen importlib._bootstrap&gt;:1353: in _find_and_load
+    ???
+&lt;frozen importlib._bootstrap&gt;:1249: in _find_and_load_unlocked
+    ???
+&lt;frozen importlib._bootstrap&gt;:857: in _load_unlocked
+    ???
+.venv/lib/python3.15/site-packages/_pytest/assertion/rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests/test_web_ui_pinned_assets.py:11: in &lt;module&gt;
+    import web_ui as ui
+E     File "&lt;runner-work&gt;/web_ui.py", line 8215
+E       2: ("ログイン中ユーザーに紐づくアカウ
+E           ^
+E   SyntaxError: unterminated string literal (detected at line 8215)</error></testcase><testcase classname="" name="tests.test_web_ui_repository_diagnostics" time="0.000"><error message="collection failure">.venv/lib/python3.15/site-packages/_pytest/python.py:508: in importtestmodule
+    mod = import_path(
+.venv/lib/python3.15/site-packages/_pytest/pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+../../_temp/uv-python-dir/cpython-3.15.2-linux-x86_64-gnu/lib/python3.15/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;frozen importlib._bootstrap&gt;:1389: in _gcd_import
+    ???
+&lt;frozen importlib._bootstrap&gt;:1353: in _find_and_load
+    ???
+&lt;frozen importlib._bootstrap&gt;:1249: in _find_and_load_unlocked
+    ???
+&lt;frozen importlib._bootstrap&gt;:857: in _load_unlocked
+    ???
+.venv/lib/python3.15/site-packages/_pytest/assertion/rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests/test_web_ui_repository_diagnostics.py:5: in &lt;module&gt;
+    import web_ui  # noqa: E402
+    ^^^^^^^^^^^^^
+E     File "&lt;runner-work&gt;/web_ui.py", line 8215
+E       2: ("ログイン中ユーザーに紐づくアカウ
+E           ^
+E   SyntaxError: unterminated string literal (detected at line 8215)</error></testcase><testcase classname="" name="tests.test_web_ui_single_file" time="0.000"><error message="collection failure">.venv/lib/python3.15/site-packages/_pytest/python.py:508: in importtestmodule
+    mod = import_path(
+.venv/lib/python3.15/site-packages/_pytest/pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+../../_temp/uv-python-dir/cpython-3.15.2-linux-x86_64-gnu/lib/python3.15/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;frozen importlib._bootstrap&gt;:1389: in _gcd_import
+    ???
+&lt;frozen importlib._bootstrap&gt;:1353: in _find_and_load
+    ???
+&lt;frozen importlib._bootstrap&gt;:1249: in _find_and_load_unlocked
+    ???
+&lt;frozen importlib._bootstrap&gt;:857: in _load_unlocked
+    ???
+.venv/lib/python3.15/site-packages/_pytest/assertion/rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests/test_web_ui_single_file.py:8: in &lt;module&gt;
+    import web_ui
+E     File "&lt;runner-work&gt;/web_ui.py", line 8215
+E       2: ("ログイン中ユーザーに紐づくアカウ
+E           ^
+E   SyntaxError: unterminated string literal (detected at line 8215)</error></testcase><testcase classname="" name="tests.test_world_motion" time="0.000"><error message="collection failure">.venv/lib/python3.15/site-packages/_pytest/python.py:508: in importtestmodule
+    mod = import_path(
+.venv/lib/python3.15/site-packages/_pytest/pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+../../_temp/uv-python-dir/cpython-3.15.2-linux-x86_64-gnu/lib/python3.15/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;frozen importlib._bootstrap&gt;:1389: in _gcd_import
+    ???
+&lt;frozen importlib._bootstrap&gt;:1353: in _find_and_load
+    ???
+&lt;frozen importlib._bootstrap&gt;:1249: in _find_and_load_unlocked
+    ???
+&lt;frozen importlib._bootstrap&gt;:857: in _load_unlocked
+    ???
+.venv/lib/python3.15/site-packages/_pytest/assertion/rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests/test_world_motion.py:8: in &lt;module&gt;
+    import web_ui as ui
+E     File "&lt;runner-work&gt;/web_ui.py", line 8215
+E       2: ("ログイン中ユーザーに紐づくアカウ
+E           ^
+E   SyntaxError: unterminated string literal (detected at line 8215)</error></testcase><testcase classname="" name="tests.test_world_shared" time="0.000"><error message="collection failure">.venv/lib/python3.15/site-packages/_pytest/python.py:508: in importtestmodule
+    mod = import_path(
+.venv/lib/python3.15/site-packages/_pytest/pathlib.py:596: in import_path
+    importlib.import_module(module_name)
+../../_temp/uv-python-dir/cpython-3.15.2-linux-x86_64-gnu/lib/python3.15/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+&lt;frozen importlib._bootstrap&gt;:1389: in _gcd_import
+    ???
+&lt;frozen importlib._bootstrap&gt;:1353: in _find_and_load
+    ???
+&lt;frozen importlib._bootstrap&gt;:1249: in _find_and_load_unlocked
+    ???
+&lt;frozen importlib._bootstrap&gt;:857: in _load_unlocked
+    ???
+.venv/lib/python3.15/site-packages/_pytest/assertion/rewrite.py:188: in exec_module
+    exec(co, module.__dict__)
+tests/test_world_shared.py:6: in &lt;module&gt;
+    import web_ui as ui
+E     File "&lt;runner-work&gt;/web_ui.py", line 8215
+E       2: ("ログイン中ユーザーに紐づくアカウ
+E           ^
+E   SyntaxError: unterminated string literal (detected at line 8215)</error></testcase></testsuite></testsuites>

@@ -1,0 +1,3 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites><testsuite name="flutter" tests="354"><testcase name="Generic measured metadata cannot consume the finite template viewport" classname="&lt;runner-work&gt;/test/screens/generic_screen_test.dart"><error message="Flutter test error">Test failed. See exception logs above.
+The test description was: Generic measured metadata cannot consume the finite template viewport</error></testcase></testsuite></testsuites>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="112" tests="3947" time="635.351" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_pkgmin_surface" name="test_committed_surface_matches_the_tree" time="5.408"><failure message="AssertionError: assert [{'file': 'bl...e': 119}, ...] == [{'file': 'bl...e': 119}, ...]&#10;  &#10;  At index 6 diff: {'file': 'dragowing/vendor/aoi/scripts/fetch_module.py', 'line': 394} != {'file': 'dragowing/vendor/aoi/scripts/fetch_module.py', 'line': 390}&#10;  Right contains one more item: {'file': 'scripts/shrink_polars.py', 'line': 515}&#10;  &#10;  Full diff:&#10;    [&#10;        {&#10;            'file': 'blueprobe/blueprobe.py',&#10;            'line': 65,&#10;        },&#10;        {&#10;            'file': 'dist/blueprobe_min.py',&#10;            'line': 118,&#10;        },&#10;        {&#10;            'file': 'dist/dragowing_min.py',&#10;            'line': 120,&#10;        },&#10;        {&#10;            'file': 'dist/pythdragoras_min.py',&#10;            'line': 120,&#10;        },&#10;        {&#10;            'file': 'dist/queryu_min.py',&#10;            'line': 117,&#10;        },&#10;        {&#10;            'file': 'dist/sakanalytics_min.py',&#10;            'line': 119,&#10;        },&#10;        {&#10;            'file': 'dragowing/vendor/aoi/scripts/fetch_module.py',&#10;  -         'line': 390,&#10;  ?                   ^&#10;  +         'line': 394,&#10;  ?                   ^&#10;  -     },&#10;  -     {&#10;  -         'file': 'nagoyaction/vendor/aoi/scripts/shrink_polars.py',&#10;  -         'line': 515,&#10;        },&#10;        {&#10;            'file': 'queryu/conftest.py',&#10;            'line': 49,&#10;        },&#10;        {&#10;            'file': 'scripts/fetch_module.py',&#10;            'line': 390,&#10;        },&#10;        {&#10;            'file': 'scripts/shrink_polars.py',&#10;            'line': 515,&#10;        },&#10;    ]">def test_committed_surface_matches_the_tree():
+        fresh = survey.scan(ROOT)
+        saved = json.loads(EVIDENCE.read_text(encoding="utf-8"))
+        assert saved["packages"] == fresh["packages"]
+&gt;       assert saved["dynamic_nonliteral"] == fresh["dynamic_nonliteral"]
+E       AssertionError: assert [{'file': 'bl...e': 119}, ...] == [{'file': 'bl...e': 119}, ...]
+E         
+E         At index 6 diff: {'file': 'dragowing/vendor/aoi/scripts/fetch_module.py', 'line': 394} != {'file': 'dragowing/vendor/aoi/scripts/fetch_module.py', 'line': 390}
+E         Right contains one more item: {'file': 'scripts/shrink_polars.py', 'line': 515}
+E         
+E         Full diff:
+E           [
+E               {
+E                   'file': 'blueprobe/blueprobe.py',
+E                   'line': 65,
+E               },
+E               {
+E                   'file': 'dist/blueprobe_min.py',
+E                   'line': 118,
+E               },
+E               {
+E                   'file': 'dist/dragowing_min.py',
+E                   'line': 120,
+E               },
+E               {
+E                   'file': 'dist/pythdragoras_min.py',
+E                   'line': 120,
+E               },
+E               {
+E                   'file': 'dist/queryu_min.py',
+E                   'line': 117,
+E               },
+E               {
+E                   'file': 'dist/sakanalytics_min.py',
+E                   'line': 119,
+E               },
+E               {
+E                   'file': 'dragowing/vendor/aoi/scripts/fetch_module.py',
+E         -         'line': 390,
+E         ?                   ^
+E         +         'line': 394,
+E         ?                   ^
+E         -     },
+E         -     {
+E         -         'file': 'nagoyaction/vendor/aoi/scripts/shrink_polars.py',
+E         -         'line': 515,
+E               },
+E               {
+E                   'file': 'queryu/conftest.py',
+E                   'line': 49,
+E               },
+E               {
+E                   'file': 'scripts/fetch_module.py',
+E                   'line': 390,
+E               },
+E               {
+E                   'file': 'scripts/shrink_polars.py',
+E                   'line': 515,
+E               },
+E           ]
+
+tests/test_pkgmin_surface.py:51: AssertionError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="15" tests="1667" time="170.193" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_vendor_enrollment_audit" name="test_workflow_compares_adopted_lock_before_candidate_enrollment" time="0.070"><failure message="AssertionError: {&#10;    &quot;schema&quot;: &quot;vendor-consumer-comparison/1&quot;,&#10;    &quot;consumer&quot;: &quot;myon-bioinformatics/Ironmate&quot;,&#10;    &quot;lock&quot;: &quot;vendor.lock.json&quot;,&#10;    &quot;matches&quot;: false,&#10;    &quot;missing&quot;: [],&#10;    &quot;unexpected&quot;: [&#10;      {&#10;        &quot;repository&quot;: &quot;myon-bioinformatics/myon-bioinformatics&quot;,&#10;        &quot;source&quot;: &quot;py_launch.cjs&quot;,&#10;        &quot;destination&quot;: &quot;vendor/py_launch.cjs&quot;&#10;      }&#10;    ],&#10;    &quot;bundle_mismatch&quot;: []&#10;  }&#10;  &#10;assert 1 == 0&#10; +  where 1 = CompletedProcess(args=['&lt;runner-work&gt;/.venv/bin/python', '-S', '&lt;runner-work&gt; &quot;py_launch.cjs&quot;,\n      &quot;destination&quot;: &quot;vendor/py_launch.cjs&quot;\n    }\n  ],\n  &quot;bundle_mismatch&quot;: []\n}\n', stderr='').returncode">tests/test_vendor_enrollment_audit.py:93: in test_workflow_compares_adopted_lock_before_candidate_enrollment
+    assert result.returncode == 0, result.stdout + result.stderr
+E   AssertionError: {
+E       "schema": "vendor-consumer-comparison/1",
+E       "consumer": "myon-bioinformatics/Ironmate",
+E       "lock": "vendor.lock.json",
+E       "matches": false,
+E       "missing": [],
+E       "unexpected": [
+E         {
+E           "repository": "myon-bioinformatics/myon-bioinformatics",
+E           "source": "py_launch.cjs",
+E           "destination": "vendor/py_launch.cjs"
+E         }
+E       ],
+E       "bundle_mismatch": []
+E     }
+E     
+E   assert 1 == 0
+E    +  where 1 = CompletedProcess(args=['&lt;runner-work&gt;/.venv/bin/python', '-S', '&lt;runner-work&gt; "py_launch.cjs",\n      "destination": "vendor/py_launch.cjs"\n    }\n  ],\n  "bundle_mismatch": []\n}\n', stderr='').returncode</failure></testcase></testsuite></testsuites>
