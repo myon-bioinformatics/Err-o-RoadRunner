@@ -280,6 +280,7 @@ def _step_has_continue_on_error(body: list[str]) -> bool:
 
 def _analyze_step(job: str, name: str, body: list[str]) -> _StepMeta:
     display = _display_step_name(job, name)
+    gh_errors, workflow_errors, pytest_failed = _collect_log_wide(body)
     meta = _StepMeta(
         name=display,
         body=body,
@@ -287,24 +288,14 @@ def _analyze_step(job: str, name: str, body: list[str]) -> _StepMeta:
         is_post=bool(POST_STEP_NAME_RE.match(name.strip())),
         continue_on_error=_step_has_continue_on_error(body),
         exit_code=_step_process_exit_code(body),
-        gh_errors=_collect_official_error_messages(body),
-        workflow_errors=_collect_workflow_errors(body),
-        pytest_failed=_collect_pytest_failed(body),
+        gh_errors=gh_errors,
+        workflow_errors=workflow_errors,
+        pytest_failed=pytest_failed,
     )
     for msg in meta.gh_errors:
         if CANCEL_TIMEOUT_RE.search(msg) and not PROCESS_EXIT_RE.search(msg):
             meta.cancel_or_timeout = True
             break
-    if not meta.cancel_or_timeout:
-        for line in body:
-            m = GH_ERROR_LINE.match(line)
-            if not m:
-                continue
-            msg = m.group("msg").strip()
-            if msg and not PROCESS_EXIT_RE.search(msg):
-                if CANCEL_TIMEOUT_RE.search(msg):
-                    meta.cancel_or_timeout = True
-                    break
     return meta
 
 
