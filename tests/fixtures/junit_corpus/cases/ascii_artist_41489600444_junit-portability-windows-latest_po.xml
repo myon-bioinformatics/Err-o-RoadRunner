@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="1" failures="0" skipped="0" tests="1" time="1.445" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="" name="tests.test_flow_contract" time="0.000"><error message="collection failure">tests\test_flow_contract.py:16: in &lt;module&gt;
+    SPEC = json.loads((ROOT / 'examples/pr-flow.json').read_text())
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\hostedtoolcache\windows\Python\3.11.9\x64\Lib\pathlib.py:1059: in read_text
+    return f.read()
+           ^^^^^^^^
+C:\hostedtoolcache\windows\Python\3.11.9\x64\Lib\encodings\cp1252.py:23: in decode
+    return codecs.charmap_decode(input,self.errors,decoding_table)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   UnicodeDecodeError: 'charmap' codec can't decode byte 0x90 in position 41: character maps to &lt;undefined&gt;</error></testcase></testsuite></testsuites>
