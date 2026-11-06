@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="3" tests="1094" time="46.415" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_check_web_observations" name="test_bounded_shared_browser_execution_is_immutable_and_preserves_failure_boundaries" time="0.001"><failure message="AssertionError: assert 'myon-bioinfo...rowserTestKit' == 'myon-bioinfo...wser-test-kit'&#10;  &#10;  - myon-bioinformatics/browser-test-kit&#10;  ?                     ^      ^^   ^^&#10;  + myon-bioinformatics/BrowserTestKit&#10;  ?                     ^      ^   ^">def test_bounded_shared_browser_execution_is_immutable_and_preserves_failure_boundaries():
+        """Upstream engine tests cover live disappearing DOM; Flutter guards the locked copy."""
+        root = Path(__file__).resolve().parents[2]
+        lock = json.loads((root / 'python/vendor.lock.json').read_text(encoding='utf-8'))
+        assert len(lock['files']) == 19
+        row = next(item for item in lock['files']
+                   if item['destination'] == 'e2e/utils/browser_execution.mjs')
+&gt;       assert row['repository'] == 'myon-bioinformatics/browser-test-kit'
+E       AssertionError: assert 'myon-bioinfo...rowserTestKit' == 'myon-bioinfo...wser-test-kit'
+E         
+E         - myon-bioinformatics/browser-test-kit
+E         ?                     ^      ^^   ^^
+E         + myon-bioinformatics/BrowserTestKit
+E         ?                     ^      ^   ^
+
+tests/test_check_web_observations.py:182: AssertionError</failure></testcase></testsuite></testsuites>

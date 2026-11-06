@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="39" tests="4002" time="686.799" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_ci_status_label.ScanTests" name="test_workflow_trust_boundary_and_fallback" time="0.002"><failure message="ModuleNotFoundError: No module named 'yaml'">self = &lt;test_ci_status_label.ScanTests testMethod=test_workflow_trust_boundary_and_fallback&gt;
+
+    def test_workflow_trust_boundary_and_fallback(self):
+&gt;       import yaml
+E       ModuleNotFoundError: No module named 'yaml'
+
+tests/test_ci_status_label.py:137: ModuleNotFoundError</failure></testcase><testcase classname="tests.test_survey_third_party" name="test_committed_inventory_matches_the_tree" time="5.370"><failure message="AssertionError: &lt;runner-work&gt;/docs/evidence/third-party-survey.json is stale. Re-run with --json &lt;runner-work&gt;/docs/evidence/third-party-survey.json&#10;  &#10;assert 1 == 0&#10; +  where 1 = CompletedProcess(args=['&lt;runner-work&gt;/.venv/bin/python', '&lt;runner-work&gt;/scripts/survey_third_p...hird-party-survey.json is stale. Re-run with --json &lt;runner-work&gt;/docs/evidence/third-party-survey.json\n').returncode">def test_committed_inventory_matches_the_tree():
+        proc = subprocess.run(
+            [sys.executable, str(SURVEY), "--check", str(ROOT / "docs" / "evidence" / "third-party-survey.json")],
+            cwd=ROOT, capture_output=True, text=True,
+        )
+&gt;       assert proc.returncode == 0, proc.stderr
+E       AssertionError: &lt;runner-work&gt;/docs/evidence/third-party-survey.json is stale. Re-run with --json &lt;runner-work&gt;/docs/evidence/third-party-survey.json
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['&lt;runner-work&gt;/.venv/bin/python', '&lt;runner-work&gt;/scripts/survey_third_p...hird-party-survey.json is stale. Re-run with --json &lt;runner-work&gt;/docs/evidence/third-party-survey.json\n').returncode
+
+tests/test_survey_third_party.py:144: AssertionError</failure></testcase><testcase classname="nagoyaction.tests.test_docs_masters" name="test_every_file_directly_under_docs_is_listed_as_a_master_file" time="0.001"><failure message="AssertionError: docs/ の直下にあるのに、マスターファイルの一覧（docs/README.md）にない&#10;assert {'ci-label-wakeup-audit.md'} == set()&#10;  &#10;  Extra items in the left set:&#10;  'ci-label-wakeup-audit.md'&#10;  &#10;  Full diff:&#10;  - set()&#10;  + {&#10;  +     'ci-label-wakeup-audit.md',&#10;  + }">def test_every_file_directly_under_docs_is_listed_as_a_master_file():
+        listed = set(re.findall(r"^\| \[([^\]]+\.md)\]\(\1\) \|", (DOCS / "README.md").read_text(encoding="utf-8"), re.M))
+        present = {p.name for p in DOCS.iterdir() if p.is_file() and p.name != "README.md"}
+&gt;       assert present - listed == set(), "docs/ の直下にあるのに、マスターファイルの一覧（docs/README.md）にない"
+E       AssertionError: docs/ の直下にあるのに、マスターファイルの一覧（docs/README.md）にない
+E       assert {'ci-label-wakeup-audit.md'} == set()
+E         
+E         Extra items in the left set:
+E         'ci-label-wakeup-audit.md'
+E         
+E         Full diff:
+E         - set()
+E         + {
+E         +     'ci-label-wakeup-audit.md',
+E         + }
+
+nagoyaction/tests/test_docs_masters.py:12: AssertionError</failure></testcase></testsuite></testsuites>
