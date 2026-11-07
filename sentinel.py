@@ -18,7 +18,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Sequence
 
-from project_version import resolve_version
+from errlib.project_version import resolve_version
 
 if TYPE_CHECKING:
     from triage import Report
@@ -166,7 +166,7 @@ def _call_triage(**kwargs: Any) -> Report:
 
 
 def _redact_text(text: str) -> str:
-    from junit_redact import redact_text
+    from errlib.junit_redact import redact_text
 
     return redact_text(text)
 

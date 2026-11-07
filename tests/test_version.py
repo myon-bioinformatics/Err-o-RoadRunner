@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 
 import triage
-from project_version import DISTRIBUTION_NAME, VERSION_UNKNOWN, read_pyproject_version
+from errlib.project_version import DISTRIBUTION_NAME, VERSION_UNKNOWN, read_pyproject_version
 
 ROOT = Path(__file__).resolve().parents[1]
 PYPROJECT = ROOT / "pyproject.toml"

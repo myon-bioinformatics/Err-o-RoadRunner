@@ -179,7 +179,7 @@ def main() -> None:
         ["uv", "run", "pytest", "-q", str(mini_test), f"--junitxml={junit_path}"],
         cwd=INPUTS,
     )
-    from junit_redact import redact_xml_document
+    from errlib.junit_redact import redact_xml_document
 
     junit_path.write_text(redact_xml_document(junit_path.read_text(encoding="utf-8")), encoding="utf-8")
     out = triage_cli(exit_code=1, junit=[junit_path])

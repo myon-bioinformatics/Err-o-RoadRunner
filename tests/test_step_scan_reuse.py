@@ -2,7 +2,7 @@ from pathlib import Path
 import sys
 import unittest
 sys.path.insert(0,str(Path(__file__).resolve().parents[1]))
-import actions_log as a
+from errlib import actions_log as a
 
 
 class StepScanTests(unittest.TestCase):

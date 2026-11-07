@@ -10,7 +10,7 @@ from unittest import mock
 
 import pytest
 
-import actions_log
+from errlib import actions_log
 from triage import triage
 
 TRIAGE_MOD = importlib.import_module("triage")

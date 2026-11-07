@@ -46,7 +46,7 @@ This complementary supplied panel shows the challenges, roles and intended outco
 ## Design principles (draft)
 
 1. **Light until escalation:** plain `triage` stays off until invoked; the optional **`sentinel`** wrapper keeps only a small ring buffer and redacted env snapshot while a command runs, then runs full triage when something fails.
-2. **Python standard library only:** the main implementation lives in root-level modules (`triage.py`, `sentinel.py`, `squad.py`, `actions_log.py`, `junit_redact.py`, `project_version.py`).
+2. **Python standard library only:** the entry points are root-level modules (`triage.py`, `sentinel.py`, `squad.py`); their shared helpers (`actions_log`, `junit_redact`, `project_version`) live in the `errlib/` package, so import them as `errlib.junit_redact` and so on.
 3. **Node is optional:** Node stack parsing is regex-based on log text; no Node runtime is required for triage.
 4. **Read-only:** it never changes code or settings, and it never posts or sends anything.
 5. **Separates facts from guesses:** it shows `FOUND` and `NOT FOUND` explicitly, and labels inferences as `HINT`.

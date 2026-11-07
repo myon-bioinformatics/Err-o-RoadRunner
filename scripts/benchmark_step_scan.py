@@ -6,7 +6,7 @@ import subprocess
 import sys
 import time
 import types
-import actions_log
+from errlib import actions_log
 
 
 def main():

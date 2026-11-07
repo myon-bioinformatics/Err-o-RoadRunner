@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-TARGET = ROOT / "project_version.py"
+TARGET = ROOT / "errlib" / "project_version.py"
 
 GUARD_CMD = [
     "uv",
