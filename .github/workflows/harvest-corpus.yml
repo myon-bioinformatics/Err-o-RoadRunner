@@ -1,7 +1,8 @@
 # .github/workflows/harvest-corpus.yml
 # Daily harvest of failed-run test results (JUnit XML / JSON / JSONL) from every public,
 # non-archived myon-bioinformatics repository, so artifacts are captured before their
-# 14-day retention expires. Opens a PR with new corpus entries; never auto-merges.
+# 14-day retention expires. Pushes the rolling branch corpus/harvest and opens or refreshes
+# one PR with the new corpus entries; never auto-merges.
 #
 # Requirements:
 # - Settings > Actions > General > "Allow GitHub Actions to create and approve pull requests".
@@ -72,7 +73,7 @@ jobs:
       - name: Validate corpus
         id: validate
         run: uv run pytest -q tests/test_junit_corpus_golden.py tests/test_results_corpus.py tests/test_fixture_redaction_scan.py
-      - name: Open PR with new entries
+      - name: Open or refresh the corpus PR
         if: success() && steps.validate.outcome == 'success'
         env:
           GH_TOKEN: ${{ github.token }}
@@ -81,13 +82,28 @@ jobs:
             echo "No new corpus entries in confirmed scope; see coverage summary for unavailable repositories."
             exit 0
           fi
-          branch="corpus/harvest-$(date -u +%Y%m%d)-${GITHUB_RUN_ID}"
+          # One rolling branch: a push updates the open PR; nothing accumulates when PR creation is blocked.
+          branch="corpus/harvest"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git switch -c "$branch"
           git add tests/fixtures
           git commit -m "失敗コーパスを自動収集 ($(date -u +%F))"
-          git push origin "$branch"
-          gh pr create --base main --head "$branch" \
-            --title "失敗コーパスの定期収集 $(date -u +%F)" \
-            --body-file "$RUNNER_TEMP/harvest-summary.md"
+          git push --force origin "HEAD:$branch"
+          existing=$(gh pr list --base main --head "$branch" --state open --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh pr edit "$existing" --title "失敗コーパスの定期収集 $(date -u +%F)" --body-file "$RUNNER_TEMP/harvest-summary.md"
+            echo "Refreshed PR #$existing" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          if ! gh pr create --base main --head "$branch" \
+              --title "失敗コーパスの定期収集 $(date -u +%F)" \
+              --body-file "$RUNNER_TEMP/harvest-summary.md"; then
+            {
+              echo "## PR creation refused"
+              echo "The branch \`$branch\` is pushed and validated, but this token may not open PRs."
+              echo "Enable Settings > Actions > General > \"Allow GitHub Actions to create and approve pull requests\","
+              echo "or open it by hand: https://github.com/${GITHUB_REPOSITORY}/compare/main...$branch?expand=1"
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi

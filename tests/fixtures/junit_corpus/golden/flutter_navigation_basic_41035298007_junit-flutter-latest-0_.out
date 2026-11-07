@@ -4,6 +4,7 @@ FOUND: junit error (first) (<repo>/tests/fixtures/junit_corpus/cases/flutter_nav
 FOUND: junit failure groups (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_41035298007_junit-flutter-latest-0_.xml): 2 failures in 1 group
 FOUND: junit failure group 1/1 (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_41035298007_junit-flutter-latest-0_.xml): 2× Unknown: Flutter test error — first: <runner-work>/test/screens/generic_screen_test.dart::Screen3 compact template is reachable above Door — msg: Flutter test error
 FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_41035298007_junit-flutter-latest-0_.xml): <runner-work>/test/screens/generic_screen_test.dart
+FOUND: junit flutter test description (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_41035298007_junit-flutter-latest-0_.xml): Screen3 compact template is reachable above Door
 FOUND: python version: 3.15.2 (cpython)
 FOUND: node version: v24.22.2
 FOUND: gh version: gh version 2.103.3 (2026-10-26)
@@ -17,4 +18,5 @@ NOT FOUND: junit system-err (<repo>/tests/fixtures/junit_corpus/cases/flutter_na
 NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_41035298007_junit-flutter-latest-0_.xml)
 NOT FOUND: lock files in project root
 HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_41035298007_junit-flutter-latest-0_.xml): flutter/dart
+HINT: junit flutter detail (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_41035298007_junit-flutter-latest-0_.xml): this JUnit XML omits the exception block; read 'EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK' from the runner output (--log) or pass the `flutter test --machine` JSON lines with --test-events
 HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_41035298007_junit-flutter-latest-0_.xml): Flutter test error\nTest failed. See exception logs above.\nThe test description was: Screen3 compact template is reachable above Door

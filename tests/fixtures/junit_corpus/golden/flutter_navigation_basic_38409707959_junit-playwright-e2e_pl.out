@@ -3,6 +3,8 @@ FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigati
 FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38409707959_junit-playwright-e2e_pl.xml): [chromium] › home_discovery_journeys.spec.ts:127:7 › Home discovery journeys › Home draw → stable tool Door → drawn screen with screenshot evidence @portable \n\n    Error: expect(locator).toBeVisible() failed\n\n    Locator: locator('[role="menuitem"]').first()\n    Expected: visible\n    Timeout: 3000ms\n    Error: element(s) not found\n\n    Call log:\n      - Expect "toBeVisible" locator('[rol
 FOUND: junit failure groups (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38409707959_junit-playwright-e2e_pl.xml): 1 failure in 1 group
 FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38409707959_junit-playwright-e2e_pl.xml): home_discovery_journeys.spec.ts
+FOUND: junit playwright test (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38409707959_junit-playwright-e2e_pl.xml): [chromium] home_discovery_journeys.spec.ts:127:7 › Home discovery journeys › Home draw → stable tool Door → drawn screen with screenshot evidence @portable
+FOUND: junit playwright error (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38409707959_junit-playwright-e2e_pl.xml): Error: expect(locator).toBeVisible() failed
 FOUND: python version: 3.15.2 (cpython)
 FOUND: node version: v24.22.2
 FOUND: gh version: gh version 2.103.3 (2026-10-26)
@@ -15,7 +17,8 @@ NOT FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/fl
 NOT FOUND: junit system-err (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38409707959_junit-playwright-e2e_pl.xml)
 NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38409707959_junit-playwright-e2e_pl.xml)
 NOT FOUND: lock files in project root
-HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38409707959_junit-playwright-e2e_pl.xml): pytest/python
+HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38409707959_junit-playwright-e2e_pl.xml): playwright
+HINT: junit playwright call log (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38409707959_junit-playwright-e2e_pl.xml): the failure text carries the locator/expect call log; read it before changing timeouts
 HINT: junit assertion diff (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38409707959_junit-playwright-e2e_pl.xml):       - Expect "toBeVisible" locator('[role="menuitem"]').first() with timeout 3000ms       - waiting for locator('[role="menuitem"]').first()
 HINT: junit timeout signal (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38409707959_junit-playwright-e2e_pl.xml): possible timeout in failure text
 HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38409707959_junit-playwright-e2e_pl.xml): [chromium] › home_discovery_journeys.spec.ts:127:7 › Home discovery journeys › Home draw → stable tool Door → drawn screen with screenshot evidence @portable \n\n    Error: expect(locator).toBeVisible() failed\n\n    Locator: locator('[role="menuitem"]').first()\n    Expected: visible\n    Timeout: 3000ms\n    Error: element(s) not found\n\n    Call log:\n      - Expect "toBeVisible" locator('[rol

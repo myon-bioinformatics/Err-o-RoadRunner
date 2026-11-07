@@ -15,5 +15,5 @@ NOT FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/br
 NOT FOUND: junit system-err (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_41365520483_junit-node-browserless_browserl.xml)
 NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_41365520483_junit-node-browserless_browserl.xml)
 NOT FOUND: lock files in project root
-HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_41365520483_junit-node-browserless_browserl.xml): pytest/python
+HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_41365520483_junit-node-browserless_browserl.xml): playwright
 HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_41365520483_junit-node-browserless_browserl.xml): page-inspect-scenario.spec.mjs:5:1 › platform fixture state machines and Node runtime contract ───\n\n    Error: ✖ workspace selects Node 24 and this test uses a supported runtime (5.536618ms)\n    ✔ notification and location queries do not request location coordinates (15.97905ms)\n    ✔ permission probe records each change with a new generation (1.182715ms)\n    ✔ unsupported and broken permissi

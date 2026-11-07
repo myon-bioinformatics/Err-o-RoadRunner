@@ -103,8 +103,8 @@ def test_prepare_redacts_existing_xml_refreshes_goldens_and_hashes(sandbox: Path
     checked = _run_step(sandbox, "Validate corpus")
     assert checked.returncode != 0
     assert "runner_work_path" in checked.stdout
-    assert WORKFLOW.index("- name: Validate corpus") < WORKFLOW.index("- name: Open PR with new entries")
-    pr_step = WORKFLOW.split("- name: Open PR with new entries", 1)[1]
+    assert WORKFLOW.index("- name: Validate corpus") < WORKFLOW.index("- name: Open or refresh the corpus PR")
+    pr_step = WORKFLOW.split("- name: Open or refresh the corpus PR", 1)[1]
     assert "if: success() && steps.validate.outcome == 'success'" in pr_step
     assert "if: always()" not in pr_step
     assert "continue-on-error" not in WORKFLOW

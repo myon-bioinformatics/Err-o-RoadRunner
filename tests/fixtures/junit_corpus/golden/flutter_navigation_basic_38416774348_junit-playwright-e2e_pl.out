@@ -2,8 +2,10 @@ FOUND: exit code: 1
 FOUND: junit errors (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38416774348_junit-playwright-e2e_pl.xml): 2
 FOUND: junit error (first) (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38416774348_junit-playwright-e2e_pl.xml): [mobile-webkit] › home_discovery_journeys.spec.ts:142:7 › Home discovery journeys › Door-to-Door dropdown navigates from URL Params to another tool @portable \n\n    Error: mouse.wheel: Mouse wheel is not supported in mobile WebKit\n\n      71 |   for (let index = 0; index < 16; index++) {\n      72 |     const before = await field.boundingBox();\n    > 73 |     await page.mouse.wheel(0, delta);\n
 FOUND: junit failure groups (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38416774348_junit-playwright-e2e_pl.xml): 2 failures in 1 group
-FOUND: junit failure group 1/1 (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38416774348_junit-playwright-e2e_pl.xml): 2× Unknown: mouse.wheel: Mouse wheel is not supported in mobile WebKit — first: home_discovery_journeys.spec.ts::Home discovery journeys › Door-to-Door dropdown navigates from URL Params to another tool @portable — msg: mouse.wheel: Mouse wheel is not supported in mobile WebKit
+FOUND: junit failure group 1/1 (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38416774348_junit-playwright-e2e_pl.xml): 2× Error: mouse.wheel: Mouse wheel is not supported in mobile WebKit — first: home_discovery_journeys.spec.ts::Home discovery journeys › Door-to-Door dropdown navigates from URL Params to another tool @portable — msg: mouse.wheel: Mouse wheel is not supported in mobile WebKit
 FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38416774348_junit-playwright-e2e_pl.xml): home_discovery_journeys.spec.ts
+FOUND: junit playwright test (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38416774348_junit-playwright-e2e_pl.xml): [mobile-webkit] home_discovery_journeys.spec.ts:142:7 › Home discovery journeys › Door-to-Door dropdown navigates from URL Params to another tool @portable
+FOUND: junit playwright error (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38416774348_junit-playwright-e2e_pl.xml): Error: mouse.wheel: Mouse wheel is not supported in mobile WebKit
 FOUND: python version: 3.15.2 (cpython)
 FOUND: node version: v24.22.2
 FOUND: gh version: gh version 2.103.3 (2026-10-26)
@@ -16,5 +18,5 @@ NOT FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/fl
 NOT FOUND: junit system-err (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38416774348_junit-playwright-e2e_pl.xml)
 NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38416774348_junit-playwright-e2e_pl.xml)
 NOT FOUND: lock files in project root
-HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38416774348_junit-playwright-e2e_pl.xml): pytest/python
+HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38416774348_junit-playwright-e2e_pl.xml): playwright
 HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38416774348_junit-playwright-e2e_pl.xml): [mobile-webkit] › home_discovery_journeys.spec.ts:142:7 › Home discovery journeys › Door-to-Door dropdown navigates from URL Params to another tool @portable \n\n    Error: mouse.wheel: Mouse wheel is not supported in mobile WebKit\n\n      71 |   for (let index = 0; index < 16; index++) {\n      72 |     const before = await field.boundingBox();\n    > 73 |     await page.mouse.wheel(0, delta);\n
