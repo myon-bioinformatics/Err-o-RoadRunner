@@ -3,11 +3,8 @@
 
 from __future__ import annotations
 
-import json
-import subprocess
-import sys
-from collections import Counter
-from pathlib import Path
+import json, subprocess, sys
+from collections import Counter; from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CORPUS = ROOT / "tests" / "fixtures" / "junit_corpus"

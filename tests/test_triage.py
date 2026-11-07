@@ -2,11 +2,7 @@
 
 from __future__ import annotations
 
-import io
-import os
-import subprocess
-import sys
-import textwrap
+import io, os, subprocess, sys, textwrap
 from pathlib import Path
 
 import pytest

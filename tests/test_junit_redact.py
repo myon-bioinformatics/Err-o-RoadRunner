@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-import importlib
-import re
+import importlib, re
 from unittest import mock
 
 import pytest

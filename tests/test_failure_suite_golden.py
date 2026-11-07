@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-import json
-import re
-import subprocess
-import sys
+import json, re, subprocess, sys
 from pathlib import Path
 
 import pytest

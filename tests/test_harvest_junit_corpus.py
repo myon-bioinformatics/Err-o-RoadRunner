@@ -2,11 +2,8 @@
 
 from __future__ import annotations
 
-import importlib.util
-import json
-import sys
-from pathlib import Path
-from unittest import mock
+import importlib.util, json, sys
+from pathlib import Path; from unittest import mock
 
 import pytest
 

@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-import importlib.util
-import runpy
-import sys
+import importlib.util, runpy, sys
 from pathlib import Path
 
 

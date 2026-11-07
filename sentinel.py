@@ -2,21 +2,8 @@
 
 from __future__ import annotations
 
-import argparse
-import collections
-import functools
-import json
-import os
-import re
-import shlex
-import signal
-import subprocess
-import sys
-import threading
-import time
-from dataclasses import dataclass, field
-from pathlib import Path
-from typing import TYPE_CHECKING, Any, Sequence
+import argparse, collections, functools, json, os, re, shlex, signal, subprocess, sys, threading, time
+from dataclasses import dataclass, field; from pathlib import Path; from typing import Any, Sequence, TYPE_CHECKING
 
 from errlib.project_version import resolve_version
 

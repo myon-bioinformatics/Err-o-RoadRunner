@@ -11,13 +11,8 @@ Covered: 249 cells exercised by test_version_resolution_matrix_cell.
 
 from __future__ import annotations
 
-import itertools
-import os
-import shutil
-import subprocess
-import sys
-from pathlib import Path
-from unittest import mock
+import itertools, os, shutil, subprocess, sys
+from pathlib import Path; from unittest import mock
 
 import pytest
 

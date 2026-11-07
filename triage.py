@@ -2,21 +2,8 @@
 
 from __future__ import annotations
 
-import argparse
-import collections
-import fnmatch
-import json
-import os
-import re
-import shutil
-import stat
-import subprocess
-import sys
-import xml.etree.ElementTree as ET
-import zipfile
-from dataclasses import dataclass, field
-from pathlib import Path
-from typing import Iterator, Sequence
+import argparse, collections, fnmatch, json, os, re, shutil, stat, subprocess, sys, xml.etree.ElementTree as ET, zipfile
+from dataclasses import dataclass, field; from pathlib import Path; from typing import Iterator, Sequence
 
 from errlib.junit_redact import redact_text
 from errlib.project_version import resolve_version
