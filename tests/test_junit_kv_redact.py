@@ -1,6 +1,6 @@
 """Key=value secret redaction in junit_redact."""
 
-from junit_redact import redact_text
+from errlib.junit_redact import redact_text
 
 
 def test_kv_secret_assignment_redacted() -> None:

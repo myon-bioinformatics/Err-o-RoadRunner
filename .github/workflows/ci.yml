@@ -82,9 +82,9 @@ jobs:
       - name: Install test dependencies
         run: uv sync --locked
       - name: Compile
-        run: uv run --locked python -m compileall -q triage.py actions_log.py junit_redact.py project_version.py sentinel.py
+        run: uv run --locked python -m compileall -q triage.py sentinel.py errlib
       - name: Import smoke
-        run: uv run --locked python -c "import triage, actions_log, junit_redact, project_version, sentinel"
+        run: uv run --locked python -c "import triage, sentinel, errlib.actions_log, errlib.junit_redact, errlib.project_version"
       - name: Combo mutation (zero survivors)
         run: uv run --locked python scripts/combo_mutation.py
       - name: Version mutation (zero survivors)

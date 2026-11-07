@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pytest
 
-import actions_log
+from errlib import actions_log
 from triage import triage
 
 ROOT = Path(__file__).resolve().parents[1]

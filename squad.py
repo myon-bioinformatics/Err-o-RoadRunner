@@ -15,7 +15,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Callable, Mapping, Sequence
 
-from junit_redact import redact_text
+from errlib.junit_redact import redact_text
 
 DEFAULT_SQUAD_TIMEOUT = 10.0
 DEFAULT_SQUAD_BUDGET = 30.0

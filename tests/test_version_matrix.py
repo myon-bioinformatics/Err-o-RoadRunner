@@ -22,7 +22,7 @@ from unittest import mock
 import pytest
 
 import triage
-from project_version import (
+from errlib.project_version import (
     VERSION_UNKNOWN,
     parse_pyproject_version,
     read_pyproject_version,
@@ -37,6 +37,7 @@ from tests.version_matrix_support import (
     RUN_MODES,
     UNREACHABLE,
     build_wheel,
+    copy_runtime_modules,
     expected_version,
     install_fake_metadata,
     matrix_totals,
@@ -80,8 +81,7 @@ def test_version_resolution_matrix_cell(
     env = {"PYTHONPATH": os.pathsep.join([str(sandbox), str(meta_dir)])}
     wheel = None
     if run_mode == "wheel_console":
-        for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
-            (sandbox / name).write_bytes((ROOT / name).read_bytes())
+        copy_runtime_modules(sandbox)
         write_wheel_build_pyproject(
             sandbox,
             pyproject_state,
@@ -156,7 +156,7 @@ def test_tomllib_parse_matches_parse_pyproject_version(pyproject_state: str) -> 
 
     import tomllib
 
-    from project_version import _version_from_toml_data
+    from errlib.project_version import _version_from_toml_data
 
     try:
         data = tomllib.loads(text)
@@ -170,7 +170,7 @@ def test_resolve_version_direct_matches_matrix_expectations(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.setattr("project_version._installed_version", lambda: None)
+    monkeypatch.setattr("errlib.project_version._installed_version", lambda: None)
     for pyproject_state in PYPROJECT_STATES:
         sandbox = tmp_path / pyproject_state
         sandbox.mkdir()
@@ -194,8 +194,7 @@ def test_import_succeeds_with_unknown_version(
 ) -> None:
     sandbox = tmp_path / "iso"
     sandbox.mkdir()
-    for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
-        (sandbox / name).write_bytes((ROOT / name).read_bytes())
+    copy_runtime_modules(sandbox)
     env = os.environ.copy()
     env["PYTHONPATH"] = str(sandbox)
     runner = ROOT / "tests" / "isolated_triage_runner.py"
@@ -228,7 +227,7 @@ def test_mutation_guard_pep503_name_mixed_case_accepted(
     sandbox = tmp_path / "s"
     sandbox.mkdir()
     populate_sandbox(sandbox, "name_pep503_mixed_case")
-    monkeypatch.setattr("project_version._installed_version", lambda: META_VERSION)
+    monkeypatch.setattr("errlib.project_version._installed_version", lambda: META_VERSION)
     assert resolve_version(package_dir=sandbox) == CHECKOUT_VERSION
 
 
@@ -240,7 +239,7 @@ def test_mutation_guard_pep503_name_underscore_accepted(
     sandbox = tmp_path / "s"
     sandbox.mkdir()
     populate_sandbox(sandbox, "name_pep503_underscore")
-    monkeypatch.setattr("project_version._installed_version", lambda: META_VERSION)
+    monkeypatch.setattr("errlib.project_version._installed_version", lambda: META_VERSION)
     assert resolve_version(package_dir=sandbox) == CHECKOUT_VERSION
 
 
@@ -252,7 +251,7 @@ def test_mutation_guard_pep503_name_dots_accepted(
     sandbox = tmp_path / "s"
     sandbox.mkdir()
     populate_sandbox(sandbox, "name_pep503_dots")
-    monkeypatch.setattr("project_version._installed_version", lambda: META_VERSION)
+    monkeypatch.setattr("errlib.project_version._installed_version", lambda: META_VERSION)
     assert resolve_version(package_dir=sandbox) == CHECKOUT_VERSION
 
 
@@ -264,7 +263,7 @@ def test_mutation_guard_pep503_name_mixed_separators_accepted(
     sandbox = tmp_path / "s"
     sandbox.mkdir()
     populate_sandbox(sandbox, "name_pep503_mixed_separators")
-    monkeypatch.setattr("project_version._installed_version", lambda: META_VERSION)
+    monkeypatch.setattr("errlib.project_version._installed_version", lambda: META_VERSION)
     assert resolve_version(package_dir=sandbox) == CHECKOUT_VERSION
 
 
@@ -276,7 +275,7 @@ def test_mutation_guard_pyproject_name_check_required(
     sandbox = tmp_path / "s"
     sandbox.mkdir()
     populate_sandbox(sandbox, "wrong_name")
-    monkeypatch.setattr("project_version._installed_version", lambda: META_VERSION)
+    monkeypatch.setattr("errlib.project_version._installed_version", lambda: META_VERSION)
     assert resolve_version(package_dir=sandbox) == META_VERSION
 
 
@@ -288,7 +287,7 @@ def test_mutation_guard_pyproject_before_metadata(
     sandbox = tmp_path / "s"
     sandbox.mkdir()
     populate_sandbox(sandbox, "valid")
-    monkeypatch.setattr("project_version._installed_version", lambda: META_VERSION)
+    monkeypatch.setattr("errlib.project_version._installed_version", lambda: META_VERSION)
     assert resolve_version(package_dir=sandbox) == CHECKOUT_VERSION
 
 
@@ -300,7 +299,7 @@ def test_mutation_guard_version_whitespace_rejected(
     sandbox = tmp_path / "s"
     sandbox.mkdir()
     populate_sandbox(sandbox, "version_whitespace")
-    monkeypatch.setattr("project_version._installed_version", lambda: META_VERSION)
+    monkeypatch.setattr("errlib.project_version._installed_version", lambda: META_VERSION)
     assert resolve_version(package_dir=sandbox) == META_VERSION
 
 
@@ -312,7 +311,7 @@ def test_mutation_guard_version_in_later_table_ignored(
     sandbox = tmp_path / "s"
     sandbox.mkdir()
     populate_sandbox(sandbox, "version_in_later_table")
-    monkeypatch.setattr("project_version._installed_version", lambda: META_VERSION)
+    monkeypatch.setattr("errlib.project_version._installed_version", lambda: META_VERSION)
     assert resolve_version(package_dir=sandbox) == META_VERSION
 
 
@@ -324,7 +323,7 @@ def test_mutation_guard_oserror_on_read_falls_back(
     sandbox = tmp_path / "s"
     sandbox.mkdir()
     populate_sandbox(sandbox, "valid")
-    monkeypatch.setattr("project_version._installed_version", lambda: META_VERSION)
+    monkeypatch.setattr("errlib.project_version._installed_version", lambda: META_VERSION)
     with mock.patch.object(Path, "read_text", side_effect=OSError("permission denied")):
         assert resolve_version(package_dir=sandbox) == META_VERSION
 
@@ -337,7 +336,7 @@ def test_mutation_guard_duplicate_version_invalid_toml_falls_back(
     sandbox = tmp_path / "s"
     sandbox.mkdir()
     populate_sandbox(sandbox, "duplicate_version_in_project")
-    monkeypatch.setattr("project_version._installed_version", lambda: META_VERSION)
+    monkeypatch.setattr("errlib.project_version._installed_version", lambda: META_VERSION)
     assert resolve_version(package_dir=sandbox) == META_VERSION
 
 
@@ -349,7 +348,7 @@ def test_mutation_guard_multiline_string_decoy_ignored(
     sandbox = tmp_path / "s"
     sandbox.mkdir()
     populate_sandbox(sandbox, "version_in_multiline_string")
-    monkeypatch.setattr("project_version._installed_version", lambda: META_VERSION)
+    monkeypatch.setattr("errlib.project_version._installed_version", lambda: META_VERSION)
     assert resolve_version(package_dir=sandbox) == CHECKOUT_VERSION
     assert resolve_version(package_dir=sandbox) != DECOY_VERSION_IN_STRING
 
@@ -362,7 +361,7 @@ def test_mutation_guard_unknown_when_no_version_sources(
     sandbox = tmp_path / "s"
     sandbox.mkdir()
     populate_sandbox(sandbox, "missing")
-    monkeypatch.setattr("project_version._installed_version", lambda: None)
+    monkeypatch.setattr("errlib.project_version._installed_version", lambda: None)
     assert resolve_version(package_dir=sandbox) == VERSION_UNKNOWN
 
 

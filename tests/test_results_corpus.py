@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from junit_redact import find_corpus_leaks
+from errlib.junit_redact import find_corpus_leaks
 
 ROOT = Path(__file__).resolve().parents[1]
 CORPUS = ROOT / "tests" / "fixtures" / "results_corpus"

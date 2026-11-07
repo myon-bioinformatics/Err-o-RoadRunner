@@ -38,7 +38,7 @@ MANIFEST = CORPUS / "manifest.json"
 
 sys.path.insert(0, str(ROOT))
 
-from junit_redact import redact_attribute, redact_text
+from errlib.junit_redact import redact_attribute, redact_text
 
 SOURCES = ROOT / "scripts" / "harvest_sources.json"
 RESULTS_CORPUS = ROOT / "tests" / "fixtures" / "results_corpus"
@@ -371,7 +371,7 @@ def redact_json(value: object, key: str = "") -> object:
 
 
 def ISO_LIKE(value: str) -> bool:  # noqa: N802 - tiny predicate
-    from junit_redact import ISO_TIMESTAMP_RE
+    from errlib.junit_redact import ISO_TIMESTAMP_RE
 
     return bool(ISO_TIMESTAMP_RE.match(value))
 

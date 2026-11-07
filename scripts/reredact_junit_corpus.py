@@ -14,7 +14,7 @@ FIXTURES = ROOT / "tests" / "fixtures"
 
 sys.path.insert(0, str(ROOT))
 
-from junit_redact import find_corpus_leaks, redact_xml_document
+from errlib.junit_redact import find_corpus_leaks, redact_xml_document
 
 
 def main(argv: list[str] | None = None) -> int:

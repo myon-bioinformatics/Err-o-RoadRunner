@@ -8,7 +8,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from project_version import DISTRIBUTION_NAME, VERSION_UNKNOWN
+from errlib.project_version import DISTRIBUTION_NAME, VERSION_UNKNOWN
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -21,7 +21,7 @@ WHEEL_BUILD_SUFFIX = (
     "\n[project.scripts]\n"
     'err-o-roadrunner = "triage:main"\n'
     "\n[tool.hatch.build.targets.wheel]\n"
-    'only-include = ["triage.py", "actions_log.py", "junit_redact.py", "project_version.py"]\n'
+    'only-include = ["triage.py", "errlib"]\n'
 )
 
 CHECKOUT_VERSION = "7.7.7"
@@ -270,9 +270,18 @@ def wheel_pyproject_version(metadata_state: str) -> str:
     return CHECKOUT_VERSION if metadata_state == "same" else META_VERSION
 
 
+def copy_runtime_modules(sandbox: Path) -> None:
+    """Copy triage.py and the errlib package into ``sandbox`` (no caches)."""
+    shutil.copy2(ROOT / "triage.py", sandbox / "triage.py")
+    shutil.copytree(
+        ROOT / "errlib",
+        sandbox / "errlib",
+        ignore=shutil.ignore_patterns("__pycache__"),
+    )
+
+
 def populate_sandbox(sandbox: Path, pyproject_state: str) -> None:
-    for name in ("triage.py", "actions_log.py", "junit_redact.py", "project_version.py"):
-        shutil.copy2(ROOT / name, sandbox / name)
+    copy_runtime_modules(sandbox)
     pyproject = sandbox / "pyproject.toml"
     payload = pyproject_bytes(pyproject_state)
     if payload is None:

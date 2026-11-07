@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from actions_log import normalize_actions_log_line, preprocess_actions_log
+from errlib.actions_log import normalize_actions_log_line, preprocess_actions_log
 from triage import MAX_READ_BYTES, triage
 from tests.actions_log_golden_util import normalize_report, triage_actions_log, triage_actions_log_cli
 from tests.report_assert import assert_report_has_exact_line
