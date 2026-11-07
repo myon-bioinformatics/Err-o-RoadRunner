@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="31" tests="2518" time="90.442" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_flutter_vendor_registry_sync" name="test_retired_git_inspector_is_explicit_skip_not_new_registration" time="0.001"><failure message="assert 12 == 6">def test_retired_git_inspector_is_explicit_skip_not_new_registration():
+        catalog = load("vendor-catalog.json")
+        registry = load("vendor-consumers.json")
+        result = vendor_fleet_plan.plan(catalog, registry, active_consumers=[FLUTTER])
+        retired = [x for x in result["rows"]
+                   if x["tool_repository"] == "myon-bioinformatics/myon-bioinformatics"
+                   and x["source"] == "git_inspector.py"]
+        assert len(retired) == 1
+        assert retired[0]["action"] == "skipped"
+        assert retired[0]["reason"] == "retired_after_gh_identity_migration"
+&gt;       assert result["counts"]["needs_registration"] == 6
+E       assert 12 == 6
+
+tests/test_flutter_vendor_registry_sync.py:60: AssertionError</failure></testcase><testcase classname="tests.test_flutter_vendor_registry_sync" name="test_existing_pins_remain_sole_consumer_authority" time="0.001"><failure message="AssertionError: assert {'gh_identity...'yourself.py'} == {'gh_identity...'yourself.py'}&#10;  &#10;  Extra items in the right set:&#10;  'scripts/image_diff.py'&#10;  &#10;  Full diff: (-: missing in left side, +: extra in left side)&#10;    {&#10;        'gh_identity.py',&#10;  -     'scripts/image_diff.py',&#10;        'xprobe.py',&#10;        'yourself.py',&#10;    }">def test_existing_pins_remain_sole_consumer_authority():
+        registry = load("vendor-consumers.json")
+        catalog = load("vendor-catalog.json")
+        lock = load(LOCK_FIXTURE)
+        pins = vendor_catalog.compare(catalog, lock, FLUTTER)["tools"]
+&gt;       assert {r["source"] for r in pins if r["enrollment"] == "enrolled" and
+                r["comparison"] == "different"} == {
+                    "gh_identity.py",
+                    "scripts/image_diff.py",
+                    "xprobe.py",
+                    "yourself.py",
+                }
+E       AssertionError: assert {'gh_identity...'yourself.py'} == {'gh_identity...'yourself.py'}
+E         
+E         Extra items in the right set:
+E         'scripts/image_diff.py'
+E         
+E         Full diff: (-: missing in left side, +: extra in left side)
+E           {
+E               'gh_identity.py',
+E         -     'scripts/image_diff.py',
+E               'xprobe.py',
+E               'yourself.py',
+E           }
+
+tests/test_flutter_vendor_registry_sync.py:95: AssertionError</failure></testcase><testcase classname="tests.test_flutter_vendor_registry_sync" name="test_shared_execution_adopts_main_merge_with_existing_helper_and_license" time="0.001"><failure message="AssertionError: assert 'missing' == 'at_recommended'&#10;  &#10;  - at_recommended&#10;  + missing">def test_shared_execution_adopts_main_merge_with_existing_helper_and_license():
+        lock = load(LOCK_FIXTURE)
+        catalog = load("vendor-catalog.json")
+        rows = {row["destination"]: row for row in lock["files"]}
+        module = rows["e2e/utils/browser_execution.mjs"]
+        assert module["repository"] == "myon-bioinformatics/browser-test-kit"
+        assert module["ref"] == module["commit"] == "8d8512fefea38993e5b3695c0706075cf05071ad"
+        assert module["source"] == "scripts/browser_execution.mjs"
+        for path in ("e2e/utils/interaction.mjs", "python/vendor/browser-test-kit-LICENSE"):
+            assert rows[path]["repository"] == module["repository"]
+        compared = vendor_catalog.compare(catalog, lock, FLUTTER)["tools"]
+        execution = next(row for row in compared if row["source"] == module["source"])
+        assert execution["enrollment"] == "enrolled"
+&gt;       assert execution["comparison"] == "at_recommended"
+E       AssertionError: assert 'missing' == 'at_recommended'
+E         
+E         - at_recommended
+E         + missing
+
+tests/test_flutter_vendor_registry_sync.py:211: AssertionError</failure></testcase></testsuite></testsuites>

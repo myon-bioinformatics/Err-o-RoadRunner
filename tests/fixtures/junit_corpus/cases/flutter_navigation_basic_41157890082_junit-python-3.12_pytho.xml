@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="3" tests="1026" time="59.072" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_docker_curl_runtime" name="test_shared_container_enrolls_deno_and_explicit_runtime_build" time="0.001"><failure message="assert 'ARG NODE_MAJOR=22' in '# Shared Flutter/Python/Node/npm/npx/Deno build and browser-test environment.\n# Default: existing static portable E2...ts&quot;, &quot;tests/photo_studio.spec.ts&quot;, &quot;tests/photo_studio_ingress.spec.ts&quot;, &quot;tests/photo_studio_format_matrix.spec.ts&quot;]\n'">def test_shared_container_enrolls_deno_and_explicit_runtime_build():
+        dockerfile = (ROOT / "Dockerfile.e2e").read_text()
+        assert "FROM denoland/deno:bin-${DENO_VERSION}" in dockerfile
+        assert "COPY --from=deno /deno /usr/local/bin/deno" in dockerfile
+&gt;       assert "ARG NODE_MAJOR=22" in dockerfile
+E       assert 'ARG NODE_MAJOR=22' in '# Shared Flutter/Python/Node/npm/npx/Deno build and browser-test environment.\n# Default: existing static portable E2...ts", "tests/photo_studio.spec.ts", "tests/photo_studio_ingress.spec.ts", "tests/photo_studio_format_matrix.spec.ts"]\n'
+
+tests/test_docker_curl_runtime.py:102: AssertionError</failure></testcase></testsuite></testsuites>
