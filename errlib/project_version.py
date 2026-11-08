@@ -84,7 +84,7 @@ def _installed_version() -> str | None:
 
 def resolve_version(*, package_dir: Path | None = None) -> str:
     """Prefer checkout pyproject.toml beside the package; else installed metadata; else unknown."""
-    root = package_dir if package_dir is not None else Path(__file__).resolve().parent
+    root = package_dir if package_dir is not None else Path(__file__).resolve().parent.parent
     checkout = read_pyproject_version(root / "pyproject.toml")
     if checkout is not None:
         return checkout

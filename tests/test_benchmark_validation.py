@@ -18,7 +18,7 @@ import runpy
 from unittest.mock import patch
 ROOT = Path(%r)
 g = runpy.run_path(str(ROOT / 'scripts/benchmark_step_scan.py'))['main'].__globals__
-with patch.object(g['subprocess'], 'check_output', return_value=(ROOT / 'actions_log.py').read_bytes()):
+with patch.object(g['subprocess'], 'check_output', return_value=(ROOT / 'errlib' / 'actions_log.py').read_bytes()):
     with %s:
         g['main']()
 """ % (str(ROOT), "patch.object(g['actions_log'], '_analyze_step', return_value=g['actions_log']._StepMeta(name='different', body=[]))" if mismatch else 'nullcontext()')

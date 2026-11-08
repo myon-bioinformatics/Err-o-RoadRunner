@@ -143,7 +143,7 @@ def test_apc_pm_sos_sequences_stripped() -> None:
 
 @pytest.mark.gap
 def test_actions_log_preprocess_strips_bom_and_controls() -> None:
-    from actions_log import preprocess_actions_log
+    from errlib.actions_log import preprocess_actions_log
 
     raw = "\ufeff2026-10-11T13:00:00.0000000Z \x1b[31merror\x1b[0m\n"
     records, _ = preprocess_actions_log(raw)
@@ -152,7 +152,7 @@ def test_actions_log_preprocess_strips_bom_and_controls() -> None:
 
 @pytest.mark.gap
 def test_actions_log_line_crlf_rstrip_required() -> None:
-    from actions_log import normalize_actions_log_line
+    from errlib.actions_log import normalize_actions_log_line
 
     assert normalize_actions_log_line("payload\r") == "payload"
 

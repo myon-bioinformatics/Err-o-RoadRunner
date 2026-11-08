@@ -18,8 +18,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterator, Sequence
 
-from junit_redact import redact_text
-from project_version import resolve_version
+from errlib.junit_redact import redact_text
+from errlib.project_version import resolve_version
 
 __version__ = resolve_version(package_dir=Path(__file__).resolve().parent)
 
@@ -1550,7 +1550,7 @@ def triage(
         detect_and_parse_log(text, report)
 
     if actions_log_text is not None:
-        from actions_log import parse_actions_log
+        from errlib.actions_log import parse_actions_log
 
         if not actions_log_text.strip():
             report.add_not_found("actions log text (empty)")

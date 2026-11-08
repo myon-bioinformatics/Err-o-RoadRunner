@@ -14,7 +14,7 @@ import xml.etree.ElementTree as ET
 
 import pytest
 
-from junit_redact import find_corpus_leaks
+from errlib.junit_redact import find_corpus_leaks
 from scripts import harvest_junit_corpus as harvest
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -38,7 +38,8 @@ def _step_script(name: str) -> str:
 
 @pytest.fixture
 def sandbox(tmp_path: Path) -> Path:
-    for name in ("triage.py", "junit_redact.py", "project_version.py", "pyproject.toml",
+    for name in ("triage.py", "errlib/__init__.py", "errlib/junit_redact.py",
+                 "errlib/project_version.py", "pyproject.toml",
                  "scripts/reredact_junit_corpus.py", "scripts/patch_junit_manifest_jobs.py",
                  "scripts/capture_junit_corpus_goldens.py", "tests/test_junit_corpus_golden.py",
                  "tests/test_results_corpus.py", "tests/test_fixture_redaction_scan.py"):
@@ -116,7 +117,7 @@ def test_prepare_fails_closed_on_invalid_xml_or_remaining_leak(sandbox: Path, ra
     (corpus / "cases/bad.xml").write_text(raw)
     if "hostname" in raw:
         # Simulate a redactor regression: the independent scanner must still reject it.
-        module = sandbox / "junit_redact.py"
+        module = sandbox / "errlib" / "junit_redact.py"
         text = module.read_text().replace("    redact_xml_tree(root)", "    # redaction disabled")
         module.write_text(text)
     result = _run_step(sandbox, "Redact corpus (Silver)")

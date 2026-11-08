@@ -54,7 +54,7 @@ Each squad never lets an exception escape and returns this shape:
 ### web
 
 - Build a search query from `error_type`, the normalized message, and the guessed framework, and always output `queries[]`.
-- Only `https://api.github.com/search/issues` by default. Results are `{title, url, score}`, at most 5. Paths and tokens are stripped with `junit_redact.redact_text`.
+- Only `https://api.github.com/search/issues` by default. Results are `{title, url, score}`, at most 5. Paths and tokens are stripped with `errlib.junit_redact.redact_text`.
 
 ## Hypothesis merging
 

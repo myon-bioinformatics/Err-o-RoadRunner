@@ -34,13 +34,13 @@ class Mutation:
 MUTATIONS: list[Mutation] = [
     Mutation(
         "gh_hits_ge3_to_ge4",
-        SRC / "actions_log.py",
+        SRC / "errlib" / "actions_log.py",
         "gh_hits >= 3 and (gh_hits >= nonempty",
         "gh_hits >= 4 and (gh_hits >= nonempty",
     ),
     Mutation(
         "gh_hits_ge3_to_ge2",
-        SRC / "actions_log.py",
+        SRC / "errlib" / "actions_log.py",
         "gh_hits >= 3 and (gh_hits >= nonempty",
         "gh_hits >= 2 and (gh_hits >= nonempty",
     ),
@@ -58,25 +58,25 @@ MUTATIONS: list[Mutation] = [
     ),
     Mutation(
         "gh_cap_show_all",
-        SRC / "actions_log.py",
+        SRC / "errlib" / "actions_log.py",
         'label: str,\n    items: list[str],\n    cap: int = MAX_ACTIONS_ERROR_LINES,\n) -> None:\n    if not items:\n        report.add_not_found(f"actions log {label} ({source})")\n        return\n    report.add_found(f"actions log {label} ({source}): {len(items)}")\n    shown = items[:cap]',
         'label: str,\n    items: list[str],\n    cap: int = MAX_ACTIONS_ERROR_LINES,\n) -> None:\n    if not items:\n        report.add_not_found(f"actions log {label} ({source})")\n        return\n    report.add_found(f"actions log {label} ({source}): {len(items)}")\n    shown = items[:]',
     ),
     Mutation(
         "workflow_cap_show_all",
-        SRC / "actions_log.py",
+        SRC / "errlib" / "actions_log.py",
         "    cap = MAX_ACTIONS_ERROR_LINES\n    shown = items[:cap]\n    for i, wf in enumerate(shown, start=1):",
         "    cap = MAX_ACTIONS_ERROR_LINES\n    shown = items[:]\n    for i, wf in enumerate(shown, start=1):",
     ),
     Mutation(
         "gh_cap_omitted_off_by_one",
-        SRC / "actions_log.py",
+        SRC / "errlib" / "actions_log.py",
         "omitted = len(items) - len(shown)",
         "omitted = len(items) - len(shown) - 1",
     ),
     Mutation(
         "workflow_omitted_count_zero",
-        SRC / "actions_log.py",
+        SRC / "errlib" / "actions_log.py",
         "omitted = len(items) - len(shown)\n    if omitted > 0:\n        report.add_found(\n            f\"actions log workflow error omitted",
         "omitted = 0\n    if omitted > 0:\n        report.add_found(\n            f\"actions log workflow error omitted",
     ),

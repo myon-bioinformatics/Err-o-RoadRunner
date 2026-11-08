@@ -13,7 +13,7 @@ from unittest import mock
 
 import pytest
 
-from junit_redact import find_corpus_leaks
+from errlib.junit_redact import find_corpus_leaks
 from sentinel import (
     EXIT_GO,
     EXIT_STOP,
