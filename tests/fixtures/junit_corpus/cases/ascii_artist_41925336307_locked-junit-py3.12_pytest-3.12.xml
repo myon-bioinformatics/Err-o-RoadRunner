@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="231" time="15.853" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_benchmark_optimization_guard.OptimizedBenchmarkTests" name="test_incorrect_layers_fail_without_success_json" time="0.051"><failure message="AssertionError: 'layer mismatch' not found in 'DAG layering parity mismatch: current, nodes=256, shape=chain, repetition=0\n'">self = &lt;test_benchmark_optimization_guard.OptimizedBenchmarkTests testMethod=test_incorrect_layers_fail_without_success_json&gt;
+
+        def test_incorrect_layers_fail_without_success_json(self):
+            code = '''
+    import runpy, sys, types, ascii_artist
+    reference = types.ModuleType('guard_reference')
+    reference.diagram = ascii_artist.diagram
+    reference._topological_layers = ascii_artist._topological_layers
+    sys.modules['guard_reference'] = reference
+    ns = runpy.run_path('scripts/benchmark_dag_frontier.py')['main'].__globals__
+    ns['subprocess'].check_output = lambda *a, **kw: b'from guard_reference import diagram, _topological_layers'
+    ascii_artist._topological_layers = lambda diagram: []
+    ns['main']()
+    '''
+            result = subprocess.run([sys.executable, '-O', '-S', '-c', code],
+                                    cwd=ROOT, capture_output=True, text=True, timeout=30)
+            self.assertNotEqual(result.returncode, 0, result.stdout)
+&gt;           self.assertIn('layer mismatch', result.stderr)
+E           AssertionError: 'layer mismatch' not found in 'DAG layering parity mismatch: current, nodes=256, shape=chain, repetition=0\n'
+
+tests/test_benchmark_optimization_guard.py:25: AssertionError</failure></testcase></testsuite></testsuites>

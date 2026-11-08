@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites id="" name="" tests="24" failures="2" skipped="0" errors="0" time="62.727630000000005"><testsuite name="generic_responsive.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="12" failures="1" skipped="0" time="53.251" errors="0"><testcase name="Generic 129 selected source controls are fully reachable" classname="generic_responsive.spec.ts" time="9.57"><system-out>
+
+[[ATTACHMENT|../../e2e/generic-responsive-results/generic_responsive-Generic-f8823-ontrols-are-fully-reachable-wide/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/generic-responsive-results/generic_responsive-Generic-f8823-ontrols-are-fully-reachable-wide/error-context.md]]
+
+[[ATTACHMENT|../../e2e/generic-responsive-results/generic_responsive-Generic-f8823-ontrols-are-fully-reachable-wide/trace.zip]]
+
+</system-out>
+<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
+  [wide] › generic_responsive.spec.ts:86:31 › Generic 129 selected source controls are fully reachable 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('dialog')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('dialog') with timeout 5000ms
+      - waiting for getByRole('dialog')
+
+
+      94 |     await expect(input).toBeFocused(); await page.keyboard.type('reachable'); await expect(input).toHaveValue('reachable');
+      95 |   } else if (id === 129) {
+    &gt; 96 |     await clickMeasured(page, targets(page, id)[0], inputs); await expect(page.getByRole('dialog')).toBeVisible();
+         |                                                                                                     ^
+      97 |     await page.keyboard.press('Escape'); await expect(page.getByRole('dialog')).toHaveCount(0);
+      98 |   }
+      99 |   expect(errors).toEqual([]);
+        at &lt;runner-work&gt;/e2e/focused/generic_responsive.spec.ts:96:101
+
+    attachment #3: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../generic-responsive-results/generic_responsive-Generic-f8823-ontrols-are-fully-reachable-wide/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../generic-responsive-results/generic_responsive-Generic-f8823-ontrols-are-fully-reachable-wide/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../generic-responsive-results/generic_responsive-Generic-f8823-ontrols-are-fully-reachable-wide/trace.zip
+    Usage:
+
+        npx playwright show-trace ../generic-responsive-results/generic_responsive-Generic-f8823-ontrols-are-fully-reachable-wide/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+</failure>
+</testcase></testsuite><testsuite name="generic_responsive.spec.ts" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;" tests="12" failures="1" skipped="0" time="54.889" errors="0"><testcase name="Generic 129 selected source controls are fully reachable" classname="generic_responsive.spec.ts" time="9.775"><system-out>
+
+[[ATTACHMENT|../../e2e/generic-responsive-results/generic_responsive-Generic-f8823-ontrols-are-fully-reachable-compact/test-failed-1.png]]
+
+[[ATTACHMENT|../../e2e/generic-responsive-results/generic_responsive-Generic-f8823-ontrols-are-fully-reachable-compact/error-context.md]]
+
+[[ATTACHMENT|../../e2e/generic-responsive-results/generic_responsive-Generic-f8823-ontrols-are-fully-reachable-compact/trace.zip]]
+
+</system-out>
+<failure message="expect(locator).toBeVisible() failed" type="expect.toBeVisible">
+  [compact] › generic_responsive.spec.ts:86:31 › Generic 129 selected source controls are fully reachable 
+
+    Error: expect(locator).toBeVisible() failed
+
+    Locator: getByRole('dialog')
+    Expected: visible
+    Timeout: 5000ms
+    Error: element(s) not found
+
+    Call log:
+      - Expect "toBeVisible" getByRole('dialog') with timeout 5000ms
+      - waiting for getByRole('dialog')
+
+
+      94 |     await expect(input).toBeFocused(); await page.keyboard.type('reachable'); await expect(input).toHaveValue('reachable');
+      95 |   } else if (id === 129) {
+    &gt; 96 |     await clickMeasured(page, targets(page, id)[0], inputs); await expect(page.getByRole('dialog')).toBeVisible();
+         |                                                                                                     ^
+      97 |     await page.keyboard.press('Escape'); await expect(page.getByRole('dialog')).toHaveCount(0);
+      98 |   }
+      99 |   expect(errors).toEqual([]);
+        at &lt;runner-work&gt;/e2e/focused/generic_responsive.spec.ts:96:101
+
+    attachment #3: screenshot (image/png) ──────────────────────────────────────────────────────────
+    ../generic-responsive-results/generic_responsive-Generic-f8823-ontrols-are-fully-reachable-compact/test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: ../generic-responsive-results/generic_responsive-Generic-f8823-ontrols-are-fully-reachable-compact/error-context.md
+
+    attachment #5: trace (application/zip) ─────────────────────────────────────────────────────────
+    ../generic-responsive-results/generic_responsive-Generic-f8823-ontrols-are-fully-reachable-compact/trace.zip
+    Usage:
+
+        npx playwright show-trace ../generic-responsive-results/generic_responsive-Generic-f8823-ontrols-are-fully-reachable-compact/trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+</failure>
+</testcase></testsuite></testsuites>

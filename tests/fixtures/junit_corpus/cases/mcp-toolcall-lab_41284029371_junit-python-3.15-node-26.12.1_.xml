@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="9" tests="1701" time="128.775" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_junit_ci" name="test_jsonl_archive_portability_uses_locked_uv" time="0.001"><failure message="AssertionError: assert 'run: uv run --locked --extra test pytest -q tests/test_jsonl_log_archive.py' in 'name: JSONL archive portability\n\non:\n  pull_request:\n    paths:\n      - pyproject.toml\n      - uv.lock\n      -...b test group)\n        run: uv run --locked --only-group ci-stdlib --exact pytest -q tests/test_jsonl_log_archive.py\n'">def test_jsonl_archive_portability_uses_locked_uv():
+        """No pip-only drift in the Windows/macOS/Linux x Python archive matrix."""
+        workflow = (Path(__file__).parents[1] / ".github/workflows/jsonl-archive.yml").read_text(
+            encoding="utf-8"
+        )
+        assert "os: [ubuntu-latest, windows-latest, macos-latest]" in workflow
+        assert "python: ['3.12.15', '3.13.17', '3.14.9']" in workflow
+        assert "node-version: '24.22.1'" in workflow
+        assert "astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2" in workflow
+        assert "python-version: ${{ matrix.python }}" in workflow
+&gt;       assert "run: uv run --locked --extra test pytest -q tests/test_jsonl_log_archive.py" in workflow
+E       AssertionError: assert 'run: uv run --locked --extra test pytest -q tests/test_jsonl_log_archive.py' in 'name: JSONL archive portability\n\non:\n  pull_request:\n    paths:\n      - pyproject.toml\n      - uv.lock\n      -...b test group)\n        run: uv run --locked --only-group ci-stdlib --exact pytest -q tests/test_jsonl_log_archive.py\n'
+
+tests/test_junit_ci.py:90: AssertionError</failure></testcase></testsuite></testsuites>

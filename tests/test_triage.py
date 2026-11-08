@@ -555,3 +555,42 @@ def test_regression_dcs_c1_csi_removed_from_report_output() -> None:
     report = triage(exit_code=1, stderr_text=text, log_text=None, junit_paths=[], project_root=ROOT)
     _assert_no_control_chars("\n".join(report.lines()))
     assert "FOUND: python exception type: ValueError" in "\n".join(report.lines())
+
+
+# --- --test-events: flutter/dart `test --machine` JSON lines (2026-11-07 corpus feedback) ---
+
+FLUTTER_MACHINE_EVENTS = "\n".join([
+    '{"type":"start","protocolVersion":"0.1.1"}',
+    '{"type":"testStart","test":{"id":288,"name":"Screen3 compact template is reachable above Door","url":"file:///w/test/screens/generic_screen_test.dart"}}',
+    '{"type":"print","testID":288,"message":"══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════\\nThe following TestFailure was thrown running a test:\\nExpected: a value less than or equal to <346.01>\\n  Actual: <355.0>\\n   Which: is not a value less than or equal to <346.01>\\n\\nWhen the exception was thrown, this was the stack:\\n#4      main.<anonymous closure> (file:///w/test/screens/generic_screen_test.dart:393:7)\\nThis was caught by the test expectation on the following line:\\n  file:///w/test/screens/generic_screen_test.dart line 393\\n"}',
+    '{"type":"error","testID":288,"error":"Test failed. See exception logs above.\\nThe test description was: Screen3 compact template is reachable above Door","stackTrace":"","isFailure":false}',
+    '{"type":"testDone","testID":288,"result":"error","hidden":false}',
+    'not json at all',
+    '{"type":"done","success":false}',
+])
+
+
+def test_test_events_pairs_error_with_print_block(tmp_path: Path) -> None:
+    path = tmp_path / "flutter.jsonl"
+    path.write_text(FLUTTER_MACHINE_EVENTS, encoding="utf-8")
+    result = run_cli("--exit-code", "1", "--test-events", str(path), "--project-root", str(tmp_path))
+    assert result.returncode == 0, result.stderr
+    out = result.stdout
+    assert f"FOUND: test-events errors ({path}): 1" in out
+    assert f"FOUND: test-events error (first) ({path}): Screen3 compact template is reachable above Door — Test failed. See exception logs above." in out
+    assert f"FOUND: test-events exception type ({path}): TestFailure" in out
+    assert f"FOUND: test-events location ({path}): file:///w/test/screens/generic_screen_test.dart line 393" in out
+    assert "HINT: test-events expectation (" in out and "Expected: a value less than or equal to <346.01> | Actual: <355.0> | Which:" in out
+    assert f"FOUND: test-events invalid lines ({path}): 1" in out
+    assert "failure evidence (no stderr" not in out
+
+
+def test_test_events_without_errors_and_without_records(tmp_path: Path) -> None:
+    clean = tmp_path / "clean.jsonl"
+    clean.write_text('{"type":"testStart","test":{"id":1,"name":"ok"}}\n{"type":"testDone","testID":1,"result":"success"}\n', encoding="utf-8")
+    out = run_cli("--exit-code", "1", "--test-events", str(clean), "--project-root", str(tmp_path)).stdout
+    assert f"NOT FOUND: test-events errors ({clean})" in out
+    empty = tmp_path / "empty.jsonl"
+    empty.write_text("garbage\n", encoding="utf-8")
+    out = run_cli("--exit-code", "1", "--test-events", str(empty), "--project-root", str(tmp_path)).stdout
+    assert f"NOT FOUND: test-events json records ({empty})" in out

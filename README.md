@@ -55,7 +55,7 @@ This complementary supplied panel shows the challenges, roles and intended outco
 
 ## Status
 
-**Current slice:** read-only triage for Python tracebacks, Node stacks, Go panics and compiler errors, TypeScript compiler diagnostics, JUnit XML, and downloaded GitHub Actions job logs (`--actions-log`). Go and TypeScript detection is best effort and reported as `HINT`. Summarize a downloaded CI artifact zip (or directory / single XML or JSON) in place with `digest` (JUnit counts and failing cases, receipt JSON fields, extension counts for everything else). Wrap commands with **`sentinel`** for always-on light capture and automatic escalation plus JSON for agents (`docs/sentinel-report-schema.md`).
+**Current slice:** read-only triage for Python tracebacks, Node stacks, Go panics and compiler errors, TypeScript compiler diagnostics, JUnit XML (pytest including rewritten `assert` / `DID NOT RAISE` / `import file mismatch`, Playwright reporter blocks, Flutter test descriptions), `flutter test --machine` JSON lines (`--test-events`), and downloaded GitHub Actions job logs (`--actions-log`). The JUnit rules are measured against the harvested failure corpus (`tests/fixtures/junit_corpus`, 458 cases from 24 repositories as of 2026-11-07; `scripts/classify_junit_corpus.py` reports 435 well handled / 23 partial). Go and TypeScript detection is best effort and reported as `HINT`. Summarize a downloaded CI artifact zip (or directory / single XML or JSON) in place with `digest` (JUnit counts and failing cases, receipt JSON fields, extension counts for everything else). Wrap commands with **`sentinel`** for always-on light capture and automatic escalation plus JSON for agents (`docs/sentinel-report-schema.md`).
 
 ## CLI usage
 
@@ -112,6 +112,7 @@ Per JUnit XML: one counts line and one `FAIL class::name: message` line per fail
 | `--log PATH` | Log file (same safety rules as stderr) |
 | `--actions-log PATH` | Downloaded GitHub Actions job log (`gh run view --log`) |
 | `--junit PATH` | JUnit XML file (repeatable) |
+| `--test-events PATH` | JSON lines from `flutter test --machine` / `dart test --reporter json` (repeatable); carries the exception block that the Flutter JUnit XML drops |
 | `--project-root DIR` | Directory checked for lock files (default: `.`) |
 
 ### Exit codes

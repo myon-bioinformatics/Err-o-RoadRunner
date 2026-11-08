@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="39" tests="3979" time="509.425" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_ci_status_label.ScanTests" name="test_completion_allowlist_matches_workflow_inventory" time="0.001"><failure message="AssertionError: Items in the first set but not the second:&#10;'Aoi manual research checkpoint canary'">self = &lt;test_ci_status_label.ScanTests testMethod=test_completion_allowlist_matches_workflow_inventory&gt;
+
+    def test_completion_allowlist_matches_workflow_inventory(self):
+        workflows = Path(__file__).resolve().parents[1] / '.github/workflows'
+        text = (workflows / 'ci-status-label.yml').read_text(encoding='utf-8')
+        block = text.split('    workflows:\n', 1)[1].split('    types:', 1)[0]
+        allowed = [ast.literal_eval(line.removeprefix('      - '))
+                   for line in block.splitlines() if line.strip()]
+        names = [re.search(r'^name: (.+)$', path.read_text(encoding='utf-8'), re.M)[1]
+                 for path in workflows.glob('*.yml')]
+        excluded = {'CI failure label (add only)', 'Aoi question inbox'}
+        self.assertEqual(len(names), len(set(names)), 'Workflow names must be unique')
+        self.assertEqual(len(allowed), len(set(allowed)))
+&gt;       self.assertEqual(set(allowed), set(names) - excluded)
+E       AssertionError: Items in the first set but not the second:
+E       'Aoi manual research checkpoint canary'
+
+tests/test_ci_status_label.py:149: AssertionError</failure></testcase><testcase classname="tests.test_survey_third_party" name="test_committed_inventory_matches_the_tree" time="4.424"><failure message="AssertionError: &lt;runner-work&gt;/docs/evidence/third-party-survey.json is stale. Re-run with --json &lt;runner-work&gt;/docs/evidence/third-party-survey.json&#10;  &#10;assert 1 == 0&#10; +  where 1 = CompletedProcess(args=['&lt;runner-work&gt;/.venv/bin/python', '&lt;runner-work&gt;/scripts/survey_third_p...hird-party-survey.json is stale. Re-run with --json &lt;runner-work&gt;/docs/evidence/third-party-survey.json\n').returncode">def test_committed_inventory_matches_the_tree():
+        proc = subprocess.run(
+            [sys.executable, str(SURVEY), "--check", str(ROOT / "docs" / "evidence" / "third-party-survey.json")],
+            cwd=ROOT, capture_output=True, text=True,
+        )
+&gt;       assert proc.returncode == 0, proc.stderr
+E       AssertionError: &lt;runner-work&gt;/docs/evidence/third-party-survey.json is stale. Re-run with --json &lt;runner-work&gt;/docs/evidence/third-party-survey.json
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['&lt;runner-work&gt;/.venv/bin/python', '&lt;runner-work&gt;/scripts/survey_third_p...hird-party-survey.json is stale. Re-run with --json &lt;runner-work&gt;/docs/evidence/third-party-survey.json\n').returncode
+
+tests/test_survey_third_party.py:144: AssertionError</failure></testcase></testsuite></testsuites>

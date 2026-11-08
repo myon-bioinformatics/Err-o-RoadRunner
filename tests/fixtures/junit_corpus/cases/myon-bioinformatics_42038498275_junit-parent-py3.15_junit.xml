@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="9" skipped="31" tests="2518" time="94.249" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_ironmate_vendor_registry_sync" name="test_ironmate_registry_matches_reviewed_flow_lock" time="0.009"><failure message="assert False">def test_ironmate_registry_matches_reviewed_flow_lock():
+        registry = load('vendor-consumers.json')
+        lock = load('tests/fixtures/ironmate-flow-workspace.lock.json')
+        assert len(lock['files']) == 61
+&gt;       assert vendor_consumers.compare(registry, lock, CONSUMER)['matches']
+E       assert False
+
+tests/test_ironmate_vendor_registry_sync.py:21: AssertionError</failure></testcase><testcase classname="tests.test_nano_inventory.NanoInventoryTests" name="test_delivery_matrix_covers_every_screened_repository_once" time="0.001"><failure message="AssertionError: Element counts were not equal:&#10;First has 1, Second has 0:  'web-ui'&#10;First has 0, Second has 1:  'PySaiyanWeBoo'">self = &lt;test_nano_inventory.NanoInventoryTests testMethod=test_delivery_matrix_covers_every_screened_repository_once&gt;
+
+    def test_delivery_matrix_covers_every_screened_repository_once(self):
+        guide = (ROOT / "docs/nano-environments.md").read_text()
+        table = guide.split("| Repository |", 1)[1].split("### Coverage", 1)[0]
+        rows = [line.split("|")[1:-1] for line in table.splitlines()
+                if line.startswith("| ")]
+        self.assertTrue(all(len(row) == 4 for row in rows))
+        self.assertTrue(all(row[3].strip() for row in rows))
+        names = [row[0].strip() for row in rows]
+        expected = [entry["repository"].split("/", 1)[1]
+                    for entry in self.snapshot["repositories"]]
+&gt;       self.assertCountEqual(names, expected)
+E       AssertionError: Element counts were not equal:
+E       First has 1, Second has 0:  'web-ui'
+E       First has 0, Second has 1:  'PySaiyanWeBoo'
+
+tests/test_nano_inventory.py:72: AssertionError</failure></testcase><testcase classname="tests.test_vendor_adopted_enrollment" name="test_ironmate_registered_contract_ignores_recommendation_skips" time="0.006"><failure message="ValueError: consumer topology mismatch against parent registry">def test_ironmate_registered_contract_ignores_recommendation_skips():
+        registry = json.loads((ROOT / 'vendor-consumers.json').read_text())
+        catalog = json.loads((ROOT / 'vendor-catalog.json').read_text())
+        lock = json.loads((ROOT / 'tests/fixtures/ironmate-flow-workspace.lock.json').read_text())
+        ironmate_rows = [t for t in catalog['tools'] if t['repository'].casefold() == 'myon-bioinformatics/ironmate']
+        assert len(ironmate_rows) == 1 and ironmate_rows[0]['source'] == 'pillow_min.py'
+        assert 'myon-bioinformatics/Ironmate' not in ironmate_rows[0].get('consumers', {})
+&gt;       assert sync.verify_child_lock_against_parent(registry, catalog, lock, 'myon-bioinformatics/Ironmate') == sync.validate(lock)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_vendor_adopted_enrollment.py:20: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+registry = {'schema': 'vendor-consumers/1', 'consumers': [{'repository': 'myon-bioinformatics/myon-bioinformatics', 'state': 'loc...ry': 'myon-bioinformatics/gh_identity', 'source': 'LICENSE', 'destination': 'vendor/gh_identity-LICENSE'}, ...]}, ...]}
+catalog = {'schema': 'vendor-catalog/1', 'tools': [{'repository': 'myon-bioinformatics/gh_identity', 'commit': 'c950ed3882f05668...ation-wide single-file coverage; not an automatic promotion.', 'source': 'convert_img_fmt_to_webp(GUI).py', ...}, ...]}
+lock = {'schema': 'vendor-lock/1', 'files': [{'repository': 'myon-bioinformatics/ascii_artist', 'ref': '505858627afc7e24dd6de...4a82bc6e50682d6a79e22a851c4c91', 'commit': 'a3d8f1835e4a82bc6e50682d6a79e22a851c4c91', 'source': 'LICENSE', ...}, ...]}
+consumer = 'myon-bioinformatics/Ironmate'
+
+    def verify_child_lock_against_parent(registry, catalog, lock, consumer):
+        """Validate a child lock against parent registry/catalog without child-heads."""
+        import vendor_catalog
+        import vendor_consumers
+        registry = vendor_consumers.validate(registry)
+        catalog = vendor_catalog.validate(catalog)
+        lock = validate(lock)
+        if not vendor_consumers.compare(registry, lock, consumer)["matches"]:
+&gt;           raise ValueError("consumer topology mismatch against parent registry")
+E           ValueError: consumer topology mismatch against parent registry
+
+vendor_sync.py:1094: ValueError</failure></testcase><testcase classname="tests.test_vendor_baseline_rollout" name="test_observed_lock_topology_and_immutable_revision[myon-bioinformatics/Aoi]" time="0.002"><failure message="assert False">name = 'myon-bioinformatics/Aoi'
+
+    @pytest.mark.parametrize("name", sorted(FIXTURES))
+    def test_observed_lock_topology_and_immutable_revision(name):
+        registry = baseline_registry(json.loads((ROOT / "vendor-consumers.json").read_text()))
+        heads = vendor_sync.validate_child_heads(json.loads((ROOT / "child-heads.json").read_text()))
+        fixture = REFRESHED_FIXTURES.get(name, FIXTURES[name])
+        lock = vendor_sync.validate(fixture["lock"])
+        observed = json.loads((ROOT / "tests/fixtures/parent_observation_20261102.json").read_text())
+        expected_sha = fixture["sha"]
+        if name in observed:
+            digest = hashlib.sha256(json.dumps(lock, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+            assert digest == observed[name]["lock_sha256"]
+            expected_sha = observed[name]["sha"]
+        assert heads["heads"][name]["sha"] == expected_sha
+&gt;       assert vendor_consumers.compare(registry, lock, name)["matches"]
+E       assert False
+
+tests/test_vendor_baseline_rollout.py:72: AssertionError</failure></testcase><testcase classname="tests.test_vendor_baseline_rollout" name="test_observed_lock_topology_and_immutable_revision[myon-bioinformatics/Ironmate]" time="0.004"><failure message="assert False">name = 'myon-bioinformatics/Ironmate'
+
+    @pytest.mark.parametrize("name", sorted(FIXTURES))
+    def test_observed_lock_topology_and_immutable_revision(name):
+        registry = baseline_registry(json.loads((ROOT / "vendor-consumers.json").read_text()))
+        heads = vendor_sync.validate_child_heads(json.loads((ROOT / "child-heads.json").read_text()))
+        fixture = REFRESHED_FIXTURES.get(name, FIXTURES[name])
+        lock = vendor_sync.validate(fixture["lock"])
+        observed = json.loads((ROOT / "tests/fixtures/parent_observation_20261102.json").read_text())
+        expected_sha = fixture["sha"]
+        if name in observed:
+            digest = hashlib.sha256(json.dumps(lock, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+            assert digest == observed[name]["lock_sha256"]
+            expected_sha = observed[name]["sha"]
+        assert heads["heads"][name]["sha"] == expected_sha
+&gt;       assert vendor_consumers.compare(registry, lock, name)["matches"]
+E       assert False
+
+tests/test_vendor_baseline_rollout.py:72: AssertionError</failure></testcase><testcase classname="tests.test_vendor_baseline_rollout" name="test_observed_lock_topology_and_immutable_revision[myon-bioinformatics/myon-bioinformatics.github.io]" time="0.003"><failure message="assert False">name = 'myon-bioinformatics/myon-bioinformatics.github.io'
+
+    @pytest.mark.parametrize("name", sorted(FIXTURES))
+    def test_observed_lock_topology_and_immutable_revision(name):
+        registry = baseline_registry(json.loads((ROOT / "vendor-consumers.json").read_text()))
+        heads = vendor_sync.validate_child_heads(json.loads((ROOT / "child-heads.json").read_text()))
+        fixture = REFRESHED_FIXTURES.get(name, FIXTURES[name])
+        lock = vendor_sync.validate(fixture["lock"])
+        observed = json.loads((ROOT / "tests/fixtures/parent_observation_20261102.json").read_text())
+        expected_sha = fixture["sha"]
+        if name in observed:
+            digest = hashlib.sha256(json.dumps(lock, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+            assert digest == observed[name]["lock_sha256"]
+            expected_sha = observed[name]["sha"]
+        assert heads["heads"][name]["sha"] == expected_sha
+&gt;       assert vendor_consumers.compare(registry, lock, name)["matches"]
+E       assert False
+
+tests/test_vendor_baseline_rollout.py:72: AssertionError</failure></testcase><testcase classname="tests.test_vendor_baseline_rollout" name="test_observed_lock_topology_and_immutable_revision[myon-bioinformatics/web-ui]" time="0.001"><failure message="KeyError: 'myon-bioinformatics/web-ui'">name = 'myon-bioinformatics/web-ui'
+
+    @pytest.mark.parametrize("name", sorted(FIXTURES))
+    def test_observed_lock_topology_and_immutable_revision(name):
+        registry = baseline_registry(json.loads((ROOT / "vendor-consumers.json").read_text()))
+        heads = vendor_sync.validate_child_heads(json.loads((ROOT / "child-heads.json").read_text()))
+        fixture = REFRESHED_FIXTURES.get(name, FIXTURES[name])
+        lock = vendor_sync.validate(fixture["lock"])
+        observed = json.loads((ROOT / "tests/fixtures/parent_observation_20261102.json").read_text())
+        expected_sha = fixture["sha"]
+        if name in observed:
+            digest = hashlib.sha256(json.dumps(lock, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+            assert digest == observed[name]["lock_sha256"]
+            expected_sha = observed[name]["sha"]
+&gt;       assert heads["heads"][name]["sha"] == expected_sha
+               ^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'myon-bioinformatics/web-ui'
+
+tests/test_vendor_baseline_rollout.py:71: KeyError</failure></testcase><testcase classname="tests.test_vendor_baseline_rollout" name="test_observation_does_not_enroll_new_repositories" time="0.002"><failure message="AssertionError: assert {'myon-bioinf...li_args', ...} == {'myon-bioinf...est-kit', ...}&#10;  &#10;  Extra items in the left set:&#10;  'myon-bioinformatics/web-ui'&#10;  Extra items in the right set:&#10;  'myon-bioinformatics/PySaiyanWeBoo'&#10;  &#10;  Full diff: (-: missing in left side, +: extra in left side)&#10;    {&#10;        'myon-bioinformatics/Aoi',&#10;        'myon-bioinformatics/Err-o-RoadRunner',&#10;        'myon-bioinformatics/Ironmate',&#10;  -     'myon-bioinformatics/PySaiyanWeBoo',&#10;[+15 more lines; full report in element text]">def test_observation_does_not_enroll_new_repositories():
+        registry = vendor_consumers.validate(json.loads((ROOT / "vendor-consumers.json").read_text()))
+        locked = {row["repository"] for row in registry["consumers"] if row["state"] == "locked"}
+&gt;       assert set(FIXTURES) == locked
+E       AssertionError: assert {'myon-bioinf...li_args', ...} == {'myon-bioinf...est-kit', ...}
+E         
+E         Extra items in the left set:
+E         'myon-bioinformatics/web-ui'
+E         Extra items in the right set:
+E         'myon-bioinformatics/PySaiyanWeBoo'
+E         
+E         Full diff: (-: missing in left side, +: extra in left side)
+E           {
+E               'myon-bioinformatics/Aoi',
+E               'myon-bioinformatics/Err-o-RoadRunner',
+E               'myon-bioinformatics/Ironmate',
+E         -     'myon-bioinformatics/PySaiyanWeBoo',
+E               'myon-bioinformatics/ascii_artist',
+E               'myon-bioinformatics/browser-test-kit',
+E               'myon-bioinformatics/cli_args',
+E               'myon-bioinformatics/flutter_navigation_basic',
+E               'myon-bioinformatics/gh_identity',
+E               'myon-bioinformatics/markdown',
+E               'myon-bioinformatics/mcp-toolcall-lab',
+E               'myon-bioinformatics/myon-bioinformatics',
+E               'myon-bioinformatics/myon-bioinformatics.github.io',
+E               'myon-bioinformatics/nvd_nist_known_vulns',
+E               'myon-bioinformatics/search_seq_including_spaces',
+E         +     'myon-bioinformatics/web-ui',
+E               'myon-bioinformatics/xprobe',
+E               'myon-bioinformatics/yourself',
+E           }
+
+tests/test_vendor_baseline_rollout.py:97: AssertionError</failure></testcase><testcase classname="tests.test_vendor_baseline_rollout" name="test_ironmate_adoption_preserves_previous_snapshot_and_checks_new_entries" time="0.003"><failure message="assert False">def test_ironmate_adoption_preserves_previous_snapshot_and_checks_new_entries():
+        name = "myon-bioinformatics/Ironmate"
+        old = FIXTURES[name]
+        current = REFRESHED_FIXTURES[name]
+        assert old["sha"] == "7adcb80de69a701a252a6a5abc7407be3f8132f5"
+        assert current["sha"] == "8f4b9e3e2b12a2a32c47daa37da0a5bc3ee7dcd3"
+        assert len(old["lock"]["files"]) == 59
+        assert current["lock"]["files"][:59] == old["lock"]["files"]
+        added = current["lock"]["files"][59:]
+        assert {row["destination"] for row in added} == {
+            "vendor/fetch_module.py", "vendor/Aoi-LICENSE"}
+        assert all(row["repository"] == "myon-bioinformatics/Aoi" and
+                   row["ref"] == row["commit"] == "9cfa841818de56a22048c8c6196f10f698118122"
+                   for row in added)
+        registry = baseline_registry(json.loads((ROOT / "vendor-consumers.json").read_text()))
+&gt;       assert vendor_consumers.compare(registry, current["lock"], name)["matches"]
+E       assert False
+
+tests/test_vendor_baseline_rollout.py:115: AssertionError</failure></testcase></testsuite></testsuites>
