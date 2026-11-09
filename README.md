@@ -105,6 +105,35 @@ Per JUnit XML: one counts line and one `FAIL class::name: message` line per fail
 | `1` | At least one failing testcase |
 | `2` | Input error or unverifiable input (missing path, bad zip, malformed/unsafe XML or JSON, or oversized member) |
 
+### Shared browser-evidence failure aggregation
+
+`digest` also reads BrowserTestKit `btk-evidence-gif/2` receipts named
+`browser.json` (or selected with `--json GLOB`). It aggregates failed shots across
+consumer directories/archives alongside JUnit failures, prints the source, shot,
+URL, redacted errors and recorded consumer commit, and checks summary counts
+against individual shot statuses. Exit codes are 0 for no reported failures,
+1 for failures, and 2 for malformed/inconsistent input. Generic JSON fields remain
+informational. This does not verify GIF pixels, build provenance, freshness or
+required repository coverage; supply all expected current-attempt inputs.
+
+```bash
+python -S /path/to/pinned/Err-o-RoadRunner/triage.py digest artifacts/*/browser.json
+```
+
+Consumers keep build/server startup and BrowserTestKit plans locally. Use the
+existing `sentinel --exit-mode child --report-json ... -- COMMAND ...` around each
+recorder to preserve command/timeout failures, including failures before a receipt
+can be written. Keep its original exit status in the parent batch: digesting only
+available receipts cannot detect a missing attempt. Sentinel writes JSON only on
+escalation; absence of its report alone is not evidence of success. Use separate
+per-consumer, per-attempt output paths and preserve available logs on failure.
+
+Distribute this support through the existing Err-o-RoadRunner package/console
+entrypoint or an explicitly pinned checkout, without copying parsers into the
+parent or BrowserTestKit. No new runtime dependency is needed. For feedback,
+reduce real failures to redacted fixture inputs and expected reports in this
+repository's tests; keep app selectors and startup logic in their owner.
+
 | Flag | Purpose |
 |------|---------|
 | `--exit-code N` | Exit code from the failed command |

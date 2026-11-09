@@ -28,7 +28,7 @@ EXIT_OK = 0
 EXIT_DIGEST_FAILURES = 1
 EXIT_USAGE = 2
 
-DIGEST_DEFAULT_JSON = ("route-audit.json", "*receipt*.json")
+DIGEST_DEFAULT_JSON = ("route-audit.json", "*receipt*.json", "browser.json")
 DIGEST_DEFAULT_KEYS = ("schema", "stage", "failed_step", "last_capture", "error")
 DIGEST_DEFAULT_MAX_BYTES = 50_000_000
 _JUNIT_UNSAFE_XML_RE = re.compile(rb"<!(?:DOCTYPE|ENTITY)\b", re.I)
@@ -1889,13 +1889,40 @@ def _digest_junit_summary(
     )
 
 
-def _digest_receipt(name: str, data: bytes, keys: Sequence[str], width: int) -> str:
+def _digest_browser_evidence(name: str, doc: dict, width: int, failures: list[str]) -> str:
+    """Read BTK v2 outcome facts, without executing its plan or trusting totals."""
+    shots, summary = doc.get("shots"), doc.get("summary")
+    if not isinstance(shots, list) or not shots or not isinstance(summary, dict):
+        raise ValueError("invalid btk-evidence-gif/2 shots or summary")
+    counts = {"pass": 0, "fail": 0}
+    pending = []
+    for index, shot in enumerate(shots):
+        if not isinstance(shot, dict) or shot.get("status") not in ("pass", "fail"):
+            raise ValueError("invalid btk-evidence-gif/2 shot status")
+        counts[shot["status"]] += 1
+        if shot["status"] == "fail":
+            detail = json.dumps({"shot": shot.get("label", index),
+                                 "url": shot.get("url"), "errors": shot.get("errors", [])},
+                                ensure_ascii=False)
+            pending.append(f"FAIL {name} " + _digest_collapse(redact_text(detail), width))
+    if any(type(summary.get(k)) is not int or summary[k] != n for k, n in counts.items()):
+        raise ValueError("btk-evidence-gif/2 summary disagrees with shots")
+    failures.extend(pending)
+    commit = _digest_collapse(redact_text(str(doc.get("commit") or "unknown")), width)
+    return (f"browser {name}: pass={counts['pass']} fail={counts['fail']} "
+            f"commit={commit}")
+
+
+def _digest_receipt(name: str, data: bytes, keys: Sequence[str], width: int,
+                    evidence_failures: list[str] | None = None) -> str:
     try:
         doc = json.loads(data)
     except ValueError as exc:
         raise ValueError(f"invalid JSON: {exc}") from exc
     if not isinstance(doc, dict):
         return f"json {name}: {type(doc).__name__}"
+    if doc.get("schema") == "btk-evidence-gif/2" and evidence_failures is not None:
+        return _digest_browser_evidence(name, doc, width, evidence_failures)
     picked = {k: doc[k] for k in keys if k in doc}
     payload = redact_text(json.dumps(picked, ensure_ascii=False, sort_keys=False))
     return f"json {name}: " + _digest_collapse(payload, width * 2)
@@ -1914,6 +1941,7 @@ def digest(
     """Summarize CI artifact zips/directories without extracting (see ``digest`` subcommand)."""
     lines: list[str] = []
     failures: list[str] = []
+    evidence_failures: list[str] = []
     problems = 0
     other: collections.Counter[str] = collections.Counter()
     skipped: list[str] = []
@@ -1936,7 +1964,7 @@ def digest(
                 elif member_name.lower().endswith(".json") and any(
                     fnmatch.fnmatch(base, pattern) for pattern in json_patterns
                 ):
-                    lines.append(_digest_receipt(label, data, keys, width))
+                    lines.append(_digest_receipt(label, data, keys, width, evidence_failures))
                 else:
                     ext = os.path.splitext(member_name)[1].lower() or "(none)"
                     other[ext] += 1
@@ -1944,11 +1972,12 @@ def digest(
             except ValueError as exc:
                 lines.append(f"problem {label}: {exc}")
                 problems += 1
-    shown = failures[:limit]
+    all_failures = failures + evidence_failures
+    shown = all_failures[:limit]
     lines.extend(shown)
-    if len(failures) > len(shown):
+    if len(all_failures) > len(shown):
         lines.append(
-            f"... {len(failures) - len(shown)} more failing testcase(s); raise --limit"
+            f"... {len(all_failures) - len(shown)} more failing record(s); raise --limit"
         )
     if other:
         lines.append(
@@ -1960,7 +1989,9 @@ def digest(
         lines.append("skipped (over --max-bytes): " + ", ".join(skipped))
     lines.append(f"failing testcases: {len(failures)}")
     lines.append(f"unverifiable inputs: {problems}")
-    return lines, len(failures), problems
+    if evidence_failures:
+        lines.append(f"failing browser shots: {len(evidence_failures)}")
+    return lines, len(all_failures), problems
 
 
 def build_digest_parser() -> argparse.ArgumentParser:
