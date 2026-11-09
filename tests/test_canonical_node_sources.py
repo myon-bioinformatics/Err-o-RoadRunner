@@ -6,7 +6,7 @@ from pathlib import Path
 def test_canonical_node_sources():
     root = Path(__file__).resolve().parents[1]
     entries = {e["destination"]: e for e in json.loads((root / "vendor.lock.json").read_text())["files"]}
-    expected = {'vendor/xprobe.py': '1ffbb7b984075c683690bbe4e9deb06199cdfe94', 'vendor/cli_args.py': '5059570cdc0ceec33995aeca0eb521066db521e7'}
+    expected = {'vendor/xprobe.py': '1ffbb7b984075c683690bbe4e9deb06199cdfe94', 'vendor/cli_args.py': '9ff06c4326fc7ba934112abecbc59451ab07be6a'}
     for path, commit in expected.items():
         entry = entries[path]
         assert entry["ref"] == entry["commit"] == commit
