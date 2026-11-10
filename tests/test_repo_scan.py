@@ -2,7 +2,12 @@ import contextlib
 import io
 from unittest.mock import patch
 
-import repo_scan
+import importlib.util
+from pathlib import Path
+
+spec = importlib.util.spec_from_file_location("repo_scan", Path(__file__).resolve().parents[1] / "Err-o-RoadRunner.py")
+repo_scan = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(repo_scan)
 
 
 def test_issue_detection_ignores_pull_requests():
