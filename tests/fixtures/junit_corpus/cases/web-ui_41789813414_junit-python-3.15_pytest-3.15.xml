@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="5" tests="6040" time="69.868" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_python_wrapper.WorldTests" name="test_front_page_is_what_the_generator_writes" time="0.017"><failure message="AssertionError: '&lt;!do[14007 chars]th:0}.ui-screens-stage{min-width:0;margin:16px[76436 chars]l&gt;\n' != '&lt;!do[14007 chars]th:0}@media(max-width:480px){.ui-screens-bar{g[76489 chars]l&gt;\n'">self = &lt;test_python_wrapper.WorldTests testMethod=test_front_page_is_what_the_generator_writes&gt;
+
+    def test_front_page_is_what_the_generator_writes(self):
+        page = (ROOT / "index.html").read_text(encoding="utf-8")
+&gt;       self.assertEqual(page, web_ui.example_pages()["index.html"])
+E       AssertionError: '&lt;!do[14007 chars]th:0}.ui-screens-stage{min-width:0;margin:16px[76436 chars]l&gt;\n' != '&lt;!do[14007 chars]th:0}@media(max-width:480px){.ui-screens-bar{g[76489 chars]l&gt;\n'
+
+tests/test_python_wrapper.py:375: AssertionError</failure></testcase><testcase classname="tests.test_static_contract.StaticContractTest" name="test_example_pages_are_single_files_carrying_the_whole_bundle" time="0.002"><failure message="AssertionError: '&lt;!do[14007 chars]th:0}.ui-screens-stage{min-width:0;margin:16px[76436 chars]l&gt;\n' != '&lt;!do[14007 chars]th:0}@media(max-width:480px){.ui-screens-bar{g[76489 chars]l&gt;\n' : run: python -S web_ui.py --site DIR; copy DIR/index.html">self = &lt;test_static_contract.StaticContractTest testMethod=test_example_pages_are_single_files_carrying_the_whole_bundle&gt;
+
+    def test_example_pages_are_single_files_carrying_the_whole_bundle(self):
+        self.assertEqual(sorted(PAGES), ["contract/v1/example.html", "examples/api-stub.html", "examples/clipboard-shelf.html", "examples/composition-studio.html", "examples/coordinates.html", "examples/door.html", "examples/github-like.html",
+                                         "examples/image-studio.html", "examples/index.html", "examples/mcp-lab.html", "examples/mcp-stub.html", "examples/patterns.html", "examples/photo-studio.html", "examples/play-studio.html", "examples/playground.html", "examples/screens.html", "examples/showcase.html", "examples/test-report.html", "examples/timeline.html", "index.html"])
+&gt;       self.assertEqual((ROOT / "index.html").read_text(encoding="utf-8"), PAGES["index.html"], "run: python -S web_ui.py --site DIR; copy DIR/index.html")
+E       AssertionError: '&lt;!do[14007 chars]th:0}.ui-screens-stage{min-width:0;margin:16px[76436 chars]l&gt;\n' != '&lt;!do[14007 chars]th:0}@media(max-width:480px){.ui-screens-bar{g[76489 chars]l&gt;\n' : run: python -S web_ui.py --site DIR; copy DIR/index.html
+
+tests/test_static_contract.py:133: AssertionError</failure></testcase></testsuite></testsuites>

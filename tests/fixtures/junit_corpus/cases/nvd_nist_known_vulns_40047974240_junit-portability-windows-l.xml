@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="4" tests="453" time="4.925" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_nvd_nist_known_vulns_node_entry.NodeEntryTests" name="test_ci_enables_node_parity_in_test_job" time="0.001"><failure message="AssertionError: unexpectedly None : Node 24+ must be installed for CI tests">self = &lt;test_nvd_nist_known_vulns_node_entry.NodeEntryTests testMethod=test_ci_enables_node_parity_in_test_job&gt;
+
+    def test_ci_enables_node_parity_in_test_job(self):
+        workflow = (ROOT / ".github/workflows/python.yml").read_text(encoding="utf-8")
+        job = workflow.split("\n  test:\n", 1)[1].split("\n  failure-identity:", 1)[0]
+        self.assertIn("actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1", job)
+        self.assertIn("node-version: '26'", job)
+        self.assertIn("Require supported Node in parity CI", job)
+        if os.environ.get("GITHUB_ACTIONS") == "true":
+&gt;           self.assertIsNotNone(NODE, "Node 24+ must be installed for CI tests")
+E           AssertionError: unexpectedly None : Node 24+ must be installed for CI tests
+
+tests\test_nvd_nist_known_vulns_node_entry.py:65: AssertionError</failure></testcase></testsuite></testsuites>

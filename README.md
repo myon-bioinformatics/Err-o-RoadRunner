@@ -55,7 +55,7 @@ This complementary supplied panel shows the challenges, roles and intended outco
 
 ## Status
 
-**Current slice:** read-only triage for Python tracebacks, Node stacks, Go panics and compiler errors, TypeScript compiler diagnostics, JUnit XML, and downloaded GitHub Actions job logs (`--actions-log`). Go and TypeScript detection is best effort and reported as `HINT`. Summarize a downloaded CI artifact zip (or directory / single XML or JSON) in place with `digest` (JUnit counts and failing cases, receipt JSON fields, extension counts for everything else). Wrap commands with **`sentinel`** for always-on light capture and automatic escalation plus JSON for agents (`docs/sentinel-report-schema.md`).
+**Current slice:** read-only triage for Python tracebacks, Node stacks, Go panics and compiler errors, TypeScript compiler diagnostics, JUnit XML (pytest including rewritten `assert` / `DID NOT RAISE` / `import file mismatch`, Playwright reporter blocks, Flutter test descriptions), `flutter test --machine` JSON lines (`--test-events`), and downloaded GitHub Actions job logs (`--actions-log`). The JUnit rules are measured against the harvested failure corpus (`tests/fixtures/junit_corpus`, 458 cases from 24 repositories as of 2026-11-07; `scripts/classify_junit_corpus.py` reports 435 well handled / 23 partial). Go and TypeScript detection is best effort and reported as `HINT`. Summarize a downloaded CI artifact zip (or directory / single XML or JSON) in place with `digest` (JUnit counts and failing cases, receipt JSON fields, extension counts for everything else). Wrap commands with **`sentinel`** for always-on light capture and automatic escalation plus JSON for agents (`docs/sentinel-report-schema.md`).
 
 ## CLI usage
 
@@ -105,6 +105,35 @@ Per JUnit XML: one counts line and one `FAIL class::name: message` line per fail
 | `1` | At least one failing testcase |
 | `2` | Input error or unverifiable input (missing path, bad zip, malformed/unsafe XML or JSON, or oversized member) |
 
+### Shared browser-evidence failure aggregation
+
+`digest` also reads BrowserTestKit `btk-evidence-gif/2` receipts named
+`browser.json` (or selected with `--json GLOB`). It aggregates failed shots across
+consumer directories/archives alongside JUnit failures, prints the source, shot,
+URL, redacted errors and recorded consumer commit, and checks summary counts
+against individual shot statuses. Exit codes are 0 for no reported failures,
+1 for failures, and 2 for malformed/inconsistent input. Generic JSON fields remain
+informational. This does not verify GIF pixels, build provenance, freshness or
+required repository coverage; supply all expected current-attempt inputs.
+
+```bash
+python -S /path/to/pinned/Err-o-RoadRunner/triage.py digest artifacts/*/browser.json
+```
+
+Consumers keep build/server startup and BrowserTestKit plans locally. Use the
+existing `sentinel --exit-mode child --report-json ... -- COMMAND ...` around each
+recorder to preserve command/timeout failures, including failures before a receipt
+can be written. Keep its original exit status in the parent batch: digesting only
+available receipts cannot detect a missing attempt. Sentinel writes JSON only on
+escalation; absence of its report alone is not evidence of success. Use separate
+per-consumer, per-attempt output paths and preserve available logs on failure.
+
+Distribute this support through the existing Err-o-RoadRunner package/console
+entrypoint or an explicitly pinned checkout, without copying parsers into the
+parent or BrowserTestKit. No new runtime dependency is needed. For feedback,
+reduce real failures to redacted fixture inputs and expected reports in this
+repository's tests; keep app selectors and startup logic in their owner.
+
 | Flag | Purpose |
 |------|---------|
 | `--exit-code N` | Exit code from the failed command |
@@ -112,6 +141,7 @@ Per JUnit XML: one counts line and one `FAIL class::name: message` line per fail
 | `--log PATH` | Log file (same safety rules as stderr) |
 | `--actions-log PATH` | Downloaded GitHub Actions job log (`gh run view --log`) |
 | `--junit PATH` | JUnit XML file (repeatable) |
+| `--test-events PATH` | JSON lines from `flutter test --machine` / `dart test --reporter json` (repeatable); carries the exception block that the Flutter JUnit XML drops |
 | `--project-root DIR` | Directory checked for lock files (default: `.`) |
 
 ### Exit codes

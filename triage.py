@@ -15,7 +15,7 @@ EXIT_OK = 0
 EXIT_DIGEST_FAILURES = 1
 EXIT_USAGE = 2
 
-DIGEST_DEFAULT_JSON = ("route-audit.json", "*receipt*.json")
+DIGEST_DEFAULT_JSON = ("route-audit.json", "*receipt*.json", "browser.json")
 DIGEST_DEFAULT_KEYS = ("schema", "stage", "failed_step", "last_capture", "error")
 DIGEST_DEFAULT_MAX_BYTES = 50_000_000
 _JUNIT_UNSAFE_XML_RE = re.compile(rb"<!(?:DOCTYPE|ENTITY)\b", re.I)
@@ -798,6 +798,23 @@ PYTEST_E_EXC_LINE_RE = re.compile(
     r"^\s*E\s+(?P<exc>[A-Za-z_][\w.]*(?:Error|Exception|Failed|Timeout))(?:\s*:|$)"
 )
 PYTEST_E_ASSERT_LINE_RE = re.compile(r"^\s*E\s+assert\b")
+# ``tests/test_x.py:60: AssertionError`` — the location pytest prints after the excerpt.
+PYTEST_LOCATION_EXC_RE = re.compile(
+    r"^\s*\S+?:\d+:\s+(?P<exc>[A-Za-z_][\w.]*(?:Error|Exception|Failed|Timeout))\s*$"
+)
+PYTEST_E_FAILED_LINE_RE = re.compile(r"^\s*E\s+Failed:")
+PYTEST_DID_NOT_RAISE_RE = re.compile(r"DID NOT RAISE\s+(?:<class '(?P<cls>[^']+)'>|(?P<exc>[A-Za-z_][\w.]*))")
+PYTEST_IMPORT_MISMATCH_RE = re.compile(
+    r"import file mismatch:\s*imported module '(?P<module>[^']+)' has this __file__ attribute:\s*"
+    r"(?P<imported>\S+)\s*which is not the same as the test file we want to collect:\s*(?P<wanted>\S+)",
+    re.S,
+)
+# Playwright reporter block: ``[chromium] › a.spec.ts:12:7 › Suite › title`` then ``Error: ...``.
+PLAYWRIGHT_HEADER_RE = re.compile(
+    r"^\[(?P<project>[^\]\s]+)\]\s+›\s+(?P<location>\S+?\.(?:spec|test)\.[cm]?[jt]sx?:\d+:\d+)\s+›\s+(?P<title>.+)$"
+)
+PLAYWRIGHT_ERROR_LINE_RE = re.compile(r"^(?P<type>[A-Za-z]*Error):\s+(?P<rest>.+)$")
+FLUTTER_TEST_DESCRIPTION_RE = re.compile(r"The test description was:\s*(?P<desc>.+)")
 JUNIT_DIFF_LINE_RE = re.compile(r"^\s*[+-]\s+")
 DART_ERROR_LINE_RE = re.compile(
     r"(?P<line>\S+\.dart:\d+:\d+:\s+Error:\s*.+)$"
@@ -809,6 +826,7 @@ JUNIT_MSG_EXCEPTION_RE = re.compile(
     r"^([A-Za-z_][\w.]*(?:Error|Exception|Failed|Timeout|Exit))(?:\s*:\s*|$)"
 )
 JUNIT_BARE_EXCEPTION_NAME_RE = re.compile(r"^[A-Za-z_][\w.]+$")
+JUNIT_TYPE_ATTR_RE = re.compile(r"[A-Za-z_][\w.$-]{0,79}")
 JUNIT_FAILURE_GROUP_CAP = 10
 
 
@@ -901,10 +919,16 @@ def _junit_exception_type_for_type_key(message: str, blob: str, first_line: str)
     return "Unknown"
 
 
-def _junit_failure_type_key(blob: str, message: str = "") -> JUnitFailureTypeKey:
-    """Type key: exception type + normalized first line of the failure message."""
+def _junit_failure_type_key(blob: str, message: str = "", type_attr: str = "") -> JUnitFailureTypeKey:
+    """Type key: exception type + normalized first line of the failure message.
+
+    ``type_attr`` (the JUnit ``type=`` attribute, e.g. Playwright's ``expect.toBeVisible``)
+    is used only when nothing in the text names a type.
+    """
     first_line = _junit_failure_message_first_line(message, blob)
     exc = _junit_exception_type_for_type_key(message, blob, first_line)
+    if exc == "Unknown" and JUNIT_TYPE_ATTR_RE.fullmatch(type_attr.strip()):
+        exc = type_attr.strip()
     norm = _junit_normalize_type_message(_junit_line_without_exception_prefix(first_line))
     fp = _junit_quote_fingerprint(first_line)
     return exc, norm, fp
@@ -925,12 +949,14 @@ def _junit_group_failures(
     labels: Sequence[str],
     messages: Sequence[str],
     blobs: Sequence[str],
+    type_attrs: Sequence[str] = (),
 ) -> list[JUnitFailureGroup]:
     from collections import OrderedDict
 
+    attrs = list(type_attrs) if type_attrs else [""] * len(labels)
     buckets: OrderedDict[JUnitFailureTypeKey, JUnitFailureGroup] = OrderedDict()
-    for label, message, blob in zip(labels, messages, blobs, strict=True):
-        key = _junit_failure_type_key(blob, message)
+    for label, message, blob, type_attr in zip(labels, messages, blobs, attrs, strict=True):
+        key = _junit_failure_type_key(blob, message, type_attr)
         if key in buckets:
             prev = buckets[key]
             buckets[key] = JUnitFailureGroup(
@@ -959,11 +985,12 @@ def _junit_emit_failure_groups(
     labels: Sequence[str],
     messages: Sequence[str],
     blobs: Sequence[str],
+    type_attrs: Sequence[str] = (),
 ) -> None:
     if not labels:
         report.add_not_found(f"junit failure groups ({source})")
         return
-    groups = _junit_group_failures(labels, messages, blobs)
+    groups = _junit_group_failures(labels, messages, blobs, type_attrs)
     total = len(labels)
     failure_noun = "failure" if total == 1 else "failures"
     group_noun = "group" if len(groups) == 1 else "groups"
@@ -1064,13 +1091,87 @@ def _junit_is_pytest_collection_failure(error_elem: ET.Element, blob: str) -> bo
     return "importerror while importing" in low or "collection error" in low
 
 
-def _junit_pytest_exception_type(blob: str) -> str:
+def _junit_pytest_exception_type(blob: str, message: str = "") -> str:
+    """Exception type of a pytest failure, with the corpus-measured fallbacks.
+
+    Order: an ``E   SomeError`` line; the trailing ``path:LINE: SomeError`` location
+    pytest prints after the source excerpt; a rewritten ``assert`` (pytest raises
+    ``AssertionError`` for it by definition); ``E   Failed:`` outcomes such as
+    ``DID NOT RAISE``. Each fallback was a "partial" class in the harvested corpus.
+    """
     for line in blob.splitlines():
         m = PYTEST_E_EXC_LINE_RE.match(line)
         if m:
             name = m.group("exc")
             if name not in PYTHON_BUILTIN_EXCEPTIONS:
                 return name
+    for line in blob.splitlines():
+        m = PYTEST_LOCATION_EXC_RE.match(line)
+        if m and m.group("exc") not in PYTHON_BUILTIN_EXCEPTIONS:
+            return m.group("exc")
+    head = (message or "").strip().splitlines()
+    first_message_line = head[0].strip() if head else ""
+    if first_message_line.startswith("assert ") or first_message_line == "assert" or any(
+        PYTEST_E_ASSERT_LINE_RE.match(line) for line in blob.splitlines()
+    ):
+        return "AssertionError"
+    if any(PYTEST_E_FAILED_LINE_RE.match(line) for line in blob.splitlines()):
+        return "Failed"
+    return ""
+
+
+def _junit_did_not_raise_hint(blob: str) -> str:
+    m = PYTEST_DID_NOT_RAISE_RE.search(blob)
+    if not m:
+        return ""
+    expected = m.group("cls") or m.group("exc")
+    return (
+        f"pytest.raises({expected}) finished without an exception (DID NOT RAISE); "
+        "the code path inside the with-block no longer raises, or raises a different type"
+    )
+
+
+def _junit_playwright_block(blob: str) -> tuple[str, str, bool]:
+    """(project/location header, first Error line, has call log) from a Playwright reporter block."""
+    header = ""
+    error_line = ""
+    for line in blob.splitlines():
+        stripped = line.strip()
+        if not header:
+            m = PLAYWRIGHT_HEADER_RE.match(stripped)
+            if m:
+                header = f"[{m.group('project')}] {m.group('location')} › {m.group('title').strip()}"
+                continue
+        if header and not error_line:
+            m = PLAYWRIGHT_ERROR_LINE_RE.match(stripped)
+            if m:
+                error_line = stripped
+        if header and error_line:
+            break
+    return header[:300], error_line[:300], header != "" and "Call log:" in blob
+
+
+def _junit_flutter_test_description(message: str, blob: str) -> str:
+    if (message or "").strip() != "Flutter test error":
+        return ""
+    if "See exception logs above" not in blob:
+        return ""
+    m = FLUTTER_TEST_DESCRIPTION_RE.search(blob)
+    return m.group("desc").strip()[:300] if m else ""
+
+
+def _junit_import_mismatch_hint(blobs: Sequence[str]) -> str:
+    for blob in blobs:
+        m = PYTEST_IMPORT_MISMATCH_RE.search(blob)
+        if m:
+            module = m.group("module")
+            imported = m.group("imported").strip()
+            wanted = m.group("wanted").strip()
+            return (
+                f"pytest import file mismatch: module '{module}' is already imported from "
+                f"{imported} but collection wants {wanted}; give test files unique basenames, "
+                "add __init__.py to each tests directory, or run pytest with --import-mode=importlib"
+            )[:500]
     return ""
 
 
@@ -1129,6 +1230,8 @@ def _junit_framework_hint(classname: str) -> str:
     lowered = classname.lower()
     if "playwright" in lowered or classname.startswith("e2e."):
         return "playwright"
+    if re.search(r"\.(?:spec|test)\.[cm]?[jt]sx?$", lowered):
+        return "playwright"
     if "flutter" in lowered or "dart" in lowered:
         return "flutter/dart"
     if classname.startswith("tests.") or "." in classname:
@@ -1150,9 +1253,11 @@ def parse_junit_xml(text: str, source: str, report: Report) -> None:
     failing_labels: list[str] = []
     failing_messages: list[str] = []
     failing_group_blobs: list[str] = []
+    failing_type_attrs: list[str] = []
     failing_testcases: list[ET.Element] = []
     first_classname = ""
     collection_errors: list[str] = []
+    collection_blobs: list[str] = []
     try:
         for elem in _bounded_xml_iter(root):
             tag = elem.tag.split("}")[-1]
@@ -1176,6 +1281,7 @@ def parse_junit_xml(text: str, source: str, report: Report) -> None:
                         failing_labels.append(label)
                         failing_messages.append(msg_attr)
                         failing_group_blobs.append(blob)
+                        failing_type_attrs.append(sanitize_report_text(child.attrib.get("type") or ""))
                     elif child_tag == "error":
                         if not first_classname:
                             first_classname = (testcase.attrib.get("classname") or "").strip()
@@ -1190,7 +1296,9 @@ def parse_junit_xml(text: str, source: str, report: Report) -> None:
                             failing_labels.append(label)
                             failing_messages.append(msg_attr)
                             failing_group_blobs.append(blob)
+                            failing_type_attrs.append(sanitize_report_text(child.attrib.get("type") or ""))
                         if _junit_is_pytest_collection_failure(child, blob):
+                            collection_blobs.append(blob)
                             msg = (child.attrib.get("message") or "").strip()
                             if msg:
                                 collection_errors.append(
@@ -1232,6 +1340,7 @@ def parse_junit_xml(text: str, source: str, report: Report) -> None:
         failing_labels,
         failing_messages,
         failing_group_blobs,
+        failing_type_attrs,
     )
 
     if skipped:
@@ -1248,11 +1357,33 @@ def parse_junit_xml(text: str, source: str, report: Report) -> None:
             report.add_hint(f"junit framework guess ({source}): {fw}")
 
     if primary_blob:
-        exc_type = _junit_pytest_exception_type(primary_blob)
+        primary_message = failing_messages[0] if failing_messages else ""
+        exc_type = _junit_pytest_exception_type(primary_blob, primary_message)
         if exc_type:
             report.add_found(f"junit pytest exception type ({source}): {exc_type}")
         else:
             report.add_not_found(f"junit pytest exception type ({source})")
+        did_not_raise = _junit_did_not_raise_hint(primary_blob)
+        if did_not_raise:
+            report.add_hint(f"junit pytest outcome ({source}): {did_not_raise}")
+        pw_header, pw_error, pw_call_log = _junit_playwright_block(primary_blob)
+        if pw_header:
+            report.add_found(f"junit playwright test ({source}): {pw_header}")
+            if pw_error:
+                report.add_found(f"junit playwright error ({source}): {pw_error}")
+            if pw_call_log:
+                report.add_hint(
+                    f"junit playwright call log ({source}): the failure text carries the "
+                    "locator/expect call log; read it before changing timeouts"
+                )
+        flutter_desc = _junit_flutter_test_description(primary_message, primary_blob)
+        if flutter_desc:
+            report.add_found(f"junit flutter test description ({source}): {flutter_desc}")
+            report.add_hint(
+                f"junit flutter detail ({source}): this JUnit XML omits the exception block; "
+                "read 'EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK' from the runner output (--log) "
+                "or pass the `flutter test --machine` JSON lines with --test-events"
+            )
         assert_hint = _junit_pytest_assert_hint(primary_blob)
         if assert_hint:
             report.add_hint(f"junit pytest assert line ({source}): {assert_hint}")
@@ -1279,12 +1410,112 @@ def parse_junit_xml(text: str, source: str, report: Report) -> None:
     if collection_errors:
         report.add_found(f"junit collection errors ({source}): {len(collection_errors)}")
         report.add_found(f"junit collection error (first) ({source}): {collection_errors[0][:300]}")
+        mismatch = _junit_import_mismatch_hint(collection_blobs)
+        if mismatch:
+            report.add_hint(f"junit collection ({source}): {mismatch}")
     else:
         report.add_not_found(f"junit collection errors ({source})")
 
     if failures or errors:
         sample = failures[0] if failures else errors[0]
         report.add_hint(f"web search keywords ({source}): {sample[:400]}")
+
+
+TEST_EVENTS_THROWN_RE = re.compile(r"^The following (?P<type>[A-Za-z_][\w.]*) was thrown", re.M)
+TEST_EVENTS_EXPECT_RE = re.compile(r"^\s*(?P<key>Expected|Actual|Which):\s*(?P<value>.+)$", re.M)
+TEST_EVENTS_CAUGHT_LINE_RE = re.compile(
+    r"caught by the test expectation on the following line:\s*\n\s*(?P<loc>\S+ line \d+)", re.M
+)
+TEST_EVENTS_FRAME_RE = re.compile(r"\((?P<loc>(?:file://|package:)\S+?:\d+:\d+)\)")
+TEST_EVENTS_MAX_RECORDS = 200_000
+
+
+def parse_test_events(text: str, source: str, report: Report) -> None:
+    """``flutter test --machine`` / ``dart test --reporter json`` lines.
+
+    The JUnit XML written from these events keeps only "Test failed. See exception
+    logs above."; the exception block itself travels in ``print`` events of the same
+    testID. Pair them so the report carries the thrown type, the Expected/Actual
+    lines and the failing test file line.
+    """
+    names: dict[int, str] = {}
+    prints: dict[int, list[str]] = {}
+    errors: list[tuple[int, str, str]] = []
+    failed_done = 0
+    records = 0
+    invalid = 0
+    for line in text.splitlines():
+        stripped = line.strip()
+        if not stripped:
+            continue
+        records += 1
+        if records > TEST_EVENTS_MAX_RECORDS:
+            report.add_found(f"test-events truncated (record limit) ({source})")
+            break
+        try:
+            event = json.loads(stripped)
+        except ValueError:
+            invalid += 1
+            continue
+        if not isinstance(event, dict):
+            invalid += 1
+            continue
+        kind = event.get("type")
+        if kind == "testStart":
+            test = event.get("test")
+            if isinstance(test, dict) and isinstance(test.get("id"), int):
+                names[test["id"]] = str(test.get("name") or "")
+        elif kind == "print":
+            test_id = event.get("testID")
+            if isinstance(test_id, int):
+                prints.setdefault(test_id, []).append(str(event.get("message") or ""))
+        elif kind == "error":
+            test_id = event.get("testID") if isinstance(event.get("testID"), int) else -1
+            errors.append((test_id, str(event.get("error") or ""), str(event.get("stackTrace") or "")))
+        elif kind == "testDone" and event.get("result") not in (None, "success"):
+            failed_done += 1
+    if records == 0 or records == invalid:
+        report.add_not_found(f"test-events json records ({source})")
+        return
+    if invalid:
+        report.add_found(f"test-events invalid lines ({source}): {invalid}")
+    if not errors:
+        report.add_not_found(f"test-events errors ({source})")
+        if failed_done:
+            report.add_found(f"test-events failed testDone ({source}): {failed_done}")
+        return
+    report.add_found(f"test-events errors ({source}): {len(errors)}")
+    test_id, error_text, stack = errors[0]
+    name = sanitize_report_text(names.get(test_id, ""))[:200]
+    first_line = sanitize_report_text(next((ln.strip() for ln in error_text.splitlines() if ln.strip()), ""))
+    label = f"{name} — " if name else ""
+    report.add_found(f"test-events error (first) ({source}): {label}{first_line[:300]}")
+    block = "\n".join(prints.get(test_id, []))
+    block = strip_terminal_controls(block)
+    thrown = TEST_EVENTS_THROWN_RE.search(block)
+    if thrown:
+        report.add_found(f"test-events exception type ({source}): {thrown.group('type')}")
+    else:
+        report.add_not_found(f"test-events exception type ({source})")
+    expectations = [f"{m.group('key')}: {m.group('value').strip()}" for m in TEST_EVENTS_EXPECT_RE.finditer(block)]
+    if expectations:
+        report.add_hint(
+            f"test-events expectation ({source}): " + sanitize_report_text(" | ".join(expectations[:3]))[:400]
+        )
+    caught = TEST_EVENTS_CAUGHT_LINE_RE.search(block)
+    frame = caught.group("loc") if caught else ""
+    if not frame:
+        m = TEST_EVENTS_FRAME_RE.search(block) or TEST_EVENTS_FRAME_RE.search(stack)
+        frame = m.group("loc") if m else ""
+    if frame:
+        report.add_found(f"test-events location ({source}): {sanitize_report_text(frame)[:300]}")
+    else:
+        report.add_not_found(f"test-events location ({source})")
+    if block and not thrown and not expectations:
+        report.add_hint(
+            f"test-events detail ({source}): print output exists for the failing test "
+            "but no thrown-type or expectation lines were recognized"
+        )
 
 
 def _has_syntax_error_line(text: str) -> bool:
@@ -1507,6 +1738,7 @@ def triage(
     actions_log_text: str | None = None,
     junit_paths: Sequence[str],
     project_root: Path | None,
+    test_events_paths: Sequence[str] = (),
 ) -> Report:
     report = Report()
 
@@ -1523,11 +1755,11 @@ def triage(
     if log_text is not None:
         texts.append(("log", log_text))
 
-    if not texts and not junit_paths and actions_log_text is None:
+    if not texts and not junit_paths and not test_events_paths and actions_log_text is None:
         if exit_code == 0:
             report.add_not_found("failure evidence (none supplied)")
         else:
-            report.add_not_found("failure evidence (no stderr, log, junit, or actions log)")
+            report.add_not_found("failure evidence (no stderr, log, junit, test events, or actions log)")
 
     for label, text in texts:
         text = strip_terminal_controls(text)
@@ -1550,6 +1782,13 @@ def triage(
         if xml_text is None:
             continue
         parse_junit_xml(xml_text, str(path), report)
+
+    for raw_path in test_events_paths:
+        path = Path(raw_path)
+        events_text = safe_read_text(path, report)
+        if events_text is None:
+            continue
+        parse_test_events(events_text, str(path), report)
 
     collect_runtime_facts(report, project_root)
     return report
@@ -1637,13 +1876,40 @@ def _digest_junit_summary(
     )
 
 
-def _digest_receipt(name: str, data: bytes, keys: Sequence[str], width: int) -> str:
+def _digest_browser_evidence(name: str, doc: dict, width: int, failures: list[str]) -> str:
+    """Read BTK v2 outcome facts, without executing its plan or trusting totals."""
+    shots, summary = doc.get("shots"), doc.get("summary")
+    if not isinstance(shots, list) or not shots or not isinstance(summary, dict):
+        raise ValueError("invalid btk-evidence-gif/2 shots or summary")
+    counts = {"pass": 0, "fail": 0}
+    pending = []
+    for index, shot in enumerate(shots):
+        if not isinstance(shot, dict) or shot.get("status") not in ("pass", "fail"):
+            raise ValueError("invalid btk-evidence-gif/2 shot status")
+        counts[shot["status"]] += 1
+        if shot["status"] == "fail":
+            detail = json.dumps({"shot": shot.get("label", index),
+                                 "url": shot.get("url"), "errors": shot.get("errors", [])},
+                                ensure_ascii=False)
+            pending.append(f"FAIL {name} " + _digest_collapse(redact_text(detail), width))
+    if any(type(summary.get(k)) is not int or summary[k] != n for k, n in counts.items()):
+        raise ValueError("btk-evidence-gif/2 summary disagrees with shots")
+    failures.extend(pending)
+    commit = _digest_collapse(redact_text(str(doc.get("commit") or "unknown")), width)
+    return (f"browser {name}: pass={counts['pass']} fail={counts['fail']} "
+            f"commit={commit}")
+
+
+def _digest_receipt(name: str, data: bytes, keys: Sequence[str], width: int,
+                    evidence_failures: list[str] | None = None) -> str:
     try:
         doc = json.loads(data)
     except ValueError as exc:
         raise ValueError(f"invalid JSON: {exc}") from exc
     if not isinstance(doc, dict):
         return f"json {name}: {type(doc).__name__}"
+    if doc.get("schema") == "btk-evidence-gif/2" and evidence_failures is not None:
+        return _digest_browser_evidence(name, doc, width, evidence_failures)
     picked = {k: doc[k] for k in keys if k in doc}
     payload = redact_text(json.dumps(picked, ensure_ascii=False, sort_keys=False))
     return f"json {name}: " + _digest_collapse(payload, width * 2)
@@ -1662,6 +1928,7 @@ def digest(
     """Summarize CI artifact zips/directories without extracting (see ``digest`` subcommand)."""
     lines: list[str] = []
     failures: list[str] = []
+    evidence_failures: list[str] = []
     problems = 0
     other: collections.Counter[str] = collections.Counter()
     skipped: list[str] = []
@@ -1684,7 +1951,7 @@ def digest(
                 elif member_name.lower().endswith(".json") and any(
                     fnmatch.fnmatch(base, pattern) for pattern in json_patterns
                 ):
-                    lines.append(_digest_receipt(label, data, keys, width))
+                    lines.append(_digest_receipt(label, data, keys, width, evidence_failures))
                 else:
                     ext = os.path.splitext(member_name)[1].lower() or "(none)"
                     other[ext] += 1
@@ -1692,11 +1959,12 @@ def digest(
             except ValueError as exc:
                 lines.append(f"problem {label}: {exc}")
                 problems += 1
-    shown = failures[:limit]
+    all_failures = failures + evidence_failures
+    shown = all_failures[:limit]
     lines.extend(shown)
-    if len(failures) > len(shown):
+    if len(all_failures) > len(shown):
         lines.append(
-            f"... {len(failures) - len(shown)} more failing testcase(s); raise --limit"
+            f"... {len(all_failures) - len(shown)} more failing record(s); raise --limit"
         )
     if other:
         lines.append(
@@ -1708,7 +1976,9 @@ def digest(
         lines.append("skipped (over --max-bytes): " + ", ".join(skipped))
     lines.append(f"failing testcases: {len(failures)}")
     lines.append(f"unverifiable inputs: {problems}")
-    return lines, len(failures), problems
+    if evidence_failures:
+        lines.append(f"failing browser shots: {len(evidence_failures)}")
+    return lines, len(all_failures), problems
 
 
 def build_digest_parser() -> argparse.ArgumentParser:
@@ -1825,6 +2095,13 @@ def build_parser() -> argparse.ArgumentParser:
         help="JUnit XML file (repeatable).",
     )
     parser.add_argument(
+        "--test-events",
+        action="append",
+        default=[],
+        metavar="PATH",
+        help="JSON lines from `flutter test --machine` or `dart test --reporter json` (repeatable).",
+    )
+    parser.add_argument(
         "--project-root",
         metavar="DIR",
         default=".",
@@ -1880,6 +2157,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         actions_log_text=actions_log_text,
         junit_paths=args.junit,
         project_root=root,
+        test_events_paths=args.test_events,
     )
     main_report.extend(report)
 

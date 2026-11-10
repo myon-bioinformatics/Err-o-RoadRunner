@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="16" tests="2345" time="130.953" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_observable_choice" name="test_missing_csv_neutral_observed_and_all_missing" time="0.000"><failure message="TypeError: csv_spins() takes 3 positional arguments but 4 were given">tests/test_observable_choice.py:46: in test_missing_csv_neutral_observed_and_all_missing
+    rows=list(csv_spins(io.StringIO('id,x,y\na,NULL,0\nb,,0\nc,1,0\n'),'id',['x','y'],True))
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   TypeError: csv_spins() takes 3 positional arguments but 4 were given</failure></testcase></testsuite></testsuites>

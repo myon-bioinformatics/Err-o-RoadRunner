@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites><testsuite name="flutter" tests="386"><testcase name="Screen3 compact template is reachable above Door" classname="&lt;runner-work&gt;/test/screens/generic_screen_test.dart"><error message="Flutter test error">Test failed. See exception logs above.
+The test description was: Screen3 compact template is reachable above Door</error></testcase><testcase name="Screen21 compact template is reachable above Door" classname="&lt;runner-work&gt;/test/screens/generic_screen_test.dart"><error message="Flutter test error">Test failed. See exception logs above.
+The test description was: Screen21 compact template is reachable above Door</error></testcase></testsuite></testsuites>

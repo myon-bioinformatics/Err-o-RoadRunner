@@ -1262,61 +1262,77 @@ def _git_blame_line(repo: Path, file_path: str, line: int) -> str:
 _CORPUS_RUN_ID_RE = re.compile(r"_(\d{10,})_")
 
 
-def _corpus_module_index(corpus_dirs: Sequence[str]) -> dict[str, dict[str, Any]]:
-    index: dict[str, dict[str, Any]] = {}
+_CorpusIndexes = tuple[dict[str, dict[str, Any]], dict[str, dict[str, Any]]]
+_CORPUS_INDEX_CACHE: dict[tuple[str, int, int], _CorpusIndexes] = {}
+
+
+def _corpus_dir_key(base: Path) -> tuple[str, int, int]:
+    files = list(base.glob("*.xml"))
+    newest = max((int(p.stat().st_mtime_ns) for p in files), default=0)
+    return (str(base.resolve()), len(files), newest)
+
+
+def _corpus_indexes(corpus_dirs: Sequence[str]) -> _CorpusIndexes:
+    """(signature index, test-module index) built in one pass per corpus directory.
+
+    Each XML is parsed once for both indexes and the result is cached per
+    directory (invalidated by file count / newest mtime), so a 450-case corpus
+    stays inside the squad time budget on repeated runs.
+    """
+    sig_index: dict[str, dict[str, Any]] = {}
+    mod_index: dict[str, dict[str, Any]] = {}
     for raw_dir in corpus_dirs:
         base = Path(raw_dir)
         if not base.is_dir():
             continue
-        for xml in sorted(base.glob("*.xml")):
-            run_match = _CORPUS_RUN_ID_RE.search(xml.name)
-            run_id = run_match.group(1) if run_match else ""
-            for rec in parse_junit_failure_records(xml):
-                module = _test_module_from_test_id(str(rec.get("test_id") or ""))
-                if not module:
-                    continue
-                entry = index.setdefault(
-                    module,
-                    {
-                        "first_seen": xml.name,
-                        "last_seen": xml.name,
-                        "run_ids": set(),
-                    },
-                )
-                entry["last_seen"] = xml.name
-                if run_id:
-                    entry["run_ids"].add(run_id)
-    return index
+        key = _corpus_dir_key(base)
+        cached = _CORPUS_INDEX_CACHE.get(key)
+        if cached is None:
+            cached = _build_corpus_indexes(base)
+            _CORPUS_INDEX_CACHE[key] = cached
+        for target, part in zip((sig_index, mod_index), cached, strict=True):
+            for name, entry in part.items():
+                merged = target.setdefault(name, {k: (set(v) if isinstance(v, set) else v) for k, v in entry.items()})
+                if merged is not entry:
+                    merged["last_seen"] = entry["last_seen"]
+                    for field in ("repos", "variants", "run_ids"):
+                        if field in merged:
+                            merged[field] |= entry.get(field, set())
+    return sig_index, mod_index
 
 
-def _corpus_signature_index(corpus_dirs: Sequence[str]) -> dict[str, dict[str, Any]]:
-    index: dict[str, dict[str, Any]] = {}
-    for raw_dir in corpus_dirs:
-        base = Path(raw_dir)
-        if not base.is_dir():
-            continue
-        for xml in sorted(base.glob("*.xml")):
-            run_match = _CORPUS_RUN_ID_RE.search(xml.name)
-            run_id = run_match.group(1) if run_match else ""
-            for rec in parse_junit_failure_records(xml):
-                sig = str(rec.get("signature") or "")
-                if not sig:
-                    continue
-                entry = index.setdefault(
+def _build_corpus_indexes(base: Path) -> _CorpusIndexes:
+    sig_index: dict[str, dict[str, Any]] = {}
+    mod_index: dict[str, dict[str, Any]] = {}
+    for xml in sorted(base.glob("*.xml")):
+        run_match = _CORPUS_RUN_ID_RE.search(xml.name)
+        run_id = run_match.group(1) if run_match else ""
+        for rec in parse_junit_failure_records(xml):
+            sig = str(rec.get("signature") or "")
+            if sig:
+                entry = sig_index.setdefault(
                     sig,
-                    {
-                        "first_seen": xml.name,
-                        "last_seen": xml.name,
-                        "repos": set(),
-                        "variants": set(),
-                        "run_ids": set(),
-                    },
+                    {"first_seen": xml.name, "last_seen": xml.name, "repos": set(), "variants": set(), "run_ids": set()},
                 )
                 entry["last_seen"] = xml.name
                 entry["variants"].add(rec.get("variant") or "unknown")
                 if run_id:
                     entry["run_ids"].add(run_id)
-    return index
+            module = _test_module_from_test_id(str(rec.get("test_id") or ""))
+            if module:
+                entry = mod_index.setdefault(module, {"first_seen": xml.name, "last_seen": xml.name, "run_ids": set()})
+                entry["last_seen"] = xml.name
+                if run_id:
+                    entry["run_ids"].add(run_id)
+    return sig_index, mod_index
+
+
+def _corpus_module_index(corpus_dirs: Sequence[str]) -> dict[str, dict[str, Any]]:
+    return _corpus_indexes(corpus_dirs)[1]
+
+
+def _corpus_signature_index(corpus_dirs: Sequence[str]) -> dict[str, dict[str, Any]]:
+    return _corpus_indexes(corpus_dirs)[0]
 
 
 def run_history_squad(ctx: SquadContext) -> dict[str, Any]:
@@ -1348,8 +1364,7 @@ def run_history_squad(ctx: SquadContext) -> dict[str, Any]:
             if blame:
                 findings.append({"file": source, "line": line, "blame": blame})
 
-    corpus_sig = _corpus_signature_index(ctx.corpus_dirs)
-    corpus_mod = _corpus_module_index(ctx.corpus_dirs)
+    corpus_sig, corpus_mod = _corpus_indexes(ctx.corpus_dirs)
     for rec in ctx.records[:20]:
         sig = str(rec.get("signature") or "")
         module = _test_module_from_test_id(str(rec.get("test_id") or ""))

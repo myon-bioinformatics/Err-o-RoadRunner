@@ -190,3 +190,44 @@ def test_multi_source_labels_include_archive_basename(tmp_path: Path) -> None:
     joined = "\n".join(lines)
     assert "one.zip:a.xml" in joined
     assert "two.zip:b.xml" in joined
+
+
+def browser_receipt(status="fail", **updates):
+    doc = {"schema": "btk-evidence-gif/2", "commit": "a" * 40,
+           "summary": {"pass": int(status == "pass"), "fail": int(status == "fail")},
+           "shots": [{"status": status, "label": "mobile", "url": "/index.html",
+                      "errors": ["page failed ghp_" + "A" * 40]}]}
+    doc.update(updates)
+    return json.dumps(doc).encode()
+
+
+def test_browser_receipts_aggregate_with_junit_and_redact(tmp_path):
+    z = tmp_path / "fleet.zip"
+    make_zip(z, **{"btk__browser.json": browser_receipt(),
+                   "web__browser.json": browser_receipt("pass"), "junit.xml": JUNIT})
+    lines, failures, problems = digest([str(z)])
+    text = "\n".join(lines)
+    assert (failures, problems) == (3, 0)
+    assert "browser btk/browser.json: pass=0 fail=1" in text
+    assert '"shot": "mobile"' in text and '"url": "/index.html"' in text
+    assert "ghp_" + "A" * 40 not in text
+    assert "failing browser shots: 1" in text
+    assert sum(line.startswith("FAIL") for line in lines) == 3
+    assert sum(line.startswith("FAIL") for line in digest([str(z)], limit=1)[0]) == 1
+
+
+def test_browser_receipt_cli_codes_and_custom_names(tmp_path):
+    path = tmp_path / "capture.json"
+    def run():
+        return subprocess.run([sys.executable, "-S", str(TRIAGE), "digest", str(path),
+                               "--json", "capture.json"], capture_output=True, text=True)
+    path.write_bytes(browser_receipt())
+    assert run().returncode == 1
+    path.write_bytes(browser_receipt("pass"))
+    assert run().returncode == 0
+    for updates in ({"summary": {"pass": 0, "fail": 0}}, {"shots": []},
+                    {"shots": [{"status": "unknown"}]},
+                    {"summary": {"pass": False, "fail": True}}):
+        path.write_bytes(browser_receipt(**updates))
+        result = run()
+        assert result.returncode == 2 and "problem capture.json" in result.stdout

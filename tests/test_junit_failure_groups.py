@@ -128,7 +128,9 @@ def test_group_counts_sum_to_failure_count(xml_path: Path) -> None:
     ) as emit:
         TRIAGE_MOD.parse_junit_xml(xml_path.read_text(encoding="utf-8"), "corpus.xml", report)
     assert emit.call_count == 1
-    assert emit.call_args.args[2:] == (labels, messages, blobs)
+    # The JUnit ``type=`` attributes ride along as a fourth, same-length list.
+    assert emit.call_args.args[2:5] == (labels, messages, blobs)
+    assert len(emit.call_args.args[5]) == len(labels)
     lines = report.lines()
     if target_count:
         assert any(
