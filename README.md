@@ -583,12 +583,12 @@ boundary for optional features; the current wrapper alone does not provide it.
 From a complete source checkout, build the standalone file using Python 3.11+:
 
 ```bash
-python scripts/build_standalone.py dist/erroroadrunner.py
-python dist/erroroadrunner.py ModuleNotFoundError: No module named example
-python dist/erroroadrunner.py --paste
+python scripts/build_standalone.py dist/ErroRR.py
+python dist/ErroRR.py ModuleNotFoundError: No module named example
+python dist/ErroRR.py --paste
 ```
 
-Copy the generated `dist/erroroadrunner.py` to another directory or machine and
+Copy the generated `dist/ErroRR.py` to another directory or machine and
 run it with Python 3.11+. It embeds the project-owned stdlib modules at build time;
 no network or pip installation is needed. The generator is the maintained source
 of the bundled file. The bundle installs an internal import hook while executing
@@ -596,3 +596,8 @@ and refuses to run if one of its backend module names is already imported in the
 same Python interpreter. Its version can be `unknown` outside an installed
 package or checkout. CI still needs to validate cross-platform behavior. The
 bundle has not yet been registered in the parent vendor catalog.
+
+OLNM can execute the generated `ErroRR.py` as a child process with an argv
+list, or embed its source and call `main(argv)` in a namespace, following its
+existing bundled-tool pattern. Namespace execution does not require `__file__`.
+The OLNM command itself and source pin have not yet been implemented.
