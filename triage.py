@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-import argparse, collections, fnmatch, json, os, re, shutil, stat, subprocess, sys, xml.etree.ElementTree as ET, zipfile
+import argparse, builtins, collections, fnmatch, json, os, re, shutil, stat, subprocess, sys, xml.etree.ElementTree as ET, zipfile
 from dataclasses import dataclass, field; from pathlib import Path; from typing import Iterator, Sequence
 
 from errlib.junit_redact import redact_text
@@ -2067,6 +2067,10 @@ def build_parser() -> argparse.ArgumentParser:
         description="Read-only triage after a failure (stdlib only, no network).",
     )
     parser.add_argument(
+        "error_text", nargs="*", metavar="ERROR",
+        help="Error text to analyze directly; quote multiline text or use -- before text beginning with a dash.",
+    )
+    parser.add_argument(
         "--exit-code",
         type=int,
         default=None,
@@ -2135,8 +2139,12 @@ def main(argv: Sequence[str] | None = None) -> int:
             return EXIT_OK
         return EXIT_USAGE
 
+    if args.error_text and args.stderr is not None:
+        print("error: direct error text and --stderr cannot be used together", file=sys.stderr)
+        return EXIT_USAGE
     report = Report()
-    stderr_text = read_stream_arg(args.stderr, report, "stderr")
+    stderr_text = (strip_terminal_controls(" ".join(args.error_text))
+                   if args.error_text else read_stream_arg(args.stderr, report, "stderr"))
     log_text = read_stream_arg(args.log, report, "log")
     actions_log_text = read_stream_arg(args.actions_log, report, "actions-log")
 
@@ -2159,6 +2167,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         project_root=root,
         test_events_paths=args.test_events,
     )
+    if args.error_text and stderr_text and not _has_python_failure_signal(stderr_text):
+        match = re.match(r"^([A-Za-z_][A-Za-z_0-9]*):\s*(.*)$", stderr_text.strip())
+        if match and isinstance(getattr(builtins, match.group(1), None), type) and issubclass(getattr(builtins, match.group(1)), BaseException):
+            main_report.add_hint(f"possible Python exception (single line; language unconfirmed): {match.group(1)}: {match.group(2)[:400]}")
     main_report.extend(report)
 
     for line in main_report.lines():
