@@ -89,17 +89,21 @@ python3 triage.py --exit-code 1 --log failure.log --project-root .
 
 ### Paste an error directly
 
-Pass an error as an argument; quotes preserve line breaks and shell-sensitive
-characters. The text is analyzed by the same parser as `--stderr`:
+Pass ordinary error words directly without quotes. The text is analyzed by the
+same parser as `--stderr`:
 
 ```bash
-python3 triage.py 'ModuleNotFoundError: No module named example'
+python3 triage.py ModuleNotFoundError: No module named example
 python3 triage.py 'Traceback (most recent call last):
   File "app.py", line 1, in <module>
     raise ValueError("bad input")
 ValueError: bad input'
 ```
 
+For multiline text or shell-sensitive characters, run `python3 triage.py --paste`,
+paste the error, then press Ctrl-D on Unix/macOS or Ctrl-Z then Enter on Windows.
+For direct arguments, the shell processes characters such as `|`, `>`, `$`, `*`,
+parentheses and quotes first; use `--paste` to preserve them.
 Use `--` before a message starting with `-`. Direct text and `--stderr` cannot
 be combined; `--log` and `--junit` can still supply additional evidence.
 Command arguments can appear in shell history and process listings, so use
