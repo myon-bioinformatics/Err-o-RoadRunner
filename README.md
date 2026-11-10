@@ -87,20 +87,28 @@ Or as a module:
 python3 triage.py --exit-code 1 --log failure.log --project-root .
 ```
 
+### Entry point
+
+Use `erroroadrunner.py` or the installed `erroroadrunner` command as the main
+entry point. It delegates to the existing triage implementation; the package
+includes its supporting modules. This entry point is not yet a standalone
+single-file distribution. The existing `err-o-roadrunner` command and
+`triage.py` remain available.
+
 ### Paste an error directly
 
 Pass ordinary error words directly without quotes. The text is analyzed by the
 same parser as `--stderr`:
 
 ```bash
-python3 triage.py ModuleNotFoundError: No module named example
+python3 erroroadrunner.py ModuleNotFoundError: No module named example
 python3 triage.py 'Traceback (most recent call last):
   File "app.py", line 1, in <module>
     raise ValueError("bad input")
 ValueError: bad input'
 ```
 
-For multiline text or shell-sensitive characters, run `python3 triage.py --paste`,
+For multiline text or shell-sensitive characters, run `python3 erroroadrunner.py --paste`,
 paste the error, then press Ctrl-D on Unix/macOS or Ctrl-Z then Enter on Windows.
 For direct arguments, the shell processes characters such as `|`, `>`, `$`, `*`,
 parentheses and quotes first; use `--paste` to preserve them.
