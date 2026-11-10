@@ -2077,6 +2077,10 @@ def build_parser() -> argparse.ArgumentParser:
         help="Process exit code from the failed command.",
     )
     parser.add_argument(
+        "--paste", action="store_true",
+        help="Read pasted error text from stdin until EOF (Ctrl-D on Unix, Ctrl-Z then Enter on Windows).",
+    )
+    parser.add_argument(
         "--stderr",
         metavar="PATH",
         help='Stderr capture file, or "-" for stdin (after other flags).',
@@ -2139,12 +2143,14 @@ def main(argv: Sequence[str] | None = None) -> int:
             return EXIT_OK
         return EXIT_USAGE
 
-    if args.error_text and args.stderr is not None:
-        print("error: direct error text and --stderr cannot be used together", file=sys.stderr)
+    if sum((bool(args.error_text), args.stderr is not None, args.paste)) > 1:
+        print("error: choose only one of direct error text, --stderr, or --paste", file=sys.stderr)
         return EXIT_USAGE
+    if args.paste and sys.stdin.isatty():
+        print("Paste the error, then press Ctrl-D (Unix) or Ctrl-Z and Enter (Windows).", file=sys.stderr, flush=True)
     report = Report()
     stderr_text = (strip_terminal_controls(" ".join(args.error_text))
-                   if args.error_text else read_stream_arg(args.stderr, report, "stderr"))
+                   if args.error_text else read_stream_arg("-" if args.paste else args.stderr, report, "stderr"))
     log_text = read_stream_arg(args.log, report, "log")
     actions_log_text = read_stream_arg(args.actions_log, report, "actions-log")
 
