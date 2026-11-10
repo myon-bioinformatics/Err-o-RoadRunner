@@ -29,7 +29,7 @@ def build() -> str:
         return None
 
     def exec_module(self, module):
-        module.__file__ = __file__
+        module.__file__ = globals().get("__file__", "<ErroRR.py>")
         exec(compile(_SOURCES[module.__name__], '<bundled:' + module.__name__ + '>', 'exec'), module.__dict__)
 
 
