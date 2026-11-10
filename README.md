@@ -601,3 +601,25 @@ OLNM can execute the generated `ErroRR.py` as a child process with an argv
 list, or embed its source and call `main(argv)` in a namespace, following its
 existing bundled-tool pattern. Namespace execution does not require `__file__`.
 The OLNM command itself and source pin have not yet been implemented.
+
+#### Calling from OLNM and other hosts
+
+To avoid collisions between bundled module names and the host interpreter,
+prefer a child process with an argument list. With the existing `cli_args`
+module available, the same common runner can be used by other tools too:
+
+```python
+import sys
+from cli_args import Command, run_command
+
+command = Command((sys.executable, "ErroRR.py", "--paste"))
+result = run_command(command, stdin="ValueError: invalid input\n", timeout=20)
+print(result.stdout, end="")
+print(result.returncode)
+```
+
+`run_command` buffers output; it does not provide live streaming. OLNM's
+existing subprocess pattern can instead inherit stdin/stdout/stderr for
+interactive paste and incremental output. Both approaches avoid shell
+interpretation by passing an argument list. `cli_args` is optional for the
+standalone file itself. OLNM integration and the source pin are pending.
