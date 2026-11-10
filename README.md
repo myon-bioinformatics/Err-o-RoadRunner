@@ -560,3 +560,20 @@ uv run pytest -q tests
 ```
 
 Tests are grouped with pytest markers: `success`, `failure`, and `adversarial`.
+
+### Component boundaries
+
+- `erroroadrunner.py`: user-facing entry point; imports the analysis backend
+  only when invoked and forwards arguments without reimplementing parsing.
+- `triage.py`: internal failure parsing, reporting and the `digest` dispatch.
+- `errlib/error_input.py`: standalone stdlib helper for recognizing possible
+  one-line Python exception names, without CLI or network dependencies.
+- `errlib/junit_redact.py` and `errlib/project_version.py`: shared redaction and
+  version helpers used by the backend.
+- `sentinel.py` and `squad.py`: command monitoring and optional investigation
+  helpers. They are loaded for their respective features rather than by the
+  entry point at import time.
+
+The packaged distribution includes these components. A genuinely standalone
+copy of `erroroadrunner.py` still needs a self-contained core and a clear
+boundary for optional features; the current wrapper alone does not provide it.
