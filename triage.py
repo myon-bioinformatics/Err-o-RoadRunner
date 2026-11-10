@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
-import argparse, builtins, collections, fnmatch, json, os, re, shutil, stat, subprocess, sys, xml.etree.ElementTree as ET, zipfile
+import argparse, collections, fnmatch, json, os, re, shutil, stat, subprocess, sys, xml.etree.ElementTree as ET, zipfile
 from dataclasses import dataclass, field; from pathlib import Path; from typing import Iterator, Sequence
 
+from errlib.error_input import python_exception_candidate
 from errlib.junit_redact import redact_text
 from errlib.project_version import resolve_version
 
@@ -2174,9 +2175,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         test_events_paths=args.test_events,
     )
     if args.error_text and stderr_text and not _has_python_failure_signal(stderr_text):
-        match = re.match(r"^([A-Za-z_][A-Za-z_0-9]*):\s*(.*)$", stderr_text.strip())
-        if match and isinstance(getattr(builtins, match.group(1), None), type) and issubclass(getattr(builtins, match.group(1)), BaseException):
-            main_report.add_hint(f"possible Python exception (single line; language unconfirmed): {match.group(1)}: {match.group(2)[:400]}")
+        candidate = python_exception_candidate(stderr_text)
+        if candidate:
+            main_report.add_hint(f"possible Python exception (single line; language unconfirmed): {candidate}")
     main_report.extend(report)
 
     for line in main_report.lines():
