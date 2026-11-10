@@ -530,3 +530,23 @@ uv run pytest -q tests
 ```
 
 Tests are grouped with pytest markers: `success`, `failure`, and `adversarial`.
+
+### GitHub repository scan (experimental)
+
+`repo_scan.py` can be run as a single Python file and uses the `gh` CLI's
+existing authentication to look for bug-like open issues and recent failed
+Actions runs. It prints each source as it completes and does not modify the
+repository. Python 3.11+ and `gh` are required.
+
+```bash
+python3 repo_scan.py myon-bioinformatics/Err-o-RoadRunner
+# Or omit the repository inside an existing checkout:
+python3 repo_scan.py
+```
+
+The first page is limited to 30 items per source by default (`--limit 1..100`).
+Issue matching uses English title and label keywords; it may miss other bugs.
+Failed runs are historical and can have since been superseded by successful
+runs. This first scan does not fetch logs, diagnose root causes, or run tests.
+An access, authentication, timeout, or parsing error returns exit code 2 and is
+reported separately from a successful search with no matches.
