@@ -34,3 +34,10 @@ def test_direct_tokens_from_shell():
     result = subprocess.run([sys.executable, triage.__file__, 'ModuleNotFoundError:', 'No', 'module', 'named', 'example'], text=True, capture_output=True)
     assert result.returncode == 0
     assert 'possible Python exception' in result.stdout
+
+
+def test_candidate_helper_is_reusable_without_cli():
+    from errlib.error_input import python_exception_candidate
+    assert python_exception_candidate('ValueError: invalid') == 'ValueError: invalid'
+    assert python_exception_candidate('not an exception: invalid') is None
+    assert python_exception_candidate('ValueError: first\nnext line') is None
