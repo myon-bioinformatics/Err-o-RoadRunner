@@ -87,6 +87,24 @@ Or as a module:
 python3 triage.py --exit-code 1 --log failure.log --project-root .
 ```
 
+### Paste an error directly
+
+Pass an error as an argument; quotes preserve line breaks and shell-sensitive
+characters. The text is analyzed by the same parser as `--stderr`:
+
+```bash
+python3 triage.py 'ModuleNotFoundError: No module named example'
+python3 triage.py 'Traceback (most recent call last):
+  File "app.py", line 1, in <module>
+    raise ValueError("bad input")
+ValueError: bad input'
+```
+
+Use `--` before a message starting with `-`. Direct text and `--stderr` cannot
+be combined; `--log` and `--junit` can still supply additional evidence.
+Command arguments can appear in shell history and process listings, so use
+`--stderr -` and standard input for sensitive error text.
+
 ### Artifact digest (CI zip / directory)
 
 Bound summary of a downloaded Actions artifact without extracting it:
