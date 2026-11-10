@@ -533,15 +533,15 @@ Tests are grouped with pytest markers: `success`, `failure`, and `adversarial`.
 
 ### GitHub repository scan (experimental)
 
-`Err-o-RoadRunner.py` can be run as a single Python file and uses the `gh` CLI's
+`err_o_roadrunner.py` can be run as a single Python file and uses the `gh` CLI's
 existing authentication to look for bug-like open issues and recent failed
 Actions runs. It prints each source as it completes and does not modify the
 repository. Python 3.11+ and `gh` are required.
 
 ```bash
-python3 Err-o-RoadRunner.py myon-bioinformatics/Err-o-RoadRunner
+python3 err_o_roadrunner.py myon-bioinformatics/Err-o-RoadRunner
 # Or omit the repository inside an existing checkout:
-python3 Err-o-RoadRunner.py
+python3 err_o_roadrunner.py
 ```
 
 The first page is limited to 30 items per source by default (`--limit 1..100`).
