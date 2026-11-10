@@ -577,3 +577,22 @@ Tests are grouped with pytest markers: `success`, `failure`, and `adversarial`.
 The packaged distribution includes these components. A genuinely standalone
 copy of `erroroadrunner.py` still needs a self-contained core and a clear
 boundary for optional features; the current wrapper alone does not provide it.
+
+### Build a standalone Python file
+
+From a complete source checkout, build the standalone file using Python 3.11+:
+
+```bash
+python scripts/build_standalone.py dist/erroroadrunner.py
+python dist/erroroadrunner.py ModuleNotFoundError: No module named example
+python dist/erroroadrunner.py --paste
+```
+
+Copy the generated `dist/erroroadrunner.py` to another directory or machine and
+run it with Python 3.11+. It embeds the project-owned stdlib modules at build time;
+no network or pip installation is needed. The generator is the maintained source
+of the bundled file. The bundle installs an internal import hook while executing
+and refuses to run if one of its backend module names is already imported in the
+same Python interpreter. Its version can be `unknown` outside an installed
+package or checkout. CI still needs to validate cross-platform behavior. The
+bundle has not yet been registered in the parent vendor catalog.
