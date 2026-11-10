@@ -32,7 +32,10 @@ jobs:
         with:
           version: "latest"
           python-version: "3.15"
-          enable-cache: false
+          enable-cache: true
+          # Pull requests restore the cache and never write it; only main saves it.
+          save-cache: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+          prune-cache: true
       - name: Install test dependencies
         run: uv sync --locked
       # Bronze: raw artifacts stay in the runner temporary directory; never upload them.
