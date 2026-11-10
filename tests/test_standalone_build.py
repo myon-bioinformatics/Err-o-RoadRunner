@@ -14,7 +14,7 @@ def execute(target, *args, stdin=None, cwd=None):
 
 
 def test_standalone_and_package_agree_on_traceback(tmp_path):
-    target = tmp_path / 'erroroadrunner.py'
+    target = tmp_path / 'ErroRR.py'
     build(target)
     text = 'Traceback (most recent call last):\n  File "app.py", line 1, in <module>\nValueError: bad input\n'
     single = execute(target, '--paste', stdin=text, cwd=tmp_path)
@@ -25,7 +25,7 @@ def test_standalone_and_package_agree_on_traceback(tmp_path):
 
 
 def test_standalone_supports_digest_and_sentinel(tmp_path):
-    target = tmp_path / 'erroroadrunner.py'
+    target = tmp_path / 'ErroRR.py'
     build(target)
     xml = tmp_path / 'result.xml'
     xml.write_text('<testsuite tests="1" failures="1"><testcase name="case"><failure message="bad"/></testcase></testsuite>')
@@ -45,7 +45,7 @@ def test_standalone_generation_is_deterministic(tmp_path):
 
 
 def test_standalone_actions_log(tmp_path):
-    target = tmp_path / 'erroroadrunner.py'
+    target = tmp_path / 'ErroRR.py'
     build(target)
     log = tmp_path / 'actions.log'
     log.write_bytes((ROOT / 'tests/fixtures/actions_logs/python_fail.log').read_bytes())
@@ -53,3 +53,20 @@ def test_standalone_actions_log(tmp_path):
     package = execute(ROOT / 'erroroadrunner.py', '--actions-log', str(log), cwd=tmp_path)
     assert single.returncode == package.returncode == 0
     assert 'python exception type: AssertionError' in single.stdout and 'python exception type: AssertionError' in package.stdout
+
+
+def test_olnm_style_exec_and_main_without_file_global(tmp_path):
+    target = tmp_path / 'ErroRR.py'
+    build(target)
+    harness = """import contextlib, io, sys
+source = open(sys.argv[1], encoding='utf-8').read()
+namespace = {'__name__': '_olnm_bundled_erroroadrunner'}
+exec(compile(source, '<olnm:ErroRR>', 'exec'), namespace)
+output = io.StringIO()
+with contextlib.redirect_stdout(output):
+    result = namespace['main'](['ModuleNotFoundError:', 'No', 'module', 'named', 'example'])
+assert result == 0 and 'possible Python exception' in output.getvalue()
+assert namespace['main'](['--version']) == 0
+"""
+    proc = subprocess.run([sys.executable, '-S', '-c', harness, str(target)], cwd=tmp_path, capture_output=True, text=True)
+    assert proc.returncode == 0, proc.stderr
