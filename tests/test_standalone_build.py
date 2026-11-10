@@ -70,3 +70,16 @@ assert namespace['main'](['--version']) == 0
 """
     proc = subprocess.run([sys.executable, '-S', '-c', harness, str(target)], cwd=tmp_path, capture_output=True, text=True)
     assert proc.returncode == 0, proc.stderr
+
+
+def test_child_process_isolated_from_host_backend_modules(tmp_path):
+    target = tmp_path / 'ErroRR.py'
+    build(target)
+    harness = '''import subprocess, sys, types
+sys.modules['triage'] = types.ModuleType('triage')
+result = subprocess.run([sys.executable, '-S', sys.argv[1], 'ValueError:', 'bad'], capture_output=True, text=True)
+assert result.returncode == 0, result.stderr
+assert 'possible Python exception' in result.stdout
+'''
+    proc = subprocess.run([sys.executable, '-S', '-c', harness, str(target)], cwd=tmp_path, capture_output=True, text=True)
+    assert proc.returncode == 0, proc.stderr
