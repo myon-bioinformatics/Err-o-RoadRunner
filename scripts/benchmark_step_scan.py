@@ -1,11 +1,6 @@
 """Run from repository root: python -S -m scripts.benchmark_step_scan."""
+import json, statistics, subprocess, sys, time, types
 from dataclasses import asdict
-import json
-import statistics
-import subprocess
-import sys
-import time
-import types
 from errlib import actions_log
 
 

@@ -2,11 +2,8 @@
 
 from __future__ import annotations
 
-import importlib
-import subprocess
-import sys
-from pathlib import Path
-from unittest import mock
+import importlib, subprocess, sys
+from pathlib import Path; from unittest import mock
 
 import pytest
 

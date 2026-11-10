@@ -2,15 +2,8 @@
 
 from __future__ import annotations
 
-import json
-import os
-import re
-import subprocess
-import sys
-import tempfile
-from copy import deepcopy
-from pathlib import Path
-from typing import Any, Mapping, Sequence
+import json, os, re, subprocess, sys, tempfile
+from copy import deepcopy; from pathlib import Path; from typing import Any, Mapping, Sequence
 
 _STABLE_ENV_KEYS = ("variable_count", "variable_names", "variable_names_truncated")
 

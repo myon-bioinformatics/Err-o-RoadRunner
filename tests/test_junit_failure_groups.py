@@ -2,10 +2,8 @@
 
 from __future__ import annotations
 
-import importlib
-import xml.etree.ElementTree as ET
-from pathlib import Path
-from unittest import mock
+import importlib, xml.etree.ElementTree as ET
+from pathlib import Path; from unittest import mock
 
 import pytest
 

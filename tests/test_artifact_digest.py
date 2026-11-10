@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-import json
-import subprocess
-import sys
-import zipfile
+import json, subprocess, sys, zipfile
 from pathlib import Path
 
 from triage import digest

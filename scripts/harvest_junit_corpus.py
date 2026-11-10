@@ -19,18 +19,8 @@ identical redacted content are skipped, and new entries are appended.
 
 from __future__ import annotations
 
-import argparse
-import hashlib
-import io
-import json
-import os
-import subprocess
-import zipfile
-import sys
-import tempfile
-import xml.etree.ElementTree as ET
-from dataclasses import dataclass
-from pathlib import Path
+import argparse, hashlib, io, json, os, subprocess, sys, tempfile, xml.etree.ElementTree as ET, zipfile
+from dataclasses import dataclass; from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 CORPUS = ROOT / "tests" / "fixtures" / "junit_corpus"

@@ -2,8 +2,7 @@
 
 from __future__ import annotations
 
-import subprocess
-import sys
+import subprocess, sys
 from pathlib import Path
 
 import triage

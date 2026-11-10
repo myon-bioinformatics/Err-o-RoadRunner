@@ -2,9 +2,7 @@
 
 from __future__ import annotations
 
-import re
-import subprocess
-import sys
+import re, subprocess, sys
 from pathlib import Path
 
 from triage import triage

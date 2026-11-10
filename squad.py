@@ -2,18 +2,8 @@
 
 from __future__ import annotations
 
-import ast
-import json
-import os
-import re
-import subprocess
-import threading
-import time
-import xml.etree.ElementTree as ET
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from dataclasses import dataclass, field
-from pathlib import Path
-from typing import Any, Callable, Mapping, Sequence
+import ast, json, os, re, subprocess, threading, time, xml.etree.ElementTree as ET
+from concurrent.futures import as_completed, ThreadPoolExecutor; from dataclasses import dataclass, field; from pathlib import Path; from typing import Any, Callable, Mapping, Sequence
 
 from errlib.junit_redact import redact_text
 

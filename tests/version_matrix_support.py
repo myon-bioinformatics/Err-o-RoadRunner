@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-import os
-import shutil
-import subprocess
-import sys
+import os, shutil, subprocess, sys
 from pathlib import Path
 
 from errlib.project_version import DISTRIBUTION_NAME, VERSION_UNKNOWN

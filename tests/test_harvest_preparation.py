@@ -2,15 +2,8 @@
 
 from __future__ import annotations
 
-import hashlib
-import json
-import os
+import hashlib, json, os, shlex, shutil, subprocess, sys, xml.etree.ElementTree as ET
 from pathlib import Path
-import shlex
-import shutil
-import subprocess
-import sys
-import xml.etree.ElementTree as ET
 
 import pytest
 
