@@ -19,8 +19,9 @@ def normalize(text: str) -> str:
     )
 
 
-def main() -> None:
-    missing_only = "--missing-only" in sys.argv[1:]
+def main(argv=None) -> None:
+    argv = sys.argv[1:] if argv is None else list(argv)
+    missing_only = "--missing-only" in argv
     entries = json.loads(MANIFEST.read_text(encoding="utf-8"))
     for entry in entries:
         xml = CORPUS / entry["xml"]
