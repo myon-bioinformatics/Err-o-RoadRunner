@@ -31,7 +31,7 @@ def _step_script(name: str) -> str:
 
 @pytest.fixture
 def sandbox(tmp_path: Path) -> Path:
-    for name in ("triage.py", "errlib/__init__.py", "errlib/junit_redact.py",
+    for name in ("triage.py", "errlib/__init__.py", "errlib/junit_redact.py", "errlib/error_input.py",
                  "errlib/project_version.py", "pyproject.toml",
                  "scripts/reredact_junit_corpus.py", "scripts/patch_junit_manifest_jobs.py",
                  "scripts/capture_junit_corpus_goldens.py", "tests/test_junit_corpus_golden.py",
