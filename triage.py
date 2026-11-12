@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse, collections, fnmatch, json, os, re, shutil, stat, subprocess, sys, xml.etree.ElementTree as ET, zipfile
 from dataclasses import dataclass, field; from pathlib import Path; from typing import Iterator, Sequence
 
+from errlib.error_input import python_exception_candidate
 from errlib.junit_redact import redact_text
 from errlib.project_version import resolve_version
 
@@ -2067,10 +2068,18 @@ def build_parser() -> argparse.ArgumentParser:
         description="Read-only triage after a failure (stdlib only, no network).",
     )
     parser.add_argument(
+        "error_text", nargs="*", metavar="ERROR",
+        help="Error text to analyze directly; quote multiline text or use -- before text beginning with a dash.",
+    )
+    parser.add_argument(
         "--exit-code",
         type=int,
         default=None,
         help="Process exit code from the failed command.",
+    )
+    parser.add_argument(
+        "--paste", action="store_true",
+        help="Read pasted error text from stdin until EOF (Ctrl-D on Unix, Ctrl-Z then Enter on Windows).",
     )
     parser.add_argument(
         "--stderr",
@@ -2135,8 +2144,14 @@ def main(argv: Sequence[str] | None = None) -> int:
             return EXIT_OK
         return EXIT_USAGE
 
+    if sum((bool(args.error_text), args.stderr is not None, args.paste)) > 1:
+        print("error: choose only one of direct error text, --stderr, or --paste", file=sys.stderr)
+        return EXIT_USAGE
+    if args.paste and sys.stdin.isatty():
+        print("Paste the error, then press Ctrl-D (Unix) or Ctrl-Z and Enter (Windows).", file=sys.stderr, flush=True)
     report = Report()
-    stderr_text = read_stream_arg(args.stderr, report, "stderr")
+    stderr_text = (strip_terminal_controls(" ".join(args.error_text))
+                   if args.error_text else read_stream_arg("-" if args.paste else args.stderr, report, "stderr"))
     log_text = read_stream_arg(args.log, report, "log")
     actions_log_text = read_stream_arg(args.actions_log, report, "actions-log")
 
@@ -2159,6 +2174,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         project_root=root,
         test_events_paths=args.test_events,
     )
+    if args.error_text and stderr_text and not _has_python_failure_signal(stderr_text):
+        candidate = python_exception_candidate(stderr_text)
+        if candidate:
+            main_report.add_hint(f"possible Python exception (single line; language unconfirmed): {candidate}")
     main_report.extend(report)
 
     for line in main_report.lines():
