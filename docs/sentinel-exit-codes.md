@@ -36,10 +36,10 @@ Wrapper CLI misuse (missing command, bad flags) still returns `2` in both modes.
 
 ```bash
 # CI: preserve pytest/make exit codes
-err-o-roadrunner sentinel -- pytest -q
+erroroadrunner sentinel -- pytest -q
 
 # Agent: branch on 0 vs 1 from sentinel itself
-err-o-roadrunner sentinel --exit-mode signal --report-json /tmp/report.json -- make test
+erroroadrunner sentinel --exit-mode signal --report-json /tmp/report.json -- make test
 if [ $? -eq 1 ]; then
   agent-read /tmp/report.json
 fi

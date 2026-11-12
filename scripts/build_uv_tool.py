@@ -27,7 +27,7 @@ def build(out: Path) -> dict:
         # triage is embedded by build_standalone, not a runtime dependency.
         return builder.build(
             [entry], out, name="err-o-roadrunner", version="0.6.0",
-            scripts=["err-o-roadrunner=erroroadrunner"], allow_imports=["triage"])
+            allow_imports=["triage"])
 
 
 def main() -> None:
