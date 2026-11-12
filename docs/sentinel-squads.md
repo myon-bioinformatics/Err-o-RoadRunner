@@ -1,6 +1,6 @@
 # Sentinel error squads
 
-On the **go** path of `err-o-roadrunner sentinel` (escalation on failure), JUnit failures are broken down into machine-readable **records**, and parallel **squads** gather extra clues. No network is used by default.
+On the **go** path of `erroroadrunner sentinel` (escalation on failure), JUnit failures are broken down into machine-readable **records**, and parallel **squads** gather extra clues. No network is used by default.
 
 ## Purpose
 

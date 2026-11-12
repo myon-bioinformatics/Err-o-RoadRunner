@@ -24,7 +24,7 @@ def test_common_package_preserves_bundle_and_command_names(tmp_path):
     assert config["project"]["requires-python"] == ">=3.11"
     assert config["project"]["dependencies"] == []
     assert config["project"]["scripts"] == {
-        "erroroadrunner": "erroroadrunner:main", "err-o-roadrunner": "erroroadrunner:main"}
+        "erroroadrunner": "erroroadrunner:main"}
     assert config["tool"]["setuptools"]["py-modules"] == ["erroroadrunner"]
     run = subprocess.run([sys.executable, "-S", str(out / "erroroadrunner.py"),
                           "ValueError:", "example"], cwd=tmp_path, text=True, capture_output=True)

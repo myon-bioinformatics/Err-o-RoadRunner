@@ -18,7 +18,7 @@ def test_standalone_and_package_agree_on_traceback(tmp_path):
     build(target)
     text = 'Traceback (most recent call last):\n  File "app.py", line 1, in <module>\nValueError: bad input\n'
     single = execute(target, '--paste', stdin=text, cwd=tmp_path)
-    package = execute(ROOT / 'erroroadrunner.py', '--paste', stdin=text, cwd=tmp_path)
+    package = execute(ROOT / 'triage.py', '--paste', stdin=text, cwd=tmp_path)
     assert single.returncode == package.returncode == 0
     for expected in ('python exception type: ValueError', 'python exception message: bad input'):
         assert expected in single.stdout and expected in package.stdout
@@ -50,7 +50,7 @@ def test_standalone_actions_log(tmp_path):
     log = tmp_path / 'actions.log'
     log.write_bytes((ROOT / 'tests/fixtures/actions_logs/python_fail.log').read_bytes())
     single = execute(target, '--actions-log', str(log), cwd=tmp_path)
-    package = execute(ROOT / 'erroroadrunner.py', '--actions-log', str(log), cwd=tmp_path)
+    package = execute(ROOT / 'triage.py', '--actions-log', str(log), cwd=tmp_path)
     assert single.returncode == package.returncode == 0
     assert 'python exception type: AssertionError' in single.stdout and 'python exception type: AssertionError' in package.stdout
 

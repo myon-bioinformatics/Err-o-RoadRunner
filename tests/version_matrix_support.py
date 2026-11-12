@@ -16,7 +16,7 @@ WHEEL_BUILD_PREFIX = (
 )
 WHEEL_BUILD_SUFFIX = (
     "\n[project.scripts]\n"
-    'err-o-roadrunner = "triage:main"\n'
+    'erroroadrunner = "triage:main"\n'
     "\n[tool.hatch.build.targets.wheel]\n"
     'only-include = ["triage.py", "errlib"]\n'
 )
@@ -365,9 +365,9 @@ def run_version_cli(
             check=True,
             capture_output=True,
         )
-        console = next(prefix.rglob("err-o-roadrunner"), None)
+        console = next(prefix.rglob("erroroadrunner"), None)
         if console is None:
-            raise RuntimeError("err-o-roadrunner console script not found after wheel install")
+            raise RuntimeError("erroroadrunner console script not found after wheel install")
         cmd = [str(console), "--version"]
         cwd = sandbox
         wheel_env = os.environ.copy()

@@ -59,7 +59,7 @@ This complementary supplied panel shows the challenges, roles and intended outco
 
 ## CLI usage
 
-Install the distribution as **`err-o-roadrunner`** (PyPI-style name; matches the `err-o-roadrunner` console script):
+Install the distribution as **`err-o-roadrunner`** (PyPI-style package name). The console command is **`erroroadrunner`**:
 
 ```bash
 uv sync
@@ -68,7 +68,7 @@ uv sync
 After installing, run:
 
 ```bash
-uv run err-o-roadrunner --exit-code "$?" --stderr /path/to/stderr.txt --junit reports/junit.xml
+uv run erroroadrunner --exit-code "$?" --stderr /path/to/stderr.txt --junit reports/junit.xml
 ```
 
 ### Version string policy
@@ -89,11 +89,11 @@ python3 triage.py --exit-code 1 --log failure.log --project-root .
 
 ### Entry point
 
-Use `erroroadrunner.py` or the installed `erroroadrunner` command as the main
-entry point. It delegates to the existing triage implementation; the package
-includes its supporting modules. This entry point is not yet a standalone
-single-file distribution. The existing `err-o-roadrunner` command and
-`triage.py` remain available.
+Use `triage.py` from a checkout, or the installed `erroroadrunner` command.
+The command maps to `triage:main`. The packaged distribution includes the
+supporting modules. This is not a standalone single-file distribution; see
+the standalone `ErroRR.py` builder below. `triage.py` remains available as
+the checkout entry.
 
 ### Paste an error directly
 
@@ -101,14 +101,14 @@ Pass ordinary error words directly without quotes. The text is analyzed by the
 same parser as `--stderr`:
 
 ```bash
-python3 erroroadrunner.py ModuleNotFoundError: No module named example
+python3 triage.py ModuleNotFoundError: No module named example
 python3 triage.py 'Traceback (most recent call last):
   File "app.py", line 1, in <module>
     raise ValueError("bad input")
 ValueError: bad input'
 ```
 
-For multiline text or shell-sensitive characters, run `python3 erroroadrunner.py --paste`,
+For multiline text or shell-sensitive characters, run `python3 triage.py --paste`,
 paste the error, then press Ctrl-D on Unix/macOS or Ctrl-Z then Enter on Windows.
 For direct arguments, the shell processes characters such as `|`, `>`, `$`, `*`,
 parentheses and quotes first; use `--paste` to preserve them.
@@ -195,7 +195,7 @@ Logic is **inverted** from “treat non-zero as failure”:
 By default (`--exit-mode child`), the process exit code is still the **wrapped command’s** code (CI-safe; timeout → `124`, not found → `127`, not executable → `126`). For agents, `--exit-mode signal` uses RoadRunner codes: `0` = stop (no investigation), `1` = go (investigation ran). Exit `0` with only a traceback on stderr stays **stop** unless you pass **`--go-on-stderr-traceback`**. See **`docs/sentinel-exit-codes.md`**.
 
 ```bash
-uv run err-o-roadrunner sentinel --report-json /tmp/sentinel.json --print-triage --summary -- \
+uv run erroroadrunner sentinel --report-json /tmp/sentinel.json --print-triage --summary -- \
   uv run pytest -q tests/test_triage.py
 ```
 
@@ -563,9 +563,9 @@ Tests are grouped with pytest markers: `success`, `failure`, and `adversarial`.
 
 ### Component boundaries
 
-- `erroroadrunner.py`: user-facing entry point; imports the analysis backend
-  only when invoked and forwards arguments without reimplementing parsing.
-- `triage.py`: internal failure parsing, reporting and the `digest` dispatch.
+- `triage.py`: user-facing checkout entry and failure parsing, reporting, and
+  the `digest` dispatch. The installed `erroroadrunner` command maps to
+  `triage:main`.
 - `errlib/error_input.py`: standalone stdlib helper for recognizing possible
   one-line Python exception names, without CLI or network dependencies.
 - `errlib/junit_redact.py` and `errlib/project_version.py`: shared redaction and
@@ -575,8 +575,8 @@ Tests are grouped with pytest markers: `success`, `failure`, and `adversarial`.
   entry point at import time.
 
 The packaged distribution includes these components. A genuinely standalone
-copy of `erroroadrunner.py` still needs a self-contained core and a clear
-boundary for optional features; the current wrapper alone does not provide it.
+single file is produced by `scripts/build_standalone.py` (`ErroRR.py`); the
+checkout modules alone are not a self-contained single-file distribution.
 
 ### Build a standalone Python file
 
@@ -615,8 +615,8 @@ uv tool install dist/uv-tool
 This uses the unmodified common builder pinned from Aoi in `vendor.lock.json`.
 The temporary package module is named `erroroadrunner.py` because the shared
 builder requires lowercase module names; it is byte-identical to `ErroRR.py`.
-Both `erroroadrunner` and `err-o-roadrunner` commands remain available. The
-distribution name and version remain `err-o-roadrunner` and `0.6.0`.
+The only console command is `erroroadrunner`. The distribution name and
+version remain `err-o-roadrunner` and `0.6.0`.
 There are no Python runtime dependencies; packaging requires setuptools.
 The source checkout's multi-file Hatch distribution is unchanged. These are
 alternative installation forms of the same distribution, not two packages to
