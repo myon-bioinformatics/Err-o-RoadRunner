@@ -135,6 +135,15 @@
       "destination": "vendor/myon-bioinformatics-LICENSE",
       "blob_sha": "4ec4989b801bf1a3df6184d21f79e6e7ed5931f6",
       "sha256": "15f66204c4a6a1ce0c94f0ed4319ff9400f872e85fd32c95f21695c2f231af59"
+    },
+    {
+      "repository": "myon-bioinformatics/Aoi",
+      "ref": "673fc7b11d94ccad16740c0998683618f2e86254",
+      "commit": "673fc7b11d94ccad16740c0998683618f2e86254",
+      "source": "vendor/uv_tool_build.py",
+      "destination": "vendor/uv_tool_build.py",
+      "blob_sha": "87e3eaa595b28e7304cac4f713aded537de4670c",
+      "sha256": "b798ce5d5c5adf9a40bffccc6db81b5c58afd7ecdc3fdd27ec2152b2f775afe8"
     }
   ]
 }
