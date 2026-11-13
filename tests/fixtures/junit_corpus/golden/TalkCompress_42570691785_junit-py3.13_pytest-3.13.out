@@ -1,0 +1,21 @@
+FOUND: exit code: 1
+FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/TalkCompress_42570691785_junit-py3.13_pytest-3.13.xml): 1
+FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/TalkCompress_42570691785_junit-py3.13_pytest-3.13.xml): assert {'cjk_space_v...6': '❤'}, ...} == {'notes': ['G... 1, ...}, ...}\n  \n  Omitting 14 identical items, use -vv to show\n  Differing items:\n  {'len_table': {'a1': 1, 'a10': 3, 'a11': 2, 'a12': 1, ...}} != {'len_table': {'a1': 1, 'a10': 3, 'a11': 2, 'a12': 1, ...}}\n  {'exceptions': {'abrirei': 3, 'achando': 2, 'acharam': 2, 'achaste': 2, ...}} != {'exceptions': {'abrirei': 3, 'achando': 2, 'a
+FOUND: junit failure groups (<repo>/tests/fixtures/junit_corpus/cases/TalkCompress_42570691785_junit-py3.13_pytest-3.13.xml): 1 failure in 1 group
+FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/TalkCompress_42570691785_junit-py3.13_pytest-3.13.xml): tests.test_estimate_calibration
+FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/TalkCompress_42570691785_junit-py3.13_pytest-3.13.xml): AssertionError
+FOUND: python version: 3.15.2 (cpython)
+FOUND: node version: v24.22.3
+FOUND: gh version: gh version 2.103.3 (2026-10-26)
+FOUND: environment variable count: 117
+FOUND: environment variable names: ACCEPT_EULA, ACTIONS_ORCHESTRATION_ID, ACTIONS_RUNNER_ACTION_ARCHIVE_CACHE, ACTIONS_RUNNER_RETURN_JOB_RESULT_FOR_HOSTED, AGENT_TOOLSDIRECTORY, ANDROID_HOME, ANDROID_NDK, ANDROID_NDK_HOME, ANDROID_NDK_LATEST_HOME, ANDROID_NDK_ROOT, ANDROID_SDK_ROOT, ANT_HOME, AZURE_EXTENSION_DIR, BOOTSTRAP_HASKELL_NONINTERACTIVE, CHROMEWEBDRIVER, CHROME_BIN, CI, DEBIAN_FRONTEND, DOTNET_MULTILEVEL_LOOKUP, DOTNET_NOLOGO, DOTNET_SKIP_FIRST_TIME_EXPERIENCE, EDGEWEBDRIVER, ENABLE_RUNNER_TRACING, GECKOWEBDRIVER, GHCUP_INSTALL_BASE_PREFIX, GITHUB_ACTION, GITHUB_ACTIONS, GITHUB_ACTION_REF, GITHUB_ACTION_REPOSITORY, GITHUB_ACTOR, GITHUB_ACTOR_ID, GITHUB_API_URL, GITHUB_ARTIFACTS, GITHUB_ARTIFACTS_LIST, GITHUB_BASE_REF, GITHUB_ENV, GITHUB_EVENT_NAME, GITHUB_EVENT_PATH, GITHUB_GRAPHQL_URL, GITHUB_HEAD_REF, ...
+NOT FOUND: junit errors (<repo>/tests/fixtures/junit_corpus/cases/TalkCompress_42570691785_junit-py3.13_pytest-3.13.xml)
+NOT FOUND: junit skipped (<repo>/tests/fixtures/junit_corpus/cases/TalkCompress_42570691785_junit-py3.13_pytest-3.13.xml)
+NOT FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/TalkCompress_42570691785_junit-py3.13_pytest-3.13.xml)
+NOT FOUND: junit system-err (<repo>/tests/fixtures/junit_corpus/cases/TalkCompress_42570691785_junit-py3.13_pytest-3.13.xml)
+NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/TalkCompress_42570691785_junit-py3.13_pytest-3.13.xml)
+NOT FOUND: lock files in project root
+HINT: junit framework guess (<repo>/tests/fixtures/junit_corpus/cases/TalkCompress_42570691785_junit-py3.13_pytest-3.13.xml): pytest/python
+HINT: junit pytest assert line (<repo>/tests/fixtures/junit_corpus/cases/TalkCompress_42570691785_junit-py3.13_pytest-3.13.xml): E       assert {'cjk_space_v...6': '❤'}, ...} == {'notes': ['G... 1, ...}, ...}
+HINT: junit assertion diff (<repo>/tests/fixtures/junit_corpus/cases/TalkCompress_42570691785_junit-py3.13_pytest-3.13.xml):   +     'cjk_space_vocab': 'あ お が この ご さん その他 と な に の は また よ を ア アイ イ イン ウ エ オ カ ガ キ キャ ギ ク クロ グ ケ '   +     'ケース コ コピー コメント コン ゴ サ サイズ シ シャ ジ ス スーパー セ ソ タ ダ チ テ デ ト ド ナ ニ ネ ノ ハ バ バッグ '   +     'パ ビ ピ フ ファ ブ ブラック ブランド プ プレ ベ ペ ホ ボ ポ マ ミ メ メンズ モ ラ リ レ ロ ワ ・ 一 一个 一分彩 一号 '   +     '一本 一本道 一级 一诺 丁 丁香 丁香五月 七 七喜 七彩 七星 七星彩 万 万亚 万利 万博 万国 万家乐 万盛 三 三分彩 三国 上 上传 '   +     '上午 上海 上海天天 下 下一 下午 下载 不 与 专 世 世博 世爵 
+HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/TalkCompress_42570691785_junit-py3.13_pytest-3.13.xml): assert {'cjk_space_v...6': '❤'}, ...} == {'notes': ['G... 1, ...}, ...}\n  \n  Omitting 14 identical items, use -vv to show\n  Differing items:\n  {'len_table': {'a1': 1, 'a10': 3, 'a11': 2, 'a12': 1, ...}} != {'len_table': {'a1': 1, 'a10': 3, 'a11': 2, 'a12': 1, ...}}\n  {'exceptions': {'abrirei': 3, 'achando': 2, 'acharam': 2, 'achaste': 2, ...}} != {'exceptions': {'abrirei': 3, 'achando': 2, 'a

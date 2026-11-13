@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="5" skipped="32" tests="2696" time="99.993" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_mcp_toolcall_lab_vendor_registry_sync" name="test_mcp_toolcall_lab_registry_matches_reviewed_pr159_lock" time="0.003"><failure message="assert False">def test_mcp_toolcall_lab_registry_matches_reviewed_pr159_lock():
+        registry = reviewed_pr159_registry()
+        lock = load("tests/fixtures/mcp-toolcall-lab-pr159.lock.json")
+        assert len(lock["files"]) == 9
+&gt;       assert vendor_consumers.compare(registry, lock, CONSUMER)["matches"]
+E       assert False
+
+tests/test_mcp_toolcall_lab_vendor_registry_sync.py:29: AssertionError</failure></testcase><testcase classname="tests.test_mcp_toolcall_lab_vendor_registry_sync" name="test_node_launch_is_registered_for_mcp_toolcall_lab_not_auto_proposed" time="0.003"><failure message="AssertionError: assert 'needs_registration' == 'registered'&#10;  &#10;  - registered&#10;  + needs_registration">def test_node_launch_is_registered_for_mcp_toolcall_lab_not_auto_proposed():
+        result = vendor_fleet_plan.plan(
+            load("vendor-catalog.json"),
+            load("vendor-consumers.json"),
+            active_consumers=[CONSUMER],
+        )
+        node_launch = [x for x in result["rows"] if x["source"] == "node_launch.py"]
+        assert len(node_launch) == 1
+        assert node_launch[0]["action"] == "registered"
+        assert node_launch[0]["destination"] == "vendor/node_launch.py"
+        web_ui = [x for x in result["rows"] if x["source"] == "web_ui.py"]
+        assert len(web_ui) == 1
+&gt;       assert web_ui[0]["action"] == "registered"
+E       AssertionError: assert 'needs_registration' == 'registered'
+E         
+E         - registered
+E         + needs_registration
+
+tests/test_mcp_toolcall_lab_vendor_registry_sync.py:48: AssertionError</failure></testcase><testcase classname="tests.test_mcp_toolcall_lab_vendor_registry_sync" name="test_current_planner_registration_matches_immutable_child_lock" time="0.002"><failure message="assert False">def test_current_planner_registration_matches_immutable_child_lock():
+        import hashlib
+        import vendor_sync
+    
+        snapshot = load("tests/fixtures/reviewed_mcp_planner_lock_20261109.json")[CONSUMER]
+        old = load("tests/fixtures/reviewed_mcp_lock_20261109.json")[CONSUMER]
+        assert old["sha"] == "31ff99fbe4c13b3feb570ae3ba1fc7cf972f8a16"
+        assert snapshot["sha"] == "cd04472040f0db991c5138144c01f56a2b79e44b"
+        heads = load("child-heads.json")["heads"][CONSUMER]
+        assert (heads["sha"], heads["repository_id"]) == (snapshot["sha"], snapshot["repository_id"])
+        lock = vendor_sync.validate(snapshot["lock"])
+        assert hashlib.sha256(json.dumps(lock, sort_keys=True, separators=(",", ":")).encode()).hexdigest() == snapshot["lock_sha256"]
+        registry = load("vendor-consumers.json")
+&gt;       assert vendor_consumers._compare_exact(registry, lock, CONSUMER)["matches"]
+E       assert False
+
+tests/test_mcp_toolcall_lab_vendor_registry_sync.py:67: AssertionError</failure></testcase><testcase classname="tests.test_vendor_baseline_rollout" name="test_post_baseline_enrollments_are_registered" time="0.006"><failure message="AssertionError: assert {'vendor/web-...or/web_ui.py'} &lt;= {'vendor/node...eboo.py', ...}&#10;  &#10;  Extra items in the left set:&#10;  'vendor/web_ui.py'&#10;  'vendor/web-ui-LICENSE'">def test_post_baseline_enrollments_are_registered():
+        registry = json.loads((ROOT / "vendor-consumers.json").read_text())
+        for name, paths in POST_BASELINE_ENROLLMENTS.items():
+            row = vendor_consumers.get_consumer(registry, name)
+            seen = {e["destination"] for e in row["entries"]} | {e.get("license") for e in row["entries"]}
+&gt;           assert paths &lt;= seen
+E           AssertionError: assert {'vendor/web-...or/web_ui.py'} &lt;= {'vendor/node...eboo.py', ...}
+E             
+E             Extra items in the left set:
+E             'vendor/web_ui.py'
+E             'vendor/web-ui-LICENSE'
+
+tests/test_vendor_baseline_rollout.py:106: AssertionError</failure></testcase><testcase classname="tests.test_vendor_baseline_rollout" name="test_observed_lock_topology_and_immutable_revision[myon-bioinformatics/mcp-toolcall-lab]" time="0.004"><failure message="assert False">name = 'myon-bioinformatics/mcp-toolcall-lab'
+
+    @pytest.mark.parametrize("name", sorted(FIXTURES))
+    def test_observed_lock_topology_and_immutable_revision(name):
+        registry = baseline_registry(json.loads((ROOT / "vendor-consumers.json").read_text()))
+        heads = vendor_sync.validate_child_heads(json.loads((ROOT / "child-heads.json").read_text()))
+        fixture = LATEST_FIXTURES.get(name, ROLLOUT_FIXTURES.get(name, REFRESHED_FIXTURES.get(name, FIXTURES[name])))
+        lock = vendor_sync.validate(fixture["lock"])
+        registry = before_replacements(registry, name, lock)
+        observed = json.loads((ROOT / "tests/fixtures/parent_observation_20261102.json").read_text())
+        expected_sha = fixture["sha"]
+        if name in ROLLOUT_FIXTURES or name in LATEST_FIXTURES:
+            digest = hashlib.sha256(json.dumps(lock, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+            assert digest == fixture["lock_sha256"]
+            assert heads["heads"][name]["repository_id"] == fixture["repository_id"]
+        elif name in observed:
+            digest = hashlib.sha256(json.dumps(lock, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+            assert digest == observed[name]["lock_sha256"]
+            expected_sha = observed[name]["sha"]
+        assert heads["heads"][name]["sha"] == expected_sha
+&gt;       assert vendor_consumers.compare(registry, lock, name)["matches"]
+E       assert False
+
+tests/test_vendor_baseline_rollout.py:130: AssertionError</failure></testcase></testsuite></testsuites>

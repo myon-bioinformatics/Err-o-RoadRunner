@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="319" time="35.958" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="nagoyaction.tests.test_nagoyaction_node_entry" name="test_vendored_license_comes_from_aoi_same_commit" time="0.001"><failure message="AssertionError: assert '827387a2c933...18120695166a0' == '9e0147a17695...195a4f49095bb'&#10;  &#10;  - 9e0147a17695ce63fa73daf75d8195a4f49095bb&#10;  + 827387a2c9339edd45b3ee2fc9d18120695166a0">def test_vendored_license_comes_from_aoi_same_commit():
+        lock = json.loads((ROOT / "vendor.lock.json").read_text(encoding="utf-8"))
+        by_dest = {f["destination"]: f for f in lock["files"]}
+        assert set(by_dest) == {"vendor/py_launch.cjs", "vendor/aoi-LICENSE"}
+        lic = by_dest["vendor/aoi-LICENSE"]
+        assert lic["repository"] == AOI
+        assert lic["source"] == "LICENSE"
+        assert lic["ref"] == lic["commit"]
+&gt;       assert lic["commit"] == by_dest["vendor/py_launch.cjs"]["commit"]
+E       AssertionError: assert '827387a2c933...18120695166a0' == '9e0147a17695...195a4f49095bb'
+E         
+E         - 9e0147a17695ce63fa73daf75d8195a4f49095bb
+E         + 827387a2c9339edd45b3ee2fc9d18120695166a0
+
+nagoyaction/tests/test_nagoyaction_node_entry.py:100: AssertionError</failure></testcase></testsuite></testsuites>

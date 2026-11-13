@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="3" tests="5011" time="507.119" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_features2" name="test_zip_env_key" time="0.001"><failure message="AssertionError: assert 'from-env' == b'from-env'">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+
+    def test_zip_env_key(monkeypatch):
+        z = _load("zipilogue", "Zipilogue/zipilogue.py")
+        monkeypatch.setenv("TALKCOMPRESS_ZIP_KEY", "from-env")
+        ns = z.argparse.Namespace(key=None, key_file=None)
+        key = z._read_key(ns)
+&gt;       assert key == b"from-env"
+E       AssertionError: assert 'from-env' == b'from-env'
+
+tests/test_features2.py:84: AssertionError</failure></testcase></testsuite></testsuites>

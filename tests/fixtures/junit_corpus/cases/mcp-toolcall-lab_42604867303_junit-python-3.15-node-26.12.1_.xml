@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="9" tests="1754" time="162.118" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_github_ops_server" name="test_fleet_query_delegates_to_the_vendored_query_and_never_touches_github" time="0.033"><failure message="assert (False)">wired = (FastMCP('mcp-toolcall-lab-github-ops'), &lt;function wired.&lt;locals&gt;.patch_client at 0x&lt;addr&gt;&gt;)
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_fleet_query_delegates_to_0')
+
+    async def test_fleet_query_delegates_to_the_vendored_query_and_never_touches_github(wired, monkeypatch, tmp_path):
+        mcp, patch_client = wired
+        _client, stub = patch_client({})  # any GitHub call would raise KeyError inside the stub
+        monkeypatch.setenv("VENDOR_FLEET_PLAN_PY", str(_fake_fleet_plan(tmp_path)))
+        async with FastMCPClient(transport=mcp) as client:
+            who = _data(await client.call_tool("fleet_query", {"kind": "who", "term": "old-app"}))
+            deps = _data(await client.call_tool("fleet_query", {"kind": "deps", "term": "app", "graph": "https://example.invalid/g.jsonld"}))
+            facts = _data(await client.call_tool("fleet_query", {"kind": "facts", "term": "tool.py", "severity": "updated"}))
+            none = _data(await client.call_tool("fleet_query", {"kind": "facts", "term": "tool.py", "severity": "failure"}))
+            why = _data(await client.call_tool("fleet_query", {"kind": "why", "term": "app/vendor/tool.py"}))
+            reverify = _data(await client.call_tool("fleet_query", {"kind": "reverify", "term": "app/vendor/tool.py"}))
+        assert who["ok"] and who["rows"][0]["repository_id"] == 1
+        assert why["ok"] and why["kind"] == "why" and why["rows"][0]["source"] == "tool/tool.py"
+&gt;       assert reverify["ok"] and reverify["kind"] == "reverify" and reverify["rows"][0]["target"] == "app/vendor/tool.py"
+E       assert (False)
+
+tests/test_github_ops_server.py:690: AssertionError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="9" tests="855" time="6.216" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_ci_python_setup.CiPythonSetupTests" name="test_selected_python_is_ready_before_any_python_or_uv_command" time="0.027"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/.github/workflows/real-chat-ui-smoke.yml'">self = &lt;test_ci_python_setup.CiPythonSetupTests testMethod=test_selected_python_is_ready_before_any_python_or_uv_command&gt;
+
+    def test_selected_python_is_ready_before_any_python_or_uv_command(self):
+        for workflow, jobs in JOBS.items():
+            for name, version in jobs.items():
+                with self.subTest(workflow=workflow, job=name):
+&gt;                   block = job(workflow, name)
+                            ^^^^^^^^^^^^^^^^^^^
+
+tests/test_ci_python_setup.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_ci_python_setup.py:45: in job
+    text = (ROOT / ".github/workflows" / workflow).read_text(encoding="utf-8")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../_temp/uv-python-dir/cpython-3.11.18-linux-x86_64-gnu/lib/python3.11/pathlib.py:1058: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('&lt;runner-work&gt;/.github/workflows/real-chat-ui-smoke.yml')
+mode = 'r', buffering = -1, encoding = 'utf-8', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+&gt;       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/.github/workflows/real-chat-ui-smoke.yml'
+
+../../_temp/uv-python-dir/cpython-3.11.18-linux-x86_64-gnu/lib/python3.11/pathlib.py:1044: FileNotFoundError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="32" tests="2711" time="88.896" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_pswb_consumer_migration" name="test_merged_lock_matches_desired_topology[myon-bioinformatics/mcp-toolcall-lab]" time="0.002"><failure message="assert False">name = 'myon-bioinformatics/mcp-toolcall-lab'
+
+    @pytest.mark.parametrize('name', NEW)
+    def test_merged_lock_matches_desired_topology(name):
+        snapshot = NEW[name]
+        assert sync._transition_digest(snapshot['lock']) == snapshot['lock_sha256']
+&gt;       assert consumers.compare(load('vendor-consumers.json'), snapshot['lock'], name)['matches']
+E       assert False
+
+tests/test_pswb_consumer_migration.py:21: AssertionError</failure></testcase></testsuite></testsuites>

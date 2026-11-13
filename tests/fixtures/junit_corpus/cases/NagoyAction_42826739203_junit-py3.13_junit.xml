@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="343" time="38.628" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="nagoyaction.tests.test_localci_nano_profile" name="test_localci_profile_does_not_become_repository_default" time="0.000"><failure message="AssertionError: assert not True&#10; +  where True = exists()&#10; +    where exists = (PosixPath('&lt;runner-work&gt;/.test-deps/aoi/nagoyaction') / 'pyproject.toml').exists">def test_localci_profile_does_not_become_repository_default():
+&gt;       assert not (ROOT / "pyproject.toml").exists()
+E       AssertionError: assert not True
+E        +  where True = exists()
+E        +    where exists = (PosixPath('&lt;runner-work&gt;/.test-deps/aoi/nagoyaction') / 'pyproject.toml').exists
+
+nagoyaction/tests/test_localci_nano_profile.py:33: AssertionError</failure></testcase></testsuite></testsuites>

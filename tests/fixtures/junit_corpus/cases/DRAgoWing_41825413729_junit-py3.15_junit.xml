@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="1" tests="327" time="35.767" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_no_sibling_imports" name="test_no_sibling_subproject_imports" time="0.132"><failure message="AssertionError: Aoi の兄弟サブプロジェクトか scripts/ を使っている: [('tests/test_benchmark_validation.py', 'path:scripts/benchmark_overlap.py')]&#10;assert not {('tests/test_benchmark_validation.py', 'path:scripts/benchmark_overlap.py')}">def test_no_sibling_subproject_imports():
+        unexpected = find_uses() - KNOWN_EXCEPTIONS
+&gt;       assert not unexpected, f"Aoi の兄弟サブプロジェクトか scripts/ を使っている: {sorted(unexpected)}"
+E       AssertionError: Aoi の兄弟サブプロジェクトか scripts/ を使っている: [('tests/test_benchmark_validation.py', 'path:scripts/benchmark_overlap.py')]
+E       assert not {('tests/test_benchmark_validation.py', 'path:scripts/benchmark_overlap.py')}
+
+tests/test_no_sibling_imports.py:85: AssertionError</failure></testcase></testsuite></testsuites>

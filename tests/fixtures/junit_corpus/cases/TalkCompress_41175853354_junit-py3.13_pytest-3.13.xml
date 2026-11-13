@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="6" skipped="3" tests="2220" time="307.567" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_pack_tokens_combining" name="test_nfd_word_not_split[Ti\u1ebfng Vi\u1ec7t]" time="0.002"><failure message="AssertionError: assert 'The Ti\u1ebf... team, ready.' == 'The Tie\u030... team, ready.'&#10;  &#10;  - The Tiếng Việt team, ready.&#10;  ?       ^^^     ^^^&#10;  + The Tiếng Việt team, ready.&#10;  ?       ^     ^">word = 'Tiếng Việt'
+
+    @pytest.mark.parametrize("word", ["Tiếng Việt", "Hà Nội", "naïve", "café", "İstanbul"])
+    def test_nfd_word_not_split(word):
+        s = unicodedata.normalize("NFD", f"The {word} team, ready.")
+&gt;       assert pack_tokens(s) == s
+E       AssertionError: assert 'The Ti\u1ebf... team, ready.' == 'The Tie\u030... team, ready.'
+E         
+E         - The Tiếng Việt team, ready.
+E         ?       ^^^     ^^^
+E         + The Tiếng Việt team, ready.
+E         ?       ^     ^
+
+tests/test_pack_tokens_combining.py:12: AssertionError</failure></testcase><testcase classname="tests.test_pack_tokens_combining" name="test_nfd_word_not_split[H\xe0 N\u1ed9i]" time="0.000"><failure message="AssertionError: assert 'The H\xe0 N\... team, ready.' == 'The Ha\u0300... team, ready.'&#10;  &#10;  - The Hà Nội team, ready.&#10;  ?      ^^  ^^^&#10;  + The Hà Nội team, ready.&#10;  ?      ^  ^">word = 'Hà Nội'
+
+    @pytest.mark.parametrize("word", ["Tiếng Việt", "Hà Nội", "naïve", "café", "İstanbul"])
+    def test_nfd_word_not_split(word):
+        s = unicodedata.normalize("NFD", f"The {word} team, ready.")
+&gt;       assert pack_tokens(s) == s
+E       AssertionError: assert 'The H\xe0 N\... team, ready.' == 'The Ha\u0300... team, ready.'
+E         
+E         - The Hà Nội team, ready.
+E         ?      ^^  ^^^
+E         + The Hà Nội team, ready.
+E         ?      ^  ^
+
+tests/test_pack_tokens_combining.py:12: AssertionError</failure></testcase><testcase classname="tests.test_pack_tokens_combining" name="test_nfd_word_not_split[na\xefve]" time="0.000"><failure message="AssertionError: assert 'The na\xefve team, ready.' == 'The nai\u0308ve team, ready.'&#10;  &#10;  - The naïve team, ready.&#10;  ?       ^^&#10;  + The naïve team, ready.&#10;  ?       ^">word = 'naïve'
+
+    @pytest.mark.parametrize("word", ["Tiếng Việt", "Hà Nội", "naïve", "café", "İstanbul"])
+    def test_nfd_word_not_split(word):
+        s = unicodedata.normalize("NFD", f"The {word} team, ready.")
+&gt;       assert pack_tokens(s) == s
+E       AssertionError: assert 'The na\xefve team, ready.' == 'The nai\u0308ve team, ready.'
+E         
+E         - The naïve team, ready.
+E         ?       ^^
+E         + The naïve team, ready.
+E         ?       ^
+
+tests/test_pack_tokens_combining.py:12: AssertionError</failure></testcase><testcase classname="tests.test_pack_tokens_combining" name="test_nfd_word_not_split[caf\xe9]" time="0.000"><failure message="AssertionError: assert 'The caf\xe9 team, ready.' == 'The cafe\u0301 team, ready.'&#10;  &#10;  - The café team, ready.&#10;  ?        ^^&#10;  + The café team, ready.&#10;  ?        ^">word = 'café'
+
+    @pytest.mark.parametrize("word", ["Tiếng Việt", "Hà Nội", "naïve", "café", "İstanbul"])
+    def test_nfd_word_not_split(word):
+        s = unicodedata.normalize("NFD", f"The {word} team, ready.")
+&gt;       assert pack_tokens(s) == s
+E       AssertionError: assert 'The caf\xe9 team, ready.' == 'The cafe\u0301 team, ready.'
+E         
+E         - The café team, ready.
+E         ?        ^^
+E         + The café team, ready.
+E         ?        ^
+
+tests/test_pack_tokens_combining.py:12: AssertionError</failure></testcase><testcase classname="tests.test_pack_tokens_combining" name="test_nfd_word_not_split[\u0130stanbul]" time="0.000"><failure message="AssertionError: assert 'The \u0130st... team, ready.' == 'The I\u0307s... team, ready.'&#10;  &#10;  - The İstanbul team, ready.&#10;  ?     ^^&#10;  + The İstanbul team, ready.&#10;  ?     ^">word = 'İstanbul'
+
+    @pytest.mark.parametrize("word", ["Tiếng Việt", "Hà Nội", "naïve", "café", "İstanbul"])
+    def test_nfd_word_not_split(word):
+        s = unicodedata.normalize("NFD", f"The {word} team, ready.")
+&gt;       assert pack_tokens(s) == s
+E       AssertionError: assert 'The \u0130st... team, ready.' == 'The I\u0307s... team, ready.'
+E         
+E         - The İstanbul team, ready.
+E         ?     ^^
+E         + The İstanbul team, ready.
+E         ?     ^
+
+tests/test_pack_tokens_combining.py:12: AssertionError</failure></testcase><testcase classname="tests.test_pack_tokens_combining" name="test_mark_word_before_bracket" time="0.000"><failure message="AssertionError: assert 'caf\xe9 (ok)' == 'cafe\u0301 (ok)'&#10;  &#10;  - café (ok)&#10;  ?    ^^&#10;  + café (ok)&#10;  ?    ^">def test_mark_word_before_bracket():
+&gt;       assert pack_tokens("cafe\u0301 (ok)") == "cafe\u0301 (ok)"
+E       AssertionError: assert 'caf\xe9 (ok)' == 'cafe\u0301 (ok)'
+E         
+E         - café (ok)
+E         ?    ^^
+E         + café (ok)
+E         ?    ^
+
+tests/test_pack_tokens_combining.py:21: AssertionError</failure></testcase></testsuite></testsuites>

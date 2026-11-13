@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="5" tests="6373" time="83.126" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_python_wrapper.WorldTests" name="test_front_page_is_what_the_generator_writes" time="0.067"><failure message="AssertionError: '&lt;!do[158 chars]b_ui 31db05473fdd42e74b18165158c263e4d7e7cfec&quot;[315230 chars]l&gt;\n' != '&lt;!do[158 chars]b_ui 423f1d7fc890f690656f369277f3cadceb38079b&quot;[315230 chars]l&gt;\n'">self = &lt;test_python_wrapper.WorldTests testMethod=test_front_page_is_what_the_generator_writes&gt;
+
+    def test_front_page_is_what_the_generator_writes(self):
+        page = (ROOT / "index.html").read_text(encoding="utf-8")
+&gt;       self.assertEqual(page, web_ui.example_pages()["index.html"])
+E       AssertionError: '&lt;!do[158 chars]b_ui 31db05473fdd42e74b18165158c263e4d7e7cfec"[315230 chars]l&gt;\n' != '&lt;!do[158 chars]b_ui 423f1d7fc890f690656f369277f3cadceb38079b"[315230 chars]l&gt;\n'
+
+tests/test_python_wrapper.py:368: AssertionError</failure></testcase><testcase classname="tests.test_static_contract.StaticContractTest" name="test_example_pages_are_single_files_carrying_the_whole_bundle" time="0.001"><failure message="AssertionError: Lists differ: ['con[310 chars]es/parts.html', 'examples/patterns.html', 'exa[197 chars]tml'] != ['con[310 chars]es/patterns.html', 'examples/photo-studio.html[174 chars]tml']&#10;&#10;First differing element 11:&#10;'examples/parts.html'&#10;'examples/patterns.html'&#10;&#10;First list contains 1 additional elements.&#10;First extra element 20:&#10;'index.html'&#10;&#10;  ['contract/v1/example.html',&#10;   'examples/api-stub.html',&#10;   'examples/clipboard-shelf.html',&#10;   'examples/composition-studio.html',&#10;   'examples/coordinates.html',&#10;   'examples/door.html',&#10;   'examples/github-like.html',&#10;   'examples/image-studio.html',&#10;   'examples/index.html',&#10;   'examples/mcp-lab.html',&#10;   'examples/mcp-stub.html',&#10;-  'examples/parts.html',&#10;   'examples/patterns.html',&#10;   'examples/photo-studio.html',&#10;   'examples/play-studio.html',&#10;   'examples/playground.html',&#10;   'examples/screens.html',&#10;   'examples/showcase.html',&#10;   'examples/test-report.html',&#10;   'examples/timeline.html',&#10;   'index.html']">self = &lt;test_static_contract.StaticContractTest testMethod=test_example_pages_are_single_files_carrying_the_whole_bundle&gt;
+
+    def test_example_pages_are_single_files_carrying_the_whole_bundle(self):
+&gt;       self.assertEqual(sorted(PAGES), ["contract/v1/example.html", "examples/api-stub.html", "examples/clipboard-shelf.html", "examples/composition-studio.html", "examples/coordinates.html", "examples/door.html", "examples/github-like.html",
+                                         "examples/image-studio.html", "examples/index.html", "examples/mcp-lab.html", "examples/mcp-stub.html", "examples/patterns.html", "examples/photo-studio.html", "examples/play-studio.html", "examples/playground.html", "examples/screens.html", "examples/showcase.html", "examples/test-report.html", "examples/timeline.html", "index.html"])
+E       AssertionError: Lists differ: ['con[310 chars]es/parts.html', 'examples/patterns.html', 'exa[197 chars]tml'] != ['con[310 chars]es/patterns.html', 'examples/photo-studio.html[174 chars]tml']
+E       
+E       First differing element 11:
+E       'examples/parts.html'
+E       'examples/patterns.html'
+E       
+E       First list contains 1 additional elements.
+E       First extra element 20:
+E       'index.html'
+E       
+E         ['contract/v1/example.html',
+E          'examples/api-stub.html',
+E          'examples/clipboard-shelf.html',
+E          'examples/composition-studio.html',
+E          'examples/coordinates.html',
+E          'examples/door.html',
+E          'examples/github-like.html',
+E          'examples/image-studio.html',
+E          'examples/index.html',
+E          'examples/mcp-lab.html',
+E          'examples/mcp-stub.html',
+E       -  'examples/parts.html',
+E          'examples/patterns.html',
+E          'examples/photo-studio.html',
+E          'examples/play-studio.html',
+E          'examples/playground.html',
+E          'examples/screens.html',
+E          'examples/showcase.html',
+E          'examples/test-report.html',
+E          'examples/timeline.html',
+E          'index.html']
+
+tests/test_static_contract.py:131: AssertionError</failure></testcase></testsuite></testsuites>

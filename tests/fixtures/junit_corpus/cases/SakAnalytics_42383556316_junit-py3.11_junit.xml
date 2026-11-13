@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="24" tests="596" time="54.439" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_proposition_seed_audit" name="test_replay_seed_registry_from_all_2240_plans" time="7.103"><failure message="AssertionError: assert '40e373f1bc4d...a56b9440087d1' == 'c265de65216a...c6237bf86ac2a'&#10;  &#10;  - c265de65216a42e6241025eb1f2d218ca24ee3531ca1b81a857c6237bf86ac2a&#10;  + 40e373f1bc4d9ca834f2162a2a7a14ab0dc9a7f30f9b28ea1fca56b9440087d1">def test_replay_seed_registry_from_all_2240_plans():
+        actual=audit.build(CYCLE,OUT/'skill-seed-plans.jsonl.gz')
+        saved=json.loads((OUT/'seed-evaluation.json').read_text())
+        # 生成元のハッシュは Aoi の source-divergence.json だけが説明する。ローカルな上書きはしない。
+        source = ROOT/'sakanalytics/proposition_seed_audit.py'
+        _recorded_source_sha(OUT, 'seed-evaluation.json', 'analysis_sha256', saved['analysis_sha256'], source)
+&gt;       assert actual['analysis_sha256']==hashlib.sha256(source.read_bytes()).hexdigest()
+E       AssertionError: assert '40e373f1bc4d...a56b9440087d1' == 'c265de65216a...c6237bf86ac2a'
+E         
+E         - c265de65216a42e6241025eb1f2d218ca24ee3531ca1b81a857c6237bf86ac2a
+E         + 40e373f1bc4d9ca834f2162a2a7a14ab0dc9a7f30f9b28ea1fca56b9440087d1
+
+tests/test_proposition_seed_audit.py:136: AssertionError</failure></testcase></testsuite></testsuites>

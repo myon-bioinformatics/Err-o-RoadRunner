@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="201" time="559.558" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_sibling_imports" name="test_sources_do_not_reach_siblings_by_relative_path" time="0.056"><failure message="AssertionError: assert {'scripts/ben...rents[1]))')]} == {}&#10;  &#10;  Left contains 1 more item:&#10;  {'scripts/benchmark_query_retention.py': [(8,&#10;                                             'sys.path.insert(0, '&#10;                                             'str(Path(__file__).resolve().parents[1]))')]}&#10;  &#10;  Full diff:&#10;  - {}&#10;  + {&#10;  +     'scripts/benchmark_query_retention.py': [&#10;  +         (&#10;  +             8,&#10;  +             'sys.path.insert(0, str(Path(__file__).resolve().parents[1]))',&#10;  +         ),&#10;  +     ],&#10;  + }">def test_sources_do_not_reach_siblings_by_relative_path():
+        found = {str(p.relative_to(ROOT)): list(_sibling_path_uses(p)) for p in SOURCES}
+&gt;       assert {k: v for k, v in found.items() if v} == {}
+E       AssertionError: assert {'scripts/ben...rents[1]))')]} == {}
+E         
+E         Left contains 1 more item:
+E         {'scripts/benchmark_query_retention.py': [(8,
+E                                                    'sys.path.insert(0, '
+E                                                    'str(Path(__file__).resolve().parents[1]))')]}
+E         
+E         Full diff:
+E         - {}
+E         + {
+E         +     'scripts/benchmark_query_retention.py': [
+E         +         (
+E         +             8,
+E         +             'sys.path.insert(0, str(Path(__file__).resolve().parents[1]))',
+E         +         ),
+E         +     ],
+E         + }
+
+tests/test_sibling_imports.py:44: AssertionError</failure></testcase></testsuite></testsuites>

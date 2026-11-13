@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="41" time="141.389" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.python.test_evidence_gif" name="test_frame_marks_one_frame_and_takes_no_clicks[webkit]" time="10.311"><failure message="assert (13 == 1)&#10; +  where 13 = len([&quot;console: Refused to apply a stylesheet because its hash, its nonce, or 'unsafe-inline' does not appear in the style-...' does not appear in the style-src directive of the Content Security Policy. @ http://127.0.0.1:39507/index.html&quot;, ...])">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_frame_marks_one_frame_and1')
+browser_name = 'webkit'
+
+    @pytest.mark.browser
+    @pytest.mark.parametrize("browser_name", ["chromium", "firefox", "webkit"])
+    def test_frame_marks_one_frame_and_takes_no_clicks(tmp_path, browser_name):
+        pytest.importorskip("web_ui")
+        (tmp_path / "page.js").write_text("b.onclick = () =&gt; { b.textContent = document.querySelectorAll('[data-btk-frame]').length; };\n"
+                                          "addEventListener('click', e =&gt; { document.title = e.target.id; });", encoding="utf-8")
+        (tmp_path / "index.html").write_text("&lt;meta http-equiv=Content-Security-Policy content=\"default-src 'self'; style-src 'self'\"&gt;"   # no inline style
+                                             "&lt;button id=b&gt;go&lt;/button&gt;&lt;p id=n&gt;&lt;/p&gt;&lt;script src=page.js&gt;&lt;/script&gt;", encoding="utf-8")
+        marks = "n.textContent += document.querySelectorAll('[data-btk-frame]').length"
+        out = tmp_path / "frame.gif"
+        code = eg.main([str(out), "--browser", browser_name, "--serve", str(tmp_path), "--plan", str(_plan(tmp_path, [{"url": "/index.html", "steps": [
+            {"frame": {"selector": "#b", "shape": "ellipse", "color": "#1565c0"}}, {"click": "#b"},     # the mark is gone when the click lands
+            {"frame": {"selector": "#b", "keep": True}}, {"click": "#b"},                              # a kept mark covers the button and lets the click through
+            {"eval": "const m = document.querySelector('[data-btk-frame]'); if (document.title !== 'b' || getComputedStyle(m).position !== 'fixed') throw new Error('mark')"},
+            {"frame": {"selector": "#b", "keep": True}}, {"eval": marks}, {"frame": {"selector": "#n", "shape": "arrow"}}, {"eval": marks},
+            {"eval": "if (b.textContent !== '1' || n.textContent !== '10') throw new Error(b.textContent + '/' + n.textContent)"},
+            {"frame": "#missing"}]}]))])
+        shot = json.loads(out.with_suffix(".json").read_text(encoding="utf-8"))["shots"][0]
+        assert code == 1 and shot["steps"][:3] == ["🔲 #b", "click #b", "🔲 #b"] and len(shot["steps"]) == 10      # only the missing selector failed
+&gt;       assert len(shot["errors"]) == 1 and "TimeoutError" in shot["errors"][0]
+E       assert (13 == 1)
+E        +  where 13 = len(["console: Refused to apply a stylesheet because its hash, its nonce, or 'unsafe-inline' does not appear in the style-...' does not appear in the style-src directive of the Content Security Policy. @ http://127.0.0.1:39507/index.html", ...])
+
+tests/python/test_evidence_gif.py:183: AssertionError</failure></testcase></testsuite></testsuites>

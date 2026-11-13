@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="334" time="21.276" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_yourself_runtime_versions" name="test_active_node_is_the_first_on_path" time="0.004"><failure message="AssertionError: assert [('24.22.2', ..., True, True)] == [('22.23.4', ..., True, True)]&#10;  &#10;  At index 0 diff: ('24.22.2', False, False) != ('22.23.4', True, False)&#10;  Left contains one more item: ('24.22.1', True, True)&#10;  &#10;  Full diff:&#10;    [&#10;  +     (&#10;  +         '24.22.2',&#10;  +         False,&#10;  +         False,&#10;  +     ),&#10;        (&#10;            '22.23.4',&#10;            True,&#10;            False,&#10;        ),&#10;        (&#10;            '24.22.1',&#10;            True,&#10;            True,&#10;        ),&#10;    ]">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_active_node_is_the_first_0')
+machine = (PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_active_node_is_the_first_0/home'), PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_active_node_is_the_first_0/opt'))
+
+    def test_active_node_is_the_first_on_path(tmp_path, machine):
+        _, opt = machine
+        first = make_node(opt / "node22", "22.23.4")
+        make_node(opt / "node24", "24.22.1")
+        both = os.pathsep.join([str(opt / "node24" / "bin"), str(first.parent)])
+        found = yourself.node_installs({"PATH": both})
+&gt;       assert [(n["version"], n["on_path"], n["active"]) for n in found] == [
+            ("22.23.4", True, False), ("24.22.1", True, True)]
+E       AssertionError: assert [('24.22.2', ..., True, True)] == [('22.23.4', ..., True, True)]
+E         
+E         At index 0 diff: ('24.22.2', False, False) != ('22.23.4', True, False)
+E         Left contains one more item: ('24.22.1', True, True)
+E         
+E         Full diff:
+E           [
+E         +     (
+E         +         '24.22.2',
+E         +         False,
+E         +         False,
+E         +     ),
+E               (
+E                   '22.23.4',
+E                   True,
+E                   False,
+E               ),
+E               (
+E                   '24.22.1',
+E                   True,
+E                   True,
+E               ),
+E           ]
+
+tests/test_yourself_runtime_versions.py:69: AssertionError</failure></testcase><testcase classname="tests.test_yourself_runtime_versions" name="test_node_without_header_has_unknown_version" time="0.002"><failure message="ValueError: too many values to unpack (expected 1)">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_node_without_header_has_u0')
+machine = (PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_node_without_header_has_u0/home'), PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_node_without_header_has_u0/opt'))
+
+    def test_node_without_header_has_unknown_version(tmp_path, machine):
+        binary = make_node(tmp_path / "bare")
+&gt;       [only] = yourself.node_installs({"PATH": str(binary.parent)})
+        ^^^^^^
+E       ValueError: too many values to unpack (expected 1)
+
+tests/test_yourself_runtime_versions.py:76: ValueError</failure></testcase></testsuite></testsuites>

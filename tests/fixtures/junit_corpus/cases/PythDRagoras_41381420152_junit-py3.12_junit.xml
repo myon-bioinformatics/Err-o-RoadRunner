@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="2" tests="549" time="20.744" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_littlebit_survey_node_entry" name="test_vendored_launcher_matches_lock" time="0.001"><failure message="AssertionError: assert '9e0147a17695...195a4f49095bb' == '827387a2c933...18120695166a0'&#10;  &#10;  - 827387a2c9339edd45b3ee2fc9d18120695166a0&#10;  + 9e0147a17695ce63fa73daf75d8195a4f49095bb">def test_vendored_launcher_matches_lock():
+        lock = json.loads((ROOT / "vendor.lock.json").read_text(encoding="utf-8"))
+        entry = next(f for f in lock["files"] if f["destination"] == "vendor/py_launch.cjs")
+        assert entry["repository"] == "myon-bioinformatics/Aoi"
+&gt;       assert entry["commit"] == entry["ref"] == "827387a2c9339edd45b3ee2fc9d18120695166a0"
+E       AssertionError: assert '9e0147a17695...195a4f49095bb' == '827387a2c933...18120695166a0'
+E         
+E         - 827387a2c9339edd45b3ee2fc9d18120695166a0
+E         + 9e0147a17695ce63fa73daf75d8195a4f49095bb
+
+tests/test_littlebit_survey_node_entry.py:73: AssertionError</failure></testcase><testcase classname="tests.test_score_sensitivity_node_entry" name="test_vendored_launcher_matches_lock" time="0.001"><failure message="AssertionError: assert '9e0147a17695...195a4f49095bb' == '827387a2c933...18120695166a0'&#10;  &#10;  - 827387a2c9339edd45b3ee2fc9d18120695166a0&#10;  + 9e0147a17695ce63fa73daf75d8195a4f49095bb">def test_vendored_launcher_matches_lock():
+        lock = json.loads((ROOT / "vendor.lock.json").read_text(encoding="utf-8"))
+        entry = next(f for f in lock["files"] if f["destination"] == "vendor/py_launch.cjs")
+        assert entry["repository"] == "myon-bioinformatics/Aoi"
+&gt;       assert entry["commit"] == entry["ref"] == "827387a2c9339edd45b3ee2fc9d18120695166a0"
+E       AssertionError: assert '9e0147a17695...195a4f49095bb' == '827387a2c933...18120695166a0'
+E         
+E         - 827387a2c9339edd45b3ee2fc9d18120695166a0
+E         + 9e0147a17695ce63fa73daf75d8195a4f49095bb
+
+tests/test_score_sensitivity_node_entry.py:60: AssertionError</failure></testcase><testcase classname="tests.test_season_sensitivity_node_entry" name="test_vendored_launcher_matches_lock" time="0.001"><failure message="AssertionError: assert '9e0147a17695...195a4f49095bb' == '827387a2c933...18120695166a0'&#10;  &#10;  - 827387a2c9339edd45b3ee2fc9d18120695166a0&#10;  + 9e0147a17695ce63fa73daf75d8195a4f49095bb">def test_vendored_launcher_matches_lock():
+        lock = json.loads((ROOT / "vendor.lock.json").read_text(encoding="utf-8"))
+        entry = next(f for f in lock["files"] if f["destination"] == "vendor/py_launch.cjs")
+        assert entry["repository"] == "myon-bioinformatics/Aoi"
+&gt;       assert entry["commit"] == entry["ref"] == "827387a2c9339edd45b3ee2fc9d18120695166a0"
+E       AssertionError: assert '9e0147a17695...195a4f49095bb' == '827387a2c933...18120695166a0'
+E         
+E         - 827387a2c9339edd45b3ee2fc9d18120695166a0
+E         + 9e0147a17695ce63fa73daf75d8195a4f49095bb
+
+tests/test_season_sensitivity_node_entry.py:60: AssertionError</failure></testcase></testsuite></testsuites>

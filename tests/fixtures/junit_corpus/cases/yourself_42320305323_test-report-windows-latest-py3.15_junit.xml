@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="5" tests="330" time="52.807" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_yourself_runtime_versions" name="test_python_defaults_and_pyenv" time="0.010"><failure message="AssertionError: assert [{'source': '...e': '3.12.3'}] == [{'source': '...lue': '3.13'}]&#10;  &#10;  Right contains one more item: {'source': 'uv', 'value': '3.13'}&#10;  &#10;  Full diff:&#10;    [&#10;        {&#10;            'source': 'pyenv',&#10;            'value': '3.12.3',&#10;        },&#10;  -     {&#10;  -         'source': 'uv',&#10;  -         'value': '3.13',&#10;  -     },&#10;    ]">tmp_path = WindowsPath('C:&lt;user-home&gt;/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_python_defaults_and_pyenv0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+
+    def test_python_defaults_and_pyenv(tmp_path, monkeypatch):
+        root, config = tmp_path / "pyenv", tmp_path / "cfg"
+        for name in ("3.12.3", "3.10.14", "miniconda3-latest", "bad name"):
+            (root / "versions" / name).mkdir(parents=True)
+        (root / "version").write_text("# global\n3.12.3\n", encoding="utf-8")
+        (config / "uv").mkdir(parents=True)
+        (config / "uv" / ".python-version").write_text("3.13 # newest\n", encoding="utf-8")
+        env = {"PYENV_ROOT": str(root), "XDG_CONFIG_HOME": str(config)}
+        assert yourself._pyenv_pythons(env) == ["3.10.14", "3.12.3", "miniconda3-latest"]
+&gt;       assert yourself._python_default_pins(env) == [{"source": "pyenv", "value": "3.12.3"},
+                                                      {"source": "uv", "value": "3.13"}]
+E       AssertionError: assert [{'source': '...e': '3.12.3'}] == [{'source': '...lue': '3.13'}]
+E         
+E         Right contains one more item: {'source': 'uv', 'value': '3.13'}
+E         
+E         Full diff:
+E           [
+E               {
+E                   'source': 'pyenv',
+E                   'value': '3.12.3',
+E               },
+E         -     {
+E         -         'source': 'uv',
+E         -         'value': '3.13',
+E         -     },
+E           ]
+
+tests\test_yourself_runtime_versions.py:116: AssertionError</failure></testcase></testsuite></testsuites>

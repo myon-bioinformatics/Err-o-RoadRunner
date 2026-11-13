@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="4" skipped="29" tests="230" time="8.787" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_ascii_artist_repository_diagnostics.RepositoryDiagnosticsTests" name="test_page_is_the_shared_self_contained_renderer" time="0.013"><failure message="  File &quot;D:\a\ascii_artist\ascii_artist\.venv\Lib\site-packages\web_ui.py&quot;, line 1116&#10;    return f'&lt;h{level}{&quot; class=\&quot;ui-title\&quot;&quot; if level == 1 else &quot;&quot;}&gt;{escape(_spec_text(block.get(&quot;text&quot;), &quot;heading&quot;, limit=300, required=True))}&lt;/h{level}&gt;'&#10;                                                                                                                                                            ^&#10;SyntaxError: f-string expression part cannot include a backslash">self = &lt;test_ascii_artist_repository_diagnostics.RepositoryDiagnosticsTests testMethod=test_page_is_the_shared_self_contained_renderer&gt;
+
+    def test_page_is_the_shared_self_contained_renderer(self):
+&gt;       html = diagnostics.page_html()
+               ^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_ascii_artist_repository_diagnostics.py:86: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def page_html() -&gt; str:
+        """The shared diagnostics page from PySaiyanWeBoo (bundled CSS and renderer embedded, nothing from a CDN)."""
+&gt;       import web_ui  # the pinned git dependency in the dev group
+        ^^^^^^^^^^^^^
+E         File "D:\a\ascii_artist\ascii_artist\.venv\Lib\site-packages\web_ui.py", line 1116
+E           return f'&lt;h{level}{" class=\"ui-title\"" if level == 1 else ""}&gt;{escape(_spec_text(block.get("text"), "heading", limit=300, required=True))}&lt;/h{level}&gt;'
+E                                                                                                                                                                   ^
+E       SyntaxError: f-string expression part cannot include a backslash
+
+scripts\ascii_artist_repository_diagnostics.py:93: SyntaxError</failure></testcase><testcase classname="tests.test_ascii_artist_repository_diagnostics.RepositoryDiagnosticsTests" name="test_page_rejects_a_repository_name_that_is_not_owner_slash_name" time="0.013"><failure message="  File &quot;D:\a\ascii_artist\ascii_artist\.venv\Lib\site-packages\web_ui.py&quot;, line 1116&#10;    return f'&lt;h{level}{&quot; class=\&quot;ui-title\&quot;&quot; if level == 1 else &quot;&quot;}&gt;{escape(_spec_text(block.get(&quot;text&quot;), &quot;heading&quot;, limit=300, required=True))}&lt;/h{level}&gt;'&#10;                                                                                                                                                            ^&#10;SyntaxError: f-string expression part cannot include a backslash">self = &lt;test_ascii_artist_repository_diagnostics.RepositoryDiagnosticsTests testMethod=test_page_rejects_a_repository_name_that_is_not_owner_slash_name&gt;
+
+    def test_page_rejects_a_repository_name_that_is_not_owner_slash_name(self):
+        with mock.patch.object(diagnostics, "REPOSITORY", '&lt;repo &amp; "quoted"&gt;'), self.assertRaises(ValueError):
+&gt;           diagnostics.page_html()
+
+tests\test_ascii_artist_repository_diagnostics.py:96: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def page_html() -&gt; str:
+        """The shared diagnostics page from PySaiyanWeBoo (bundled CSS and renderer embedded, nothing from a CDN)."""
+&gt;       import web_ui  # the pinned git dependency in the dev group
+        ^^^^^^^^^^^^^
+E         File "D:\a\ascii_artist\ascii_artist\.venv\Lib\site-packages\web_ui.py", line 1116
+E           return f'&lt;h{level}{" class=\"ui-title\"" if level == 1 else ""}&gt;{escape(_spec_text(block.get("text"), "heading", limit=300, required=True))}&lt;/h{level}&gt;'
+E                                                                                                                                                                   ^
+E       SyntaxError: f-string expression part cannot include a backslash
+
+scripts\ascii_artist_repository_diagnostics.py:93: SyntaxError</failure></testcase><testcase classname="tests.test_ascii_artist_repository_diagnostics.RepositoryDiagnosticsTests" name="test_write_outputs_roundtrips_metadata" time="0.018"><failure message="  File &quot;D:\a\ascii_artist\ascii_artist\.venv\Lib\site-packages\web_ui.py&quot;, line 1116&#10;    return f'&lt;h{level}{&quot; class=\&quot;ui-title\&quot;&quot; if level == 1 else &quot;&quot;}&gt;{escape(_spec_text(block.get(&quot;text&quot;), &quot;heading&quot;, limit=300, required=True))}&lt;/h{level}&gt;'&#10;                                                                                                                                                            ^&#10;SyntaxError: f-string expression part cannot include a backslash">self = &lt;test_ascii_artist_repository_diagnostics.RepositoryDiagnosticsTests testMethod=test_write_outputs_roundtrips_metadata&gt;
+
+    def test_write_outputs_roundtrips_metadata(self):
+        record = _metadata_v1_record()
+        with tempfile.TemporaryDirectory() as tmp, mock.patch.object(
+            diagnostics, "build_record", return_value=record
+        ):
+            out = Path(tmp) / "site"
+&gt;           payload = diagnostics.write_outputs(out, probe=False)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_ascii_artist_repository_diagnostics.py:71: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+scripts\ascii_artist_repository_diagnostics.py:118: in write_outputs
+    (out_dir / HTML_NAME).write_text(page_html(), encoding="utf-8")
+                                     ^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+    def page_html() -&gt; str:
+        """The shared diagnostics page from PySaiyanWeBoo (bundled CSS and renderer embedded, nothing from a CDN)."""
+&gt;       import web_ui  # the pinned git dependency in the dev group
+        ^^^^^^^^^^^^^
+E         File "D:\a\ascii_artist\ascii_artist\.venv\Lib\site-packages\web_ui.py", line 1116
+E           return f'&lt;h{level}{" class=\"ui-title\"" if level == 1 else ""}&gt;{escape(_spec_text(block.get("text"), "heading", limit=300, required=True))}&lt;/h{level}&gt;'
+E                                                                                                                                                                   ^
+E       SyntaxError: f-string expression part cannot include a backslash
+
+scripts\ascii_artist_repository_diagnostics.py:93: SyntaxError</failure></testcase><testcase classname="tests.test_capture_pages" name="test_sample_uses_real_renderer_and_escapes_html" time="0.015"><failure message="  File &quot;D:\a\ascii_artist\ascii_artist\.venv\Lib\site-packages\web_ui.py&quot;, line 1116&#10;    return f'&lt;h{level}{&quot; class=\&quot;ui-title\&quot;&quot; if level == 1 else &quot;&quot;}&gt;{escape(_spec_text(block.get(&quot;text&quot;), &quot;heading&quot;, limit=300, required=True))}&lt;/h{level}&gt;'&#10;                                                                                                                                                            ^&#10;SyntaxError: f-string expression part cannot include a backslash">tmp_path = WindowsPath('C:&lt;user-home&gt;/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_sample_uses_real_renderer0')
+
+    def test_sample_uses_real_renderer_and_escapes_html(tmp_path):
+&gt;       text = capture.write_sample(tmp_path)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_capture_pages.py:15: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+site = WindowsPath('C:&lt;user-home&gt;/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_sample_uses_real_renderer0')
+
+    def write_sample(site: Path) -&gt; str:
+        """The evidence page: ascii_artist's own semantic HTML (stdlib-only library, CSS consumer-owned) inside
+        PySaiyanWeBoo's page shell, so the page is self-contained and styled like the other repositories'."""
+        write_favicon(site)
+        output = sample_output()
+&gt;       import web_ui  # the pinned git dependency in the dev group
+        ^^^^^^^^^^^^^
+E         File "D:\a\ascii_artist\ascii_artist\.venv\Lib\site-packages\web_ui.py", line 1116
+E           return f'&lt;h{level}{" class=\"ui-title\"" if level == 1 else ""}&gt;{escape(_spec_text(block.get("text"), "heading", limit=300, required=True))}&lt;/h{level}&gt;'
+E                                                                                                                                                                   ^
+E       SyntaxError: f-string expression part cannot include a backslash
+
+scripts\capture_pages.py:35: SyntaxError</failure></testcase></testsuite></testsuites>

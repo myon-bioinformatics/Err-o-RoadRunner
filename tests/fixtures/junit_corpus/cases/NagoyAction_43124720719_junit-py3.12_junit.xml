@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="377" time="43.645" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="nagoyaction.tests.test_localci" name="test_lint_exit_code_is_zero_with_skips_and_one_under_strict" time="0.740"><failure message="AssertionError: assert '[pass] round 1/1（2/2 件は skip）' in 'localci seed=1\nlocalci seed=1 checks=2 rounds=1\nshellcheck: actionlint が /usr/bin/shellcheck を使う\nactionlint tag=v1...ebb8123cb3712530b08cc387b349a3d8 via=release\n=== summary ===\nseed: 1\nconfidence: 1/1 rounds passed, 1/1 completed\n'">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_lint_exit_code_is_zero_wi0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+capsys = &lt;_pytest.capture.CaptureFixture object at 0x&lt;addr&gt;&gt;
+
+    def test_lint_exit_code_is_zero_with_skips_and_one_under_strict(tmp_path, monkeypatch, capsys):
+        monkeypatch.delenv("GITHUB_ACTIONS", raising=False)
+        monkeypatch.setenv("XDG_CACHE_HOME", str(tmp_path / "cache"))
+        monkeypatch.setattr(localci.shutil, "which", lambda name: None)
+        monkeypatch.setattr(localci.urllib.request, "urlopen", lambda req, timeout=60: (_ for _ in ()).throw(_unreachable(req.full_url)))
+        workflows = tmp_path / "repo" / ".github" / "workflows"
+        workflows.mkdir(parents=True)
+        (workflows / "ci.yml").write_text("on: push\njobs:\n  a:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/checkout@v4\n")
+        monkeypatch.chdir(tmp_path / "repo")
+        assert localci.main(["lint", "--seed", "1"]) == 0
+        out = capsys.readouterr().out
+&gt;       assert "[pass] round 1/1（2/2 件は skip）" in out
+E       AssertionError: assert '[pass] round 1/1（2/2 件は skip）' in 'localci seed=1\nlocalci seed=1 checks=2 rounds=1\nshellcheck: actionlint が /usr/bin/shellcheck を使う\nactionlint tag=v1...ebb8123cb3712530b08cc387b349a3d8 via=release\n=== summary ===\nseed: 1\nconfidence: 1/1 rounds passed, 1/1 completed\n'
+
+&lt;runner-work&gt;/.test-deps/aoi/nagoyaction/tests/test_localci.py:1249: AssertionError</failure></testcase></testsuite></testsuites>

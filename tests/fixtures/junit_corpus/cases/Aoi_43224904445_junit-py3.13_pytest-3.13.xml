@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="39" tests="4284" time="865.498" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_ci_status_label.ScanTests" name="test_workflow_trust_boundary_and_fallback" time="0.001"><failure message="AssertionError: 'name[565 chars] - \'Pages\'\n      - \'requests tqdm biopytho[1508 chars]l.py' != 'name[565 chars] - \'requests tqdm biopython surface\'\n      [1489 chars]l.py'&#10;Diff is 2134 characters long. Set self.maxDiff to None to see it.">self = &lt;test_ci_status_label.ScanTests testMethod=test_workflow_trust_boundary_and_fallback&gt;
+
+        def test_workflow_trust_boundary_and_fallback(self):
+            # This is an exact contract for one security-sensitive workflow, not a
+            # YAML parser. Ignore only empty/comment-only lines; preserve indentation,
+            # duplicate keys, expressions, and every executable step.
+            path = Path(__file__).resolve().parents[1] / '.github/workflows/ci-status-label.yml'
+            actual = '\n'.join(
+                line.rstrip() for line in path.read_text(encoding='utf-8').splitlines()
+                if line.strip() and not line.lstrip().startswith('#')
+            )
+            expected = """name: CI failure label (add only)
+    on:
+      schedule:
+        - cron: '23 */6 * * *'
+      workflow_run:
+        workflows:
+          - 'Action uses'
+          - 'Browser startup validation'
+          - 'c001 offline replay audit'
+          - 'c001 saved input verification'
+          - 'CDN module experiment'
+          - 'CI'
+          - 'cycle c001 (saved inputs)'
+          - 'DRAgoWing reports'
+          - 'Links'
+          - 'LittleBit holdout drift'
+          - 'Minimal stdlib distributions'
+          - 'Nano research environment comparison'
+          - 'numpy_min backends'
+          - 'requests tqdm biopython surface'
+          - 'py_launch tests'
+          - 'Aoi manual research checkpoint canary'
+          - 'Season simulator'
+          - 'Shared tool lock'
+          - 'Shrink linalg experiment'
+          - 'Shrink module experiment'
+          - 'Shrink polars experiment'
+          - 'Stdlib feasibility survey'
+          - 'Third-party min experiment'
+        types: [completed]
+      pull_request_target:
+        types: [opened, reopened, synchronize, ready_for_review]
+      workflow_dispatch:
+    permissions:
+      contents: read
+      checks: read
+      actions: read
+      pull-requests: read
+      issues: write
+    concurrency:
+      group: ci-failure-label-add-only
+      cancel-in-progress: false
+    jobs:
+      label:
+        if: &gt;-
+          (github.event_name == 'pull_request_target' ||
+           github.ref == format('refs/heads/{0}', github.event.repository.default_branch)) &amp;&amp;
+          (github.event_name != 'workflow_run' ||
+           contains(fromJSON('["failure","timed_out","action_required","startup_failure"]'), github.event.workflow_run.conclusion))
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+        steps:
+          - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+            with:
+              ref: ${{ github.event.repository.default_branch }}
+              persist-credentials: false
+          - name: Add confirmed latest-head failure labels; hold all removals
+            env:
+              GH_TOKEN: ${{ github.token }}
+              GH_REPO: ${{ github.repository }}
+            run: python3 -B .github/scripts/add_ci_label.py"""
+&gt;           self.assertEqual(actual, expected)
+E           AssertionError: 'name[565 chars] - \'Pages\'\n      - \'requests tqdm biopytho[1508 chars]l.py' != 'name[565 chars] - \'requests tqdm biopython surface\'\n      [1489 chars]l.py'
+E           Diff is 2134 characters long. Set self.maxDiff to None to see it.
+
+tests/test_ci_status_label.py:223: AssertionError</failure></testcase><testcase classname="nagoyaction.tests.test_docs_masters" name="test_every_file_directly_under_docs_is_listed_as_a_master_file" time="0.001"><failure message="AssertionError: docs/ の直下にあるのに、マスターファイルの一覧（docs/README.md）にない&#10;assert {'guide.page.json'} == set()&#10;  &#10;  Extra items in the left set:&#10;  'guide.page.json'&#10;  &#10;  Full diff:&#10;  - set()&#10;  + {&#10;  +     'guide.page.json',&#10;  + }">def test_every_file_directly_under_docs_is_listed_as_a_master_file():
+        listed = set(re.findall(r"^\| \[([^\]]+\.md)\]\(\1\) \|", (DOCS / "README.md").read_text(encoding="utf-8"), re.M))
+        present = {p.name for p in DOCS.iterdir() if p.is_file() and p.name != "README.md"}
+&gt;       assert present - listed == set(), "docs/ の直下にあるのに、マスターファイルの一覧（docs/README.md）にない"
+E       AssertionError: docs/ の直下にあるのに、マスターファイルの一覧（docs/README.md）にない
+E       assert {'guide.page.json'} == set()
+E         
+E         Extra items in the left set:
+E         'guide.page.json'
+E         
+E         Full diff:
+E         - set()
+E         + {
+E         +     'guide.page.json',
+E         + }
+
+nagoyaction/tests/test_docs_masters.py:12: AssertionError</failure></testcase></testsuite></testsuites>

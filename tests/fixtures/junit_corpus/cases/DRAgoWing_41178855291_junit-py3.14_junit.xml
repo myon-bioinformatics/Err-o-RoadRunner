@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="1" tests="312" time="37.929" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_vendor_dispatch_ci" name="test_vendor_dispatch_verifies_the_lock_without_record" time="0.001"><failure message="assert 'actions/checkout@v7' in '\n  vendor-dispatch:\n    name: Vendor dispatch\n    needs: changes\n    if: always() &amp;&amp; needs.changes.result == \'su... [[ &quot;$node_major&quot; -ge 24 ]]\n          python .test-deps/parent/pilot/vendor_dispatch.py --manifest vendor.lock.json\n'">def test_vendor_dispatch_verifies_the_lock_without_record():
+        text = CI.read_text(encoding="utf-8")
+        assert "python -m pytest" not in text
+        assert 'uv run --locked --python "${{ matrix.python }}" pytest' in text
+        job = _job(text, "vendor-dispatch")
+        assert "needs: changes" in job
+&gt;       assert "actions/checkout@v7" in job
+E       assert 'actions/checkout@v7' in '\n  vendor-dispatch:\n    name: Vendor dispatch\n    needs: changes\n    if: always() &amp;&amp; needs.changes.result == \'su... [[ "$node_major" -ge 24 ]]\n          python .test-deps/parent/pilot/vendor_dispatch.py --manifest vendor.lock.json\n'
+
+tests/test_vendor_dispatch_ci.py:37: AssertionError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="9" tests="1754" time="144.631" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_mcp_toolcall_lab_vendor_automation" name="test_vendor_lock_lists_expected_sources" time="0.001"><failure message="AssertionError: assert {('myon-bioin...ity.py'), ...} == {('myon-bioin...ity.py'), ...}&#10;  &#10;  Extra items in the left set:&#10;  ('myon-bioinformatics/myon-bioinformatics', 'vendor_fleet_plan.py', 'vendor/vendor_fleet_plan.py')&#10;  &#10;  Full diff:&#10;    {&#10;        (&#10;            'myon-bioinformatics/PySaiyanWeBoo',&#10;            'LICENSE',&#10;            'vendor/web-ui-LICENSE',&#10;        ),&#10;        (&#10;            'myon-bioinformatics/PySaiyanWeBoo',&#10;            'web_ui.py',&#10;            'vendor/web_ui.py',&#10;        ),&#10;        (&#10;            'myon-bioinformatics/ascii_artist',&#10;            'LICENSE',&#10;            'vendor/ascii_artist-LICENSE',&#10;        ),&#10;        (&#10;            'myon-bioinformatics/ascii_artist',&#10;            'ascii_artist.py',&#10;            'vendor/ascii_artist.py',&#10;        ),&#10;        (&#10;            'myon-bioinformatics/gh_identity',&#10;            'LICENSE',&#10;            'vendor/gh_identity-LICENSE',&#10;        ),&#10;        (&#10;            'myon-bioinformatics/gh_identity',&#10;            'gh_identity.py',&#10;            'vendor/gh_identity.py',&#10;        ),&#10;        (&#10;            'myon-bioinformatics/markdown',&#10;            'LICENSE',&#10;            'vendor/markdown-LICENSE',&#10;        ),&#10;        (&#10;            'myon-bioinformatics/markdown',&#10;            'markdown.py',&#10;            'vendor/markdown.py',&#10;        ),&#10;        (&#10;            'myon-bioinformatics/myon-bioinformatics',&#10;            'LICENSE',&#10;            'vendor/myon-bioinformatics-LICENSE',&#10;        ),&#10;        (&#10;            'myon-bioinformatics/myon-bioinformatics',&#10;            'gh_ops.py',&#10;            'vendor/gh_ops.py',&#10;        ),&#10;        (&#10;            'myon-bioinformatics/myon-bioinformatics',&#10;            'node_launch.py',&#10;            'vendor/node_launch.py',&#10;        ),&#10;  +     (&#10;  +         'myon-bioinformatics/myon-bioinformatics',&#10;  +         'vendor_fleet_plan.py',&#10;  +         'vendor/vendor_fleet_plan.py',&#10;  +     ),&#10;    }">def test_vendor_lock_lists_expected_sources():
+        lock = json.loads((ROOT / "vendor.lock.json").read_text(encoding="utf-8"))
+        expected = {
+            ("myon-bioinformatics/ascii_artist", "ascii_artist.py", "vendor/ascii_artist.py"),
+            ("myon-bioinformatics/myon-bioinformatics", "gh_ops.py", "vendor/gh_ops.py"),
+            ("myon-bioinformatics/markdown", "markdown.py", "vendor/markdown.py"),
+            ("myon-bioinformatics/ascii_artist", "LICENSE", "vendor/ascii_artist-LICENSE"),
+            ("myon-bioinformatics/markdown", "LICENSE", "vendor/markdown-LICENSE"),
+            ("myon-bioinformatics/myon-bioinformatics", "LICENSE", "vendor/myon-bioinformatics-LICENSE"),
+            ("myon-bioinformatics/gh_identity", "gh_identity.py", "vendor/gh_identity.py"),
+            ("myon-bioinformatics/gh_identity", "LICENSE", "vendor/gh_identity-LICENSE"),
+            (
+                "myon-bioinformatics/myon-bioinformatics",
+                "node_launch.py",
+                "vendor/node_launch.py",
+            ),
+            ("myon-bioinformatics/PySaiyanWeBoo", "web_ui.py", "vendor/web_ui.py"),
+            ("myon-bioinformatics/PySaiyanWeBoo", "LICENSE", "vendor/web-ui-LICENSE"),
+        }
+        actual = {(e["repository"], e["source"], e["destination"]) for e in lock["files"]}
+&gt;       assert actual == expected
+E       AssertionError: assert {('myon-bioin...ity.py'), ...} == {('myon-bioin...ity.py'), ...}
+E         
+E         Extra items in the left set:
+E         ('myon-bioinformatics/myon-bioinformatics', 'vendor_fleet_plan.py', 'vendor/vendor_fleet_plan.py')
+E         
+E         Full diff:
+E           {
+E               (
+E                   'myon-bioinformatics/PySaiyanWeBoo',
+E                   'LICENSE',
+E                   'vendor/web-ui-LICENSE',
+E               ),
+E               (
+E                   'myon-bioinformatics/PySaiyanWeBoo',
+E                   'web_ui.py',
+E                   'vendor/web_ui.py',
+E               ),
+E               (
+E                   'myon-bioinformatics/ascii_artist',
+E                   'LICENSE',
+E                   'vendor/ascii_artist-LICENSE',
+E               ),
+E               (
+E                   'myon-bioinformatics/ascii_artist',
+E                   'ascii_artist.py',
+E                   'vendor/ascii_artist.py',
+E               ),
+E               (
+E                   'myon-bioinformatics/gh_identity',
+E                   'LICENSE',
+E                   'vendor/gh_identity-LICENSE',
+E               ),
+E               (
+E                   'myon-bioinformatics/gh_identity',
+E                   'gh_identity.py',
+E                   'vendor/gh_identity.py',
+E               ),
+E               (
+E                   'myon-bioinformatics/markdown',
+E                   'LICENSE',
+E                   'vendor/markdown-LICENSE',
+E               ),
+E               (
+E                   'myon-bioinformatics/markdown',
+E                   'markdown.py',
+E                   'vendor/markdown.py',
+E               ),
+E               (
+E                   'myon-bioinformatics/myon-bioinformatics',
+E                   'LICENSE',
+E                   'vendor/myon-bioinformatics-LICENSE',
+E               ),
+E               (
+E                   'myon-bioinformatics/myon-bioinformatics',
+E                   'gh_ops.py',
+E                   'vendor/gh_ops.py',
+E               ),
+E               (
+E                   'myon-bioinformatics/myon-bioinformatics',
+E                   'node_launch.py',
+E                   'vendor/node_launch.py',
+E               ),
+E         +     (
+E         +         'myon-bioinformatics/myon-bioinformatics',
+E         +         'vendor_fleet_plan.py',
+E         +         'vendor/vendor_fleet_plan.py',
+E         +     ),
+E           }
+
+tests/test_mcp_toolcall_lab_vendor_automation.py:37: AssertionError</failure></testcase></testsuite></testsuites>

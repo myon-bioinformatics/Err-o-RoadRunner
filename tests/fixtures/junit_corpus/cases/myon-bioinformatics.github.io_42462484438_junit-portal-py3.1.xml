@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="117" time="1.997" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_html_import" name="test_generated_page_is_current" time="0.002"><failure message="assert '&lt;!doctype ht...ody&gt;&lt;/html&gt;\n' == '&lt;!doctype ht...ody&gt;&lt;/html&gt;\n'&#10;  &#10;  Skipping 392 identical leading characters in diff, use -v to show&#10;  Skipping 3653 identical trailing characters in diff, use -v to show&#10;  - =&quot;web_ui 10d52554ec63c050ffe489d3f98af0747ce40d7a&quot;&gt;&lt;title&gt;&#10;  + =&quot;web_ui 1854362d625279f4278f917cd18bacd151bc69b4&quot;&gt;&lt;title&gt;">def test_generated_page_is_current():
+        builder = load_module('build_html_import', 'tools/build_html_import.py')
+&gt;       assert (ROOT / 'tools/html-import/index.html').read_text(encoding='utf-8') == builder.generate()
+E       assert '&lt;!doctype ht...ody&gt;&lt;/html&gt;\n' == '&lt;!doctype ht...ody&gt;&lt;/html&gt;\n'
+E         
+E         Skipping 392 identical leading characters in diff, use -v to show
+E         Skipping 3653 identical trailing characters in diff, use -v to show
+E         - ="web_ui 10d52554ec63c050ffe489d3f98af0747ce40d7a"&gt;&lt;title&gt;
+E         + ="web_ui 1854362d625279f4278f917cd18bacd151bc69b4"&gt;&lt;title&gt;
+
+tests/test_html_import.py:46: AssertionError</failure></testcase></testsuite></testsuites>
