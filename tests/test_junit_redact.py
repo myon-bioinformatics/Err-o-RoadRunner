@@ -1,9 +1,12 @@
-"""Unit tests for junit_redact leak detection and redaction."""
+"""errlib/junit_redact.py: leak detection and redaction.
+
+- junit_redact: Unit tests for junit_redact leak detection and redaction.
+- junit_kv_redact: Key=value secret redaction in junit_redact.
+"""
 
 from __future__ import annotations
 
 import importlib, re
-from unittest import mock
 
 import pytest
 
@@ -16,8 +19,10 @@ from errlib.junit_redact import (
     secret_patterns_excluding_credential,
 )
 
-JR = importlib.import_module("errlib.junit_redact")
 
+# ──── junit_redact ────────────────────────────────────────────────
+
+JR = importlib.import_module("errlib.junit_redact")
 _FAKE_OAUTH = "ghp_" + "A" * 36
 _FAKE_GHO = "gho_" + "B" * 36
 _FAKE_GHS = "ghs_" + "C" * 20
@@ -27,7 +32,6 @@ _FAKE_ASIA = "ASIA" + "F" * 16
 _FAKE_AWS_SECRET = "aws_secret_access_key=" + "G" * 40
 _FAKE_BEARER = "Bearer " + "H" * 12
 _FAKE_SK = "sk-" + "I" * 20
-
 _CREDENTIAL_SAMPLES: dict[str, str] = {
     "github_oauth_token": _FAKE_OAUTH,
     "github_app_token": _FAKE_GHS,
@@ -198,3 +202,15 @@ def test_mutation_table_all_credential_patterns_guarded() -> None:
     """Documented guard: each credential pattern has independent redaction + detection tests."""
     labels = [spec.label for spec in CREDENTIAL_PATTERN_SPECS]
     assert len(labels) == len(set(labels))
+
+
+# ──── junit_kv_redact ─────────────────────────────────────────────
+
+def test_kv_secret_assignment_redacted() -> None:
+    raw = "curl -H 'Authorization: token=abc123secret' password=hide_me api_key=ZZZ"
+    out = redact_text(raw)
+    assert "abc123secret" not in out
+    assert "hide_me" not in out
+    assert "token=<redacted>" in out
+    assert "password=<redacted>" in out
+    assert "api_key=<redacted>" in out

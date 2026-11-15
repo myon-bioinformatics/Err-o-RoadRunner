@@ -84,9 +84,9 @@ jobs:
       - name: Import smoke
         run: uv run --locked python -c "import triage, sentinel, errlib.actions_log, errlib.junit_redact, errlib.project_version"
       - name: Combo mutation (zero survivors)
-        run: uv run --locked python scripts/combo_mutation.py
+        run: uv run --locked python scripts/check_mutations.py combo
       - name: Version mutation (zero survivors)
-        run: uv run --locked python scripts/version_mutation.py
+        run: uv run --locked python scripts/check_mutations.py version
       - name: Tests with JUnit
         run: |
           mkdir -p reports

@@ -37,6 +37,6 @@ markers = [
     "failure_suite: deliberate failure golden suite",
     "junit_corpus: real failed-run JUnit XML golden suite",
     "multi_error: multi-error coverage and standard-error HINT floor",
-    "mutation_guard: mutations targeted by scripts/combo_mutation.py",
+    "mutation_guard: guard tests run by scripts/check_mutations.py",
     "sentinel: lightweight wrapper and error escalation",
 ]

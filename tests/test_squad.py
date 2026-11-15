@@ -1,9 +1,15 @@
-"""Error squads and per-testcase JUnit failure records."""
+"""Error squads, per-testcase JUnit records and matrix hypotheses.
+
+- squad: Error squads and per-testcase JUnit failure records.
+- matrix_classification: Matrix hypotheses require the same failure, not only the same testcase.
+"""
 
 from __future__ import annotations
 
 import os, statistics, subprocess, sys, time
-from pathlib import Path; from unittest import mock
+import xml.etree.ElementTree as ET
+from pathlib import Path
+from unittest import mock
 
 import pytest
 
@@ -14,17 +20,17 @@ from sentinel import (
     dedupe_multisource_triage,
     parse_group_by,
     resolve_default_corpus_dirs,
+    RunOutcome,
+    WatchState,
 )
-from sentinel import RunOutcome, WatchState
+from tests.support import CORPUS_CASES, corpus_cases, ROOT, run_benchmark
 
-ROOT = Path(__file__).resolve().parents[1]
+
+# ──── squad ───────────────────────────────────────────────────────
+
 AOI_GLOB = "Aoi_37561005125_junit-py3.*_*.xml"
-AOI_CASES = sorted((ROOT / "tests/fixtures/junit_corpus/cases").glob(AOI_GLOB))
+AOI_CASES = sorted(CORPUS_CASES.glob(AOI_GLOB))
 SENTINEL_CLI = [sys.executable, str(ROOT / "sentinel.py")]
-
-
-def _aoi_paths() -> list[str]:
-    return [str(p) for p in AOI_CASES]
 
 
 @pytest.fixture
@@ -38,7 +44,7 @@ def contamination_root(tmp_path: Path) -> Path:
 
 @pytest.mark.sentinel
 def test_aoi_merged_records_distinct_error_types_and_variants() -> None:
-    records = squad.load_failure_records_for_escalation(_aoi_paths())
+    records = squad.load_failure_records_for_escalation(corpus_cases(AOI_GLOB))
     assert len(records) == 19
     assert all(len(rec.get("variants") or []) == 5 for rec in records)
     error_types = {rec["error_type"] for rec in records}
@@ -53,7 +59,7 @@ def test_aoi_merged_records_distinct_error_types_and_variants() -> None:
 
 @pytest.mark.sentinel
 def test_aoi_h1_without_fake_repo_modules() -> None:
-    records = squad.load_failure_records_for_escalation(_aoi_paths())
+    records = squad.load_failure_records_for_escalation(corpus_cases(AOI_GLOB))
     hyps = squad.merge_squad_hypotheses([], records=records, project_root=ROOT)
     import_hyp = next(
         h for h in hyps if h.get("summary") == "import-path contamination"
@@ -74,7 +80,7 @@ def test_merge_hypotheses_assigns_unique_ids_for_multiple_cascades() -> None:
             / "tests/fixtures/junit_corpus/cases/flutter_navigation_basic_38139683688_junit-flutter-core-1_77.xml"
         ),
     ]
-    records = squad.load_failure_records_for_escalation(_aoi_paths() + flutter_paths)
+    records = squad.load_failure_records_for_escalation(corpus_cases(AOI_GLOB) + flutter_paths)
     hyps = squad.merge_squad_hypotheses([], records=records, project_root=ROOT)
     summaries = {h.get("summary") for h in hyps}
     assert "import-path contamination" in summaries
@@ -368,13 +374,13 @@ def test_sys_path_insert_flagged_in_code_squad(tmp_path: Path) -> None:
 
 @pytest.mark.sentinel
 def test_code_squad_aoi_does_not_flag_err_o_roadrunner_tests() -> None:
-    records = squad.load_failure_records_for_escalation(_aoi_paths())
+    records = squad.load_failure_records_for_escalation(corpus_cases(AOI_GLOB))
     pack = squad.run_code_squad(
         squad.SquadContext(
             records=records,
             project_root=ROOT,
             project_root_explicit=False,
-            junit_paths=tuple(_aoi_paths()),
+            junit_paths=tuple(corpus_cases(AOI_GLOB)),
             corpus_dirs=(),
             offline=True,
             web_endpoints=(),
@@ -390,20 +396,20 @@ def test_code_squad_aoi_does_not_flag_err_o_roadrunner_tests() -> None:
     for finding in pack["findings"]:
         file_ref = str(finding.get("file") or "")
         assert "/workspace" not in file_ref
-        assert "test_harvest_junit_corpus" not in file_ref
+        assert "test_harvest_corpus" not in file_ref
         assert "test_squad.py" not in file_ref
 
 
 @pytest.mark.sentinel
 def test_history_corpus_matches_earlier_aoi_runs() -> None:
     corpus = str(ROOT / "tests/fixtures/junit_corpus/cases")
-    records = squad.load_failure_records_for_escalation(_aoi_paths())
+    records = squad.load_failure_records_for_escalation(corpus_cases(AOI_GLOB))
     target_runs = {"37559206978", "37560026164"}
     pack = squad.run_error_squads(
         enabled=frozenset({squad.SQUAD_HISTORY}),
         records=records,
         project_root=ROOT,
-        junit_paths=tuple(_aoi_paths()),
+        junit_paths=tuple(corpus_cases(AOI_GLOB)),
         corpus_dirs=(corpus,),
         offline=True,
         web_endpoints=(),
@@ -580,7 +586,7 @@ def test_escalation_report_includes_squad_fields(contamination_root: Path) -> No
         outcome,
         project_root=contamination_root,
         project_root_explicit=True,
-        junit_paths=_aoi_paths(),
+        junit_paths=corpus_cases(AOI_GLOB),
         corpus_dirs=[str(ROOT / "tests/fixtures/junit_corpus/cases")],
         actions_log_path=None,
         hooks=[],
@@ -609,3 +615,69 @@ def test_dedupe_multisource_triage_helper() -> None:
     out = dedupe_multisource_triage(structured, junit_artifact_count=5)
     assert len(out["found"]) == 1
     assert "5 variants" in out["found"][0]
+
+
+# ──── matrix_classification ───────────────────────────────────────
+
+def _junit(path: Path, failures: list[tuple[str, str]]) -> str:
+    suite = ET.Element("testsuite", tests="1", failures=str(len(failures)))
+    case = ET.SubElement(suite, "testcase", classname="matrix", name="test_shared")
+    for error_type, message in failures:
+        failure = ET.SubElement(case, "failure", type=error_type, message=f"{error_type}: {message}")
+        failure.text = f"{error_type}: {message}"
+    ET.ElementTree(suite).write(path, encoding="unicode")
+    return str(path)
+
+
+@pytest.mark.sentinel
+@pytest.mark.parametrize(
+    ("other_os", "other_python", "classification"),
+    [("windows", "3.12", "os-specific"), ("ubuntu", "3.13", "python-specific")],
+)
+def test_no_squads_preserves_axis_specific_hypotheses(
+    tmp_path: Path, other_os: str, other_python: str, classification: str,
+) -> None:
+    paths = [
+        _junit(tmp_path / "test-report-ubuntu-latest-py3.12.xml", [("ValueError", "alpha")]),
+        _junit(tmp_path / f"test-report-{other_os}-latest-py{other_python}.xml", []),
+    ]
+    short, report = run_benchmark(paths, squads="none")
+    assert [hyp["classification"] for hyp in report["hypotheses"]] == [classification]
+    assert report["squads"] == []
+    assert "M fails on all" not in short
+
+
+@pytest.mark.sentinel
+@pytest.mark.parametrize(
+    ("first", "second"),
+    [
+        (("ValueError", "alpha"), ("ValueError", "beta")),
+        (("ValueError", "shared message"), ("TypeError", "shared message")),
+    ],
+)
+def test_different_failures_in_one_testcase_are_not_matrix_invariant(
+    tmp_path: Path, first: tuple[str, str], second: tuple[str, str],
+) -> None:
+    paths = [
+        _junit(tmp_path / "test-report-ubuntu-latest-py3.12.xml", [first]),
+        _junit(tmp_path / "test-report-windows-latest-py3.12.xml", [second]),
+    ]
+    short, report = run_benchmark(paths, squads="none")
+    # Preserve the existing public testcase grouping; classify its failures separately.
+    assert len(report["records"]) == 1
+    assert report["matrix"]["failing"] == 2
+    assert [hyp["classification"] for hyp in report["hypotheses"]] == ["os-specific"]
+    assert "M fails on all" not in short
+
+
+@pytest.mark.sentinel
+def test_shared_failure_remains_invariant_without_exposing_private_cells(tmp_path: Path) -> None:
+    shared = ("ValueError", "shared message")
+    paths = [
+        _junit(tmp_path / "test-report-ubuntu-latest-py3.12.xml", [shared, ("TypeError", "other")]),
+        _junit(tmp_path / "test-report-windows-latest-py3.12.xml", [shared]),
+    ]
+    short, report = run_benchmark(paths, squads="none")
+    assert "invariant" in [hyp["classification"] for hyp in report["hypotheses"]]
+    assert "M fails on all 2 variants" in short
+    assert not any(key.startswith("matrix_") for record in report["records"] for key in record)

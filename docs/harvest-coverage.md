@@ -1,8 +1,8 @@
 # Harvest coverage
 
-The installed `.github/workflows/harvest-corpus.yml` and its proposed copy are identical.
-Both use a 90-minute timeout, preserve the JSON/Markdown reports even on collection
-failure, publish Markdown to the job summary, and reuse it verbatim as the generated
+The scheduled `.github/workflows/harvest-corpus.yml` (`scripts/harvest_corpus.py harvest`)
+uses a 90-minute timeout, preserves the JSON/Markdown reports even on collection
+failure, publishes Markdown to the job summary, and reuses it verbatim as the generated
 corpus PR body. No automatic merge is performed.
 
 The JSON `repositories` mapping records each requested repository, its status,

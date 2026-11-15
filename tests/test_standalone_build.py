@@ -1,6 +1,15 @@
-import subprocess
-import sys
+"""scripts/build_standalone.py: the single-file bundle and its uv tool packaging.
+
+- standalone_build: ErroRR.py agrees with the checkout, is deterministic and isolated from host modules.
+- uv_tool_build: The shared packager must preserve the maintained standalone bundle.
+"""
+import subprocess, sys, tomllib
 from pathlib import Path
+
+from vendor import fleet_check as fleet
+
+
+# ──── standalone_build ────────────────────────────────────────────
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -83,3 +92,37 @@ assert 'possible Python exception' in result.stdout
 '''
     proc = subprocess.run([sys.executable, '-S', '-c', harness, str(target)], cwd=tmp_path, capture_output=True, text=True)
     assert proc.returncode == 0, proc.stderr
+
+
+# ──── uv_tool_build ───────────────────────────────────────────────
+
+def test_common_package_preserves_bundle_and_command_names(tmp_path):
+    olnm = tmp_path / "ErroRR.py"
+    subprocess.run([sys.executable, "-S", str(ROOT / "scripts/build_standalone.py"),
+                    str(olnm)], check=True)
+    out = tmp_path / "package"
+    result = subprocess.run([sys.executable, "-S", str(ROOT / "scripts/build_standalone.py"),
+                             "--uv-tool", str(out)], capture_output=True, text=True)
+    assert result.returncode == 0, result.stderr
+    assert (out / "erroroadrunner.py").read_bytes() == olnm.read_bytes()
+    config = tomllib.loads((out / "pyproject.toml").read_text())
+    assert config["project"]["name"] == "err-o-roadrunner"
+    assert config["project"]["version"] == "0.6.0"
+    assert config["project"]["requires-python"] == ">=3.11"
+    assert config["project"]["dependencies"] == []
+    assert config["project"]["scripts"] == {
+        "erroroadrunner": "erroroadrunner:main"}
+    assert config["tool"]["setuptools"]["py-modules"] == ["erroroadrunner"]
+    run = subprocess.run([sys.executable, "-S", str(out / "erroroadrunner.py"),
+                          "ValueError:", "example"], cwd=tmp_path, text=True, capture_output=True)
+    assert run.returncode == 0, run.stderr
+    assert "possible Python exception" in run.stdout
+    second = subprocess.run([sys.executable, "-S", str(ROOT / "scripts/build_standalone.py"),
+                             "--uv-tool", str(out)], capture_output=True, text=True)
+    assert second.returncode != 0
+    assert (out / "erroroadrunner.py").read_bytes() == olnm.read_bytes()
+
+
+def test_builder_matches_vendor_pin():
+    rows = fleet.check_lock(ROOT, commits={"vendor/uv_tool_build.py": "673fc7b11d94ccad16740c0998683618f2e86254"})
+    assert rows["vendor/uv_tool_build.py"]["repository"] == "myon-bioinformatics/Aoi"

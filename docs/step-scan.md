@@ -7,7 +7,7 @@ and stripping logic. Existing standalone collectors remain available internally.
 No error prioritization, output schema, dependencies or network behavior changed.
 
 ```sh
-python -S -m unittest discover -s tests -p test_step_scan_reuse.py
+python -S -m unittest discover -s tests -p test_actions_log.py
 python -S -m scripts.benchmark_step_scan
 ```
 
