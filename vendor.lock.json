@@ -144,6 +144,15 @@
       "destination": "vendor/uv_tool_build.py",
       "blob_sha": "87e3eaa595b28e7304cac4f713aded537de4670c",
       "sha256": "b798ce5d5c5adf9a40bffccc6db81b5c58afd7ecdc3fdd27ec2152b2f775afe8"
+    },
+    {
+      "repository": "myon-bioinformatics/myon-bioinformatics",
+      "ref": "45ed741f7e1f60179934cee6fa1e16a887f97cb0",
+      "commit": "45ed741f7e1f60179934cee6fa1e16a887f97cb0",
+      "source": "fleet_check.py",
+      "destination": "vendor/fleet_check.py",
+      "blob_sha": "5b6b732ff2c4fa966a64b6ab07e4da8d563038cf",
+      "sha256": "ae36c7e4d0f8d19ea5a62de98860a37302a65ab48db1bee2bdb6ada4bf7be56d"
     }
   ]
 }
