@@ -9,7 +9,7 @@ PARENT_WORKFLOW_PIN = "9e3da7ae1846e9604ebc24bb5178f7de094a4e77"
 ACCEPTED = {
     "vendor/xprobe.py": "1ffbb7b984075c683690bbe4e9deb06199cdfe94",
     "vendor/cli_args.py": "9ff06c4326fc7ba934112abecbc59451ab07be6a",
-    "vendor/fleet_check.py": "45ed741f7e1f60179934cee6fa1e16a887f97cb0",
+    "vendor/fleet_check.py": "6c29503cf17eda856766ddfdf4d66a5b0965a8b1",
 }
 
 
