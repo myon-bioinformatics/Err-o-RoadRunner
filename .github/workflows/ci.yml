@@ -4,7 +4,6 @@ on:
   push:
     branches: [main]
   pull_request:
-  workflow_dispatch:
 
 permissions:
   contents: read
@@ -21,7 +20,7 @@ jobs:
   vendor-locked:
     name: Vendor locked baseline
     needs: changes
-    if: needs.changes.outputs.product_changed == 'true' || github.event_name == 'workflow_dispatch'
+    if: needs.changes.outputs.product_changed == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -54,7 +53,7 @@ jobs:
   test:
     name: pytest (Python ${{ matrix.python-version }})
     needs: [changes, vendor-locked]
-    if: needs.changes.outputs.product_changed == 'true' || github.event_name == 'workflow_dispatch'
+    if: needs.changes.outputs.product_changed == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
@@ -103,7 +102,7 @@ jobs:
 
   failure-identity:
     needs: [changes, test]
-    if: always() && (needs.changes.outputs.product_changed == 'true' || github.event_name == 'workflow_dispatch')
+    if: always() && needs.changes.outputs.product_changed == 'true'
     permissions:
       contents: read
       actions: read
