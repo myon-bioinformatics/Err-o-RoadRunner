@@ -1,9 +1,96 @@
-"""Run sentinel benchmarks for golden regression (stdlib subprocess only)."""
+"""Shared test helpers (not collected): run triage / sentinel the way the goldens are captured and checked.
+
+``scripts/capture_goldens.py`` and ``scripts/harvest_corpus.py`` import the same runner and masks, so a
+captured golden and the test that compares it see the same command. Standard library only at import time.
+"""
 
 from __future__ import annotations
 
 import json, os, re, subprocess, sys, tempfile
 from copy import deepcopy; from pathlib import Path; from typing import Any, Mapping, Sequence
+
+ROOT = Path(__file__).resolve().parents[1]
+FIXTURES = ROOT / "tests" / "fixtures"
+EMPTY = FIXTURES / "failure_suite" / "empty_root"
+CORPUS_CASES = FIXTURES / "junit_corpus" / "cases"
+SENTINEL_CLI = [sys.executable, str(ROOT / "sentinel.py")]
+
+_RUNTIME_LINE_PREFIXES = (
+    "FOUND: python version:",
+    "FOUND: node version:",
+    "FOUND: gh version:",
+    "FOUND: environment variable count:",
+    "FOUND: environment variable names:",
+)
+
+
+# ──── triage CLI and report text ────────────────────────────────────────
+
+
+def triage_cli(*args: object, project_root: Path = EMPTY, exit_code: int = 1, check: bool = True) -> str:
+    """stdout of ``python -m triage --exit-code N --project-root DIR ARGS`` run from the checkout."""
+    cmd = [sys.executable, "-m", "triage", "--exit-code", str(exit_code), "--project-root", str(project_root)]
+    proc = subprocess.run([*cmd, *map(str, args)], cwd=ROOT, capture_output=True, text=True, check=False)
+    if check and proc.returncode != 0:
+        raise AssertionError(proc.stderr)
+    return proc.stdout
+
+
+def mask_repo(text: str) -> str:
+    """Checkout paths as ``<repo>`` (what captured goldens store)."""
+    return text.replace(str(ROOT.resolve()), "<repo>").replace("/workspace", "<repo>")
+
+
+def normalize_report(text: str) -> str:
+    """Golden comparison form: ``<repo>`` / ``<pylib>`` paths, runtime lines and Node internals masked."""
+    text = re.sub(r"/usr/lib/python3\.\d+/", "<pylib>/", mask_repo(text))
+    lines: list[str] = []
+    for line in text.splitlines():
+        prefix = next((p for p in _RUNTIME_LINE_PREFIXES if line.startswith(p)), None)
+        if prefix:
+            line = f"{prefix} <runtime>"
+        elif "node stack frame" in line or line.startswith("FOUND: node error"):
+            line = re.sub(r"node:internal/[^:\s]+:\d+", "<node-internal>", line)
+        lines.append(line)
+    return "\n".join(lines) + "\n"
+
+
+def assert_report_has_exact_line(lines: list[str], expected: str) -> str:
+    """Require an exact full-line match; partial lines and NOT FOUND must not satisfy."""
+    if expected.startswith("FOUND:"):
+        not_found_line = f"NOT FOUND: {expected.removeprefix('FOUND: ')}"
+        if not_found_line in lines:
+            raise AssertionError(
+                f"ambiguous: NOT FOUND line present for expected FOUND line {expected!r}"
+            )
+    matches = [ln for ln in lines if ln == expected]
+    assert len(matches) == 1, (
+        f"expected exactly one line equal to {expected!r}, "
+        f"got {len(matches)} matches among {len(lines)} lines"
+    )
+    return matches[0]
+
+
+def triage_actions_log(log_path: Path) -> str:
+    from triage import triage
+
+    text = log_path.read_text(encoding="utf-8", errors="replace")
+    report = triage(
+        exit_code=1,
+        stderr_text=None,
+        log_text=None,
+        actions_log_text=text,
+        junit_paths=[],
+        project_root=ROOT,
+    )
+    return "\n".join(report.lines()) + "\n"
+
+
+def triage_actions_log_cli(log_path: Path) -> str:
+    return triage_cli("--actions-log", log_path, project_root=ROOT)
+
+
+# ──── sentinel benchmarks ───────────────────────────────────────────────
 
 _STABLE_ENV_KEYS = ("variable_count", "variable_names", "variable_names_truncated")
 
@@ -22,8 +109,15 @@ _SUMMARY_MASK_PREFIXES = (
     "environment variable names:",
 )
 
-ROOT = Path(__file__).resolve().parents[1]
-SENTINEL_CLI = [sys.executable, str(ROOT / "sentinel.py")]
+
+def corpus_cases(pattern: str) -> list[str]:
+    """Sorted JUnit corpus case paths matching ``pattern``."""
+    return [str(p) for p in sorted(CORPUS_CASES.glob(pattern))]
+
+
+def records_without(doc: dict, *keys: str) -> list:
+    """Report ``records`` with the given keys dropped (fields that vary by runtime)."""
+    return [{k: v for k, v in rec.items() if k not in keys} for rec in doc.get("records") or []]
 
 
 def _mask_triage_line(line: str) -> str:

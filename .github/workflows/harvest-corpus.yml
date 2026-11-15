@@ -44,7 +44,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          uv run --locked python scripts/harvest_junit_corpus.py --allow-partial --per-repo 25 --report "$RUNNER_TEMP/harvest-report.json" --summary "$RUNNER_TEMP/harvest-summary.md"
+          uv run --locked python scripts/harvest_corpus.py harvest --allow-partial --per-repo 25 --report "$RUNNER_TEMP/harvest-report.json" --summary "$RUNNER_TEMP/harvest-summary.md"
       # Coverage metadata only: no XML/JSON result bodies, independent of corpus promotion.
       - name: Publish collection coverage
         if: always() && steps.harvest.outcome != 'skipped'
@@ -67,15 +67,15 @@ jobs:
           retention-days: 14
       # Silver: shared redaction and XML leak scan must succeed before golden generation.
       - name: Redact corpus (Silver)
-        run: uv run --locked python scripts/reredact_junit_corpus.py --corpus-only
+        run: uv run --locked python scripts/harvest_corpus.py redact --corpus-only
       - name: Prepare corpus goldens
         run: |
-          uv run --locked python scripts/patch_junit_manifest_jobs.py
-          uv run --locked python scripts/capture_junit_corpus_goldens.py
+          uv run --locked python scripts/harvest_corpus.py jobs
+          uv run --locked python scripts/capture_goldens.py junit-corpus
       # Gold: validate XML, generated goldens, and JSON/JSONL before publishing corpus.
       - name: Validate corpus
         id: validate
-        run: uv run pytest -q tests/test_junit_corpus_golden.py tests/test_results_corpus.py tests/test_fixture_redaction_scan.py
+        run: uv run pytest -q tests/test_corpus.py
       - name: Open or refresh the corpus PR
         if: success() && steps.validate.outcome == 'success'
         env:

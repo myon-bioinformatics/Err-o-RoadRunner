@@ -1,5 +1,12 @@
 #!/usr/bin/env python3
-"""Harvest failed-run test results (JUnit XML, JSON, JSONL) and keep only failures (redacted).
+"""Harvested failure corpus: collect failed-run results, redact, name jobs, classify.
+
+  python scripts/harvest_corpus.py harvest [--allow-partial] [--per-repo N] [--report F] [--summary F]
+  python scripts/harvest_corpus.py redact [--corpus-only]   # re-apply shared redaction to fixture XML
+  python scripts/harvest_corpus.py jobs                     # manifest ``job`` from workflow job names
+  python scripts/harvest_corpus.py classify                 # triage report richness per corpus case
+
+``harvest`` keeps only failures (redacted) of failed-run test results (JUnit XML, JSON, JSONL).
 
 Sources: every public, non-archived repository listed in ``scripts/harvest_sources.json``.
 Formats are treated equally:
@@ -19,19 +26,20 @@ identical redacted content are skipped, and new entries are appended.
 
 from __future__ import annotations
 
-import argparse, hashlib, io, json, os, subprocess, sys, tempfile, xml.etree.ElementTree as ET, zipfile
-from dataclasses import dataclass; from pathlib import Path
+import argparse, hashlib, io, json, os, re, subprocess, sys, tempfile, xml.etree.ElementTree as ET, zipfile
+from collections import Counter; from dataclasses import dataclass; from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-CORPUS = ROOT / "tests" / "fixtures" / "junit_corpus"
+FIXTURES = ROOT / "tests" / "fixtures"
+CORPUS = FIXTURES / "junit_corpus"
 MANIFEST = CORPUS / "manifest.json"
 
 sys.path.insert(0, str(ROOT))
 
-from errlib.junit_redact import redact_attribute, redact_text
+from errlib.junit_redact import find_corpus_leaks, redact_attribute, redact_text, redact_xml_document
 
 SOURCES = ROOT / "scripts" / "harvest_sources.json"
-RESULTS_CORPUS = ROOT / "tests" / "fixtures" / "results_corpus"
+RESULTS_CORPUS = FIXTURES / "results_corpus"
 RESULTS_MANIFEST = RESULTS_CORPUS / "manifest.json"
 
 _SOURCES = json.loads(SOURCES.read_text(encoding="utf-8"))
@@ -703,13 +711,8 @@ def _split(entries: list[dict], pending: list[PendingCorpusWrite]) -> tuple[list
     return xml_e, xml_p, json_e, json_p
 
 
-def main(argv: list[str] | None = None) -> int:
-    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("--allow-partial", action="store_true", help="write what succeeded even if some runs/artifacts failed (for scheduled harvests)")
-    ap.add_argument("--per-repo", type=int, default=5, help="max new corpus files per repository per harvest")
-    ap.add_argument("--report", type=Path, help="write a JSON summary (counts, failures) here")
-    ap.add_argument("--summary", type=Path, help="write Markdown for job summary and generated PR body")
-    args = ap.parse_args(argv if argv is not None else [])
+def run_harvest(args: argparse.Namespace) -> int:
+    """``harvest``: append new failing results to both manifests (nothing is written when blocked)."""
     existing_xml = _load_manifest(MANIFEST)
     existing_json = _load_manifest(RESULTS_MANIFEST)
     coverage: dict = {}
@@ -746,5 +749,200 @@ def main(argv: list[str] | None = None) -> int:
     return 0
 
 
+# ──── redact ────
+
+def redact_corpus(corpus_only: bool = False) -> int:
+    """``redact``: re-apply JUnit redaction to checked-in fixture XML; 1 when a leak remains."""
+    scope = CORPUS if corpus_only else FIXTURES
+    paths = sorted(scope.rglob("*.xml"))
+    entries = json.loads(MANIFEST.read_text(encoding="utf-8")) if MANIFEST.exists() else []
+    changed_hashes = {}
+    updated = 0
+    errors = 0
+    leaks_after: list[tuple[str, list[str]]] = []
+    for path in paths:
+        raw = path.read_text(encoding="utf-8")
+        try:
+            new = redact_xml_document(raw)
+        except Exception as exc:
+            print(f"SKIP {path.relative_to(ROOT)}: {exc}", file=sys.stderr)
+            errors += 1
+            continue
+        if new != raw:
+            path.write_text(new, encoding="utf-8")
+            updated += 1
+            if path.is_relative_to(CORPUS):
+                changed_hashes[path.relative_to(CORPUS).as_posix()] = hashlib.sha256(new.encode("utf-8")).hexdigest()
+        post_leaks = find_corpus_leaks(new)
+        if post_leaks:
+            leaks_after.append((str(path.relative_to(ROOT)), post_leaks))
+    manifest_changed = False
+    for entry in entries:
+        digest = changed_hashes.get(entry.get("xml"))
+        if digest is not None and "sha256" in entry:
+            entry["sha256"] = digest
+            manifest_changed = True
+    if manifest_changed:
+        MANIFEST.write_text(json.dumps(entries, indent=2) + "\n", encoding="utf-8")
+    print(f"Re-redacted {updated}/{len(paths)} XML files under {scope.relative_to(ROOT)}")
+    if leaks_after:
+        for rel, labels in leaks_after[:20]:
+            print(f"LEAK {rel}: {', '.join(labels)}", file=sys.stderr)
+        print(f"{len(leaks_after)} files still leak after redaction", file=sys.stderr)
+        return 1
+    return int(bool(errors))
+
+
+# ──── jobs ────
+
+PYTHON_VER_RE = re.compile(
+    r"junit-(?:controlled-)?(?:python-)?(?:py)?(\d+\.\d+)",
+    re.IGNORECASE,
+)
+PYTHON_VERX_RE = re.compile(r"junit-py(\d+)\.x\b", re.IGNORECASE)
+
+
+def run_jobs(repo: str, run_id: int) -> list[dict]:
+    # fetch-guard via run_gh: no prompt, deadline; a failed or stuck call means no jobs.
+    out = run_gh(["run", "view", str(run_id), "--repo", repo, "--json", "jobs"], [],
+                 repo=repo, run_id=run_id, artifact=None, stage="run_jobs")
+    if out is None:
+        return []
+    data = json.loads(out)
+    return data.get("jobs") or []
+
+
+def _python_version_keys(artifact: str) -> list[str]:
+    keys: list[str] = []
+    m = PYTHON_VER_RE.search(artifact)
+    if m:
+        keys.append(m.group(1))
+        keys.append(f"({m.group(1)})")
+    mx = PYTHON_VERX_RE.search(artifact)
+    if mx:
+        keys.append("3.x")
+        keys.append("py3.x")
+    return keys
+
+
+def resolve_job(artifact: str, jobs: list[dict]) -> str | None:
+    names = [j.get("name") or "" for j in jobs if j.get("name")]
+    if not names:
+        return None
+
+    for key in _python_version_keys(artifact):
+        matches = [n for n in names if key in n]
+        if len(matches) == 1:
+            return matches[0]
+
+    art_low = artifact.lower()
+    slug = art_low.replace("junit-", "").replace("controlled-", "")
+    for name in names:
+        norm = name.lower().replace(" ", "-").replace("(", "").replace(")", "")
+        if slug and slug in norm:
+            if sum(1 for n in names if slug in n.lower().replace(" ", "-")) == 1:
+                return name
+
+    keyword_sets = [
+        ("flutter-refactor", ("flutter", "refactor")),
+        ("flutter-core", ("flutter", "core")),
+        ("junit-marp", ("marp",)),
+        ("failure-identity", ("identity", "collect")),
+        ("junit-controlled", ("controlled", "identity")),
+    ]
+    for art_needle, job_tokens in keyword_sets:
+        if art_needle in art_low:
+            matches = [
+                n
+                for n in names
+                if all(tok in n.lower() for tok in job_tokens)
+            ]
+            if len(matches) == 1:
+                return matches[0]
+
+    return None
+
+
+def patch_manifest_jobs() -> None:
+    """``jobs``: set each manifest ``job`` by matching its artifact name to the run's job names."""
+    entries = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    cache: dict[tuple[str, int], list[dict]] = {}
+    for entry in entries:
+        key = (entry["repo"], int(entry["run_id"]))
+        if key not in cache:
+            cache[key] = run_jobs(entry["repo"], key[1])
+        entry["job"] = resolve_job(entry["artifact"], cache[key])
+    MANIFEST.write_text(json.dumps(entries, indent=2) + "\n", encoding="utf-8")
+    resolved = sum(1 for e in entries if e.get("job"))
+    print(f"Patched {len(entries)} entries ({resolved} resolved, {len(entries) - resolved} null)")
+
+
+# ──── classify ────
+
+KEY_FOUND = (
+    "junit pytest exception type",
+    "junit dart error (first)",
+    "junit collection error (first)",
+    "junit system-err (first line)",
+    "junit testcase classname (first)",
+)
+
+
+def classify(lines: list[str]) -> str:
+    found = [ln for ln in lines if ln.startswith("FOUND:")]
+    if not any("junit failures" in ln or "junit errors" in ln for ln in found):
+        return "unknown"
+    rich = sum(1 for key in KEY_FOUND if any(key in ln for ln in found))
+    if rich >= 2:
+        return "well_handled"
+    if rich == 1:
+        return "partial"
+    return "unknown"
+
+
+def classify_corpus() -> dict:
+    """``classify``: write ``classification.json`` and return counts per bucket."""
+    from tests.support import triage_cli
+
+    entries = json.loads(MANIFEST.read_text(encoding="utf-8"))
+    rows = []
+    counts = Counter()
+    for entry in entries:
+        xml = CORPUS / entry["xml"]
+        lines = triage_cli("--junit", xml, check=False).splitlines()
+        bucket = classify(lines)
+        counts[bucket] += 1
+        rows.append({**entry, "classification": bucket})
+    out = CORPUS / "classification.json"
+    out.write_text(json.dumps(rows, indent=2) + "\n", encoding="utf-8")
+    print(json.dumps(dict(counts), indent=2))
+    return dict(counts)
+
+
+def main(argv: list[str] | None = None) -> int:
+    ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
+    sub = ap.add_subparsers(dest="command", required=True)
+    cmd = sub.add_parser("harvest", help="collect failing results of failed runs (redacted) into the corpus manifests")
+    cmd.add_argument("--allow-partial", action="store_true", help="write what succeeded even if some runs/artifacts failed (for scheduled harvests)")
+    cmd.add_argument("--per-repo", type=int, default=5, help="max new corpus files per repository per harvest")
+    cmd.add_argument("--report", type=Path, help="write a JSON summary (counts, failures) here")
+    cmd.add_argument("--summary", type=Path, help="write Markdown for job summary and generated PR body")
+    cmd = sub.add_parser("redact", help="re-apply JUnit redaction to checked-in fixture XML")
+    cmd.add_argument("--corpus-only", action="store_true",
+                     help="Only process the harvested JUnit corpus, preserving other fixtures")
+    sub.add_parser("jobs", help="set manifest job fields from workflow job names (gh run view)")
+    sub.add_parser("classify", help="classify corpus cases by triage report richness")
+    args = ap.parse_args(sys.argv[1:] if argv is None else argv)
+    if args.command == "harvest":
+        return run_harvest(args)
+    if args.command == "redact":
+        return redact_corpus(args.corpus_only)
+    if args.command == "jobs":
+        patch_manifest_jobs()
+    else:
+        classify_corpus()
+    return 0
+
+
 if __name__ == "__main__":
-    raise SystemExit(main(sys.argv[1:]))
+    raise SystemExit(main())

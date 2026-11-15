@@ -1,18 +1,30 @@
-"""Harvest script must fail closed on gh/download errors without touching manifest."""
+"""scripts/harvest_corpus.py and .github/workflows/harvest-corpus.yml: fail-closed collection and offline preparation steps.
+
+- harvest_junit_corpus: Harvest script must fail closed on gh/download errors without touching manifest.
+- harvest_preparation: Exercise the workflow's preparation and validation commands without network access.
+"""
 
 from __future__ import annotations
 
-import importlib.util, json, sys
-from pathlib import Path; from unittest import mock
+import hashlib, importlib.util, json, os, shlex, shutil, subprocess, sys
+import xml.etree.ElementTree as ET
+from pathlib import Path
+from unittest import mock
 
 import pytest
 
+from errlib.junit_redact import find_corpus_leaks
+from scripts import harvest_corpus as harvest
+
+
+# ──── harvest_junit_corpus ────────────────────────────────────────
+
 ROOT = Path(__file__).resolve().parents[1]
-HARVEST = ROOT / "scripts" / "harvest_junit_corpus.py"
+HARVEST = ROOT / "scripts" / "harvest_corpus.py"
 
 
 def _load_harvest_module() -> object:
-    name = "harvest_junit_corpus_under_test"
+    name = "harvest_corpus_under_test"
     spec = importlib.util.spec_from_file_location(name, HARVEST)
     mod = importlib.util.module_from_spec(spec)
     assert spec.loader is not None
@@ -40,7 +52,7 @@ def test_harvest_main_exits_nonzero_and_leaves_manifest_unchanged(tmp_path: Path
         detail="gh: authentication required",
     )
     with mock.patch.object(mod, "harvest", return_value=([], [failure], [])):
-        code = mod.main()
+        code = mod.main(["harvest"])
     assert code == 1
     assert json.loads(manifest.read_text(encoding="utf-8")) == [{"id": "keep-me", "xml": "cases/keep.xml"}]
 
@@ -61,7 +73,7 @@ def test_harvest_main_does_not_write_manifest_on_failure_before_success(tmp_path
         detail="download failed",
     )
     with mock.patch.object(mod, "harvest", return_value=([{"id": "new"}], [failure], pending)):
-        assert mod.main() == 1
+        assert mod.main(["harvest"]) == 1
     assert not (tmp_path / "cases" / "new.xml").exists()
     assert json.loads(manifest.read_text(encoding="utf-8"))[0]["id"] == "keep-me"
 
@@ -80,7 +92,7 @@ def test_harvest_main_writes_on_full_success(tmp_path: Path) -> None:
         return entries, [], pending
 
     with mock.patch.object(mod, "harvest", side_effect=successful_harvest):
-        assert mod.main() == 0
+        assert mod.main(["harvest"]) == 0
     assert (tmp_path / "cases" / "new.xml").read_text(encoding="utf-8") == "<testsuites/>"
     # Harvest is incremental: existing entries are kept and new ones appended.
     assert json.loads(manifest.read_text(encoding="utf-8")) == [{"id": "keep-me", "xml": "cases/keep.xml"}, *entries]
@@ -287,7 +299,7 @@ def test_collection_coverage_end_to_end(tmp_path, monkeypatch, scenario, expecte
     monkeypatch.setattr(mod, "download_artifact", download)
     report = tmp_path / "report.json"
     summary = tmp_path / "summary.md"
-    assert mod.main(["--allow-partial", "--report", str(report), "--summary", str(summary)]) == expected_code
+    assert mod.main(["harvest", "--allow-partial", "--report", str(report), "--summary", str(summary)]) == expected_code
     data = json.loads(report.read_text())
     assert data["status"] == expected_status
     assert data["exit_code"] == expected_code
@@ -396,3 +408,111 @@ def test_gh_calls_never_prompt_and_time_out_as_stage_failures(tmp_path):
     assert all("timed out after" in f.detail for f in failures)
     assert [k["timeout"] for k in seen] == [mod.GH_TIMEOUT_SECONDS, mod.ARTIFACT_TIMEOUT_SECONDS]
     assert all(k["env"]["GH_PROMPT_DISABLED"] == "1" and k["stdin"] is subprocess.DEVNULL for k in seen)
+
+
+# ──── harvest_preparation ─────────────────────────────────────────
+
+WORKFLOW = (ROOT / ".github/workflows/harvest-corpus.yml").read_text()
+
+
+def _step_script(name: str) -> str:
+    step = WORKFLOW.split(f"      - name: {name}\n", 1)[1].split("      - name:", 1)[0]
+    run = step.split("        run: ", 1)[1]
+    if run.startswith("|\n"):
+        lines = []
+        for line in run[2:].splitlines():
+            if not line.startswith("          "):
+                break
+            lines.append(line[10:])
+        run = "\n".join(lines)
+    root = shlex.quote(str(ROOT))
+    return run.replace("uv run --locked python", shlex.quote(sys.executable)).replace(
+        "uv run pytest", f"uv run --project {root} --offline --no-sync pytest")
+
+
+@pytest.fixture
+def sandbox(tmp_path: Path) -> Path:
+    for name in ("triage.py", "errlib/__init__.py", "errlib/junit_redact.py", "errlib/error_input.py",
+                 "errlib/project_version.py", "pyproject.toml",
+                 "scripts/harvest_corpus.py", "scripts/harvest_sources.json", "scripts/capture_goldens.py",
+                 "tests/support.py", "tests/test_corpus.py"):
+        dest = tmp_path / name
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(ROOT / name, dest)
+    # The job metadata API is irrelevant to offline corpus preparation.
+    gh = tmp_path / "bin" / "gh"
+    gh.parent.mkdir()
+    gh.write_text('#!/bin/sh\nprintf \'{"jobs": []}\\n\'\n')
+    gh.chmod(0o755)
+    corpus = tmp_path / "tests/fixtures/junit_corpus"
+    (corpus / "cases").mkdir(parents=True)
+    (corpus / "golden").mkdir()
+    (tmp_path / "tests/fixtures/failure_suite/empty_root").mkdir(parents=True)
+    return tmp_path
+
+
+def _run_step(sandbox: Path, name: str) -> subprocess.CompletedProcess:
+    return subprocess.run(["bash", "-e", "-c", _step_script(name)], cwd=sandbox,
+                          env={**os.environ, "PATH": str(sandbox / "bin") + os.pathsep + os.environ["PATH"]},
+                          text=True, capture_output=True, timeout=60)
+
+
+def test_prepare_redacts_existing_xml_refreshes_goldens_and_hashes(sandbox: Path) -> None:
+    corpus = sandbox / "tests/fixtures/junit_corpus"
+    entries = []
+    for run in (38908321131, 38908363336):
+        raw = '<testsuite><testcase name="bad"><failure>AssertionError: paths = [PosixPath(\'/home/runner/work/markdown...\')]</failure></testcase></testsuite>'
+        source = sandbox / f"{run}.xml"
+        source.write_text(raw)
+        # The collector must still keep failing cases, omit passing cases, and use shared redaction.
+        tree = ET.fromstring(raw)
+        ET.SubElement(tree, "testcase", {"name": "passing"})
+        assert len(harvest.extract_failing_xml(ET.ElementTree(tree)).getroot().findall(".//testcase")) == 1
+        entry, write = harvest._harvest_file("markdown", {"databaseId": run}, "junit-py3.9", source, "pytest-3.9.xml", [])
+        assert find_corpus_leaks(write.content) == []
+        entries.append(entry)
+        # Simulate a corpus written by the old collector and an already-existing leaky golden.
+        (corpus / entry["xml"]).write_text(raw)
+        (corpus / entry["golden"]).write_text("stale /home/runner/work/markdown...\n")
+        entry["sha256"] = hashlib.sha256(raw.encode()).hexdigest()
+    (corpus / "manifest.json").write_text(json.dumps(entries))
+    outside = sandbox / "tests/fixtures/unrelated.xml"
+    outside.write_text('<testsuite name="untouched"/>')
+    redacted = _run_step(sandbox, "Redact corpus (Silver)")
+    assert redacted.returncode == 0, redacted.stdout + redacted.stderr
+    prepared = _run_step(sandbox, "Prepare corpus goldens")
+    assert prepared.returncode == 0, prepared.stdout + prepared.stderr
+    for entry in json.loads((corpus / "manifest.json").read_text()):
+        xml = corpus / entry["xml"]
+        assert entry["sha256"] == hashlib.sha256(xml.read_bytes()).hexdigest()
+        for path in (xml, corpus / entry["golden"]):
+            assert find_corpus_leaks(path.read_text()) == []
+        assert "FOUND: junit failures" in (corpus / entry["golden"]).read_text()
+    assert outside.read_text() == '<testsuite name="untouched"/>'
+    checked = _run_step(sandbox, "Validate corpus")
+    assert checked.returncode == 0, checked.stdout + checked.stderr
+    # A later leak in a generated golden must block reaching PR creation.
+    (corpus / entries[0]["golden"]).write_text("/home/runner/work/markdown...\n")
+    checked = _run_step(sandbox, "Validate corpus")
+    assert checked.returncode != 0
+    assert "runner_work_path" in checked.stdout
+    assert WORKFLOW.index("- name: Validate corpus") < WORKFLOW.index("- name: Open or refresh the corpus PR")
+    pr_step = WORKFLOW.split("- name: Open or refresh the corpus PR", 1)[1]
+    assert "if: success() && steps.validate.outcome == 'success'" in pr_step
+    assert "if: always()" not in pr_step
+    assert "continue-on-error" not in WORKFLOW
+
+
+@pytest.mark.parametrize("raw", ["<broken", '<testsuite hostname="private"/>'])
+def test_prepare_fails_closed_on_invalid_xml_or_remaining_leak(sandbox: Path, raw: str) -> None:
+    corpus = sandbox / "tests/fixtures/junit_corpus"
+    (corpus / "manifest.json").write_text("[]")
+    (corpus / "cases/bad.xml").write_text(raw)
+    if "hostname" in raw:
+        # Simulate a redactor regression: the independent scanner must still reject it.
+        module = sandbox / "errlib" / "junit_redact.py"
+        text = module.read_text().replace("    redact_xml_tree(root)", "    # redaction disabled")
+        module.write_text(text)
+    result = _run_step(sandbox, "Redact corpus (Silver)")
+    assert result.returncode != 0
+    assert "Patched" not in result.stdout

@@ -1,19 +1,41 @@
-"""GitHub Actions log parsing tests."""
+"""GitHub Actions log parsing (errlib/actions_log.py) and the strict report-line assertion it relies on.
+
+`python -S -m unittest discover -s tests -p test_actions_log.py` runs StepScanTests without pytest.
+
+- actions_log: GitHub Actions log parsing tests.
+- step_scan_reuse: combined step collectors match the separate ones (stdlib unittest).
+- report_assert: Unit tests for strict report line assertions.
+"""
 
 from __future__ import annotations
 
-import json, sys
-from pathlib import Path
+import json, sys, unittest
 
-import pytest
+try:
+    import pytest
+except ImportError:  # `python -S` (no site-packages): only the unittest.TestCase classes below run.
+    class _NoPytest:  # pytest-style tests stay defined but are never collected by unittest
+        def __getattr__(self, name): return self
+        def __call__(self, *args, **kwargs):
+            return args[0] if len(args) == 1 and not kwargs and callable(args[0]) else self
+    pytest = _NoPytest()
 
+from errlib import actions_log as a
 from errlib.actions_log import normalize_actions_log_line, preprocess_actions_log
+from tests.support import (
+    assert_report_has_exact_line,
+    FIXTURES,
+    normalize_report,
+    ROOT,
+    triage_actions_log,
+    triage_actions_log_cli,
+)
 from triage import MAX_READ_BYTES, triage
-from tests.actions_log_golden_util import normalize_report, triage_actions_log, triage_actions_log_cli
-from tests.report_assert import assert_report_has_exact_line
 
-ROOT = Path(__file__).resolve().parents[1]
-FIX = ROOT / "tests" / "fixtures" / "actions_logs"
+
+# ──── actions_log ─────────────────────────────────────────────────
+
+FIX = FIXTURES / "actions_logs"
 REAL = FIX / "real"
 REAL_MANIFEST = REAL / "manifest.json"
 
@@ -250,3 +272,51 @@ def test_capture_real_goldens_script_smoke() -> None:
     cli = normalize_report(triage_actions_log_cli(log_path))
     api = normalize_report(triage_actions_log(log_path))
     assert cli == api
+
+
+# ──── step_scan_reuse ─────────────────────────────────────────────
+
+class StepScanTests(unittest.TestCase):
+    def test_combined_collector_matches_separate_definitions(self):
+        body=['normal','##[error]message','::error file=test.py,line=12::problem',
+              'FAILED tests/test_x.py::test_x - assertion','FAILED odd',
+              '##[error]The operation was canceled.',
+              'Process completed with exit code 1.']
+        self.assertEqual(a._collect_log_wide(body),
+            (a._collect_official_error_messages(body),a._collect_workflow_errors(body),a._collect_pytest_failed(body)))
+        meta=a._analyze_step('job','Run test',body)
+        self.assertTrue(meta.cancel_or_timeout)
+        self.assertTrue(meta.is_failure_evidence())
+        self.assertIs(meta.body,body)
+
+    def test_no_error_and_exit_message_containing_timeout(self):
+        self.assertFalse(a._analyze_step('','Run', ['normal']).cancel_or_timeout)
+        self.assertFalse(a._analyze_step('','Run',
+            ['##[error]Process completed with exit code 1 timeout expired']).cancel_or_timeout)
+
+
+# ──── report_assert ───────────────────────────────────────────────
+
+def test_exact_line_matches_found() -> None:
+    lines = ["FOUND: exit code: 1", "FOUND: actions log failing step (x): pytest"]
+    assert_report_has_exact_line(lines, "FOUND: exit code: 1")
+
+
+def test_substring_prefix_does_not_match_longer_line() -> None:
+    lines = ["FOUND: actions log failing step (actions-log): pytest -q"]
+    with pytest.raises(AssertionError, match="exactly one line equal"):
+        assert_report_has_exact_line(lines, "FOUND: actions log failing step")
+
+
+def test_not_found_does_not_satisfy_found_prefix() -> None:
+    lines = ["NOT FOUND: actions log failing step (actions-log)"]
+    with pytest.raises(AssertionError):
+        assert_report_has_exact_line(lines, "FOUND: actions log failing step (actions-log)")
+
+
+def test_startswith_style_helper_would_false_pass() -> None:
+    """Document the PR #3 bug: startswith('FOUND: foo') matches NOT FOUND: foo."""
+    lines = ["NOT FOUND: actions log failing step (actions-log)"]
+    assert not any(ln == "FOUND: actions log failing step (actions-log)" for ln in lines)
+    assert any(ln.startswith("FOUND: actions log failing step") for ln in lines) is False
+    assert any("FOUND: actions log failing step" in ln for ln in lines) is True
