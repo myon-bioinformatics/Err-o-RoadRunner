@@ -830,12 +830,27 @@ def resolve_job(artifact: str, jobs: list[dict]) -> str | None:
     if not names:
         return None
 
-    for key in _python_version_keys(artifact):
+    art_low = artifact.lower()
+    is_setup_report = art_low.startswith("junit-setup-")
+    version_artifact = "junit-" + art_low.removeprefix("junit-setup-") if is_setup_report else artifact
+    for key in _python_version_keys(version_artifact):
         matches = [n for n in names if key in n]
         if len(matches) == 1:
             return matches[0]
 
-    art_low = artifact.lower()
+    # Preserve the owning job of each phase; never assign setup to a test
+    # job just because both names contain "test" or "collect".
+    if art_low in {"setup-identity", "failure-identity"}:
+        exact = [name for name in names if name.lower() == f"{art_low} / collect"]
+        if len(exact) == 1:
+            return exact[0]
+    if is_setup_report:
+        phase = art_low.removeprefix("junit-setup-")
+        normalized = [(name, "-".join(re.findall(r"[a-z0-9]+", name.lower()))) for name in names]
+        exact = [name for name, norm in normalized if phase == norm]
+        matches = exact or [name for name, norm in normalized if phase and phase in norm]
+        return matches[0] if len(matches) == 1 else None
+
     slug = art_low.replace("junit-", "").replace("controlled-", "")
     for name in names:
         norm = name.lower().replace(" ", "-").replace("(", "").replace(")", "")

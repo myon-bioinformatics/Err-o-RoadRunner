@@ -516,3 +516,23 @@ def test_prepare_fails_closed_on_invalid_xml_or_remaining_leak(sandbox: Path, ra
     result = _run_step(sandbox, "Redact corpus (Silver)")
     assert result.returncode != 0
     assert "Patched" not in result.stdout
+
+
+@pytest.mark.parametrize(("artifact", "expected"), [
+    ("junit-setup-py3.x", "pytest (Python 3.x)"),
+    ("junit-setup-py3.11", "pytest (Python 3.11)"),
+    ("junit-setup-vendor", "Vendor locked baseline"),
+    ("junit-setup-test", "test"),
+    ("junit-setup-clipboard-webkit", "studio-clipboard (webkit)"),
+    ("junit-setup-unknown", None),
+    ("junit-py3.11", "pytest (Python 3.11)"),
+    ("setup-identity", "setup-identity / collect"),
+    ("failure-identity", "failure-identity / collect"),
+])
+def test_harvest_resolves_setup_artifact_to_source_job(artifact, expected):
+    jobs = [{"name": name} for name in (
+        "pytest (Python 3.x)", "pytest (Python 3.11)", "Vendor locked baseline",
+        "test", "test other", "studio-clipboard (webkit)", "studio-clipboard (firefox)",
+        "setup-identity / collect", "failure-identity / collect",
+    )]
+    assert harvest.resolve_job(artifact, jobs) == expected
