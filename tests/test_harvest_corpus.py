@@ -163,7 +163,7 @@ def test_download_failure_recorded() -> None:
     def fake_list_art(repo: str, run_id: int, failures: list) -> list[dict]:
         return [{"name": "junit-py3.12", "id": 2, "expired": False}]
 
-    def fail_download(repo, run_id, name, dest, failures):  # noqa: ANN001
+    def fail_download(repo, run_id, name, dest, failures, *, artifact_id):  # noqa: ANN001
         failures.append(
             mod.HarvestFailure(
                 repo=repo,
@@ -288,7 +288,7 @@ def test_collection_coverage_end_to_end(tmp_path, monkeypatch, scenario, expecte
             return []
         return [{"name": "junit", "id": 1, "expired": scenario == "expired"}]
 
-    def download(repo, run_id, name, dest, failures):
+    def download(repo, run_id, name, dest, failures, *, artifact_id):
         if scenario != "empty_artifact":
             (dest / "result.xml").write_text("<broken" if scenario == "invalid_xml" else
                 '<testsuite><testcase name="bad"><failure>boom</failure></testcase></testsuite>')
@@ -326,11 +326,11 @@ def test_download_failure_in_one_repository_with_other_confirmed_empty(tmp_path,
     monkeypatch.setattr(mod, "REPOS", ["good", "bad"])
     def runs(repo, failures):
         return [] if repo == "good" else [{"databaseId": 1}]
-    def download(repo, run_id, name, dest, failures):
+    def download(repo, run_id, name, dest, failures, *, artifact_id):
         failures.append(mod.HarvestFailure(repo, run_id, name, "download_artifact", "network error"))
         return False
     monkeypatch.setattr(mod, "list_failed_runs", runs)
-    monkeypatch.setattr(mod, "list_artifacts", lambda *args: [{"name": "junit", "expired": False}])
+    monkeypatch.setattr(mod, "list_artifacts", lambda *args: [{"name": "junit", "id": 1, "expired": False}])
     monkeypatch.setattr(mod, "download_artifact", download)
     coverage = {}
     entries, failures, _ = mod.harvest(coverage=coverage)
@@ -353,7 +353,7 @@ def test_duplicate_corpus_still_checks_artifact(monkeypatch):
     mod = _load_harvest_module()
     monkeypatch.setattr(mod, "REPOS", ["good"])
     monkeypatch.setattr(mod, "list_failed_runs", lambda *args: [{"databaseId": 1}])
-    monkeypatch.setattr(mod, "list_artifacts", lambda *args: [{"name": "junit", "expired": True}])
+    monkeypatch.setattr(mod, "list_artifacts", lambda *args: [{"name": "junit", "id": 1, "expired": True}])
     coverage = {}
     mod.harvest(existing=[{"repo": mod.ORG + "/good", "run_id": 1, "artifact": "junit"}], coverage=coverage)
     assert coverage["good"]["status"] == "unavailable"
@@ -373,10 +373,10 @@ def test_same_repository_partial_and_expired_with_valid_target(monkeypatch):
     monkeypatch.setattr(mod, "REPOS", ["repo"])
     monkeypatch.setattr(mod, "list_failed_runs", lambda *args: [{"databaseId": 1}])
     monkeypatch.setattr(mod, "list_artifacts", lambda *args: [
-        {"name": "junit-old", "expired": True},
-        {"name": "junit-new", "expired": False},
+        {"name": "junit-old", "id": 1, "expired": True},
+        {"name": "junit-new", "id": 2, "expired": False},
     ])
-    def download(repo, run_id, name, dest, failures):
+    def download(repo, run_id, name, dest, failures, *, artifact_id):
         (dest / "passing.xml").write_text('<testsuite><testcase name="passing"/></testsuite>')
         return True
     monkeypatch.setattr(mod, "download_artifact", download)
@@ -402,8 +402,8 @@ def test_gh_calls_never_prompt_and_time_out_as_stage_failures(tmp_path):
     failures = []
     with mock.patch.object(mod.subprocess, "run", hang):
         assert mod.run_gh(["api", "x"], failures, repo="r", run_id=1, artifact=None, stage="list_runs") is None
-        with mock.patch.object(mod, "_artifact_id", lambda *a: 7):
-            assert mod.download_artifact("r", 1, "junit", tmp_path / "d", failures) is False
+        assert mod.download_artifact("r", 1, "junit", tmp_path / "d", failures, artifact_id=7) is False
+        assert failures[-1].as_dict()["artifact_id"] == 7
     assert [f.stage for f in failures] == ["list_runs", "download_artifact"]
     assert all("timed out after" in f.detail for f in failures)
     assert [k["timeout"] for k in seen] == [mod.GH_TIMEOUT_SECONDS, mod.ARTIFACT_TIMEOUT_SECONDS]
@@ -536,3 +536,80 @@ def test_harvest_resolves_setup_artifact_to_source_job(artifact, expected):
         "setup-identity / collect", "failure-identity / collect",
     )]
     assert harvest.resolve_job(artifact, jobs) == expected
+
+
+@pytest.mark.parametrize("mode", ["new", "hashed-legacy", "single-newer", "unhashed-legacy", "same-content"])
+def test_harvest_downloads_listed_ids_without_reresolving_names(tmp_path, monkeypatch, mode):
+    import io
+    import zipfile
+
+    mod = _load_harvest_module()
+    repo = "Ironmate"
+    run_id = 12345
+    name = "junit-" + "same-name-" * 9
+    source_path = "nested/results.xml"
+    old_id, new_id = 14524043122, 14527477725
+    old_case = '<testsuite><testcase name="same"><failure>old failure</failure></testcase></testsuite>'
+    new_case = '<testsuite><testcase name="same"><failure>new failure</failure></testcase></testsuite>'
+    archives = {old_id: old_case, new_id: old_case if mode == "same-content" else new_case}
+    artifact_ids = [new_id] if mode in {"single-newer", "unhashed-legacy"} else [old_id, new_id]
+    listed = [{"name": name, "id": aid, "expired": False} for aid in artifact_ids]
+    listing_calls = []
+    download_ids = []
+
+    def list_gh(args, *rest, **kwargs):
+        assert args == ["api", f"repos/{mod.ORG}/{repo}/actions/runs/{run_id}/artifacts",
+                        "--jq", ".artifacts[] | {name,id,expired}"]
+        listing_calls.append(args)
+        return "\n".join(json.dumps(item) for item in listed)
+
+    def download_gh(argv, **kwargs):
+        assert len(argv) == 3 and argv[:2] == ["gh", "api"]
+        aid = int(argv[2].split("/")[-2])
+        assert argv[2] == f"repos/{mod.ORG}/{repo}/actions/artifacts/{aid}/zip"
+        download_ids.append(aid)
+        out = io.BytesIO()
+        with zipfile.ZipFile(out, "w") as zf:
+            zf.writestr(source_path, archives[aid])
+        return subprocess.CompletedProcess(argv, 0, out.getvalue(), b"")
+
+    previous = []
+    if mode in {"hashed-legacy", "single-newer", "unhashed-legacy"}:
+        raw = tmp_path / "raw.xml"
+        raw.write_text(old_case)
+        legacy, pending = mod._harvest_file(repo, {"databaseId": run_id}, name, raw, source_path, [])
+        if mode == "unhashed-legacy":
+            legacy.pop("sha256")
+            monkeypatch.setattr(mod, "CORPUS", tmp_path / "nonexistent-corpus")
+        previous = [legacy]
+        old_id_path = (legacy["id"], legacy["xml"], legacy["golden"])
+    monkeypatch.setattr(mod, "REPOS", [repo])
+    monkeypatch.setattr(mod, "list_failed_runs", lambda *args: [{"databaseId": run_id}])
+    monkeypatch.setattr(mod, "run_gh", list_gh)
+    monkeypatch.setattr(mod.subprocess, "run", download_gh)
+    entries, failures, pending = mod.harvest(existing=previous)
+    assert not failures
+    assert len(listing_calls) == 1
+    assert download_ids == artifact_ids
+    expected = {"new": [old_id, new_id], "hashed-legacy": [new_id], "single-newer": [new_id],
+                "unhashed-legacy": [], "same-content": [old_id]}[mode]
+    assert [e["artifact_id"] for e in entries] == expected
+    assert all(e["artifact"] == name and e["source_file"] == source_path for e in entries)
+    assert len({e["id"] for e in entries}) == len({p.rel_path for p in pending}) == len(expected)
+    assert all(str(e["artifact_id"]) in e["id"] and str(e["artifact_id"]) in e["xml"] for e in entries)
+    if previous:
+        assert "artifact_id" not in previous[0]
+        assert tuple(previous[0][key] for key in ("id", "xml", "golden")) == old_id_path
+        assert all(e["xml"] != previous[0]["xml"] for e in entries)
+
+
+@pytest.mark.parametrize("value", [True, 0, -1, "7", None])
+def test_invalid_listed_artifact_ids_fail_without_download(value, tmp_path, monkeypatch):
+    mod = _load_harvest_module()
+    monkeypatch.setattr(mod, "run_gh", lambda *a, **k: json.dumps({"name": "junit", "id": value, "expired": False}))
+    failures = []
+    assert mod.list_artifacts("r", 1, failures) == []
+    assert failures[-1].stage == "list_artifacts"
+    monkeypatch.setattr(mod.subprocess, "run", lambda *a, **k: pytest.fail("invalid ID reached download"))
+    assert not mod.download_artifact("r", 1, "junit", tmp_path, failures, artifact_id=value)
+    assert failures[-1].detail == "invalid listed artifact id"

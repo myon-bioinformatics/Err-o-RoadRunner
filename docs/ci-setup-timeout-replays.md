@@ -21,3 +21,21 @@ Each replay checks that triage prioritizes the setup timeout over a later
 missing-artifact error or warning. A disposable process exits with failure
 to exercise fresh setup JUnit through failure-only extraction, leak checks,
 and the public `digest` CLI. It produces no product-test JUnit.
+
+## Artifact identity when harvesting
+
+The bulk harvester downloads by the unique artifact ID returned for a run,
+rather than looking up its display name again. A rerun can list two artifacts
+with the same name. New corpus rows include the artifact ID so different
+artifacts with the same member path do not overwrite one another. Identical
+redacted content is still deduplicated. Existing rows, IDs and file paths are
+left intact. For a legacy row, use its digest (or the readable corpus file)
+when available; use the old name/path only if its digest is unavailable and
+the artifact listing has a unique ID for that name.
+
+An artifact ID identifies a run artifact, not a source job or run attempt.
+A future job-specific intake must verify the requested repository, run,
+attempt and job, and independently link the artifact to that job. If that
+link is ambiguous or unavailable, report it as unverified and collect no
+artifact for that job; do not infer the link from the display name or
+fall back to a broader harvest.

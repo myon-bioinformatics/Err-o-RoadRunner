@@ -67,6 +67,7 @@ class HarvestFailure:
     artifact: str | None
     stage: str
     detail: str
+    artifact_id: int | None = None
 
     def as_dict(self) -> dict:
         return {
@@ -75,6 +76,7 @@ class HarvestFailure:
             "artifact": self.artifact,
             "stage": self.stage,
             "detail": self.detail,
+            **({"artifact_id": self.artifact_id} if self.artifact_id is not None else {}),
         }
 
 
@@ -198,7 +200,7 @@ def list_artifacts(repo: str, run_id: int, failures: list[HarvestFailure]) -> li
             continue
         try:
             item = json.loads(line)
-            if not isinstance(item, dict) or not isinstance(item.get("name"), str) or not isinstance(item.get("id"), int) or not isinstance(item.get("expired"), bool):
+            if not isinstance(item, dict) or not isinstance(item.get("name"), str) or not _valid_artifact_id(item.get("id")) or not isinstance(item.get("expired"), bool):
                 raise ValueError("expected artifact name/id/expired")
             items.append(item)
         except ValueError as exc:
@@ -214,14 +216,8 @@ def list_artifacts(repo: str, run_id: int, failures: list[HarvestFailure]) -> li
     return items
 
 
-def _artifact_id(repo: str, run_id: int, name: str, failures: list[HarvestFailure]) -> int | None:
-    out = run_gh(
-        ["api", f"repos/{ORG}/{repo}/actions/runs/{run_id}/artifacts", "--jq", f'.artifacts[] | select(.name == "{name}") | .id'],
-        failures, repo=repo, run_id=run_id, artifact=name, stage="download_artifact",
-    )
-    if not out or not out.strip():
-        return None
-    return int(out.split()[0])
+def _valid_artifact_id(value: object) -> bool:
+    return type(value) is int and value > 0
 
 
 def safe_extract(data: bytes, dest: Path) -> list[Path]:
@@ -255,10 +251,11 @@ def download_artifact(
     name: str,
     dest: Path,
     failures: list[HarvestFailure],
+    *,
+    artifact_id: int,
 ) -> bool:
-    artifact_id = _artifact_id(repo, run_id, name, failures)
-    if artifact_id is None:
-        failures.append(HarvestFailure(repo=repo, run_id=run_id, artifact=name, stage="download_artifact", detail="artifact id not found"))
+    if not _valid_artifact_id(artifact_id):
+        failures.append(HarvestFailure(repo, run_id, name, "download_artifact", "invalid listed artifact id"))
         return False
     try:
         proc = subprocess.run(
@@ -271,16 +268,16 @@ def download_artifact(
         )
     except subprocess.TimeoutExpired:
         failures.append(HarvestFailure(repo=repo, run_id=run_id, artifact=name, stage="download_artifact",
-                                       detail=f"gh timed out after {ARTIFACT_TIMEOUT_SECONDS}s"))
+                                       detail=f"gh timed out after {ARTIFACT_TIMEOUT_SECONDS}s", artifact_id=artifact_id))
         return False
     if proc.returncode != 0:
         detail = (proc.stderr or proc.stdout or b"").decode("utf-8", "replace").strip() or f"download exit {proc.returncode}"
-        failures.append(HarvestFailure(repo=repo, run_id=run_id, artifact=name, stage="download_artifact", detail=detail[:500]))
+        failures.append(HarvestFailure(repo=repo, run_id=run_id, artifact=name, stage="download_artifact", detail=detail[:500], artifact_id=artifact_id))
         return False
     try:
         safe_extract(proc.stdout, dest)
     except zipfile.BadZipFile as exc:
-        failures.append(HarvestFailure(repo=repo, run_id=run_id, artifact=name, stage="download_artifact", detail=f"bad zip: {exc}"[:500]))
+        failures.append(HarvestFailure(repo=repo, run_id=run_id, artifact=name, stage="download_artifact", detail=f"bad zip: {exc}"[:500], artifact_id=artifact_id))
         return False
     return True
 
@@ -493,17 +490,26 @@ def _load_manifest(path: Path) -> list[dict]:
 
 
 def _existing_keys(entries: list[dict]) -> tuple[set[tuple], set[str]]:
-    keys = {(e.get("repo"), e.get("run_id"), e.get("artifact"), e.get("source_file")) for e in entries}
-    # Entries harvested before source_file existed: treat the whole artifact as already taken.
-    keys |= {(e.get("repo"), e.get("run_id"), e.get("artifact"), "*") for e in entries if "source_file" not in e}
-    hashes = {e["sha256"] for e in entries if e.get("sha256")}
+    keys: set[tuple] = set()
+    hashes: set[str] = set()
     for e in entries:
-        if e.get("sha256"):
-            continue
-        rel = e.get("xml")
-        path = CORPUS / rel if rel else None
-        if path is not None and path.is_file():
-            hashes.add(hashlib.sha256(path.read_text(encoding="utf-8").encode("utf-8")).hexdigest())
+        digest = e.get("sha256")
+        if not digest:
+            path = None
+            if e.get("xml"):
+                path = CORPUS / e["xml"]
+            elif e.get("data"):
+                path = RESULTS_CORPUS / e["data"]
+            if path is not None and path.is_file():
+                digest = hashlib.sha256(path.read_text(encoding="utf-8").encode("utf-8")).hexdigest()
+        if digest:
+            hashes.add(digest)
+        if _valid_artifact_id(e.get("artifact_id")):
+            keys.add((e.get("repo"), e.get("run_id"), e["artifact_id"], e.get("source_file", "*")))
+        elif not digest:
+            # Legacy identity without readable contents: retain its original
+            # name/path fallback, never assign it a guessed artifact ID.
+            keys.add((e.get("repo"), e.get("run_id"), e.get("artifact"), e.get("source_file", "*")))
     return keys, hashes
 
 
@@ -529,34 +535,46 @@ def harvest(
             if count >= entries_limit_per_repo:
                 break
             run_id = int(run["databaseId"])
-            for art in list_artifacts(repo, run_id, failures):
+            listed = list_artifacts(repo, run_id, failures)
+            ids_by_name: dict[str, set[int]] = {}
+            for art in listed:
+                ids_by_name.setdefault(art["name"], set()).add(art["id"])
+            for art in listed:
                 if count >= entries_limit_per_repo:
                     break
-                name = art["name"]
+                name, artifact_id = art["name"], art["id"]
                 if not is_junit_artifact(name):
                     continue
                 if art.get("expired"):
                     failures.append(
-                        HarvestFailure(repo=repo, run_id=run_id, artifact=name, stage="artifact_expired", detail="artifact expired")
+                        HarvestFailure(repo=repo, run_id=run_id, artifact=name, stage="artifact_expired", detail="artifact expired", artifact_id=artifact_id)
                     )
                     continue
                 with tempfile.TemporaryDirectory() as tmp:
                     dest = Path(tmp)
-                    if not download_artifact(repo, run_id, name, dest, failures):
+                    if not download_artifact(repo, run_id, name, dest, failures, artifact_id=artifact_id):
                         continue
                     files = sorted(p for p in dest.rglob("*") if p.is_file())
                     valid_files = [p for p in files if is_valid_result(p)]
                     if not valid_files:
-                        failures.append(HarvestFailure(repo, run_id, name, "inspect_artifact", "no valid test result files"))
+                        failures.append(HarvestFailure(repo, run_id, name, "inspect_artifact", "no valid test result files", artifact_id=artifact_id))
                     checked += len(valid_files)
                     for path in files:
                         if count >= entries_limit_per_repo:
                             break
                         rel_src = path.relative_to(dest).as_posix()
-                        key = (f"{ORG}/{repo}", run_id, name, rel_src)
-                        if key in seen_keys or (f"{ORG}/{repo}", run_id, name, "*") in seen_keys:
+                        prefix = (f"{ORG}/{repo}", run_id)
+                        key = (*prefix, artifact_id, rel_src)
+                        if key in seen_keys or (*prefix, artifact_id, "*") in seen_keys:
                             continue
-                        made = _harvest_file(repo, run, name, path, rel_src, failures)
+                        # An old manifest has no attempt-specific ID. Its name
+                        # still deduplicates a unique artifact, but must not
+                        # mask another artifact with that name after a rerun.
+                        if len(ids_by_name[name]) == 1 and (
+                            (*prefix, name, rel_src) in seen_keys or (*prefix, name, "*") in seen_keys
+                        ):
+                            continue
+                        made = _harvest_file(repo, run, name, path, rel_src, failures, artifact_id=artifact_id)
                         if made is None:
                             continue
                         entry, write = made
@@ -619,7 +637,8 @@ def report_markdown(report: dict) -> str:
         lines.append(f"| {cell(repo)} | {item['status']} | {item['checked_files']} |")
     lines += ["", "### Collection failures / expired artifacts", ""]
     for f in report["failures"]:
-        lines.append(f"- {cell(f['repo'])}, run {f['run_id']}, {cell(f['artifact'])}: {cell(f['stage'])}: {cell(f['detail'])}")
+        artifact_id = f" (ID {f['artifact_id']})" if f.get('artifact_id') is not None else ""
+        lines.append(f"- {cell(f['repo'])}, run {f['run_id']}, {cell(f['artifact'])}{artifact_id}: {cell(f['stage'])}: {cell(f['detail'])}")
     if not report["failures"]:
         lines.append("- None")
     lines += ["", "### New entries by repository", ""]
@@ -629,7 +648,10 @@ def report_markdown(report: dict) -> str:
     return "\n".join(lines) + "\n"
 
 
-def _harvest_file(repo: str, run: dict, artifact: str, path: Path, rel_src: str, failures: list[HarvestFailure]) -> tuple[dict, PendingCorpusWrite] | None:
+def _harvest_file(
+    repo: str, run: dict, artifact: str, path: Path, rel_src: str, failures: list[HarvestFailure],
+    *, artifact_id: int | None = None,
+) -> tuple[dict, PendingCorpusWrite] | None:
     run_id = int(run["databaseId"])
     suffix = path.suffix.lower()
     base = {
@@ -642,11 +664,16 @@ def _harvest_file(repo: str, run: dict, artifact: str, path: Path, rel_src: str,
         "source_file": rel_src,
     }
     stem = _slug(f"{repo}_{run_id}_{artifact}_{Path(rel_src).stem}")
+    if artifact_id is not None:
+        base["artifact_id"] = artifact_id
+        # Keep the identity suffix outside the clipped display slug.
+        source_key = hashlib.sha256(rel_src.encode("utf-8")).hexdigest()
+        stem = f"{stem}_{artifact_id}_{source_key}"
     if suffix == ".xml":
         try:
             tree = ET.parse(path)
         except ET.ParseError as exc:
-            failures.append(HarvestFailure(repo=repo, run_id=run_id, artifact=artifact, stage="parse_xml", detail=str(exc)[:500]))
+            failures.append(HarvestFailure(repo=repo, run_id=run_id, artifact=artifact, stage="parse_xml", detail=str(exc)[:500], artifact_id=artifact_id))
             return None
         trimmed = extract_failing_xml(tree)
         if trimmed is None:
