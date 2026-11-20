@@ -561,6 +561,16 @@ uv run pytest -q tests
 
 Tests are grouped with pytest markers: `success`, `failure`, and `adversarial`.
 
+### CI setup evidence
+
+The vendor gate and each Python test lane write and upload their setup JUnit
+before the mutation checks or pytest. The `setup-identity` artifact collects
+setup separately from the normal `failure-identity` test reports; a failed
+setup step never becomes a passing or fabricated test result. If the vendor
+gate blocks the test matrix, only the vendor report is expected for setup.
+A runner cancellation, timeout, or failure before the reporting script can
+run may still leave a missing report.
+
 ### Component boundaries
 
 - `triage.py`: user-facing checkout entry and failure parsing, reporting, and

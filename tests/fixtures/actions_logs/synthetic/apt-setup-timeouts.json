@@ -1,0 +1,50 @@
+{
+  "provenance": "Public job observations; the test reconstructs minimal logs and XML, not downloaded artifacts.",
+  "cases": [
+    {
+      "id": "ironmate-clipboard-webkit-apt",
+      "repo": "myon-bioinformatics/Ironmate",
+      "workflow": "CI",
+      "run_id": 44517161759,
+      "job_id": 135536047309,
+      "job": "studio-clipboard (webkit)",
+      "setup_step": "Install clipboard browser OS dependencies",
+      "budget_minutes": 15,
+      "apt_download": "140 MB",
+      "report_step": "Preserve clipboard browser evidence",
+      "observed_report": "No clipboard artifact files; upload warning",
+      "artifact_log_level": "warning",
+      "run_attempt": 1
+    },
+    {
+      "id": "ironmate-marp-libreoffice-apt",
+      "repo": "myon-bioinformatics/Ironmate",
+      "workflow": "CI",
+      "run_id": 44519780880,
+      "job_id": 135545149637,
+      "job": "Marp real PPTX conversion",
+      "setup_step": "Install minimal LibreOffice for the UNO check",
+      "budget_minutes": 5,
+      "apt_download": "92.6 MB",
+      "report_step": "Preserve Marp JUnit",
+      "observed_report": "No Marp test JUnit; upload failed",
+      "artifact_log_level": "error",
+      "run_attempt": 1
+    },
+    {
+      "id": "pswb-iphone-webkit-apt",
+      "repo": "myon-bioinformatics/PySaiyanWeBoo",
+      "workflow": "Platform matrix",
+      "run_id": 44509826341,
+      "job_id": 135536153757,
+      "job": "webkit / iPhone 13 (emulation)",
+      "setup_step": "System libraries and the browser (bounded; WebKit needs many packages)",
+      "budget_minutes": 20,
+      "apt_download": "126 MB",
+      "report_step": "Run actions/upload-artifact@v7",
+      "observed_report": "No platform artifact files; upload failed",
+      "artifact_log_level": "error",
+      "run_attempt": 2
+    }
+  ]
+}

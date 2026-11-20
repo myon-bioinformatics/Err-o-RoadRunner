@@ -28,6 +28,7 @@ jobs:
         with:
           persist-credentials: false
       - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        id: setup_uv
         with:
           version: "latest"
           python-version: "3.15"
@@ -37,6 +38,7 @@ jobs:
           save-cache: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
           prune-cache: true
       - name: Fetch pinned shared vendor tool
+        id: vendor_tool
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: myon-bioinformatics/myon-bioinformatics
@@ -44,11 +46,29 @@ jobs:
           path: .vendor-sync-tools
           persist-credentials: false
       - name: Verify and recreate locked vendor snapshot
+        id: verify_vendor
         shell: bash
         run: |
           set -euo pipefail
           python -S .vendor-sync-tools/vendor_sync.py check --manifest vendor.lock.json
           python -S .vendor-sync-tools/vendor_sync.py recreate --manifest vendor.lock.json
+
+      - name: Record setup JUnit
+        if: ${{ !cancelled() }}
+        env:
+          SETUP_OUTCOMES: |
+            Setup uv and Python=${{ steps.setup_uv.outcome }}
+            Fetch pinned shared vendor tool=${{ steps.vendor_tool.outcome }}
+            Verify and recreate locked vendor snapshot=${{ steps.verify_vendor.outcome }}
+        run: python3 -S scripts/ci_setup_junit.py vendor-locked reports/setup.xml
+      - name: Preserve setup JUnit
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: junit-setup-vendor
+          path: reports/setup.xml
+          if-no-files-found: error
+          retention-days: 14
 
   test:
     name: pytest (Python ${{ matrix.python-version }})
@@ -65,6 +85,7 @@ jobs:
         with:
           persist-credentials: false
       - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        id: setup_uv
         # The latest lane must not reuse an older system Python during venv creation.
         env:
           UV_PYTHON_PREFERENCE: ${{ matrix.python-version == '3.x' && 'only-managed' || 'managed' }}
@@ -76,13 +97,36 @@ jobs:
           # Pull requests restore the cache and never write it; only main saves it.
           save-cache: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
           prune-cache: true
-      - run: python -VV
+      - name: Report Python version
+        id: python_version
+        run: python -VV
       - name: Install test dependencies
+        id: test_deps
         run: uv sync --locked
       - name: Compile
+        id: compile
         run: uv run --locked python -m compileall -q triage.py sentinel.py errlib
       - name: Import smoke
+        id: import_smoke
         run: uv run --locked python -c "import triage, sentinel, errlib.actions_log, errlib.junit_redact, errlib.project_version"
+      - name: Record setup JUnit
+        if: ${{ !cancelled() }}
+        env:
+          SETUP_OUTCOMES: |
+            Setup uv and Python=${{ steps.setup_uv.outcome }}
+            Report Python version=${{ steps.python_version.outcome }}
+            Install test dependencies=${{ steps.test_deps.outcome }}
+            Compile=${{ steps.compile.outcome }}
+            Import smoke=${{ steps.import_smoke.outcome }}
+        run: python3 -S scripts/ci_setup_junit.py pytest-py${{ matrix.python-version }} reports/setup.xml
+      - name: Preserve setup JUnit
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: junit-setup-py${{ matrix.python-version }}
+          path: reports/setup.xml
+          if-no-files-found: error
+          retention-days: 14
       - name: Combo mutation (zero survivors)
         run: uv run --locked python scripts/check_mutations.py combo
       - name: Version mutation (zero survivors)
@@ -109,9 +153,23 @@ jobs:
     uses: myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-junit-identity.yml@9e3da7ae1846e9604ebc24bb5178f7de094a4e77
     with:
       expected-reports: '["junit-py3.11/junit.xml","junit-py3.12/junit.xml","junit-py3.13/junit.xml","junit-py3.14/junit.xml","junit-py3.15/junit.xml","junit-py3.x/junit.xml"]'
-      artifact-pattern: "junit-*"
+      artifact-pattern: "junit-py*"
       output-artifact: failure-identity
-      commit-sha: ${{ github.event.pull_request.head.sha || github.sha }}
+      commit-sha: ${{ github.sha }}
+
+  setup-identity:
+    needs: [changes, vendor-locked, test]
+    if: always() && needs.changes.outputs.product_changed == 'true'
+    permissions:
+      contents: read
+      actions: read
+    uses: myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-junit-identity.yml@9e3da7ae1846e9604ebc24bb5178f7de094a4e77
+    with:
+      # A failed vendor gate blocks the entire pytest matrix; do not invent its setup reports.
+      expected-reports: ${{ needs.vendor-locked.result == 'success' && '["junit-setup-vendor/setup.xml","junit-setup-py3.11/setup.xml","junit-setup-py3.12/setup.xml","junit-setup-py3.13/setup.xml","junit-setup-py3.14/setup.xml","junit-setup-py3.15/setup.xml","junit-setup-py3.x/setup.xml"]' || '["junit-setup-vendor/setup.xml"]' }}
+      artifact-pattern: "junit-setup-*"
+      output-artifact: setup-identity
+      commit-sha: ${{ github.sha }}
 
   actionlint:
     needs: changes
