@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="3" tests="1094" time="47.143" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_flutter_navigation_basic_repository_metadata" name="test_vendor_lock_matches_exact_bytes_and_ci_contract" time="0.002"><failure message="AssertionError: assert 0 == 1&#10; +  where 0 = &lt;built-in method count of str object at 0x&lt;addr&gt;&gt;('ref: 9e3da7ae1846e9604ebc24bb5178f7de094a4e77')&#10; +    where &lt;built-in method count of str object at 0x&lt;addr&gt;&gt; = 'name: Non-Dart checks\n\n# Python stdlib / pytest oracles, Docker-friendly smoke, and change-selected\n# Playwright. ...: ${{ needs.junit-plan.outputs.reports }}\n      commit-sha: ${{ github.event.pull_request.head.sha || github.sha }}\n'.count">def test_vendor_lock_matches_exact_bytes_and_ci_contract():
+        vendor = PYTHON_DIR / "vendor"
+        lock = json.loads((PYTHON_DIR / "vendor.lock.json").read_text(encoding="utf-8"))
+        assert lock["schema"] == "vendor-lock/1"
+        expected = {
+            ("myon-bioinformatics/BrowserTestKit", "scripts/image_diff.py", "python/vendor/image_diff.py"),
+            ("myon-bioinformatics/Ironmate", "pillow_min.py", "python/vendor/pillow_min/pillow_min.py"),
+            ("myon-bioinformatics/Ironmate", "LICENSE", "python/vendor/pillow_min/Ironmate-LICENSE"),
+            ("myon-bioinformatics/yourself", "yourself.py", "python/vendor/yourself.py"),
+            ("myon-bioinformatics/yourself", "LICENSE", "python/vendor/yourself-LICENSE"),
+            ("myon-bioinformatics/xprobe", "xprobe.py", "python/vendor/xprobe.py"),
+            ("myon-bioinformatics/xprobe", "LICENSE", "python/vendor/xprobe-LICENSE"),
+            ("myon-bioinformatics/myon-bioinformatics", "gh_ops.py", "python/vendor/gh_ops.py"),
+            ("myon-bioinformatics/myon-bioinformatics", "LICENSE", "python/vendor/myon-bioinformatics-LICENSE"),
+            ("myon-bioinformatics/BrowserTestKit", "scripts/check_evidence.py", "python/vendor/check_evidence.py"),
+            ("myon-bioinformatics/BrowserTestKit", "scripts/check_png.py", "python/vendor/check_png.py"),
+            ("myon-bioinformatics/BrowserTestKit", "scripts/jsonl_digest.py", "python/vendor/jsonl_digest.py"),
+            ("myon-bioinformatics/BrowserTestKit", "LICENSE", "python/vendor/browser-test-kit-LICENSE"),
+            ("myon-bioinformatics/cli_args", "cli_args.py", "python/vendor/cli_args.py"),
+            ("myon-bioinformatics/cli_args", "LICENSE", "python/vendor/cli_args-LICENSE"),
+            ("myon-bioinformatics/gh_identity", "gh_identity.py", "python/vendor/gh_identity.py"),
+            ("myon-bioinformatics/gh_identity", "LICENSE", "python/vendor/gh_identity-LICENSE"),
+            ("myon-bioinformatics/BrowserTestKit", "scripts/interaction.mjs", "e2e/utils/interaction.mjs"),
+            ("myon-bioinformatics/BrowserTestKit", "scripts/browser_execution.mjs", "e2e/utils/browser_execution.mjs"),
+        }
+        entries = lock["files"]
+        assert {(entry["repository"], entry["source"], entry["destination"]) for entry in entries} == expected
+        for entry in entries:
+            assert entry["ref"] == entry["commit"]
+            assert len(entry["ref"]) == 40 and set(entry["ref"]) &lt;= set("0123456789abcdef")
+        # The former Ironmate producer was replaced by gh_identity (#169) and removed.
+        assert not any((vendor / name).exists() for name in (
+            "repository_metadata_contract.py", "repository_metadata_generator.py", "Ironmate-LICENSE"))
+        assert len({entry["destination"] for entry in entries}) == len(entries)
+        for entry in entries:
+            commit = entry["commit"]
+            assert len(commit) == 40 and set(commit) &lt;= set("0123456789abcdef")
+            data = (ROOT / entry["destination"]).read_bytes()
+            assert hashlib.sha256(data).hexdigest() == entry["sha256"]
+            blob = f"blob {len(data)}".encode() + bytes([0]) + data
+            assert hashlib.sha1(blob).hexdigest() == entry["blob_sha"]
+        assert not (vendor / "repository_metadata_provenance.json").exists()
+    
+        workflow = (ROOT / ".github/workflows/non-dart.yml").read_text(encoding="utf-8")
+        pin = "9e3da7ae1846e9604ebc24bb5178f7de094a4e77"
+&gt;       assert workflow.count(f"ref: {pin}") == 1
+E       AssertionError: assert 0 == 1
+E        +  where 0 = &lt;built-in method count of str object at 0x&lt;addr&gt;&gt;('ref: 9e3da7ae1846e9604ebc24bb5178f7de094a4e77')
+E        +    where &lt;built-in method count of str object at 0x&lt;addr&gt;&gt; = 'name: Non-Dart checks\n\n# Python stdlib / pytest oracles, Docker-friendly smoke, and change-selected\n# Playwright. ...: ${{ needs.junit-plan.outputs.reports }}\n      commit-sha: ${{ github.event.pull_request.head.sha || github.sha }}\n'.count
+
+tests/test_flutter_navigation_basic_repository_metadata.py:173: AssertionError</failure></testcase><testcase classname="tests.test_parent_workflow_pins" name="test_parent_workflow_references_use_reviewed_rollout_commit" time="0.004"><failure message="AssertionError: ['9e3da7ae1846e9604ebc24bb5178f7de094a4e77', '9e3da7ae1846e9604ebc24bb5178f7de094a4e77', '9e3da7ae1846e9604ebc24bb5178f7de094a4e77', '26c442bc51b8a2837fe2556782b2937f396932af', '9e3da7ae1846e9604ebc24bb5178f7de094a4e77']&#10;assert {'26c442bc51b...f7de094a4e77'} == {'9e3da7ae184...f7de094a4e77'}&#10;  &#10;  Extra items in the left set:&#10;  '26c442bc51b8a2837fe2556782b2937f396932af'&#10;  &#10;  Full diff:&#10;    {&#10;  +     '26c442bc51b8a2837fe2556782b2937f396932af',&#10;        '9e3da7ae1846e9604ebc24bb5178f7de094a4e77',&#10;    }">def test_parent_workflow_references_use_reviewed_rollout_commit():
+        pins = []
+        for path in sorted((ROOT / ".github/workflows").glob("*")):
+            if path.suffix not in (".yml", ".yaml"):
+                continue
+            text = path.read_text(encoding="utf-8")
+            # Capture mutable and shortened references too, rather than ignoring them.
+            pins.extend(re.findall(r"uses:\s*['\"]?" + re.escape(PARENT) + r"/[^\s@'\"]+@([^\s'\"]+)", text))
+            lines = text.splitlines()
+            for i, line in enumerate(lines):
+                if re.fullmatch(r"\s+repository:\s*['\"]?" + re.escape(PARENT) + r"['\"]?\s*", line):
+                    refs = [re.fullmatch(r"\s+ref:\s*['\"]?([^\s'\"]+)['\"]?\s*", item) for item in lines[i + 1:i + 12]]
+                    pins.append(next((m.group(1) for m in refs if m), None))
+        assert pins, "shared parent references must remain observable"
+&gt;       assert set(pins) == {PARENT_WORKFLOW_PIN}, pins
+E       AssertionError: ['9e3da7ae1846e9604ebc24bb5178f7de094a4e77', '9e3da7ae1846e9604ebc24bb5178f7de094a4e77', '9e3da7ae1846e9604ebc24bb5178f7de094a4e77', '26c442bc51b8a2837fe2556782b2937f396932af', '9e3da7ae1846e9604ebc24bb5178f7de094a4e77']
+E       assert {'26c442bc51b...f7de094a4e77'} == {'9e3da7ae184...f7de094a4e77'}
+E         
+E         Extra items in the left set:
+E         '26c442bc51b8a2837fe2556782b2937f396932af'
+E         
+E         Full diff:
+E           {
+E         +     '26c442bc51b8a2837fe2556782b2937f396932af',
+E               '9e3da7ae1846e9604ebc24bb5178f7de094a4e77',
+E           }
+
+tests/test_parent_workflow_pins.py:24: AssertionError</failure></testcase></testsuite></testsuites>

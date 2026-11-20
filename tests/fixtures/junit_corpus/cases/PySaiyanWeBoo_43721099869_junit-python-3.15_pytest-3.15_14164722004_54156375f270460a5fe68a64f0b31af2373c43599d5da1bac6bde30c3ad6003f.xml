@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="3" tests="6473" time="98.257" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_pages.WorldTests" name="test_world_script_caches_only_display_preferences_and_favorites_and_requests_only_for_the_opt_in_shared_section" time="0.002"><failure message="AssertionError: Lists differ: ['alpha', 'lang', 'fav', 'bag', 'names'] != ['alpha', 'lang', 'fav', 'names']&#10;&#10;First differing element 3:&#10;'bag'&#10;'names'&#10;&#10;First list contains 1 additional elements.&#10;First extra element 4:&#10;'names'&#10;&#10;- ['alpha', 'lang', 'fav', 'bag', 'names']&#10;?                         -------&#10;&#10;+ ['alpha', 'lang', 'fav', 'names']">self = &lt;test_pages.WorldTests testMethod=test_world_script_caches_only_display_preferences_and_favorites_and_requests_only_for_the_opt_in_shared_section&gt;
+
+    def test_world_script_caches_only_display_preferences_and_favorites_and_requests_only_for_the_opt_in_shared_section(self):
+        # What a visitor writes stays in the page: no cookies, beacons or sockets, no place names. The one thing kept is a small cache of the
+        # chosen language, name-layer preference and starred places in this browser (localStorage, key "ui-world:&lt;id&gt;"; the emoji and board messages are never written).
+        # The one network call is the shared section's refresh button (opt in with shared_issue): an anonymous GET without credentials, cache or referrer.
+        for word in ("sessionStorage", "indexedDB", "cookie", "XMLHttpRequest", "sendBeacon", "WebSocket",
+                     "caches", "Intl", "timeZone", "geolocation", "pushState", "postMessage", "Worker"):
+            self.assertTrue(word not in pysaiyanweboo.WORLD_JS, word)                                # (replaceState only edits the #spot fragment)
+        # The one thing asked of the browser is a camera stream, shown on a &lt;video&gt; and nothing else: a chosen photo is an object URL on an &lt;img&gt;.
+        # Neither is drawn to a canvas, read back, recorded, stored or sent.
+        self.assertEqual(re.findall(r"navigator\.(\w+)", pysaiyanweboo.WORLD_JS), ["mediaDevices"])
+        self.assertEqual(pysaiyanweboo.WORLD_JS.count("getUserMedia"), 1)
+        for word in ("canvas", "drawImage", "FileReader", "ImageCapture", "MediaRecorder", "toDataURL", "toBlob", "createImageBitmap", "arrayBuffer", "readAsDataURL"):
+            self.assertTrue(word not in pysaiyanweboo.WORLD_JS, word)
+        self.assertEqual(sorted(re.findall(r"localStorage\.(\w+)", pysaiyanweboo.WORLD_JS)), ["getItem", "setItem"])
+&gt;       self.assertEqual(re.findall(r"save\(\{(\w+)", pysaiyanweboo.WORLD_JS), ["alpha", "lang", "fav", "names"])  # only these four preferences are written
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Lists differ: ['alpha', 'lang', 'fav', 'bag', 'names'] != ['alpha', 'lang', 'fav', 'names']
+E       
+E       First differing element 3:
+E       'bag'
+E       'names'
+E       
+E       First list contains 1 additional elements.
+E       First extra element 4:
+E       'names'
+E       
+E       - ['alpha', 'lang', 'fav', 'bag', 'names']
+E       ?                         -------
+E       
+E       + ['alpha', 'lang', 'fav', 'names']
+
+tests/test_pages.py:601: AssertionError</failure></testcase></testsuite></testsuites>

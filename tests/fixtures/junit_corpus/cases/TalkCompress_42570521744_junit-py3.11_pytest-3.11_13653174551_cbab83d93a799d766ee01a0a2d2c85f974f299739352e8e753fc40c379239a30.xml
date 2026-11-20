@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="9" tests="5954" time="575.085" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_collision_roundtrip" name="test_impact_lt100m_lists_sub100m_only" time="0.702"><failure message="AssertionError: assert False&#10; +  where False = &lt;built-in method isdisjoint of set object at 0x&lt;addr&gt;&gt;(['en', 'zh', 'es', 'fr', 'pt', 'de', ...])&#10; +    where &lt;built-in method isdisjoint of set object at 0x&lt;addr&gt;&gt; = {'cs', 'pt'}.isdisjoint">def test_impact_lt100m_lists_sub100m_only():
+        d = rt.load()
+        # All committed winners may pass. Exercise the gate with an explicitly
+        # unverified winner instead of depending on unfinished production records.
+        d["records"].pop("cs:vezmete", None)
+        rows = rt.impact(d, "lt100m")
+        assert any(eid == "mx-take-fut-2" and old[1] == "cs"
+                   for eid, _src, old, _new in rows if old)
+        langs = {old[1] for _k, _s, old, _n in rows if old}
+&gt;       assert langs.isdisjoint(d["ge100m_langs"])
+E       AssertionError: assert False
+E        +  where False = &lt;built-in method isdisjoint of set object at 0x&lt;addr&gt;&gt;(['en', 'zh', 'es', 'fr', 'pt', 'de', ...])
+E        +    where &lt;built-in method isdisjoint of set object at 0x&lt;addr&gt;&gt; = {'cs', 'pt'}.isdisjoint
+
+tests/test_collision_roundtrip.py:221: AssertionError</failure></testcase></testsuite></testsuites>

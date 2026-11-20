@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="9" tests="1746" time="134.581" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_mcp_toolcall_lab_vendor_automation" name="test_ci_verifies_vendor_lock_without_auto_update_jobs" time="0.005"><failure message="AssertionError: assert ['26c442bc51b...937f396932af'] == ['9e3da7ae184...f7de094a4e77']&#10;  &#10;  At index 0 diff: '26c442bc51b8a2837fe2556782b2937f396932af' != '9e3da7ae1846e9604ebc24bb5178f7de094a4e77'&#10;  &#10;  Full diff:&#10;    [&#10;  -     '9e3da7ae1846e9604ebc24bb5178f7de094a4e77',&#10;  -     '9e3da7ae1846e9604ebc24bb5178f7de094a4e77',&#10;  +     '26c442bc51b8a2837fe2556782b2937f396932af',&#10;  +     '26c442bc51b8a2837fe2556782b2937f396932af',&#10;    ]">def test_ci_verifies_vendor_lock_without_auto_update_jobs():
+        ci = _workflow()
+        assert {"push", "pull_request"} &lt;= set(ci["on"])
+        assert "workflow_dispatch" not in ci["on"]
+        text = WORKFLOW.read_text(encoding="utf-8")
+        assert "vendor_sync.py promote" not in text
+        assert "vendor_sync.py update" not in text
+        assert "sync_vendor_provenance" not in text
+        assert "resolve-vendor" not in text
+        assert "test-locked" not in text
+    
+        vendor_job = ci["jobs"]["vendor-locked"]
+        test_job = ci["jobs"]["test"]
+        assert vendor_job["permissions"] == test_job["permissions"] == {"contents": "read"}
+        assert "continue-on-error" not in vendor_job
+        assert test_job["needs"] == ["changes", "vendor-locked"]
+    
+        pins = [
+            step["with"]["ref"]
+            for job in (vendor_job, test_job)
+            for step in job["steps"]
+            if step.get("with", {}).get("repository") == "myon-bioinformatics/myon-bioinformatics"
+        ]
+&gt;       assert pins == [VENDOR_SYNC_PIN, VENDOR_SYNC_PIN]
+E       AssertionError: assert ['26c442bc51b...937f396932af'] == ['9e3da7ae184...f7de094a4e77']
+E         
+E         At index 0 diff: '26c442bc51b8a2837fe2556782b2937f396932af' != '9e3da7ae1846e9604ebc24bb5178f7de094a4e77'
+E         
+E         Full diff:
+E           [
+E         -     '9e3da7ae1846e9604ebc24bb5178f7de094a4e77',
+E         -     '9e3da7ae1846e9604ebc24bb5178f7de094a4e77',
+E         +     '26c442bc51b8a2837fe2556782b2937f396932af',
+E         +     '26c442bc51b8a2837fe2556782b2937f396932af',
+E           ]
+
+tests/test_mcp_toolcall_lab_vendor_automation.py:63: AssertionError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="33" tests="2738" time="97.671" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_py_launch_catalog" name="test_worktree_source_identity[py_launch]" time="0.001"><failure message="AssertionError: assert 'caf5ef6d42bd...0e3036edc4726' == 'c858a1f71e1d...d7038287880aa'&#10;  &#10;  - c858a1f71e1d75a1fbbefbd762fd7038287880aa&#10;  + caf5ef6d42bd572e9cfde84ee570e3036edc4726">pin = {'source': 'py_launch.cjs', 'worktree': 'py_launch.cjs', 'commit': '1116d5c4f55d25af4d21cfe9b3c88f49d3a476fa', 'fixture': 'py-launch-catalog-pin.lock.json', ...}
+
+    @LAUNCHERS
+    def test_worktree_source_identity(pin):
+        data = (ROOT / pin["worktree"]).read_bytes()
+&gt;       assert vendor_sync.git_blob(data) == pin["worktree_blob"]
+E       AssertionError: assert 'caf5ef6d42bd...0e3036edc4726' == 'c858a1f71e1d...d7038287880aa'
+E         
+E         - c858a1f71e1d75a1fbbefbd762fd7038287880aa
+E         + caf5ef6d42bd572e9cfde84ee570e3036edc4726
+
+tests/test_py_launch_catalog.py:49: AssertionError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="1" tests="73" time="117.460" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.python.test_platform_probe_browser" name="test_viewer_tabs_highlight_what_changed" time="0.002"><failure message="ModuleNotFoundError: No module named 'web_ui'">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_viewer_tabs_highlight_wha0')
+
+    @pytest.mark.browser
+    def test_viewer_tabs_highlight_what_changed(tmp_path):
+        from playwright.sync_api import sync_playwright
+        records = pp.load_records([str(RESULTS)]) if RESULTS.exists() else []
+        if len(records) &lt; 2:
+            pytest.skip("run the environment tests first")
+        page_path = tmp_path / "matrix.html"
+&gt;       page_path.write_text(pp.render(records), encoding="utf-8")
+                             ^^^^^^^^^^^^^^^^^^
+
+tests/python/test_platform_probe_browser.py:40: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+records = [{'schema': 'btk-platform-facts/1', 'env': {'os': 'Linux', 'os_release': '7.0.0-1017-azure', 'runner_image': 'ubuntu24...rea': {'top': '0px', 'right': '0px', 'bottom': '0px', 'left': '0px'}, ...}, 'layout': {'ok': True, 'failed': []}, ...}]
+
+    def render(records: list[dict]) -&gt; str:
+        """One self-contained review page from PySaiyanWeBoo's web_ui (core CSS + the matrix script); needs the
+        ``pages`` dependency group (``uv run --group pages``), unlike collect/merge/summary which stay stdlib."""
+&gt;       import web_ui  # PySaiyanWeBoo, pinned in pyproject's pages group
+        ^^^^^^^^^^^^^
+E       ModuleNotFoundError: No module named 'web_ui'
+
+tools/platform_probe.py:435: ModuleNotFoundError</failure></testcase></testsuite></testsuites>

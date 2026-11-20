@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="26" tests="855" time="7.414" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_ci_python_setup.CiPythonSetupTests" name="test_selected_python_is_ready_before_any_python_or_uv_command" time="0.034"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/.github/workflows/real-chat-ui-smoke.yml'">self = &lt;test_ci_python_setup.CiPythonSetupTests testMethod=test_selected_python_is_ready_before_any_python_or_uv_command&gt;
+
+    def test_selected_python_is_ready_before_any_python_or_uv_command(self):
+        for workflow, jobs in JOBS.items():
+            for name, version in jobs.items():
+                with self.subTest(workflow=workflow, job=name):
+&gt;                   block = job(workflow, name)
+                            ^^^^^^^^^^^^^^^^^^^
+
+tests/test_ci_python_setup.py:58: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_ci_python_setup.py:45: in job
+    text = (ROOT / ".github/workflows" / workflow).read_text(encoding="utf-8")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../_temp/uv-python-dir/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/pathlib.py:1027: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('&lt;runner-work&gt;/.github/workflows/real-chat-ui-smoke.yml')
+mode = 'r', buffering = -1, encoding = 'utf-8', errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+&gt;       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/.github/workflows/real-chat-ui-smoke.yml'
+
+../../_temp/uv-python-dir/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/pathlib.py:1013: FileNotFoundError</failure></testcase><testcase classname="tests.test_parent_workflow_pins" name="test_parent_workflow_references_use_reviewed_rollout_commit" time="0.003"><failure message="AssertionError: shared parent references must remain observable&#10;assert []">def test_parent_workflow_references_use_reviewed_rollout_commit():
+        pins = []
+        vendor_tool_pins = []
+        for path in sorted((ROOT / ".github/workflows").glob("*")):
+            if path.suffix not in (".yml", ".yaml"):
+                continue
+            text = path.read_text(encoding="utf-8")
+            pins.extend(re.findall(r"uses:\\s*" + re.escape(PARENT) + r"/[^\\s@]+@([^\\s]+)", text))
+            lines = text.splitlines()
+            for i, line in enumerate(lines):
+                if not re.fullmatch(r"\\s+repository:\\s*" + re.escape(PARENT) + r"\\s*", line):
+                    continue
+                block = lines[i + 1:i + 12]
+                refs = [re.fullmatch(r"\\s+ref:\\s*(\\S+)\\s*", item) for item in block]
+                ref = next((m.group(1) for m in refs if m), None)
+                if any(re.fullmatch(r"\\s+path:\\s*\\.vendor-sync-tools\\s*", item) for item in block):
+                    vendor_tool_pins.append(ref)
+                else:
+                    pins.append(ref)
+&gt;       assert pins, "shared parent references must remain observable"
+E       AssertionError: shared parent references must remain observable
+E       assert []
+
+tests/test_parent_workflow_pins.py:30: AssertionError</failure></testcase></testsuite></testsuites>

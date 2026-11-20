@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="42" tests="4466" time="595.186" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_vendor_lock" name="test_vendor_lock_matches_checked_in_bytes" time="0.001"><failure message="AssertionError: shrink/polars_min.py">def test_vendor_lock_matches_checked_in_bytes() -&gt; None:
+        lock = json.loads((ROOT / "vendor.lock.json").read_text(encoding="utf-8"))
+        assert lock["schema"] == "vendor-lock/1"
+        for entry in lock["files"]:
+            assert re.fullmatch(r"[0-9a-f]{40}", entry["ref"]), entry["destination"]
+            assert entry["ref"] == entry["commit"], entry["destination"]
+            data = (ROOT / entry["destination"]).read_bytes()
+            blob = hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest()
+&gt;           assert blob == entry["blob_sha"], entry["destination"]
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: shrink/polars_min.py
+
+tests/test_vendor_lock.py:17: AssertionError</failure></testcase><testcase classname="sakanalytics.tests.test_league_laboratory" name="test_saved_evidence_replays_and_contains_passes_and_nonpasses" time="0.007"><failure message="AssertionError: sakanalytics/npb/league_laboratory.py: SHA-256 drift in results.json inputs.analysis_sha256; review provenance, never auto-rebaseline&#10;assert []">cfg = {'schema': 'aoi-league-laboratory/1', 'years': [2013, 2014, 2015, 2016, 2017, 2018, ...], 'train_through': 2022, 'discovery_seed': 0, ...}
+props = [{'id': 'P2', 'statement': 'ピタゴラス期待勝率でリーグ3位以内なら、実際も3位以内である', 'strength': 'usually', 'if': [{'col': 'rank_pythag', 'op'...tement': '得点がリーグ5位以下なら、下位半分（Bクラス）である', 'strength': 'usually', 'if': [{'col': 'rank_rf', 'op': '&gt;=', 'value': 5}], ...}]
+
+    def test_saved_evidence_replays_and_contains_passes_and_nonpasses(cfg, props):
+        report = json.loads((OUT / 'results.json').read_text())
+        assert report['settings'] == cfg
+        assert report['reference_definitions'] == props
+        assert report['reference_definitions_sha256'] == lab.digest(props)
+        assert report['inputs']['propositions_sha256'] == lab.file_sha(CYCLE / 'propositions.toml')
+        assert report['inputs']['settings_sha256'] == lab.file_sha(CYCLE / 'league-laboratory.toml')
+&gt;       _recorded_source_sha(OUT, 'results.json', 'inputs.analysis_sha256', report['inputs']['analysis_sha256'],
+                             _aoi_copy('npb/league_laboratory.py'))
+
+sakanalytics/tests/test_league_laboratory.py:286: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+out = PosixPath('&lt;runner-work&gt;/cycles/c001-chunichi/outputs/exploratory/league-laboratory')
+artifact = 'results.json', field = 'inputs.analysis_sha256'
+recorded = '13c27269f2eb563f72a0f2af2d7c2e4fc28d782f618cbe7f014f5834f061000f'
+source = PosixPath('&lt;runner-work&gt;/sakanalytics/npb/league_laboratory.py')
+
+    def _recorded_source_sha(out, artifact, field, recorded, source):
+        """記録の生成元ハッシュを確かめる。記録は書き換えない（自動で基準を更新しない）。
+    
+        今のファイルが記録と同じなら、それで終わり。違うなら、source-divergence.json に
+        その差（記録時のハッシュ → 今のハッシュ、生成物は作り直していない）が書いてあることを求める。
+        """
+        current = hashlib.sha256(source.read_bytes()).hexdigest()
+        path = out / 'source-divergence.json'
+        rows = json.loads(path.read_text(encoding='utf-8'))['source_divergence'] if path.exists() else []
+        rel = source.relative_to(ROOT).as_posix()
+        matching = [r for r in rows if r['path'] == rel and r['field'] == field]
+        assert len(matching) &lt;= 1
+        if current == recorded:
+            assert not matching, f'{rel}: divergence recorded but the file matches the evidence'
+            return
+&gt;       assert matching, f'{rel}: SHA-256 drift in {artifact} {field}; review provenance, never auto-rebaseline'
+E       AssertionError: sakanalytics/npb/league_laboratory.py: SHA-256 drift in results.json inputs.analysis_sha256; review provenance, never auto-rebaseline
+E       assert []
+
+sakanalytics/tests/test_league_laboratory.py:37: AssertionError</failure></testcase><testcase classname="sakanalytics.tests.test_proposition_seed_audit" name="test_replay_seed_registry_from_all_2240_plans" time="3.310"><failure message="AssertionError: sakanalytics/core/proposition_seed_audit.py: SHA-256 drift in seed-evaluation.json analysis_sha256; review provenance, never auto-rebaseline">def test_replay_seed_registry_from_all_2240_plans():
+        actual=audit.build(CYCLE,OUT/'skill-seed-plans.jsonl.gz')
+        saved=json.loads((OUT/'seed-evaluation.json').read_text())
+        # 生成元のハッシュは Aoi の source-divergence.json だけが説明する。ローカルな上書きはしない。
+        source = _aoi_copy('core/proposition_seed_audit.py')
+&gt;       _recorded_source_sha(OUT, 'seed-evaluation.json', 'analysis_sha256', saved['analysis_sha256'], source)
+
+sakanalytics/tests/test_proposition_seed_audit.py:141: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+sakanalytics/tests/test_proposition_seed_audit.py:68: in _recorded_source_sha
+    _finish_source_hash(problems)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+problems = ['sakanalytics/core/proposition_seed_audit.py: SHA-256 drift in seed-evaluation.json analysis_sha256; review provenance, never auto-rebaseline']
+
+    def _finish_source_hash(problems):
+        if not problems:
+            return
+        text = '\n'.join(problems)
+        if _source_hash_report_only():
+            warnings.warn(text, UserWarning, stacklevel=3)
+            if os.environ.get('GITHUB_ACTIONS') == 'true':
+                print('::warning::' + ' '.join(text.split()))
+            return
+&gt;       raise AssertionError(text)
+E       AssertionError: sakanalytics/core/proposition_seed_audit.py: SHA-256 drift in seed-evaluation.json analysis_sha256; review provenance, never auto-rebaseline
+
+sakanalytics/tests/test_proposition_seed_audit.py:29: AssertionError</failure></testcase></testsuite></testsuites>

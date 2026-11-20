@@ -1,0 +1,1230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="20" failures="6" skipped="42" tests="4484" time="750.154" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_vendor_lock" name="test_vendor_lock_matches_checked_in_bytes" time="0.001"><failure message="AssertionError: shrink/polars_min.py">def test_vendor_lock_matches_checked_in_bytes() -&gt; None:
+        lock = json.loads((ROOT / "vendor.lock.json").read_text(encoding="utf-8"))
+        assert lock["schema"] == "vendor-lock/1"
+        for entry in lock["files"]:
+            assert re.fullmatch(r"[0-9a-f]{40}", entry["ref"]), entry["destination"]
+            assert entry["ref"] == entry["commit"], entry["destination"]
+            data = (ROOT / entry["destination"]).read_bytes()
+            blob = hashlib.sha1(b"blob " + str(len(data)).encode() + b"\0" + data).hexdigest()
+&gt;           assert blob == entry["blob_sha"], entry["destination"]
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: shrink/polars_min.py
+
+tests/test_vendor_lock.py:17: AssertionError</failure></testcase><testcase classname="sakanalytics.tests.test_league_laboratory" name="test_saved_evidence_replays_and_contains_passes_and_nonpasses" time="0.013"><failure message="AssertionError: sakanalytics/npb/league_laboratory.py: SHA-256 drift in results.json inputs.analysis_sha256; review provenance, never auto-rebaseline&#10;assert []">cfg = {'schema': 'aoi-league-laboratory/1', 'years': [2013, 2014, 2015, 2016, 2017, 2018, ...], 'train_through': 2022, 'discovery_seed': 0, ...}
+props = [{'id': 'P2', 'statement': 'ピタゴラス期待勝率でリーグ3位以内なら、実際も3位以内である', 'strength': 'usually', 'if': [{'col': 'rank_pythag', 'op'...tement': '得点がリーグ5位以下なら、下位半分（Bクラス）である', 'strength': 'usually', 'if': [{'col': 'rank_rf', 'op': '&gt;=', 'value': 5}], ...}]
+
+    def test_saved_evidence_replays_and_contains_passes_and_nonpasses(cfg, props):
+        report = json.loads((OUT / 'results.json').read_text())
+        assert report['settings'] == cfg
+        assert report['reference_definitions'] == props
+        assert report['reference_definitions_sha256'] == lab.digest(props)
+        assert report['inputs']['propositions_sha256'] == lab.file_sha(CYCLE / 'propositions.toml')
+        assert report['inputs']['settings_sha256'] == lab.file_sha(CYCLE / 'league-laboratory.toml')
+&gt;       _recorded_source_sha(OUT, 'results.json', 'inputs.analysis_sha256', report['inputs']['analysis_sha256'],
+                             _aoi_copy('npb/league_laboratory.py'))
+
+sakanalytics/tests/test_league_laboratory.py:286: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+out = PosixPath('&lt;runner-work&gt;/cycles/c001-chunichi/outputs/exploratory/league-laboratory')
+artifact = 'results.json', field = 'inputs.analysis_sha256'
+recorded = '13c27269f2eb563f72a0f2af2d7c2e4fc28d782f618cbe7f014f5834f061000f'
+source = PosixPath('&lt;runner-work&gt;/sakanalytics/npb/league_laboratory.py')
+
+    def _recorded_source_sha(out, artifact, field, recorded, source):
+        """記録の生成元ハッシュを確かめる。記録は書き換えない（自動で基準を更新しない）。
+    
+        今のファイルが記録と同じなら、それで終わり。違うなら、source-divergence.json に
+        その差（記録時のハッシュ → 今のハッシュ、生成物は作り直していない）が書いてあることを求める。
+        """
+        current = hashlib.sha256(source.read_bytes()).hexdigest()
+        path = out / 'source-divergence.json'
+        rows = json.loads(path.read_text(encoding='utf-8'))['source_divergence'] if path.exists() else []
+        rel = source.relative_to(ROOT).as_posix()
+        matching = [r for r in rows if r['path'] == rel and r['field'] == field]
+        assert len(matching) &lt;= 1
+        if current == recorded:
+            assert not matching, f'{rel}: divergence recorded but the file matches the evidence'
+            return
+&gt;       assert matching, f'{rel}: SHA-256 drift in {artifact} {field}; review provenance, never auto-rebaseline'
+E       AssertionError: sakanalytics/npb/league_laboratory.py: SHA-256 drift in results.json inputs.analysis_sha256; review provenance, never auto-rebaseline
+E       assert []
+
+sakanalytics/tests/test_league_laboratory.py:37: AssertionError</failure></testcase><testcase classname="sakanalytics.tests.test_proposition_seed_audit" name="test_replay_seed_registry_from_all_2240_plans" time="5.770"><failure message="AssertionError: sakanalytics/core/proposition_seed_audit.py: SHA-256 drift in seed-evaluation.json analysis_sha256; review provenance, never auto-rebaseline">def test_replay_seed_registry_from_all_2240_plans():
+        actual=audit.build(CYCLE,OUT/'skill-seed-plans.jsonl.gz')
+        saved=json.loads((OUT/'seed-evaluation.json').read_text())
+        # 生成元のハッシュは Aoi の source-divergence.json だけが説明する。ローカルな上書きはしない。
+        source = _aoi_copy('core/proposition_seed_audit.py')
+&gt;       _recorded_source_sha(OUT, 'seed-evaluation.json', 'analysis_sha256', saved['analysis_sha256'], source)
+
+sakanalytics/tests/test_proposition_seed_audit.py:141: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+sakanalytics/tests/test_proposition_seed_audit.py:68: in _recorded_source_sha
+    _finish_source_hash(problems)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+problems = ['sakanalytics/core/proposition_seed_audit.py: SHA-256 drift in seed-evaluation.json analysis_sha256; review provenance, never auto-rebaseline']
+
+    def _finish_source_hash(problems):
+        if not problems:
+            return
+        text = '\n'.join(problems)
+        if _source_hash_report_only():
+            warnings.warn(text, UserWarning, stacklevel=3)
+            if os.environ.get('GITHUB_ACTIONS') == 'true':
+                print('::warning::' + ' '.join(text.split()))
+            return
+&gt;       raise AssertionError(text)
+E       AssertionError: sakanalytics/core/proposition_seed_audit.py: SHA-256 drift in seed-evaluation.json analysis_sha256; review provenance, never auto-rebaseline
+
+sakanalytics/tests/test_proposition_seed_audit.py:29: AssertionError</failure></testcase><testcase classname="pythdragoras.tests.test_propositions" name="test_cycle1_files_reference_real_columns" time="0.000"><failure message="ImportError: cannot import name 'add_persistence' from 'sakanalytics' (&lt;runner-work&gt;/sakanalytics/sakanalytics.py)">def test_cycle1_files_reference_real_columns():
+        import tomllib
+        from pathlib import Path
+    
+&gt;       from sakanalytics import add_persistence, batting_join, inning_decomposition, season_table, to_team_games
+E       ImportError: cannot import name 'add_persistence' from 'sakanalytics' (&lt;runner-work&gt;/sakanalytics/sakanalytics.py)
+
+pythdragoras/tests/test_propositions.py:195: ImportError</failure></testcase><testcase classname="nagoyaction.tests.test_annual_history_report" name="test_full_evidence_chain_replays_original_cells_and_game_witnesses" time="3.701"><failure message="FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/sakanalytics/synthetic_league.py'">primary_evidence = PosixPath('&lt;pytest-tmp&gt;/pytest-0/annual-evidence0')
+
+    def test_full_evidence_chain_replays_original_cells_and_game_witnesses(primary_evidence):
+&gt;       result=summarize(primary_evidence)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+nagoyaction/tests/test_annual_history_report.py:79: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+nagoyaction/tests/test_annual_history_report.py:75: in summarize
+    return summary(root/'records.jsonl',root/'audit.json',root/'annual.jsonl',[root/'experiment.json'],root/'raw/manifest.jsonl')
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+nagoyaction/annual_history_report.py:75: in summary
+    replay_generator_sha256=digest(Path(__file__).resolve().parents[1]/'sakanalytics/synthetic_league.py'),
+                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+nagoyaction/annual_history_report.py:30: in &lt;lambda&gt;
+    digest=lambda p:hashlib.sha256(p.read_bytes()).hexdigest()
+                                   ^^^^^^^^^^^^^^
+../../_temp/uv-python-dir/cpython-3.13.18-linux-x86_64-gnu/lib/python3.13/pathlib/_abc.py:625: in read_bytes
+    with self.open(mode='rb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = PosixPath('&lt;runner-work&gt;/sakanalytics/synthetic_league.py')
+mode = 'rb', buffering = -1, encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed to by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+&gt;       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/sakanalytics/synthetic_league.py'
+
+../../_temp/uv-python-dir/cpython-3.13.18-linux-x86_64-gnu/lib/python3.13/pathlib/_local.py:537: FileNotFoundError</failure></testcase><testcase classname="nagoyaction.tests.test_linkcheck" name="test_repository_links_are_all_valid" time="0.107"><failure message="AssertionError: assert [{'file': 'py...broken', ...}] == []&#10;  &#10;  Left contains 4 more items, first extra item: {'file': 'pythdragoras/docs/littlebit-approx.md', 'target': '../rule_search.py', 'kind': 'relative', 'status': 'broken', ...}&#10;  &#10;  Full diff:&#10;  - []&#10;  + [&#10;  +     {&#10;  +         'file': 'pythdragoras/docs/littlebit-approx.md',&#10;  +         'target': '../rule_search.py',&#10;  +         'kind': 'relative',&#10;  +         'status': 'broken',&#10;  +         'path': 'pythdragoras/rule_search.py',&#10;  +         'reason': 'git に登録されたファイルがない',&#10;  +     },&#10;  +     {&#10;  +         'file': 'pythdragoras/docs/littlebit-approx.md',&#10;  +         'target': '../littlebit_prune.py',&#10;  +         'kind': 'relative',&#10;  +         'status': 'broken',&#10;  +         'path': 'pythdragoras/littlebit_prune.py',&#10;  +         'reason': 'git に登録されたファイルがない',&#10;  +     },&#10;  +     {&#10;  +         'file': 'pythdragoras/docs/littlebit-approx.md',&#10;  +         'target': '../registration_audit.py',&#10;  +         'kind': 'relative',&#10;  +         'status': 'broken',&#10;  +         'path': 'pythdragoras/registration_audit.py',&#10;  +         'reason': 'git に登録されたファイルがない',&#10;  +     },&#10;  +     {&#10;  +         'file': 'pythdragoras/docs/littlebit-approx.md',&#10;  +         'target': '../littlebit_holdout.py',&#10;  +         'kind': 'relative',&#10;  +         'status': 'broken',&#10;  +         'path': 'pythdragoras/littlebit_holdout.py',&#10;  +         'reason': 'git に登録されたファイルがない',&#10;  +     },&#10;  + ]">def test_repository_links_are_all_valid():
+        root = __import__("pathlib").Path(__file__).resolve().parents[2]
+        broken = [r for r in lc.check_local(root, lc.tracked_files(root)) if r["status"] == "broken"]
+&gt;       assert broken == []
+E       AssertionError: assert [{'file': 'py...broken', ...}] == []
+E         
+E         Left contains 4 more items, first extra item: {'file': 'pythdragoras/docs/littlebit-approx.md', 'target': '../rule_search.py', 'kind': 'relative', 'status': 'broken', ...}
+E         
+E         Full diff:
+E         - []
+E         + [
+E         +     {
+E         +         'file': 'pythdragoras/docs/littlebit-approx.md',
+E         +         'target': '../rule_search.py',
+E         +         'kind': 'relative',
+E         +         'status': 'broken',
+E         +         'path': 'pythdragoras/rule_search.py',
+E         +         'reason': 'git に登録されたファイルがない',
+E         +     },
+E         +     {
+E         +         'file': 'pythdragoras/docs/littlebit-approx.md',
+E         +         'target': '../littlebit_prune.py',
+E         +         'kind': 'relative',
+E         +         'status': 'broken',
+E         +         'path': 'pythdragoras/littlebit_prune.py',
+E         +         'reason': 'git に登録されたファイルがない',
+E         +     },
+E         +     {
+E         +         'file': 'pythdragoras/docs/littlebit-approx.md',
+E         +         'target': '../registration_audit.py',
+E         +         'kind': 'relative',
+E         +         'status': 'broken',
+E         +         'path': 'pythdragoras/registration_audit.py',
+E         +         'reason': 'git に登録されたファイルがない',
+E         +     },
+E         +     {
+E         +         'file': 'pythdragoras/docs/littlebit-approx.md',
+E         +         'target': '../littlebit_holdout.py',
+E         +         'kind': 'relative',
+E         +         'status': 'broken',
+E         +         'path': 'pythdragoras/littlebit_holdout.py',
+E         +         'reason': 'git に登録されたファイルがない',
+E         +     },
+E         + ]
+
+nagoyaction/tests/test_linkcheck.py:106: AssertionError</failure></testcase><testcase classname="nagoyaction.tests.test_worker" name="test_real_restart_exactly_matches_uninterrupted" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'&quot;">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_real_restart_exactly_matc0')
+
+    @pytest.fixture
+    def research(tmp_path):
+        root = tmp_path / "aoi"
+        root.mkdir()
+        for folder in ("research_loop", "pythdragoras"):
+            (root / folder).mkdir()
+            names = ["exploration.py"] if folder == "research_loop" else ["pythdragoras.py", "sets.py", "propositions.py"]
+            for name in names:
+&gt;               shutil.copyfile(AOI / folder / name, root / folder / name)
+
+nagoyaction/tests/test_worker.py:31: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('&lt;runner-work&gt;/pythdragoras/sets.py')
+dst = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_real_restart_exactly_matc0/aoi/pythdragoras/sets.py')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'
+
+../../_temp/uv-python-dir/cpython-3.13.18-linux-x86_64-gnu/lib/python3.13/shutil.py:260: FileNotFoundError</error></testcase><testcase classname="nagoyaction.tests.test_worker" name="test_timeout_keeps_last_committed_unit" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'&quot;">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_timeout_keeps_last_commit0')
+
+    @pytest.fixture
+    def research(tmp_path):
+        root = tmp_path / "aoi"
+        root.mkdir()
+        for folder in ("research_loop", "pythdragoras"):
+            (root / folder).mkdir()
+            names = ["exploration.py"] if folder == "research_loop" else ["pythdragoras.py", "sets.py", "propositions.py"]
+            for name in names:
+&gt;               shutil.copyfile(AOI / folder / name, root / folder / name)
+
+nagoyaction/tests/test_worker.py:31: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('&lt;runner-work&gt;/pythdragoras/sets.py')
+dst = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_timeout_keeps_last_commit0/aoi/pythdragoras/sets.py')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'
+
+../../_temp/uv-python-dir/cpython-3.13.18-linux-x86_64-gnu/lib/python3.13/shutil.py:260: FileNotFoundError</error></testcase><testcase classname="nagoyaction.tests.test_worker" name="test_actual_subprocess_is_killed_at_deadline" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'&quot;">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_actual_subprocess_is_kill0')
+
+    @pytest.fixture
+    def research(tmp_path):
+        root = tmp_path / "aoi"
+        root.mkdir()
+        for folder in ("research_loop", "pythdragoras"):
+            (root / folder).mkdir()
+            names = ["exploration.py"] if folder == "research_loop" else ["pythdragoras.py", "sets.py", "propositions.py"]
+            for name in names:
+&gt;               shutil.copyfile(AOI / folder / name, root / folder / name)
+
+nagoyaction/tests/test_worker.py:31: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('&lt;runner-work&gt;/pythdragoras/sets.py')
+dst = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_actual_subprocess_is_kill0/aoi/pythdragoras/sets.py')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'
+
+../../_temp/uv-python-dir/cpython-3.13.18-linux-x86_64-gnu/lib/python3.13/shutil.py:260: FileNotFoundError</error></testcase><testcase classname="nagoyaction.tests.test_worker" name="test_stop_input_changes_corruption_lock_and_write_limit" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'&quot;">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_stop_input_changes_corrup0')
+
+    @pytest.fixture
+    def research(tmp_path):
+        root = tmp_path / "aoi"
+        root.mkdir()
+        for folder in ("research_loop", "pythdragoras"):
+            (root / folder).mkdir()
+            names = ["exploration.py"] if folder == "research_loop" else ["pythdragoras.py", "sets.py", "propositions.py"]
+            for name in names:
+&gt;               shutil.copyfile(AOI / folder / name, root / folder / name)
+
+nagoyaction/tests/test_worker.py:31: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('&lt;runner-work&gt;/pythdragoras/sets.py')
+dst = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_stop_input_changes_corrup0/aoi/pythdragoras/sets.py')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'
+
+../../_temp/uv-python-dir/cpython-3.13.18-linux-x86_64-gnu/lib/python3.13/shutil.py:260: FileNotFoundError</error></testcase><testcase classname="nagoyaction.tests.test_worker" name="test_inflight_change_is_not_committed" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'&quot;">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_inflight_change_is_not_co0')
+
+    @pytest.fixture
+    def research(tmp_path):
+        root = tmp_path / "aoi"
+        root.mkdir()
+        for folder in ("research_loop", "pythdragoras"):
+            (root / folder).mkdir()
+            names = ["exploration.py"] if folder == "research_loop" else ["pythdragoras.py", "sets.py", "propositions.py"]
+            for name in names:
+&gt;               shutil.copyfile(AOI / folder / name, root / folder / name)
+
+nagoyaction/tests/test_worker.py:31: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('&lt;runner-work&gt;/pythdragoras/sets.py')
+dst = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_inflight_change_is_not_co0/aoi/pythdragoras/sets.py')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'
+
+../../_temp/uv-python-dir/cpython-3.13.18-linux-x86_64-gnu/lib/python3.13/shutil.py:260: FileNotFoundError</error></testcase><testcase classname="nagoyaction.tests.test_worker" name="test_paths_and_offline_capabilities" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'&quot;">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_paths_and_offline_capabil0')
+
+    @pytest.fixture
+    def research(tmp_path):
+        root = tmp_path / "aoi"
+        root.mkdir()
+        for folder in ("research_loop", "pythdragoras"):
+            (root / folder).mkdir()
+            names = ["exploration.py"] if folder == "research_loop" else ["pythdragoras.py", "sets.py", "propositions.py"]
+            for name in names:
+&gt;               shutil.copyfile(AOI / folder / name, root / folder / name)
+
+nagoyaction/tests/test_worker.py:31: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('&lt;runner-work&gt;/pythdragoras/sets.py')
+dst = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_paths_and_offline_capabil0/aoi/pythdragoras/sets.py')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'
+
+../../_temp/uv-python-dir/cpython-3.13.18-linux-x86_64-gnu/lib/python3.13/shutil.py:260: FileNotFoundError</error></testcase><testcase classname="nagoyaction.tests.test_worker" name="test_normalized_state_path_cannot_escape_containment" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'&quot;">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_normalized_state_path_can0')
+
+    @pytest.fixture
+    def research(tmp_path):
+        root = tmp_path / "aoi"
+        root.mkdir()
+        for folder in ("research_loop", "pythdragoras"):
+            (root / folder).mkdir()
+            names = ["exploration.py"] if folder == "research_loop" else ["pythdragoras.py", "sets.py", "propositions.py"]
+            for name in names:
+&gt;               shutil.copyfile(AOI / folder / name, root / folder / name)
+
+nagoyaction/tests/test_worker.py:31: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('&lt;runner-work&gt;/pythdragoras/sets.py')
+dst = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_normalized_state_path_can0/aoi/pythdragoras/sets.py')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'
+
+../../_temp/uv-python-dir/cpython-3.13.18-linux-x86_64-gnu/lib/python3.13/shutil.py:260: FileNotFoundError</error></testcase><testcase classname="nagoyaction.tests.test_worker" name="test_cli_watchdog_also_bounds_snapshot" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'&quot;">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_cli_watchdog_also_bounds_0')
+
+    @pytest.fixture
+    def research(tmp_path):
+        root = tmp_path / "aoi"
+        root.mkdir()
+        for folder in ("research_loop", "pythdragoras"):
+            (root / folder).mkdir()
+            names = ["exploration.py"] if folder == "research_loop" else ["pythdragoras.py", "sets.py", "propositions.py"]
+            for name in names:
+&gt;               shutil.copyfile(AOI / folder / name, root / folder / name)
+
+nagoyaction/tests/test_worker.py:31: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('&lt;runner-work&gt;/pythdragoras/sets.py')
+dst = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_cli_watchdog_also_bounds_0/aoi/pythdragoras/sets.py')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'
+
+../../_temp/uv-python-dir/cpython-3.13.18-linux-x86_64-gnu/lib/python3.13/shutil.py:260: FileNotFoundError</error></testcase><testcase classname="nagoyaction.tests.test_worker" name="test_cli_signals_do_not_orphan_worker[15]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'&quot;">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_cli_signals_do_not_orphan0')
+
+    @pytest.fixture
+    def research(tmp_path):
+        root = tmp_path / "aoi"
+        root.mkdir()
+        for folder in ("research_loop", "pythdragoras"):
+            (root / folder).mkdir()
+            names = ["exploration.py"] if folder == "research_loop" else ["pythdragoras.py", "sets.py", "propositions.py"]
+            for name in names:
+&gt;               shutil.copyfile(AOI / folder / name, root / folder / name)
+
+nagoyaction/tests/test_worker.py:31: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('&lt;runner-work&gt;/pythdragoras/sets.py')
+dst = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_cli_signals_do_not_orphan0/aoi/pythdragoras/sets.py')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'
+
+../../_temp/uv-python-dir/cpython-3.13.18-linux-x86_64-gnu/lib/python3.13/shutil.py:260: FileNotFoundError</error></testcase><testcase classname="nagoyaction.tests.test_worker" name="test_cli_signals_do_not_orphan_worker[2]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'&quot;">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_cli_signals_do_not_orphan1')
+
+    @pytest.fixture
+    def research(tmp_path):
+        root = tmp_path / "aoi"
+        root.mkdir()
+        for folder in ("research_loop", "pythdragoras"):
+            (root / folder).mkdir()
+            names = ["exploration.py"] if folder == "research_loop" else ["pythdragoras.py", "sets.py", "propositions.py"]
+            for name in names:
+&gt;               shutil.copyfile(AOI / folder / name, root / folder / name)
+
+nagoyaction/tests/test_worker.py:31: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('&lt;runner-work&gt;/pythdragoras/sets.py')
+dst = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_cli_signals_do_not_orphan1/aoi/pythdragoras/sets.py')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'
+
+../../_temp/uv-python-dir/cpython-3.13.18-linux-x86_64-gnu/lib/python3.13/shutil.py:260: FileNotFoundError</error></testcase><testcase classname="nagoyaction.tests.test_worker" name="test_bundle_explicit_paths_and_manifest_in_snapshot" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'&quot;">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_bundle_explicit_paths_and0')
+
+    @pytest.fixture
+    def research(tmp_path):
+        root = tmp_path / "aoi"
+        root.mkdir()
+        for folder in ("research_loop", "pythdragoras"):
+            (root / folder).mkdir()
+            names = ["exploration.py"] if folder == "research_loop" else ["pythdragoras.py", "sets.py", "propositions.py"]
+            for name in names:
+&gt;               shutil.copyfile(AOI / folder / name, root / folder / name)
+
+nagoyaction/tests/test_worker.py:31: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('&lt;runner-work&gt;/pythdragoras/sets.py')
+dst = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_bundle_explicit_paths_and0/aoi/pythdragoras/sets.py')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'
+
+../../_temp/uv-python-dir/cpython-3.13.18-linux-x86_64-gnu/lib/python3.13/shutil.py:260: FileNotFoundError</error></testcase><testcase classname="nagoyaction.tests.test_worker" name="test_bundle_rejects_mixed_missing_or_unsafe_inputs[hash]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'&quot;">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_bundle_rejects_mixed_miss0')
+
+    @pytest.fixture
+    def research(tmp_path):
+        root = tmp_path / "aoi"
+        root.mkdir()
+        for folder in ("research_loop", "pythdragoras"):
+            (root / folder).mkdir()
+            names = ["exploration.py"] if folder == "research_loop" else ["pythdragoras.py", "sets.py", "propositions.py"]
+            for name in names:
+&gt;               shutil.copyfile(AOI / folder / name, root / folder / name)
+
+nagoyaction/tests/test_worker.py:31: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('&lt;runner-work&gt;/pythdragoras/sets.py')
+dst = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_bundle_rejects_mixed_miss0/aoi/pythdragoras/sets.py')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'
+
+../../_temp/uv-python-dir/cpython-3.13.18-linux-x86_64-gnu/lib/python3.13/shutil.py:260: FileNotFoundError</error></testcase><testcase classname="nagoyaction.tests.test_worker" name="test_bundle_rejects_mixed_missing_or_unsafe_inputs[missing]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'&quot;">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_bundle_rejects_mixed_miss1')
+
+    @pytest.fixture
+    def research(tmp_path):
+        root = tmp_path / "aoi"
+        root.mkdir()
+        for folder in ("research_loop", "pythdragoras"):
+            (root / folder).mkdir()
+            names = ["exploration.py"] if folder == "research_loop" else ["pythdragoras.py", "sets.py", "propositions.py"]
+            for name in names:
+&gt;               shutil.copyfile(AOI / folder / name, root / folder / name)
+
+nagoyaction/tests/test_worker.py:31: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('&lt;runner-work&gt;/pythdragoras/sets.py')
+dst = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_bundle_rejects_mixed_miss1/aoi/pythdragoras/sets.py')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'
+
+../../_temp/uv-python-dir/cpython-3.13.18-linux-x86_64-gnu/lib/python3.13/shutil.py:260: FileNotFoundError</error></testcase><testcase classname="nagoyaction.tests.test_worker" name="test_bundle_rejects_mixed_missing_or_unsafe_inputs[symlink]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'&quot;">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_bundle_rejects_mixed_miss2')
+
+    @pytest.fixture
+    def research(tmp_path):
+        root = tmp_path / "aoi"
+        root.mkdir()
+        for folder in ("research_loop", "pythdragoras"):
+            (root / folder).mkdir()
+            names = ["exploration.py"] if folder == "research_loop" else ["pythdragoras.py", "sets.py", "propositions.py"]
+            for name in names:
+&gt;               shutil.copyfile(AOI / folder / name, root / folder / name)
+
+nagoyaction/tests/test_worker.py:31: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('&lt;runner-work&gt;/pythdragoras/sets.py')
+dst = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_bundle_rejects_mixed_miss2/aoi/pythdragoras/sets.py')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'
+
+../../_temp/uv-python-dir/cpython-3.13.18-linux-x86_64-gnu/lib/python3.13/shutil.py:260: FileNotFoundError</error></testcase><testcase classname="nagoyaction.tests.test_worker" name="test_bundle_rejects_mixed_missing_or_unsafe_inputs[parent_symlink]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'&quot;">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_bundle_rejects_mixed_miss3')
+
+    @pytest.fixture
+    def research(tmp_path):
+        root = tmp_path / "aoi"
+        root.mkdir()
+        for folder in ("research_loop", "pythdragoras"):
+            (root / folder).mkdir()
+            names = ["exploration.py"] if folder == "research_loop" else ["pythdragoras.py", "sets.py", "propositions.py"]
+            for name in names:
+&gt;               shutil.copyfile(AOI / folder / name, root / folder / name)
+
+nagoyaction/tests/test_worker.py:31: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('&lt;runner-work&gt;/pythdragoras/sets.py')
+dst = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_bundle_rejects_mixed_miss3/aoi/pythdragoras/sets.py')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'
+
+../../_temp/uv-python-dir/cpython-3.13.18-linux-x86_64-gnu/lib/python3.13/shutil.py:260: FileNotFoundError</error></testcase><testcase classname="nagoyaction.tests.test_worker" name="test_bundle_rejects_mixed_missing_or_unsafe_inputs[source_escape]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'&quot;">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_bundle_rejects_mixed_miss4')
+
+    @pytest.fixture
+    def research(tmp_path):
+        root = tmp_path / "aoi"
+        root.mkdir()
+        for folder in ("research_loop", "pythdragoras"):
+            (root / folder).mkdir()
+            names = ["exploration.py"] if folder == "research_loop" else ["pythdragoras.py", "sets.py", "propositions.py"]
+            for name in names:
+&gt;               shutil.copyfile(AOI / folder / name, root / folder / name)
+
+nagoyaction/tests/test_worker.py:31: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('&lt;runner-work&gt;/pythdragoras/sets.py')
+dst = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_bundle_rejects_mixed_miss4/aoi/pythdragoras/sets.py')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'
+
+../../_temp/uv-python-dir/cpython-3.13.18-linux-x86_64-gnu/lib/python3.13/shutil.py:260: FileNotFoundError</error></testcase><testcase classname="nagoyaction.tests.test_worker" name="test_bundle_rejects_mixed_missing_or_unsafe_inputs[overlay]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'&quot;">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_bundle_rejects_mixed_miss5')
+
+    @pytest.fixture
+    def research(tmp_path):
+        root = tmp_path / "aoi"
+        root.mkdir()
+        for folder in ("research_loop", "pythdragoras"):
+            (root / folder).mkdir()
+            names = ["exploration.py"] if folder == "research_loop" else ["pythdragoras.py", "sets.py", "propositions.py"]
+            for name in names:
+&gt;               shutil.copyfile(AOI / folder / name, root / folder / name)
+
+nagoyaction/tests/test_worker.py:31: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('&lt;runner-work&gt;/pythdragoras/sets.py')
+dst = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_bundle_rejects_mixed_miss5/aoi/pythdragoras/sets.py')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'
+
+../../_temp/uv-python-dir/cpython-3.13.18-linux-x86_64-gnu/lib/python3.13/shutil.py:260: FileNotFoundError</error></testcase><testcase classname="nagoyaction.tests.test_worker" name="test_bundle_rejects_mixed_missing_or_unsafe_inputs[role]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'&quot;">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_bundle_rejects_mixed_miss6')
+
+    @pytest.fixture
+    def research(tmp_path):
+        root = tmp_path / "aoi"
+        root.mkdir()
+        for folder in ("research_loop", "pythdragoras"):
+            (root / folder).mkdir()
+            names = ["exploration.py"] if folder == "research_loop" else ["pythdragoras.py", "sets.py", "propositions.py"]
+            for name in names:
+&gt;               shutil.copyfile(AOI / folder / name, root / folder / name)
+
+nagoyaction/tests/test_worker.py:31: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('&lt;runner-work&gt;/pythdragoras/sets.py')
+dst = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_bundle_rejects_mixed_miss6/aoi/pythdragoras/sets.py')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'
+
+../../_temp/uv-python-dir/cpython-3.13.18-linux-x86_64-gnu/lib/python3.13/shutil.py:260: FileNotFoundError</error></testcase><testcase classname="nagoyaction.tests.test_worker" name="test_bundle_rejects_mixed_missing_or_unsafe_inputs[id]" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'&quot;">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_bundle_rejects_mixed_miss7')
+
+    @pytest.fixture
+    def research(tmp_path):
+        root = tmp_path / "aoi"
+        root.mkdir()
+        for folder in ("research_loop", "pythdragoras"):
+            (root / folder).mkdir()
+            names = ["exploration.py"] if folder == "research_loop" else ["pythdragoras.py", "sets.py", "propositions.py"]
+            for name in names:
+&gt;               shutil.copyfile(AOI / folder / name, root / folder / name)
+
+nagoyaction/tests/test_worker.py:31: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('&lt;runner-work&gt;/pythdragoras/sets.py')
+dst = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_bundle_rejects_mixed_miss7/aoi/pythdragoras/sets.py')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'
+
+../../_temp/uv-python-dir/cpython-3.13.18-linux-x86_64-gnu/lib/python3.13/shutil.py:260: FileNotFoundError</error></testcase><testcase classname="nagoyaction.tests.test_worker" name="test_bundle_selection_and_manifest_change_refuse_resume" time="0.002"><error message="failed on setup with &quot;FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'&quot;">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_bundle_selection_and_mani0')
+
+    @pytest.fixture
+    def research(tmp_path):
+        root = tmp_path / "aoi"
+        root.mkdir()
+        for folder in ("research_loop", "pythdragoras"):
+            (root / folder).mkdir()
+            names = ["exploration.py"] if folder == "research_loop" else ["pythdragoras.py", "sets.py", "propositions.py"]
+            for name in names:
+&gt;               shutil.copyfile(AOI / folder / name, root / folder / name)
+
+nagoyaction/tests/test_worker.py:31: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+src = PosixPath('&lt;runner-work&gt;/pythdragoras/sets.py')
+dst = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_bundle_selection_and_mani0/aoi/pythdragoras/sets.py')
+follow_symlinks = True
+
+    def copyfile(src, dst, *, follow_symlinks=True):
+        """Copy data from src to dst in the most efficient way possible.
+    
+        If follow_symlinks is not set and src is a symbolic link, a new
+        symlink will be created instead of copying the file it points to.
+    
+        """
+        sys.audit("shutil.copyfile", src, dst)
+    
+        if _samefile(src, dst):
+            raise SameFileError("{!r} and {!r} are the same file".format(src, dst))
+    
+        file_size = 0
+        for i, fn in enumerate([src, dst]):
+            try:
+                st = _stat(fn)
+            except OSError:
+                # File most likely does not exist
+                pass
+            else:
+                # XXX What about other special files? (sockets, devices...)
+                if stat.S_ISFIFO(st.st_mode):
+                    fn = fn.path if isinstance(fn, os.DirEntry) else fn
+                    raise SpecialFileError("`%s` is a named pipe" % fn)
+                if _WINDOWS and i == 0:
+                    file_size = st.st_size
+    
+        if not follow_symlinks and _islink(src):
+            os.symlink(os.readlink(src), dst)
+        else:
+&gt;           with open(src, 'rb') as fsrc:
+                 ^^^^^^^^^^^^^^^
+E           FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/pythdragoras/sets.py'
+
+../../_temp/uv-python-dir/cpython-3.13.18-linux-x86_64-gnu/lib/python3.13/shutil.py:260: FileNotFoundError</error></testcase></testsuite></testsuites>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="16" tests="2490" time="179.447" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_studio" name="test_python_node_workspace_api" time="0.159"><failure message="AssertionError: b&quot;&lt;runner-work&gt;/vendor/py_launch.cjs:529&#10;      throw runFailure(msg, result);&#10;      ^&#10;  &#10;  Error: fl...114,  32, 100, 105, 114, 101,  99, 116, 111, 114,&#10;      121,  58,  32,  39,  45,  39,  10&#10;    ]&#10;  }&#10;  &#10;  Node.js v26.13.1&#10;  &quot;&#10;assert 1 == 0&#10; +  where 1 = CompletedProcess(args=['node', '-e', 'const {run}=require(process.argv[1]);const v=JSON.parse(process.argv[2]);\nconst...14,  32, 100, 105, 114, 101,  99, 116, 111, 114,\n    121,  58,  32,  39,  45,  39,  10\n  ]\n}\n\nNode.js v26.13.1\n&quot;).returncode">tests/test_studio.py:1850: in test_python_node_workspace_api
+    assert result.returncode == 0, result.stderr
+E   AssertionError: b"&lt;runner-work&gt;/vendor/py_launch.cjs:529
+E         throw runFailure(msg, result);
+E         ^
+E     
+E     Error: fl...114,  32, 100, 105, 114, 101,  99, 116, 111, 114,
+E         121,  58,  32,  39,  45,  39,  10
+E       ]
+E     }
+E     
+E     Node.js v26.13.1
+E     "
+E   assert 1 == 0
+E    +  where 1 = CompletedProcess(args=['node', '-e', 'const {run}=require(process.argv[1]);const v=JSON.parse(process.argv[2]);\nconst...14,  32, 100, 105, 114, 101,  99, 116, 111, 114,\n    121,  58,  32,  39,  45,  39,  10\n  ]\n}\n\nNode.js v26.13.1\n").returncode</failure></testcase><testcase classname="tests.test_tooling" name="test_image_tools_share_output_flags_and_node_digest" time="0.407"><failure message="AssertionError: b'usage: image_digest.py [-h] --out OUT [--base BASE] [--max-bytes MAX_BYTES]&#10;                         [--tile TILE] [--json]&#10;                         input&#10;  image_digest.py: error: the following arguments are required: --out/-o/--output&#10;  '&#10;assert 2 == 0&#10; +  where 2 = CompletedProcess(args=['node', 'vendor/py_launch.cjs', '--env-var', 'IRONMATE_PYTHON', '--', 'image_digest.py', '/tmp/...son]\n                       input\nimage_digest.py: error: the following arguments are required: --out/-o/--output\n').returncode">tests/test_tooling.py:380: in test_image_tools_share_output_flags_and_node_digest
+    assert legacy.returncode == 0, legacy.stderr
+E   AssertionError: b'usage: image_digest.py [-h] --out OUT [--base BASE] [--max-bytes MAX_BYTES]
+E                            [--tile TILE] [--json]
+E                            input
+E     image_digest.py: error: the following arguments are required: --out/-o/--output
+E     '
+E   assert 2 == 0
+E    +  where 2 = CompletedProcess(args=['node', 'vendor/py_launch.cjs', '--env-var', 'IRONMATE_PYTHON', '--', 'image_digest.py', '/tmp/...son]\n                       input\nimage_digest.py: error: the following arguments are required: --out/-o/--output\n').returncode</failure></testcase><testcase classname="tests.test_tooling" name="test_ironmate_image_and_ingress_round_trip" time="0.512"><failure message="assert (2 == 2 and b'&quot;ok&quot;:false' in b'{&quot;ok&quot;: false, &quot;tool&quot;: &quot;studio_ingress.py&quot;, &quot;error&quot;: &quot;[Errno 2] No such file or directory: \'&lt;pytest-tmp&gt;/pytest-0/test_ironmate_image_and_ingres0/nope.txt\'&quot;, &quot;exit&quot;: 2, &quot;hint&quot;: &quot;pass a path that exists and is readable&quot;}\n')&#10; +  where 2 = CompletedProcess(args=['node', 'vendor/py_launch.cjs', '--env-var', 'IRONMATE_PYTHON', '--', 'studio_ingress.py', '--j...pytest-0/test_ironmate_image_and_ingres0/nope.txt\'&quot;, &quot;exit&quot;: 2, &quot;hint&quot;: &quot;pass a path that exists and is readable&quot;}\n').returncode&#10; +  and   b'{&quot;ok&quot;: false, &quot;tool&quot;: &quot;studio_ingress.py&quot;, &quot;error&quot;: &quot;[Errno 2] No such file or directory: \'&lt;pytest-tmp&gt;/pytest-0/test_ironmate_image_and_ingres0/nope.txt\'&quot;, &quot;exit&quot;: 2, &quot;hint&quot;: &quot;pass a path that exists and is readable&quot;}\n' = CompletedProcess(args=['node', 'vendor/py_launch.cjs', '--env-var', 'IRONMATE_PYTHON', '--', 'studio_ingress.py', '--j...pytest-0/test_ironmate_image_and_ingres0/nope.txt\'&quot;, &quot;exit&quot;: 2, &quot;hint&quot;: &quot;pass a path that exists and is readable&quot;}\n').stderr">tests/test_tooling.py:419: in test_ironmate_image_and_ingress_round_trip
+    assert bad.returncode == 2 and b'"ok":false' in bad.stderr
+E   assert (2 == 2 and b'"ok":false' in b'{"ok": false, "tool": "studio_ingress.py", "error": "[Errno 2] No such file or directory: \'&lt;pytest-tmp&gt;/pytest-0/test_ironmate_image_and_ingres0/nope.txt\'", "exit": 2, "hint": "pass a path that exists and is readable"}\n')
+E    +  where 2 = CompletedProcess(args=['node', 'vendor/py_launch.cjs', '--env-var', 'IRONMATE_PYTHON', '--', 'studio_ingress.py', '--j...pytest-0/test_ironmate_image_and_ingres0/nope.txt\'", "exit": 2, "hint": "pass a path that exists and is readable"}\n').returncode
+E    +  and   b'{"ok": false, "tool": "studio_ingress.py", "error": "[Errno 2] No such file or directory: \'&lt;pytest-tmp&gt;/pytest-0/test_ironmate_image_and_ingres0/nope.txt\'", "exit": 2, "hint": "pass a path that exists and is readable"}\n' = CompletedProcess(args=['node', 'vendor/py_launch.cjs', '--env-var', 'IRONMATE_PYTHON', '--', 'studio_ingress.py', '--j...pytest-0/test_ironmate_image_and_ingres0/nope.txt\'", "exit": 2, "hint": "pass a path that exists and is readable"}\n').stderr</failure></testcase></testsuite></testsuites>

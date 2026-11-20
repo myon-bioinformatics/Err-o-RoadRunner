@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="206" time="8.595" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_queryu_cache_share" name="test_fetch_many_parallel_hosts_serial_within_host" time="0.891"><failure message="assert 0.8899134620000027 &lt; ((0.2 * 2) + (0.05 * 4))">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_fetch_many_parallel_hosts0')
+
+    def test_fetch_many_parallel_hosts_serial_within_host(tmp_path):
+        calls, lock = [], threading.Lock()
+    
+        def handler(request):
+            with lock:
+                calls.append((request.url, time.monotonic()))
+            time.sleep(0.05)
+            if request.url.endswith("/fail"):
+                raise OSError("down")
+            if request.url.endswith("/missing"):
+                return Response(404, b"none")
+            if request.url.endswith("/busy"):
+                return Response(503, b"")
+            return Response(200, f"&lt;p&gt;{request.url}&lt;/p&gt;".encode(), {"ETag": "x"})
+    
+        cache = Cache(tmp_path / "cache")
+        requests = [("a1", "https://a.example/1", "g"), ("a2", "https://a.example/2", "g"),
+                    ("b1", "https://b.example/1", "g"), ("b2", "https://b.example/missing", "g"),
+                    ("c1", "https://c.example/busy", "g"), ("d1", "https://d.example/fail", "g")]
+        started = time.monotonic()
+        rows = cs.fetch_many(cache, requests, client=HandlerClient(handler), wait=0.2)
+        elapsed = time.monotonic() - started
+        assert [r["key"] for r in rows] == ["a1", "a2", "b1", "b2", "c1", "d1"]
+        assert [r["status"] for r in rows] == [200, 200, 200, 404, 503, None] and rows[-1]["error"] == "OSError"
+        a = [t for u, t in calls if "a.example" in u]
+        assert a[1] - a[0] &gt;= 0.2  # politeness within one host
+&gt;       assert elapsed &lt; 0.2 * 2 + 0.05 * 4  # hosts did not wait for each other
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       assert 0.8899134620000027 &lt; ((0.2 * 2) + (0.05 * 4))
+
+tests/test_queryu_cache_share.py:119: AssertionError</failure></testcase></testsuite></testsuites>

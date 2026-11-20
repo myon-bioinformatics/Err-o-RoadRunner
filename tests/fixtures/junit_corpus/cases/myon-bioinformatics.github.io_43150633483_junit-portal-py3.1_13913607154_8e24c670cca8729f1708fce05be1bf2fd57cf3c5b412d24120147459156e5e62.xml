@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="134" time="2.986" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_callable_entrypoints" name="test_import_then_named_main_uses_explicit_arguments[scripts/capture_portfolio_evidence.py]" time="0.002"><failure message="ModuleNotFoundError: No module named 'playwright.sync_api'">path = 'scripts/capture_portfolio_evidence.py'
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+capsys = &lt;_pytest.capture.CaptureFixture object at 0x&lt;addr&gt;&gt;
+
+    @pytest.mark.parametrize('path', PARSERS)
+    def test_import_then_named_main_uses_explicit_arguments(path, monkeypatch, capsys):
+        monkeypatch.setattr(sys, 'argv', ['host', '--invalid-host-argument'])
+&gt;       module = load(path)
+                 ^^^^^^^^^^
+
+tests/test_callable_entrypoints.py:30: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_callable_entrypoints.py:23: in load
+    spec.loader.exec_module(module)
+&lt;frozen importlib._bootstrap_external&gt;:751: in exec_module
+    ???
+&lt;frozen importlib._bootstrap&gt;:491: in _call_with_frames_removed
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    """Sub-site &amp; Sub-page Evidence Capture Script.
+    
+    Navigates through all portfolio sub-pages, view modes, and sub-tools
+    (html-import, mcp-toolcall-lab tabs: wiki, pixiv, niconico, diagnostics),
+    captures deterministic screenshots, writes metadata, and stitches a
+    multi-frame evidence montage image.
+    """
+    import argparse, hashlib, json, sys
+    from datetime import datetime, timezone; from pathlib import Path
+    
+&gt;   from playwright.sync_api import sync_playwright
+E   ModuleNotFoundError: No module named 'playwright.sync_api'
+
+scripts/capture_portfolio_evidence.py:11: ModuleNotFoundError</failure></testcase></testsuite></testsuites>

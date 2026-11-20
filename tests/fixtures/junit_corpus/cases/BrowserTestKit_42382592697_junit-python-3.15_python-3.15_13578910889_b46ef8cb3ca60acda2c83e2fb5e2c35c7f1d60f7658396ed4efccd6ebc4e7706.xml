@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="4" tests="1192" time="32.677" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.python.test_btk_plan" name="test_platform_matrix_keeps_the_unflagged_install" time="0.003"><failure message="AssertionError: assert 'platform-matrix.yml:48 full + shell (job uses both the full build and the shell)' in 'ok      .github/workflows/ci.yml:169 --only-shell (job runs headless only)\nok      .github/workflows/ci.yml:173 --on...ss only)\nok      .github/workflows/platform-matrix.yml:51 full + shell (job uses both the full build and the shell)\n'">capsys = &lt;_pytest.capture.CaptureFixture object at 0x&lt;addr&gt;&gt;
+
+    def test_platform_matrix_keeps_the_unflagged_install(capsys):
+        workflow = (ROOT / ".github" / "workflows" / "platform-matrix.yml").read_text()
+        install = "python -m playwright install chromium firefox webkit"
+        assert install in workflow
+        assert "--with-deps" not in workflow
+        assert workflow.index("playwright install-deps chromium firefox webkit") &lt; workflow.index(install)
+        assert "--no-shell" not in workflow
+        probe = (ROOT / "tools" / "platform_probe.py").read_text()
+        assert "headed: bool = False" in probe
+        assert "headless=not headed" in probe
+        assert 'for browser in chromium firefox webkit; do' in workflow
+        assert 'collect --browser "$browser" --profile "$profile"' in workflow
+        assert pip.plan_cli([str(ROOT)]) == 0
+        out = capsys.readouterr().out
+&gt;       assert "platform-matrix.yml:48 full + shell (job uses both the full build and the shell)" in out
+E       AssertionError: assert 'platform-matrix.yml:48 full + shell (job uses both the full build and the shell)' in 'ok      .github/workflows/ci.yml:169 --only-shell (job runs headless only)\nok      .github/workflows/ci.yml:173 --on...ss only)\nok      .github/workflows/platform-matrix.yml:51 full + shell (job uses both the full build and the shell)\n'
+
+tests/python/test_btk_plan.py:87: AssertionError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="9" tests="1746" time="184.396" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_mcp_toolcall_lab_vendor_automation" name="test_ci_verifies_vendor_lock_without_auto_update_jobs" time="0.005"><failure message="AssertionError: assert ['26c442bc51b...937f396932af'] == ['9e3da7ae184...f7de094a4e77']&#10;  &#10;  At index 0 diff: '26c442bc51b8a2837fe2556782b2937f396932af' != '9e3da7ae1846e9604ebc24bb5178f7de094a4e77'&#10;  &#10;  Full diff:&#10;    [&#10;  -     '9e3da7ae1846e9604ebc24bb5178f7de094a4e77',&#10;  -     '9e3da7ae1846e9604ebc24bb5178f7de094a4e77',&#10;  +     '26c442bc51b8a2837fe2556782b2937f396932af',&#10;  +     '26c442bc51b8a2837fe2556782b2937f396932af',&#10;    ]">def test_ci_verifies_vendor_lock_without_auto_update_jobs():
+        ci = _workflow()
+        assert {"push", "pull_request"} &lt;= set(ci["on"])
+        assert "workflow_dispatch" not in ci["on"]
+        text = WORKFLOW.read_text(encoding="utf-8")
+        assert "vendor_sync.py promote" not in text
+        assert "vendor_sync.py update" not in text
+        assert "sync_vendor_provenance" not in text
+        assert "resolve-vendor" not in text
+        assert "test-locked" not in text
+    
+        vendor_job = ci["jobs"]["vendor-locked"]
+        test_job = ci["jobs"]["test"]
+        assert vendor_job["permissions"] == test_job["permissions"] == {"contents": "read"}
+        assert "continue-on-error" not in vendor_job
+        assert test_job["needs"] == ["changes", "vendor-locked"]
+    
+        pins = [
+            step["with"]["ref"]
+            for job in (vendor_job, test_job)
+            for step in job["steps"]
+            if step.get("with", {}).get("repository") == "myon-bioinformatics/myon-bioinformatics"
+        ]
+&gt;       assert pins == [VENDOR_SYNC_PIN, VENDOR_SYNC_PIN]
+E       AssertionError: assert ['26c442bc51b...937f396932af'] == ['9e3da7ae184...f7de094a4e77']
+E         
+E         At index 0 diff: '26c442bc51b8a2837fe2556782b2937f396932af' != '9e3da7ae1846e9604ebc24bb5178f7de094a4e77'
+E         
+E         Full diff:
+E           [
+E         -     '9e3da7ae1846e9604ebc24bb5178f7de094a4e77',
+E         -     '9e3da7ae1846e9604ebc24bb5178f7de094a4e77',
+E         +     '26c442bc51b8a2837fe2556782b2937f396932af',
+E         +     '26c442bc51b8a2837fe2556782b2937f396932af',
+E           ]
+
+tests/test_mcp_toolcall_lab_vendor_automation.py:63: AssertionError</failure></testcase><testcase classname="tests.test_parent_workflow_pins" name="test_parent_workflow_references_use_reviewed_rollout_commit" time="0.006"><failure message="AssertionError: ['9e3da7ae1846e9604ebc24bb5178f7de094a4e77', '9e3da7ae1846e9604ebc24bb5178f7de094a4e77', '9e3da7ae1846e9604ebc24bb5178...6e9604ebc24bb5178f7de094a4e77', '26c442bc51b8a2837fe2556782b2937f396932af', '26c442bc51b8a2837fe2556782b2937f396932af']&#10;assert {'26c442bc51b...f7de094a4e77'} == {'9e3da7ae184...f7de094a4e77'}&#10;  &#10;  Extra items in the left set:&#10;  '26c442bc51b8a2837fe2556782b2937f396932af'&#10;  &#10;  Full diff:&#10;    {&#10;  +     '26c442bc51b8a2837fe2556782b2937f396932af',&#10;        '9e3da7ae1846e9604ebc24bb5178f7de094a4e77',&#10;    }">def test_parent_workflow_references_use_reviewed_rollout_commit():
+        pins = []
+        for path in sorted((ROOT / ".github/workflows").glob("*")):
+            if path.suffix not in (".yml", ".yaml"):
+                continue
+            text = path.read_text(encoding="utf-8")
+            # Capture mutable and shortened references too, rather than ignoring them.
+            pins.extend(re.findall(r"uses:\s*['\"]?" + re.escape(PARENT) + r"/[^\s@'\"]+@([^\s'\"]+)", text))
+            lines = text.splitlines()
+            for i, line in enumerate(lines):
+                if re.fullmatch(r"\s+repository:\s*['\"]?" + re.escape(PARENT) + r"['\"]?\s*", line):
+                    refs = [re.fullmatch(r"\s+ref:\s*['\"]?([^\s'\"]+)['\"]?\s*", item) for item in lines[i + 1:i + 12]]
+                    pins.append(next((m.group(1) for m in refs if m), None))
+        assert pins, "shared parent references must remain observable"
+&gt;       assert set(pins) == {PARENT_WORKFLOW_PIN}, pins
+E       AssertionError: ['9e3da7ae1846e9604ebc24bb5178f7de094a4e77', '9e3da7ae1846e9604ebc24bb5178f7de094a4e77', '9e3da7ae1846e9604ebc24bb5178...6e9604ebc24bb5178f7de094a4e77', '26c442bc51b8a2837fe2556782b2937f396932af', '26c442bc51b8a2837fe2556782b2937f396932af']
+E       assert {'26c442bc51b...f7de094a4e77'} == {'9e3da7ae184...f7de094a4e77'}
+E         
+E         Extra items in the left set:
+E         '26c442bc51b8a2837fe2556782b2937f396932af'
+E         
+E         Full diff:
+E           {
+E         +     '26c442bc51b8a2837fe2556782b2937f396932af',
+E               '9e3da7ae1846e9604ebc24bb5178f7de094a4e77',
+E           }
+
+tests/test_parent_workflow_pins.py:24: AssertionError</failure></testcase></testsuite></testsuites>

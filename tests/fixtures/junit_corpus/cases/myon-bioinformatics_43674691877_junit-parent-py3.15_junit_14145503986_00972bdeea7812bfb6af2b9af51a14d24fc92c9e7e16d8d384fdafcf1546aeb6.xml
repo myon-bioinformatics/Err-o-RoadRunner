@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="5" skipped="32" tests="2724" time="108.696" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_vendor_contracts" name="test_observed_lock_topology_and_immutable_revision[myon-bioinformatics/Aoi]" time="0.004"><failure message="AssertionError: assert '44a0a39a14e4...e4b3fba9e4143' == '0d7bfc628718...3cffff5aacde6'&#10;  &#10;  - 0d7bfc6287186852cdff85d5d363cffff5aacde6&#10;  + 44a0a39a14e49ea938a3c83c8dbe4b3fba9e4143">name = 'myon-bioinformatics/Aoi'
+
+    @pytest.mark.parametrize("name", sorted(FIXTURES))
+    def test_observed_lock_topology_and_immutable_revision(name):
+        registry = baseline_registry(json.loads((ROOT / "vendor-consumers.json").read_text()))
+        heads = vendor_sync.validate_child_heads(json.loads((ROOT / "child-heads.json").read_text()))
+        fixture = LATEST_FIXTURES.get(name, ROLLOUT_FIXTURES.get(name, REFRESHED_FIXTURES.get(name, FIXTURES[name])))
+        lock = vendor_sync.validate(fixture["lock"])
+        registry = before_replacements(registry, name, lock)
+        observed = json.loads((ROOT / "tests/fixtures/parent_observation_20261102.json").read_text())
+        expected_sha = fixture["sha"]
+        if name in ROLLOUT_FIXTURES or name in LATEST_FIXTURES:
+            digest = hashlib.sha256(json.dumps(lock, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+            assert digest == fixture["lock_sha256"]
+            assert heads["heads"][name]["repository_id"] == fixture["repository_id"]
+        elif name in observed:
+            digest = hashlib.sha256(json.dumps(lock, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+            assert digest == observed[name]["lock_sha256"]
+            expected_sha = observed[name]["sha"]
+&gt;       assert heads["heads"][name]["sha"] == expected_sha
+E       AssertionError: assert '44a0a39a14e4...e4b3fba9e4143' == '0d7bfc628718...3cffff5aacde6'
+E         
+E         - 0d7bfc6287186852cdff85d5d363cffff5aacde6
+E         + 44a0a39a14e49ea938a3c83c8dbe4b3fba9e4143
+
+tests/test_vendor_contracts.py:214: AssertionError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_rename_rollout_is_exact_without_identity_fallback" time="0.001"><failure message="AssertionError: assert '0d7bfc628718...3cffff5aacde6' == '44a0a39a14e4...e4b3fba9e4143'&#10;  &#10;  - 44a0a39a14e49ea938a3c83c8dbe4b3fba9e4143&#10;  + 0d7bfc6287186852cdff85d5d363cffff5aacde6">def test_rename_rollout_is_exact_without_identity_fallback():
+        registry = json.loads((ROOT / "vendor-consumers.json").read_text())
+        heads = vendor_sync.validate_child_heads(json.loads((ROOT / "child-heads.json").read_text()))
+        assert set(ROLLOUT_FIXTURES) == {
+            "myon-bioinformatics/" + name for name in (
+                "Ironmate", "Aoi", "flutter_navigation_basic", "Err-o-RoadRunner",
+                "myon-bioinformatics.github.io", "PySaiyanWeBoo", "BrowserTestKit")
+        }
+        for name, fixture in ROLLOUT_FIXTURES.items():
+            if name in REOBSERVED['adopted']:
+                continue  # re-observed later; test_observed_lock_topology_and_immutable_revision checks the newer snapshot
+&gt;           assert fixture["sha"] == heads["heads"][name]["sha"]
+E           AssertionError: assert '0d7bfc628718...3cffff5aacde6' == '44a0a39a14e4...e4b3fba9e4143'
+E             
+E             - 44a0a39a14e49ea938a3c83c8dbe4b3fba9e4143
+E             + 0d7bfc6287186852cdff85d5d363cffff5aacde6
+
+tests/test_vendor_contracts.py:287: AssertionError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_merged_lock_matches_its_historical_topology[myon-bioinformatics/Aoi]" time="0.003"><failure message="assert False">name = 'myon-bioinformatics/Aoi'
+
+    @pytest.mark.parametrize('name', PSWB_CONSUMER_MIGRATION_NEW)
+    def test_merged_lock_matches_its_historical_topology(name):
+        snapshot = PSWB_CONSUMER_MIGRATION_NEW[name]
+        assert sync._transition_digest(snapshot['lock']) == snapshot['lock_sha256']
+        registry = load_pswb_consumer_migration('vendor-consumers.json')
+        if name == 'myon-bioinformatics/mcp-toolcall-lab':
+            # This frozen snapshot records the PSWB migration before the separate
+            # launcher rename. Preserve its evidence, not a claim of current adoption.
+            assert not consumers.compare(registry, snapshot['lock'], name)['matches']
+            target = load_pswb_consumer_migration('tests/fixtures/njs-mcp-toolcall-lab-new.lock.json')
+            assert consumers.compare(registry, target, name)['matches']
+            entry = next(row for row in registry['consumers'] if row['repository'] == name)
+            launcher = next(row for row in entry['entries'] if row['source'] == 'njs_launch.py')
+            assert launcher['destination'] == 'vendor/njs_launch.py'
+            launcher['source'] = 'node_launch.py'
+            launcher['destination'] = 'vendor/node_launch.py'
+&gt;       assert consumers.compare(registry, snapshot['lock'], name)['matches']
+E       assert False
+
+tests/test_vendor_contracts.py:1083: AssertionError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_only_exact_historical_observation_uses_old_contract[myon-bioinformatics/Aoi]" time="0.004"><failure message="ValueError: observation transition target contract changed">name = 'myon-bioinformatics/Aoi'
+
+    @pytest.mark.parametrize('name', OLD)
+    def test_only_exact_historical_observation_uses_old_contract(name):
+        registry = load_pswb_consumer_migration('vendor-consumers.json')
+        heads = load_pswb_consumer_migration('child-heads.json')
+        transitions = load_pswb_consumer_migration('vendor-observation-transitions.json')
+        with patch.object(sync, '_load_recorded_child_lock', return_value=OLD[name]):
+&gt;           old_registry, reports = sync._registry_for_recorded_transitions(registry, heads, transitions, [name])
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_vendor_contracts.py:1097: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+registry = {'schema': 'vendor-consumers/1', 'consumers': [{'repository': 'myon-bioinformatics/myon-bioinformatics', 'state': 'loc...ry': 'myon-bioinformatics/gh_identity', 'source': 'LICENSE', 'destination': 'vendor/gh_identity-LICENSE'}, ...]}, ...]}
+document = {'heads': {'myon-bioinformatics/Aoi': {'optional': {'repository_created_at': '2026-10-03T08:06:15Z'}, 'repository_id':...ry_id': 1381699282, 'sha': 'ba9dab5bf58d2d4f91895e357580d8bba1d304a1'}, ...}, 'ref': 'main', 'schema': 'child-heads/1'}
+transitions = {'schema': 'vendor-observation-transitions/1', 'transitions': [{'consumer': 'myon-bioinformatics/Aoi', 'repository_id'...0e990aa62f678bba4b888070718', 'lock_sha256': 'f6ef14c32c7c060cf40891641ba12934d4b08b65752b3a7798f5af3d38785481', ...}]}
+monitored = ['myon-bioinformatics/Aoi'], token=&lt;redacted&gt;
+
+    def _registry_for_recorded_transitions(registry, document, transitions, monitored, *, token=&lt;redacted&gt;
+        """Audit explicitly frozen observations under their frozen contract, never skip bytes.
+    
+        The desired registry remains the child enrollment contract. Only an exact
+        reviewed observation and complete lock may use the recorded old entries.
+        Changed observations return to the normal strict desired-contract audit.
+        """
+        import vendor_consumers
+        registry = vendor_consumers.validate(registry)
+        if set(transitions) != {"schema", "transitions"} or transitions["schema"] != "vendor-observation-transitions/1":
+            raise ValueError("invalid observation transition manifest")
+        rows = transitions["transitions"]
+        if not isinstance(rows, list):
+            raise ValueError("invalid observation transitions")
+        result = copy.deepcopy(registry)
+        applied, seen = [], set()
+        for row in rows:
+            fields = {"consumer", "repository_id", "recorded_sha", "lock_sha256", "target_consumer_sha256", "old_entries", "reason"}
+            if not isinstance(row, dict) or set(row) != fields:
+                raise ValueError("invalid observation transition fields")
+            name = row["consumer"]
+            key = name.casefold()
+            if key in seen or key == PARENT_REPOSITORY.casefold():
+                raise ValueError("duplicate or parent observation transition")
+            seen.add(key)
+            if not re.fullmatch(r"[0-9a-f]{40}", row["recorded_sha"]) or any(
+                    not re.fullmatch(r"[0-9a-f]{64}", row[k]) for k in ("lock_sha256", "target_consumer_sha256")):
+                raise ValueError("invalid observation transition digest")
+            if not isinstance(row["reason"], str) or not row["reason"].strip():
+                raise ValueError("observation transition requires a reason")
+            consumer = vendor_consumers.get_consumer(registry, name)
+            if consumer["state"] != "locked" or _transition_digest(consumer) != row["target_consumer_sha256"]:
+&gt;               raise ValueError("observation transition target contract changed")
+E               ValueError: observation transition target contract changed
+
+vendor_sync.py:2128: ValueError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_only_exact_historical_observation_uses_old_contract[myon-bioinformatics/myon-bioinformatics.github.io]" time="0.004"><failure message="ValueError: observation transition target contract changed">name = 'myon-bioinformatics/myon-bioinformatics.github.io'
+
+    @pytest.mark.parametrize('name', OLD)
+    def test_only_exact_historical_observation_uses_old_contract(name):
+        registry = load_pswb_consumer_migration('vendor-consumers.json')
+        heads = load_pswb_consumer_migration('child-heads.json')
+        transitions = load_pswb_consumer_migration('vendor-observation-transitions.json')
+        with patch.object(sync, '_load_recorded_child_lock', return_value=OLD[name]):
+&gt;           old_registry, reports = sync._registry_for_recorded_transitions(registry, heads, transitions, [name])
+                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_vendor_contracts.py:1097: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+registry = {'schema': 'vendor-consumers/1', 'consumers': [{'repository': 'myon-bioinformatics/myon-bioinformatics', 'state': 'loc...ry': 'myon-bioinformatics/gh_identity', 'source': 'LICENSE', 'destination': 'vendor/gh_identity-LICENSE'}, ...]}, ...]}
+document = {'heads': {'myon-bioinformatics/Aoi': {'optional': {'repository_created_at': '2026-10-03T08:06:15Z'}, 'repository_id':...ry_id': 1381699282, 'sha': 'ba9dab5bf58d2d4f91895e357580d8bba1d304a1'}, ...}, 'ref': 'main', 'schema': 'child-heads/1'}
+transitions = {'schema': 'vendor-observation-transitions/1', 'transitions': [{'consumer': 'myon-bioinformatics/Aoi', 'repository_id'...0e990aa62f678bba4b888070718', 'lock_sha256': 'f6ef14c32c7c060cf40891641ba12934d4b08b65752b3a7798f5af3d38785481', ...}]}
+monitored = ['myon-bioinformatics/myon-bioinformatics.github.io'], token=&lt;redacted&gt;
+
+    def _registry_for_recorded_transitions(registry, document, transitions, monitored, *, token=&lt;redacted&gt;
+        """Audit explicitly frozen observations under their frozen contract, never skip bytes.
+    
+        The desired registry remains the child enrollment contract. Only an exact
+        reviewed observation and complete lock may use the recorded old entries.
+        Changed observations return to the normal strict desired-contract audit.
+        """
+        import vendor_consumers
+        registry = vendor_consumers.validate(registry)
+        if set(transitions) != {"schema", "transitions"} or transitions["schema"] != "vendor-observation-transitions/1":
+            raise ValueError("invalid observation transition manifest")
+        rows = transitions["transitions"]
+        if not isinstance(rows, list):
+            raise ValueError("invalid observation transitions")
+        result = copy.deepcopy(registry)
+        applied, seen = [], set()
+        for row in rows:
+            fields = {"consumer", "repository_id", "recorded_sha", "lock_sha256", "target_consumer_sha256", "old_entries", "reason"}
+            if not isinstance(row, dict) or set(row) != fields:
+                raise ValueError("invalid observation transition fields")
+            name = row["consumer"]
+            key = name.casefold()
+            if key in seen or key == PARENT_REPOSITORY.casefold():
+                raise ValueError("duplicate or parent observation transition")
+            seen.add(key)
+            if not re.fullmatch(r"[0-9a-f]{40}", row["recorded_sha"]) or any(
+                    not re.fullmatch(r"[0-9a-f]{64}", row[k]) for k in ("lock_sha256", "target_consumer_sha256")):
+                raise ValueError("invalid observation transition digest")
+            if not isinstance(row["reason"], str) or not row["reason"].strip():
+                raise ValueError("observation transition requires a reason")
+            consumer = vendor_consumers.get_consumer(registry, name)
+            if consumer["state"] != "locked" or _transition_digest(consumer) != row["target_consumer_sha256"]:
+&gt;               raise ValueError("observation transition target contract changed")
+E               ValueError: observation transition target contract changed
+
+vendor_sync.py:2128: ValueError</failure></testcase></testsuite></testsuites>

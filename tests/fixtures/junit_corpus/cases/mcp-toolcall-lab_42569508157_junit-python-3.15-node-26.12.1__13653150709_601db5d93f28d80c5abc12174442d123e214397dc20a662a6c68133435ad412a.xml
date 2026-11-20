@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="9" tests="1746" time="168.751" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_mcp_toolcall_lab_vendor_lock" name="test_vendor_lock_matches_checked_in_bytes" time="0.001"><failure message="AssertionError: vendor/markdown.py&#10;assert '2af2b6646af5...7e0c048c3f680' == 'be468a648747...b8716170b7c57'&#10;  &#10;  - be468a648747fa18e385bb2828cb8716170b7c57&#10;  + 2af2b6646af5663aa1761be08ee7e0c048c3f680">def test_vendor_lock_matches_checked_in_bytes() -&gt; None:
+        lock = json.loads((ROOT / "vendor.lock.json").read_text(encoding="utf-8"))
+        assert set(lock) == {"schema", "files"}
+        assert lock["schema"] == "vendor-lock/1"
+        for entry in lock["files"]:
+            assert re.fullmatch(r"[0-9a-f]{40}", entry["ref"]), entry["destination"]
+&gt;           assert entry["ref"] == entry["commit"], entry["destination"]
+E           AssertionError: vendor/markdown.py
+E           assert '2af2b6646af5...7e0c048c3f680' == 'be468a648747...b8716170b7c57'
+E             
+E             - be468a648747fa18e385bb2828cb8716170b7c57
+E             + 2af2b6646af5663aa1761be08ee7e0c048c3f680
+
+tests/test_mcp_toolcall_lab_vendor_lock.py:15: AssertionError</failure></testcase></testsuite></testsuites>
