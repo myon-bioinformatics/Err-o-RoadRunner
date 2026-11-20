@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites><testsuite name="clipboard-webkit" tests="7" errors="1" failures="0" skipped="2"><testcase classname="clipboard-webkit" name="Install isolated test-only Playwright and browser"><error type="SetupError" message="Install isolated test-only Playwright and browser failed" /></testcase></testsuite></testsuites>

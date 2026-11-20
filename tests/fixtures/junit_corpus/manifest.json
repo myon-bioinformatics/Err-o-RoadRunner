@@ -6006,5 +6006,23 @@
     "xml": "cases/xprobe_40047853401_test-report-windows-latest-py3.12_junit.xml",
     "golden": "golden/xprobe_40047853401_test-report-windows-latest-py3.12_junit.out",
     "sha256": "2631f04a41ca0b76854482180d995a373393e38f14c41e3928ecd866376b395e"
+  },
+  {
+    "id": "Ironmate_44529792812_junit-setup-clipboard-webkit_setup_14533555561_ac09dfc797bc65d1cfcb1b966a1b953a4be3d0f7dc85713ea27fb578d154e797",
+    "repo": "myon-bioinformatics/Ironmate",
+    "run_id": 44529792812,
+    "artifact": "junit-setup-clipboard-webkit",
+    "job": "studio-clipboard (webkit)",
+    "workflow": "Python tests and vendor verification",
+    "date": "2026-11-19T13:04:06Z",
+    "source_file": "setup.xml",
+    "artifact_id": 14533555561,
+    "format": "junit-xml",
+    "xml": "cases/Ironmate_44529792812_junit-setup-clipboard-webkit_setup_14533555561_ac09dfc797bc65d1cfcb1b966a1b953a4be3d0f7dc85713ea27fb578d154e797.xml",
+    "golden": "golden/Ironmate_44529792812_junit-setup-clipboard-webkit_setup_14533555561_ac09dfc797bc65d1cfcb1b966a1b953a4be3d0f7dc85713ea27fb578d154e797.out",
+    "sha256": "b652440659f4365d26cc3759effd9a7dc686f67b23d3b6d3575df9aa230c220e",
+    "job_id": 135579761212,
+    "run_attempt": 1,
+    "head_sha": "2a7974ef86064e8c6abb2a5650ce719b107bb5fd"
   }
 ]
