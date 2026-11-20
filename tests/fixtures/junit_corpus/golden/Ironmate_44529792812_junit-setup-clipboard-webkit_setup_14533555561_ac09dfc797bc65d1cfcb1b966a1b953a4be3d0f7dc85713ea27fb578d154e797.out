@@ -1,0 +1,18 @@
+FOUND: exit code: 1
+FOUND: junit errors (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_44529792812_junit-setup-clipboard-webkit_setup_14533555561_ac09dfc797bc65d1cfcb1b966a1b953a4be3d0f7dc85713ea27fb578d154e797.xml): 1
+FOUND: junit error (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_44529792812_junit-setup-clipboard-webkit_setup_14533555561_ac09dfc797bc65d1cfcb1b966a1b953a4be3d0f7dc85713ea27fb578d154e797.xml): Install isolated test-only Playwright and browser failed
+FOUND: junit failure groups (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_44529792812_junit-setup-clipboard-webkit_setup_14533555561_ac09dfc797bc65d1cfcb1b966a1b953a4be3d0f7dc85713ea27fb578d154e797.xml): 1 failure in 1 group
+FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_44529792812_junit-setup-clipboard-webkit_setup_14533555561_ac09dfc797bc65d1cfcb1b966a1b953a4be3d0f7dc85713ea27fb578d154e797.xml): clipboard-webkit
+FOUND: python version: <runtime>
+FOUND: node version: <runtime>
+FOUND: gh version: <runtime>
+FOUND: environment variable count: <runtime>
+FOUND: environment variable names: <runtime>
+NOT FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_44529792812_junit-setup-clipboard-webkit_setup_14533555561_ac09dfc797bc65d1cfcb1b966a1b953a4be3d0f7dc85713ea27fb578d154e797.xml)
+NOT FOUND: junit skipped (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_44529792812_junit-setup-clipboard-webkit_setup_14533555561_ac09dfc797bc65d1cfcb1b966a1b953a4be3d0f7dc85713ea27fb578d154e797.xml)
+NOT FOUND: junit pytest exception type (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_44529792812_junit-setup-clipboard-webkit_setup_14533555561_ac09dfc797bc65d1cfcb1b966a1b953a4be3d0f7dc85713ea27fb578d154e797.xml)
+NOT FOUND: junit dart error (first) (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_44529792812_junit-setup-clipboard-webkit_setup_14533555561_ac09dfc797bc65d1cfcb1b966a1b953a4be3d0f7dc85713ea27fb578d154e797.xml)
+NOT FOUND: junit system-err (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_44529792812_junit-setup-clipboard-webkit_setup_14533555561_ac09dfc797bc65d1cfcb1b966a1b953a4be3d0f7dc85713ea27fb578d154e797.xml)
+NOT FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_44529792812_junit-setup-clipboard-webkit_setup_14533555561_ac09dfc797bc65d1cfcb1b966a1b953a4be3d0f7dc85713ea27fb578d154e797.xml)
+NOT FOUND: lock files in project root
+HINT: web search keywords (<repo>/tests/fixtures/junit_corpus/cases/Ironmate_44529792812_junit-setup-clipboard-webkit_setup_14533555561_ac09dfc797bc65d1cfcb1b966a1b953a4be3d0f7dc85713ea27fb578d154e797.xml): Install isolated test-only Playwright and browser failed
