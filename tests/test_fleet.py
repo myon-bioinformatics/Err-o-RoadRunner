@@ -6,6 +6,7 @@
 """
 
 from __future__ import annotations
+import unittest
 
 import re
 
@@ -24,7 +25,7 @@ PARENT_WORKFLOW_PIN = "9e3da7ae1846e9604ebc24bb5178f7de094a4e77"
 ACCEPTED = {
     "vendor/xprobe.py": "1ffbb7b984075c683690bbe4e9deb06199cdfe94",
     "vendor/cli_args.py": "9ff06c4326fc7ba934112abecbc59451ab07be6a",
-    "vendor/fleet_check.py": "6c29503cf17eda856766ddfdf4d66a5b0965a8b1",
+    "vendor/fleet_check.py": "64db25eb0fd9025dbe3cbcbced8b88a39ecb9266",
 }
 
 
@@ -108,3 +109,11 @@ def test_no_stray_root_module_copies_under_tests_tree() -> None:
             pytest.fail(
                 f"stray copy of root module {path.name} under tests/: {path.relative_to(ROOT)}"
             )
+
+
+# 🧰 Scripts: 📝 each one describes itself and ⌨️ one that reads sys.argv declares its arguments (argparse /
+# cli_args). Read with ast, never run; the portfolio's script catalog reads the same facts.
+
+class ScriptsDescribeThemselves(unittest.TestCase):
+    def test_every_script_has_a_description_and_declared_arguments(self):
+        fleet.check_scripts(fleet.repo_root(__file__))

@@ -1,13 +1,17 @@
 """Write a separate JUnit report from GitHub Actions setup-step outcomes."""
 
+import argparse
 import os
-import sys
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
 
-def main() -> None:
-    phase, destination = sys.argv[1:]
+def main(argv=None) -> None:
+    parser = argparse.ArgumentParser(description=__doc__, epilog="SETUP_OUTCOMES holds one 'step=outcome' per line.")
+    parser.add_argument("phase", help="setup phase; the suite is ci.setup.PHASE")
+    parser.add_argument("destination", help="JUnit XML file to write")
+    args = parser.parse_args(argv)
+    phase, destination = args.phase, args.destination
     suite_name = f"ci.setup.{phase}"
     suite = ET.Element("testsuite", name=suite_name)
     errors = skipped = 0
