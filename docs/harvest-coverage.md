@@ -5,6 +5,11 @@ uses a 90-minute timeout, preserves the JSON/Markdown reports even on collection
 failure, publishes Markdown to the job summary, and reuses it verbatim as the generated
 corpus PR body. No automatic merge is performed.
 
+When the workflow token may not open pull requests, the run still succeeds: it pushes
+`corpus/harvest` and leaves one issue, 「失敗コーパスの定期収集: PR を開いてください」,
+with a link that opens the PR in one tap. Later runs rewrite that issue and close it once
+the PR exists.
+
 The JSON `repositories` mapping records each requested repository, its status,
 number of failed runs returned, checked result files, and failures with stage,
 run ID, artifact name and reason. `failures` also contains the aggregate list.

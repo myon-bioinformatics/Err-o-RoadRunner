@@ -4,8 +4,11 @@
 # 14-day retention expires. Pushes the rolling branch corpus/harvest and opens or refreshes
 # one PR with the new corpus entries; never auto-merges.
 #
+# When this token may not open PRs (Settings > Actions > General > "Allow GitHub Actions to
+# create and approve pull requests" is off), one issue carries a link that opens the PR in
+# one tap. Each run rewrites that issue, and it is closed once the PR exists.
+#
 # Requirements:
-# - Settings > Actions > General > "Allow GitHub Actions to create and approve pull requests".
 # - GITHUB_TOKEN can read Actions artifacts of other *public* repositories.
 name: Harvest failure corpus
 
@@ -16,6 +19,7 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  issues: write   # the fallback notice when PR creation is refused
 
 concurrency:
   group: harvest-corpus
@@ -92,20 +96,32 @@ jobs:
           git add tests/fixtures
           git commit -m "失敗コーパスを自動収集 ($(date -u +%F))"
           git push --force origin "HEAD:$branch"
+          title="失敗コーパスの定期収集 $(date -u +%F)"
+          notice="失敗コーパスの定期収集: PR を開いてください"
+          note=$(gh issue list --state open --limit 100 --json number,title --jq "map(select(.title == \"$notice\")) | .[0].number // empty")
           existing=$(gh pr list --base main --head "$branch" --state open --json number --jq '.[0].number // empty')
           if [ -n "$existing" ]; then
-            gh pr edit "$existing" --title "失敗コーパスの定期収集 $(date -u +%F)" --body-file "$RUNNER_TEMP/harvest-summary.md"
+            gh pr edit "$existing" --title "$title" --body-file "$RUNNER_TEMP/harvest-summary.md"
             echo "Refreshed PR #$existing" >> "$GITHUB_STEP_SUMMARY"
+          elif gh pr create --base main --head "$branch" --title "$title" --body-file "$RUNNER_TEMP/harvest-summary.md"; then
+            existing="new"
+          fi
+          if [ -n "$existing" ]; then
+            if [ -n "$note" ]; then gh issue close "$note" --comment "PR ができたので閉じます。"; fi
             exit 0
           fi
-          if ! gh pr create --base main --head "$branch" \
-              --title "失敗コーパスの定期収集 $(date -u +%F)" \
-              --body-file "$RUNNER_TEMP/harvest-summary.md"; then
-            {
-              echo "## PR creation refused"
-              echo "The branch \`$branch\` is pushed and validated, but this token may not open PRs."
-              echo "Enable Settings > Actions > General > \"Allow GitHub Actions to create and approve pull requests\","
-              echo "or open it by hand: https://github.com/${GITHUB_REPOSITORY}/compare/main...$branch?expand=1"
-            } >> "$GITHUB_STEP_SUMMARY"
-            exit 1
+          # This token may not open PRs: leave one issue with a one-tap link, rewritten on every run.
+          link="https://github.com/${GITHUB_REPOSITORY}/compare/main...$branch?expand=1"
+          {
+            echo "ブランチ \`$branch\` は検証を通って push 済みです。次のリンクから PR を開けます。"
+            echo
+            echo "$link"
+            echo
+            head -c 60000 "$RUNNER_TEMP/harvest-summary.md"
+          } > "$RUNNER_TEMP/harvest-notice.md"
+          if [ -n "$note" ]; then
+            gh issue edit "$note" --body-file "$RUNNER_TEMP/harvest-notice.md"
+          else
+            gh issue create --title "$notice" --body-file "$RUNNER_TEMP/harvest-notice.md"
           fi
+          echo "PR creation refused; the notice issue links to $link" >> "$GITHUB_STEP_SUMMARY"
