@@ -15,7 +15,6 @@ erroroadrunner = "triage:main"
 
 [dependency-groups]
 dev = ["pytest>=9.1.1", "pip>=25.0"]
-stdlib-test = ["pytest>=8", "pyyaml>=6"]
 
 [tool.hatch.build.targets.wheel]
 only-include = ["triage.py", "sentinel.py", "squad.py", "errlib"]
