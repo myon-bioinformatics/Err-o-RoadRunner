@@ -18,7 +18,7 @@ from vendor import fleet_check as fleet
 # ──── fleet ───────────────────────────────────────────────────────
 
 ROOT = fleet.repo_root(__file__)
-PARENT_WORKFLOW_PIN = "98a0e611cc879fde2d047da806de5a2121a65524"
+PARENT_WORKFLOW_PIN = "fbf433b296ec047f1c9acdf4d5d12c81ff7f59e8"
 
 
 # Node sources and the shared checks stay on accepted upstream commits with exact bytes.
