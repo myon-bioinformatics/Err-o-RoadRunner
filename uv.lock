@@ -21,9 +21,6 @@ dev = [
     { name = "pip" },
     { name = "pytest" },
 ]
-stdlib-test = [
-    { name = "pytest" },
-]
 
 [package.metadata]
 
@@ -32,7 +29,6 @@ dev = [
     { name = "pip", specifier = ">=25.0" },
     { name = "pytest", specifier = ">=9.1.1" },
 ]
-stdlib-test = [{ name = "pytest", specifier = ">=8" }]
 
 [[package]]
 name = "iniconfig"
