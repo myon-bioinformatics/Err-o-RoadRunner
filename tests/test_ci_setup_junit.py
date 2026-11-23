@@ -1,24 +1,20 @@
 """Check pre-test setup evidence through the public stdlib digest CLI."""
 
 import os
-import subprocess
-import sys
 from pathlib import Path
 from xml.etree import ElementTree as ET
 
 import pytest
+
+from vendor.cli_args import run_cli
 
 ROOT = Path(__file__).resolve().parents[1]
 WRITER = ROOT / "scripts" / "ci_setup_junit.py"
 
 
 def emit(path, outcomes):
-    return subprocess.run(
-        [sys.executable, "-S", str(WRITER), "pytest-py3.15", str(path)],
-        env={**os.environ, "SETUP_OUTCOMES": outcomes},
-        capture_output=True,
-        text=True,
-    )
+    return run_cli(WRITER, "pytest-py3.15", str(path), python_options=("-S",),
+                   env={**os.environ, "SETUP_OUTCOMES": outcomes})
 
 
 def test_setup_junit_digest_distinguishes_setup_and_test_failures(tmp_path):
@@ -36,11 +32,7 @@ def test_setup_junit_digest_distinguishes_setup_and_test_failures(tmp_path):
     test = tmp_path / "junit.xml"
     test.write_text('<testsuite><testcase classname="product" name="test_value">'
                     '<failure message="assertion"/></testcase></testsuite>', encoding="utf-8")
-    digest = subprocess.run(
-        [sys.executable, "-S", str(ROOT / "triage.py"), "digest", str(setup), str(test)],
-        capture_output=True,
-        text=True,
-    )
+    digest = run_cli(ROOT / "triage.py", "digest", str(setup), str(test), python_options=("-S",))
     assert digest.returncode == 1, digest.stderr
     assert "ci.setup.pytest-py3.15::Sync & install: Sync & install failed" in digest.stdout
     assert "product::test_value: assertion" in digest.stdout
