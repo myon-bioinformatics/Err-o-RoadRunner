@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="4" tests="1030" time="23.225" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.python.test_platform" name="test_published_lane_runs_three_os_on_dispatch_and_schedule_but_linux_on_pull_requests" time="0.001"><failure message="AssertionError: assert ('workflow_dispatch:' in 'name: platform-apps (published network lane)\n\n# Explicitly independent from the reproducible local 42-environment m...e: platform-app-matrix\n          path: app-matrix\n          if-no-files-found: error\n          retention-days: 30\n')">def test_published_lane_runs_three_os_on_dispatch_and_schedule_but_linux_on_pull_requests():
+        apps = (ROOT / '.github/workflows/platform-apps.yml').read_text()
+&gt;       assert 'workflow_dispatch:' in apps and "cron: '17 3 * * 1'" in apps
+E       AssertionError: assert ('workflow_dispatch:' in 'name: platform-apps (published network lane)\n\n# Explicitly independent from the reproducible local 42-environment m...e: platform-app-matrix\n          path: app-matrix\n          if-no-files-found: error\n          retention-days: 30\n')
+
+tests/python/test_platform.py:116: AssertionError</failure></testcase><testcase classname="tests.python.test_platform" name="test_manual_runs_can_switch_grid_and_widths_while_schedule_keeps_defaults" time="0.001"><failure message="assert (&quot;WIDTH_STEP: ${{ inputs.width_step || '8' }}&quot; in 'name: platform-apps (published network lane)\n\n# Explicitly independent from the reproducible local 42-environment m...e: platform-app-matrix\n          path: app-matrix\n          if-no-files-found: error\n          retention-days: 30\n')">def test_manual_runs_can_switch_grid_and_widths_while_schedule_keeps_defaults():
+        apps = (ROOT / '.github/workflows/platform-apps.yml').read_text()
+&gt;       assert "WIDTH_STEP: ${{ inputs.width_step || '8' }}" in apps and "WIDTHS: ${{ inputs.widths || '320 384' }}" in apps
+E       assert ("WIDTH_STEP: ${{ inputs.width_step || '8' }}" in 'name: platform-apps (published network lane)\n\n# Explicitly independent from the reproducible local 42-environment m...e: platform-app-matrix\n          path: app-matrix\n          if-no-files-found: error\n          retention-days: 30\n')
+
+tests/python/test_platform.py:248: AssertionError</failure></testcase><testcase classname="tests.python.test_tooling" name="test_platform_matrix_keeps_the_unflagged_install" time="0.003"><failure message="AssertionError: assert 'platform-matrix.yml:51 full + shell (job uses both the full build and the shell)' in 'ok      .github/workflows/ci.yml:191 --only-shell (job runs headless only)\nok      .github/workflows/ci.yml:195 --on...ss only)\nok      .github/workflows/platform-matrix.yml:50 full + shell (job uses both the full build and the shell)\n'">capsys = &lt;_pytest.capture.CaptureFixture object at 0x&lt;addr&gt;&gt;
+
+    def test_platform_matrix_keeps_the_unflagged_install(capsys):
+        workflow = (ROOT / ".github" / "workflows" / "platform-matrix.yml").read_text()
+        install = "python -m playwright install chromium firefox webkit"
+        assert install in workflow
+        assert "--with-deps" not in workflow
+        assert workflow.index("playwright install-deps chromium firefox webkit") &lt; workflow.index(install)
+        assert "--no-shell" not in workflow
+        probe = (ROOT / "tools" / "platform_probe.py").read_text()
+        assert "headed: bool = False" in probe
+        assert "headless=not headed" in probe
+        assert 'for browser in chromium firefox webkit; do' in workflow
+        assert 'collect --browser "$browser" --profile "$profile"' in workflow
+        assert pip.plan_cli([str(ROOT)]) == 0
+        out = capsys.readouterr().out
+&gt;       assert "platform-matrix.yml:51 full + shell (job uses both the full build and the shell)" in out
+E       AssertionError: assert 'platform-matrix.yml:51 full + shell (job uses both the full build and the shell)' in 'ok      .github/workflows/ci.yml:191 --only-shell (job runs headless only)\nok      .github/workflows/ci.yml:195 --on...ss only)\nok      .github/workflows/platform-matrix.yml:50 full + shell (job uses both the full build and the shell)\n'
+
+tests/python/test_tooling.py:593: AssertionError</failure></testcase></testsuite></testsuites>

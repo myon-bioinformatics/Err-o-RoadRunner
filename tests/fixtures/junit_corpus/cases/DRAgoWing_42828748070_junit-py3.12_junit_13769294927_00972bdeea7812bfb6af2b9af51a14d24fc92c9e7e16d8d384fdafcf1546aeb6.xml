@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="1" tests="333" time="35.719" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_no_sibling_imports" name="test_no_sibling_subproject_imports" time="0.191"><failure message="AssertionError: Aoi の兄弟サブプロジェクトか scripts/ を使っている: [('tests/test_dragowing_standalone.py', 'path:scripts/build_stdlib_tool.py')]&#10;assert not {('tests/test_dragowing_standalone.py', 'path:scripts/build_stdlib_tool.py')}">def test_no_sibling_subproject_imports():
+        unexpected = find_uses() - KNOWN_EXCEPTIONS
+&gt;       assert not unexpected, f"Aoi の兄弟サブプロジェクトか scripts/ を使っている: {sorted(unexpected)}"
+E       AssertionError: Aoi の兄弟サブプロジェクトか scripts/ を使っている: [('tests/test_dragowing_standalone.py', 'path:scripts/build_stdlib_tool.py')]
+E       assert not {('tests/test_dragowing_standalone.py', 'path:scripts/build_stdlib_tool.py')}
+
+tests/test_no_sibling_imports.py:86: AssertionError</failure></testcase></testsuite></testsuites>

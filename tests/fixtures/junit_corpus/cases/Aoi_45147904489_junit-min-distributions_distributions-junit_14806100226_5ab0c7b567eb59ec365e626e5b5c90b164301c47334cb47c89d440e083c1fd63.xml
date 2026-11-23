@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="21" time="0.421" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_distributions" name="test_min_distributions_are_isolated_and_interoperate" time="0.018"><failure message="AssertionError: Traceback (most recent call last):&#10;    File &quot;&lt;string&gt;&quot;, line 4, in &lt;module&gt;&#10;    File &quot;&lt;pytest-tmp&gt;/pytest-0/test_min_distributions_are_iso0/blueprobe_min.py&quot;, line 127, in &lt;module&gt;&#10;      _minpy_export_entry(globals())&#10;    File &quot;&lt;pytest-tmp&gt;/pytest-0/test_min_distributions_are_iso0/blueprobe_min.py&quot;, line 117, in _minpy_export_entry&#10;      module = importlib.import_module(_MINPY_PREFIX + &quot;.&quot; + _MINPY_ENTRY)&#10;               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^&#10;    File &quot;&lt;runner-work&gt;/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/importlib/__init__.py&quot;, line 90, in import_module&#10;      return _bootstrap._gcd_import(name[level:], package, level)&#10;             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^&#10;    File &quot;&lt;frozen importlib._bootstrap&gt;&quot;, line 1387, in _gcd_import&#10;    File &quot;&lt;frozen importlib._bootstrap&gt;&quot;, line 1360, in _find_and_load&#10;    File &quot;&lt;frozen importlib._bootstrap&gt;&quot;, line 1331, in _find_and_load_unlocked&#10;    File &quot;&lt;frozen importlib._bootstrap&gt;&quot;, line 935, in _load_unlocked&#10;    File &quot;&lt;pytest-tmp&gt;/pytest-0/test_min_distributions_are_iso0/blueprobe_min.py&quot;, line 62, in exec_module&#10;      exec(compile(source, filename, &quot;exec&quot;), module.__dict__)&#10;           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^&#10;  UnicodeEncodeError: 'utf-8' codec can't encode characters in position 54916-54917: surrogates not allowed&#10;  &#10;assert 1 == 0&#10; +  where 1 = CompletedProcess(args=['&lt;runner-work&gt;/.venv/bin/python', '-I', '-S', '-c', &quot;\nimport sys\nsys.path.insert(...^^^^^\nUnicodeEncodeError: \'utf-8\' codec can\'t encode characters in position 54916-54917: surrogates not allowed\n').returncode">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_min_distributions_are_iso0')
+
+    def test_min_distributions_are_isolated_and_interoperate(tmp_path):
+        manifest = json.loads((ROOT / 'distributions.json').read_text())
+        for item in manifest['projects'].values():
+            p = ROOT / item['output']
+            shutil.copyfile(p, tmp_path / p.name)
+        # 🐉 DRAgoWing は dragowing.py そのものが単一ファイル（minpy の束ねはない）
+        shutil.copyfile(ROOT / 'dragowing' / 'dragowing.py', tmp_path / 'dragowing.py')
+        code = r'''
+    import sys
+    sys.path.insert(0, '.')
+    import blueprobe_min as blue
+    import queryu_min as query
+    import sakanalytics_min as saka
+    import dragowing as draw
+    import pythdragoras_min as pyth
+    from pathlib import Path
+    assert blue.normalize('Ａ\0 B') == 'A� B'
+    c = query.Cache(Path('cache'))
+    e = c.put('one', 'https://example.invalid/one', 'group', 200, b'&lt;p&gt;raw&lt;/p&gt;', {})
+    assert e['code_version'] is None
+    snap = c.snapshot(e)
+    assert snap['html'] == '&lt;p&gt;raw&lt;/p&gt;' and snap['response_sha256'] == e['sha256']
+    class Parser:
+        def parse(self, html, url):
+            return blue.new_report()
+    assert blue.inspect_queryu_cache(Parser(), c)
+    p = c.root / e['file']
+    p.write_bytes(b'corrupt')
+    try:
+        c.snapshot(e)
+    except query.CacheIntegrityError:
+        pass
+    else:
+        raise AssertionError('corrupt cache accepted')
+    rows = [dict(sensor='north', year=2024, energy=10),
+            dict(sensor='north', year=2025, energy=12)]
+    comparison = saka.compare_periods(rows, entity='sensor', period='year', metrics=['energy'], before=2024, after=2025)
+    assert comparison['comparisons'][0]['metrics']['energy']['delta'] == 2
+    assert saka.discover([{'id':'a', 'latency':10}, {'id':'b', 'latency':12}], identifier='id', features=['latency'])['pairs'][0]['units'] == ['a', 'b']
+    curve = pyth.threshold_curve([.1, .4, .9], [False, True, True], [.2, .4, 1.])
+    assert curve[1]['mcc'] == 1. and curve[2]['mcc'] is None
+    assert pyth.shape(curve)['covered_span'] == .4-.2
+    assert not any(hasattr(saka, n) for n in ['FEATURES', 'audit_annual'])
+    assert not any(hasattr(pyth, n) for n in ['ScoreState', 'team_games', 'analyze'])
+    assert pyth.classify({'posthoc': False}).status == 'unknown'
+    assert pyth.classify({'posthoc': True}).status == 'posthoc'
+    report = draw.render_report({'title': '&lt;unsafe&gt;', 'frames': {'x': {}}, 'default': 'x'})
+    assert '&amp;lt;unsafe&amp;gt;' in report
+    assert draw.series_figure([1, 2], [3, None])['data'][0]['connectgaps'] is False
+    assert draw.matrix_figure(['p'], ['q'], [[4]])['data'][0]['z'] == [[4]]
+    assert not any(name in sys.modules for name in ['cache_core', 'snapshot_source', 'annual_audit', 'figures', 'score_sensitivity'])
+    assert not any(name in sys.modules for name in ['numpy', 'polars', 'httpx', 'selectolax'])
+    '''
+        out = subprocess.run([sys.executable, '-I', '-S', '-c', code], cwd=tmp_path,
+                             capture_output=True, text=True)
+&gt;       assert out.returncode == 0, out.stderr
+E       AssertionError: Traceback (most recent call last):
+E           File "&lt;string&gt;", line 4, in &lt;module&gt;
+E           File "&lt;pytest-tmp&gt;/pytest-0/test_min_distributions_are_iso0/blueprobe_min.py", line 127, in &lt;module&gt;
+E             _minpy_export_entry(globals())
+E           File "&lt;pytest-tmp&gt;/pytest-0/test_min_distributions_are_iso0/blueprobe_min.py", line 117, in _minpy_export_entry
+E             module = importlib.import_module(_MINPY_PREFIX + "." + _MINPY_ENTRY)
+E                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           File "&lt;runner-work&gt;/cpython-3.12.16-linux-x86_64-gnu/lib/python3.12/importlib/__init__.py", line 90, in import_module
+E             return _bootstrap._gcd_import(name[level:], package, level)
+E                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           File "&lt;frozen importlib._bootstrap&gt;", line 1387, in _gcd_import
+E           File "&lt;frozen importlib._bootstrap&gt;", line 1360, in _find_and_load
+E           File "&lt;frozen importlib._bootstrap&gt;", line 1331, in _find_and_load_unlocked
+E           File "&lt;frozen importlib._bootstrap&gt;", line 935, in _load_unlocked
+E           File "&lt;pytest-tmp&gt;/pytest-0/test_min_distributions_are_iso0/blueprobe_min.py", line 62, in exec_module
+E             exec(compile(source, filename, "exec"), module.__dict__)
+E                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E         UnicodeEncodeError: 'utf-8' codec can't encode characters in position 54916-54917: surrogates not allowed
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['&lt;runner-work&gt;/.venv/bin/python', '-I', '-S', '-c', "\nimport sys\nsys.path.insert(...^^^^^\nUnicodeEncodeError: \'utf-8\' codec can\'t encode characters in position 54916-54917: surrogates not allowed\n').returncode
+
+tests/test_distributions.py:71: AssertionError</failure></testcase></testsuite></testsuites>

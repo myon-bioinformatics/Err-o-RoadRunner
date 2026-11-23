@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="2" tests="277" time="12.097" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_no_sibling_imports" name="test_no_sibling_subproject_imports" time="0.213"><failure message="AssertionError: Aoi の兄弟サブプロジェクトか scripts/ を使っている: [('vendor/fleet_check.py', 'path:scripts/*')]&#10;assert not {('vendor/fleet_check.py', 'path:scripts/*')}">def test_no_sibling_subproject_imports():
+        unexpected = find_uses() - KNOWN_EXCEPTIONS
+&gt;       assert not unexpected, f"Aoi の兄弟サブプロジェクトか scripts/ を使っている: {sorted(unexpected)}"
+E       AssertionError: Aoi の兄弟サブプロジェクトか scripts/ を使っている: [('vendor/fleet_check.py', 'path:scripts/*')]
+E       assert not {('vendor/fleet_check.py', 'path:scripts/*')}
+
+tests/test_no_sibling_imports.py:79: AssertionError</failure></testcase></testsuite></testsuites>

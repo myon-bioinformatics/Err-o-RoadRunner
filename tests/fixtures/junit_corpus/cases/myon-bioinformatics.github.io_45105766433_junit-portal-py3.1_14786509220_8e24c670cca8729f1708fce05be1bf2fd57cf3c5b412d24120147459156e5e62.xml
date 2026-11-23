@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="1" failures="0" skipped="2" tests="3" time="0.587" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="" name="tests.test_site" time="0.000"><error message="collection failure">tests/test_site.py:33: in &lt;module&gt;
+    SITE, PAGES = _staged_site()
+                  ^^^^^^^^^^^^^^
+tests/test_site.py:29: in _staged_site
+    pages.stage(site)
+scripts/project_pages.py:410: in stage
+    generate(root)  # Fail closed before copying anything.
+    ^^^^^^^^^^^^^^
+scripts/project_pages.py:367: in generate
+    verify_pin(commit, root)
+scripts/project_pages.py:92: in verify_pin
+    if commit != pinned_commit(root):
+                 ^^^^^^^^^^^^^^^^^^^
+scripts/project_pages.py:83: in pinned_commit
+    requirement = (root / 'requirements-pages.txt').read_text(encoding='utf-8')
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../_temp/uv-python-dir/cpython-3.15.2-linux-x86_64-gnu/lib/python3.15/pathlib/__init__.py:986: in read_text
+    with self.open(mode='r', encoding=encoding, errors=errors, newline=newline) as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+../../_temp/uv-python-dir/cpython-3.15.2-linux-x86_64-gnu/lib/python3.15/pathlib/__init__.py:970: in open
+    return io.open(self, mode, buffering, encoding, errors, newline)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   FileNotFoundError: [Errno 2] No such file or directory: '&lt;runner-work&gt;/requirements-pages.txt'</error></testcase></testsuite></testsuites>

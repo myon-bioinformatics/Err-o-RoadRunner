@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="3" skipped="43" tests="4169" time="576.033" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_child_checks" name="test_parent_pins_match_each_child_copy[blueprobe]" time="0.002"><failure message="AssertionError: ['98a0e611cc879fde2d047da806de5a2121a65524', '98a0e611cc879fde2d047da806de5a2121a65524', '98a0e611cc879fde2d047da806de5a2121a65524', '98a0e611cc879fde2d047da806de5a2121a65524']&#10;assert (['98a0e611cc879fde2d047da806de5a2121a65524', '98a0e611cc879fde2d047da806de5a2121a65524', '98a0e611cc879fde2d047da806de5a2121a65524', '98a0e611cc879fde2d047da806de5a2121a65524'] and {'98a0e611cc8...5a2121a65524'} == {'a816ff489a7...0aca4bc9015c'}&#10;  &#10;  Extra items in the left set:&#10;  '98a0e611cc879fde2d047da806de5a2121a65524'&#10;  Extra items in the right set:&#10;  'a816ff489a7d4fdf59ee6890c84b0aca4bc9015c'&#10;  &#10;  Full diff:&#10;    {&#10;  -     'a816ff489a7d4fdf59ee6890c84b0aca4bc9015c',&#10;  +     '98a0e611cc879fde2d047da806de5a2121a65524',&#10;    })">child = 'blueprobe'
+
+    @pytest.mark.parametrize("child", PIN_CHILDREN)
+    def test_parent_pins_match_each_child_copy(child):
+        pins = child_checks.parent_workflow_pins(ROOT / child)
+        live = [p for p in pins if p == LIVE_REF]
+        pins = [p for p in pins if p != LIVE_REF]
+&gt;       assert pins and set(pins) == {PIN}, pins
+E       AssertionError: ['98a0e611cc879fde2d047da806de5a2121a65524', '98a0e611cc879fde2d047da806de5a2121a65524', '98a0e611cc879fde2d047da806de5a2121a65524', '98a0e611cc879fde2d047da806de5a2121a65524']
+E       assert (['98a0e611cc879fde2d047da806de5a2121a65524', '98a0e611cc879fde2d047da806de5a2121a65524', '98a0e611cc879fde2d047da806de5a2121a65524', '98a0e611cc879fde2d047da806de5a2121a65524'] and {'98a0e611cc8...5a2121a65524'} == {'a816ff489a7...0aca4bc9015c'}
+E         
+E         Extra items in the left set:
+E         '98a0e611cc879fde2d047da806de5a2121a65524'
+E         Extra items in the right set:
+E         'a816ff489a7d4fdf59ee6890c84b0aca4bc9015c'
+E         
+E         Full diff:
+E           {
+E         -     'a816ff489a7d4fdf59ee6890c84b0aca4bc9015c',
+E         +     '98a0e611cc879fde2d047da806de5a2121a65524',
+E           })
+
+tests/test_child_checks.py:41: AssertionError</failure></testcase><testcase classname="tests.test_child_checks" name="test_parent_pins_match_each_child_copy[queryu]" time="0.002"><failure message="AssertionError: ['98a0e611cc879fde2d047da806de5a2121a65524', '98a0e611cc879fde2d047da806de5a2121a65524', '98a0e611cc879fde2d047da806de5a2121a65524', '98a0e611cc879fde2d047da806de5a2121a65524']&#10;assert (['98a0e611cc879fde2d047da806de5a2121a65524', '98a0e611cc879fde2d047da806de5a2121a65524', '98a0e611cc879fde2d047da806de5a2121a65524', '98a0e611cc879fde2d047da806de5a2121a65524'] and {'98a0e611cc8...5a2121a65524'} == {'a816ff489a7...0aca4bc9015c'}&#10;  &#10;  Extra items in the left set:&#10;  '98a0e611cc879fde2d047da806de5a2121a65524'&#10;  Extra items in the right set:&#10;  'a816ff489a7d4fdf59ee6890c84b0aca4bc9015c'&#10;  &#10;  Full diff:&#10;    {&#10;  -     'a816ff489a7d4fdf59ee6890c84b0aca4bc9015c',&#10;  +     '98a0e611cc879fde2d047da806de5a2121a65524',&#10;    })">child = 'queryu'
+
+    @pytest.mark.parametrize("child", PIN_CHILDREN)
+    def test_parent_pins_match_each_child_copy(child):
+        pins = child_checks.parent_workflow_pins(ROOT / child)
+        live = [p for p in pins if p == LIVE_REF]
+        pins = [p for p in pins if p != LIVE_REF]
+&gt;       assert pins and set(pins) == {PIN}, pins
+E       AssertionError: ['98a0e611cc879fde2d047da806de5a2121a65524', '98a0e611cc879fde2d047da806de5a2121a65524', '98a0e611cc879fde2d047da806de5a2121a65524', '98a0e611cc879fde2d047da806de5a2121a65524']
+E       assert (['98a0e611cc879fde2d047da806de5a2121a65524', '98a0e611cc879fde2d047da806de5a2121a65524', '98a0e611cc879fde2d047da806de5a2121a65524', '98a0e611cc879fde2d047da806de5a2121a65524'] and {'98a0e611cc8...5a2121a65524'} == {'a816ff489a7...0aca4bc9015c'}
+E         
+E         Extra items in the left set:
+E         '98a0e611cc879fde2d047da806de5a2121a65524'
+E         Extra items in the right set:
+E         'a816ff489a7d4fdf59ee6890c84b0aca4bc9015c'
+E         
+E         Full diff:
+E           {
+E         -     'a816ff489a7d4fdf59ee6890c84b0aca4bc9015c',
+E         +     '98a0e611cc879fde2d047da806de5a2121a65524',
+E           })
+
+tests/test_child_checks.py:41: AssertionError</failure></testcase><testcase classname="tests.test_child_checks" name="test_cli_lists_pins_and_uses" time="0.002"><failure message="AssertionError: assert {'98a0e611cc8...5a2121a65524'} == {'a816ff489a7...0aca4bc9015c'}&#10;  &#10;  Extra items in the left set:&#10;  '98a0e611cc879fde2d047da806de5a2121a65524'&#10;  Extra items in the right set:&#10;  'a816ff489a7d4fdf59ee6890c84b0aca4bc9015c'&#10;  &#10;  Full diff:&#10;    {&#10;  -     'a816ff489a7d4fdf59ee6890c84b0aca4bc9015c',&#10;  +     '98a0e611cc879fde2d047da806de5a2121a65524',&#10;    }">capsys = &lt;_pytest.capture.CaptureFixture object at 0x&lt;addr&gt;&gt;
+
+    def test_cli_lists_pins_and_uses(capsys):
+        assert child_checks.main(["pins", str(ROOT / "queryu")]) == 0
+&gt;       assert set(capsys.readouterr().out.split()) == {PIN}
+E       AssertionError: assert {'98a0e611cc8...5a2121a65524'} == {'a816ff489a7...0aca4bc9015c'}
+E         
+E         Extra items in the left set:
+E         '98a0e611cc879fde2d047da806de5a2121a65524'
+E         Extra items in the right set:
+E         'a816ff489a7d4fdf59ee6890c84b0aca4bc9015c'
+E         
+E         Full diff:
+E           {
+E         -     'a816ff489a7d4fdf59ee6890c84b0aca4bc9015c',
+E         +     '98a0e611cc879fde2d047da806de5a2121a65524',
+E           }
+
+tests/test_child_checks.py:88: AssertionError</failure></testcase></testsuite></testsuites>

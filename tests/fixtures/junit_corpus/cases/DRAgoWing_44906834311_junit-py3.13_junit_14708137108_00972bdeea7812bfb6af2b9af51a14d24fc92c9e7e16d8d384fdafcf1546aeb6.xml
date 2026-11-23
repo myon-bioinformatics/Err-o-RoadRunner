@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="1" failures="0" skipped="0" tests="1" time="0.721" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="" name="tests.test_structure_figure" time="0.000"><error message="collection failure">ImportError while importing test module '&lt;runner-work&gt;/tests/test_structure_figure.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+../../_temp/uv-python-dir/cpython-3.13.18-linux-x86_64-gnu/lib/python3.13/importlib/__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests/test_structure_figure.py:3: in &lt;module&gt;
+    from dragowing import structure_figure
+E   ImportError: cannot import name 'structure_figure' from 'dragowing' (unknown location)</error></testcase></testsuite></testsuites>
