@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites><testsuite name="test" tests="10" errors="1" failures="0" skipped="3"><testcase classname="test" name="Recreate locked vendor files from GitHub"><error type="SetupError" message="Recreate locked vendor files from GitHub failed" /></testcase></testsuite></testsuites>

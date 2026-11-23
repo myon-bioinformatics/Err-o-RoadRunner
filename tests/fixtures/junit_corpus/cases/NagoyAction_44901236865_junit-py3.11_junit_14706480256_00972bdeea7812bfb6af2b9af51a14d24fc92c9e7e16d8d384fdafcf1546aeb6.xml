@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="383" time="43.889" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="nagoyaction.tests.test_localci" name="test_batch_receipt_is_not_inherited_by_nested_pytest" time="0.783"><failure message="AssertionError: pytest batch failed or has missing per-test evidence&#10;  .                                                                        [100%]&#10;  1 passed in 0.58s&#10;assert 'not_run' == 'pass'&#10;  &#10;  - pass&#10;  + not_run">def test_batch_receipt_is_not_inherited_by_nested_pytest():
+        target = "tests/test_localci.py::test_pytest_plugin_monkeypatches_substitute"
+        check = localci.Check("nested", "pytest", target)
+        result = localci.run_pytest_batch([check], 7, cwd=ROOT, prefix=[sys.executable, "-m", "pytest"], keep_going=True)
+&gt;       assert result["nested"].status == "pass", result.batch_error
+E       AssertionError: pytest batch failed or has missing per-test evidence
+E         .                                                                        [100%]
+E         1 passed in 0.58s
+E       assert 'not_run' == 'pass'
+E         
+E         - pass
+E         + not_run
+
+nagoyaction/tests/test_localci.py:1520: AssertionError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1081" time="59.726" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_service_distribution.ServiceDistributionTests" name="test_helper_package_imports_without_root_aliases" time="0.001"><failure message="AssertionError: 22 != 21">self = &lt;test_service_distribution.ServiceDistributionTests testMethod=test_helper_package_imports_without_root_aliases&gt;
+
+    def test_helper_package_imports_without_root_aliases(self):
+        modules = sorted(path.stem for path in (ROOT / 'seqlib').glob('*.py')
+                         if path.stem != '__init__')
+&gt;       self.assertEqual(len(modules), 21)
+E       AssertionError: 22 != 21
+
+tests/test_service_distribution.py:41: AssertionError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="53" tests="2711" time="394.233" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_harvest_preparation" name="test_prepare_redacts_existing_xml_refreshes_goldens_and_hashes" time="0.210"><failure message="AssertionError: Patched 2 entries (0 resolved, 2 null)&#10;  Traceback (most recent call last):&#10;    File &quot;&lt;pytest-tmp&gt;/pytest-7/test_prepare_redacts_existing_0/scripts/capture_junit_corpus_goldens.py&quot;, line 51, in &lt;module&gt;&#10;      main()&#10;      ~~~~^^&#10;    File &quot;&lt;pytest-tmp&gt;/pytest-7/test_prepare_redacts_existing_0/scripts/capture_junit_corpus_goldens.py&quot;, line 45, in main&#10;      raise RuntimeError(proc.stderr)&#10;  RuntimeError: Traceback (most recent call last):&#10;    File &quot;&lt;frozen runpy&gt;&quot;, line 198, in _run_module_as_main&#10;    File &quot;&lt;frozen runpy&gt;&quot;, line 88, in _run_code&#10;    File &quot;&lt;pytest-tmp&gt;/pytest-7/test_prepare_redacts_existing_0/triage.py&quot;, line 8, in &lt;module&gt;&#10;      from errlib.error_input import python_exception_candidate&#10;  ModuleNotFoundError: No module named 'errlib.error_input'&#10;  &#10;  &#10;assert 1 == 0&#10; +  where 1 = CompletedProcess(args=['bash', '-e', '-c', '&lt;runner-work&gt;/.venv/bin/python scrip...errlib.error_input import python_exception_candidate\nModuleNotFoundError: No module named \'errlib.error_input\'\n\n').returncode">sandbox = PosixPath('&lt;pytest-tmp&gt;/pytest-7/test_prepare_redacts_existing_0')
+
+    def test_prepare_redacts_existing_xml_refreshes_goldens_and_hashes(sandbox: Path) -&gt; None:
+        corpus = sandbox / "tests/fixtures/junit_corpus"
+        entries = []
+        for run in (38908321131, 38908363336):
+            raw = '&lt;testsuite&gt;&lt;testcase name="bad"&gt;&lt;failure&gt;AssertionError: paths = [PosixPath(\'&lt;runner-work&gt;')]&lt;/failure&gt;&lt;/testcase&gt;&lt;/testsuite&gt;'
+            source = sandbox / f"{run}.xml"
+            source.write_text(raw)
+            # The collector must still keep failing cases, omit passing cases, and use shared redaction.
+            tree = ET.fromstring(raw)
+            ET.SubElement(tree, "testcase", {"name": "passing"})
+            assert len(harvest.extract_failing_xml(ET.ElementTree(tree)).getroot().findall(".//testcase")) == 1
+            entry, write = harvest._harvest_file("markdown", {"databaseId": run}, "junit-py3.9", source, "pytest-3.9.xml", [])
+            assert find_corpus_leaks(write.content) == []
+            entries.append(entry)
+            # Simulate a corpus written by the old collector and an already-existing leaky golden.
+            (corpus / entry["xml"]).write_text(raw)
+            (corpus / entry["golden"]).write_text("stale &lt;runner-work&gt;")
+            entry["sha256"] = hashlib.sha256(raw.encode()).hexdigest()
+        (corpus / "manifest.json").write_text(json.dumps(entries))
+        outside = sandbox / "tests/fixtures/unrelated.xml"
+        outside.write_text('&lt;testsuite name="untouched"/&gt;')
+        redacted = _run_step(sandbox, "Redact corpus (Silver)")
+        assert redacted.returncode == 0, redacted.stdout + redacted.stderr
+        prepared = _run_step(sandbox, "Prepare corpus goldens")
+&gt;       assert prepared.returncode == 0, prepared.stdout + prepared.stderr
+E       AssertionError: Patched 2 entries (0 resolved, 2 null)
+E         Traceback (most recent call last):
+E           File "&lt;pytest-tmp&gt;/pytest-7/test_prepare_redacts_existing_0/scripts/capture_junit_corpus_goldens.py", line 51, in &lt;module&gt;
+E             main()
+E             ~~~~^^
+E           File "&lt;pytest-tmp&gt;/pytest-7/test_prepare_redacts_existing_0/scripts/capture_junit_corpus_goldens.py", line 45, in main
+E             raise RuntimeError(proc.stderr)
+E         RuntimeError: Traceback (most recent call last):
+E           File "&lt;frozen runpy&gt;", line 198, in _run_module_as_main
+E           File "&lt;frozen runpy&gt;", line 88, in _run_code
+E           File "&lt;pytest-tmp&gt;/pytest-7/test_prepare_redacts_existing_0/triage.py", line 8, in &lt;module&gt;
+E             from errlib.error_input import python_exception_candidate
+E         ModuleNotFoundError: No module named 'errlib.error_input'
+E         
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['bash', '-e', '-c', '&lt;runner-work&gt;/.venv/bin/python scrip...errlib.error_input import python_exception_candidate\nModuleNotFoundError: No module named \'errlib.error_input\'\n\n').returncode
+
+tests/test_harvest_preparation.py:84: AssertionError</failure></testcase></testsuite></testsuites>

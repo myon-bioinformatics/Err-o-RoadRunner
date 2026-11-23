@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="2" tests="565" time="14.543" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_littlebit_holdout_drift" name="test_ci_resolves_aoi_main_without_hard_pinning_its_sha" time="0.001"><failure message="AssertionError: assert 'aoi_ref' in '# Aoi は実行時に main を解決して checkout する。別リポジトリのコミット SHA は固定しない。\n# 証跡（holdout の入力・成果物）と親の reusable workflow のピンは記録として残す。\n...ioinformatics/myon-bioinformatics/.github/workflows/reusable-actionlint.yml@9e3da7ae1846e9604ebc24bb5178f7de094a4e77\n'">def test_ci_resolves_aoi_main_without_hard_pinning_its_sha():
+        workflow = (SOURCE_ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+        readme = (SOURCE_ROOT / "README.md").read_text(encoding="utf-8")
+        assert "AOI_SHA:" not in workflow
+        assert "git ls-remote" in workflow
+        assert "https://github.com/myon-bioinformatics/Aoi" in workflow
+        assert "refs/heads/main" in workflow
+        assert "GITHUB_STEP_SUMMARY" in workflow
+&gt;       assert "aoi_ref" in workflow
+E       AssertionError: assert 'aoi_ref' in '# Aoi は実行時に main を解決して checkout する。別リポジトリのコミット SHA は固定しない。\n# 証跡（holdout の入力・成果物）と親の reusable workflow のピンは記録として残す。\n...ioinformatics/myon-bioinformatics/.github/workflows/reusable-actionlint.yml@9e3da7ae1846e9604ebc24bb5178f7de094a4e77\n'
+
+tests/test_littlebit_holdout_drift.py:319: AssertionError</failure></testcase></testsuite></testsuites>

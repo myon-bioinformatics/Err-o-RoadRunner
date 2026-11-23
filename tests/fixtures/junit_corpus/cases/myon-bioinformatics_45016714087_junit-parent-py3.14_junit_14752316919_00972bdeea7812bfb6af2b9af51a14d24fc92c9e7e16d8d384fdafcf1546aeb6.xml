@@ -1,0 +1,1395 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="37" skipped="36" tests="2908" time="114.148" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_vendor_contracts" name="test_ironmate_registered_contract_ignores_recommendation_skips" time="0.006"><failure message="ValueError: consumer topology mismatch against parent registry">def test_ironmate_registered_contract_ignores_recommendation_skips():
+        registry = baseline_registry(json.loads((ROOT / 'vendor-consumers.json').read_text()))
+        catalog = json.loads((ROOT / 'vendor-catalog.json').read_text())
+        lock = json.loads((ROOT / 'tests/fixtures/ironmate-flow-ascii-artist.lock.json').read_text())
+        ironmate_rows = [t for t in catalog['tools'] if t['repository'].casefold() == 'myon-bioinformatics/ironmate']
+        assert len(ironmate_rows) == 1 and ironmate_rows[0]['source'] == 'pillow_min.py'
+        assert 'myon-bioinformatics/Ironmate' not in ironmate_rows[0].get('consumers', {})
+&gt;       assert sync.verify_child_lock_against_parent(registry, catalog, lock, 'myon-bioinformatics/Ironmate') == sync.validate(lock)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_vendor_contracts.py:38: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+registry = {'schema': 'vendor-consumers/1', 'consumers': [{'repository': 'myon-bioinformatics/myon-bioinformatics', 'state': 'loc...ry': 'myon-bioinformatics/gh_identity', 'source': 'LICENSE', 'destination': 'vendor/gh_identity-LICENSE'}, ...]}, ...]}
+catalog = {'schema': 'vendor-catalog/1', 'tools': [{'repository': 'myon-bioinformatics/gh_identity', 'commit': 'c950ed3882f05668...ation-wide single-file coverage; not an automatic promotion.', 'source': 'convert_img_fmt_to_webp(GUI).py', ...}, ...]}
+lock = {'schema': 'vendor-lock/1', 'files': [{'repository': 'myon-bioinformatics/ascii_artist', 'ref': '001de63c23396e3ea6333...4a82bc6e50682d6a79e22a851c4c91', 'commit': 'a3d8f1835e4a82bc6e50682d6a79e22a851c4c91', 'source': 'LICENSE', ...}, ...]}
+consumer = 'myon-bioinformatics/Ironmate'
+
+    def verify_child_lock_against_parent(registry, catalog, lock, consumer):
+        """Validate a child lock against parent registry/catalog without child-heads."""
+        import vendor_catalog
+        import vendor_consumers
+        registry = vendor_consumers.validate(registry)
+        catalog = vendor_catalog.validate(catalog)
+        lock = validate(lock)
+        if not vendor_consumers.compare(registry, lock, consumer)["matches"]:
+&gt;           raise ValueError("consumer topology mismatch against parent registry")
+E           ValueError: consumer topology mismatch against parent registry
+
+vendor_sync.py:1206: ValueError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_observed_lock_topology_and_immutable_revision[myon-bioinformatics/Aoi]" time="0.003"><failure message="assert False">name = 'myon-bioinformatics/Aoi'
+
+    @pytest.mark.parametrize("name", sorted(FIXTURES))
+    def test_observed_lock_topology_and_immutable_revision(name):
+        if name == "myon-bioinformatics/flutter_navigation_basic":
+            pytest.skip("archived 2026-11-18; dropped from live child-heads and vendor tracking")
+        heads = vendor_sync.validate_child_heads(pre_refresh_heads())
+        # Ironmate #237 has the same lock as #235, including pillow_min from
+        # tools/stdlib_min/. Keep the historical #223 contract for transition tests.
+        if name == "myon-bioinformatics/Ironmate":
+            registry = vendor_consumers.validate(json.loads((ROOT / "vendor-consumers.json").read_text()))
+            fixture = {
+                "sha": "4d3713b412f5ecf39df6146af5a3c2bf4c8740ab",
+                "repository_id": 1181998414,
+                "lock_sha256": "b2cf9a4d57ac53d46b84a350e6743900898b8675e600f67a18b480373d81c1f0",
+                "lock": json.loads((ROOT / "tests/fixtures/ironmate-stdlib-pillow-min-235.lock.json").read_text()),
+            }
+        else:
+            registry = baseline_registry(json.loads((ROOT / "vendor-consumers.json").read_text()))
+            fixture = LATEST_FIXTURES.get(name, ROLLOUT_FIXTURES.get(name, REFRESHED_FIXTURES.get(name, FIXTURES[name])))
+        lock = vendor_sync.validate(fixture["lock"])
+        registry = before_replacements(registry, name, lock)
+        observed = json.loads((ROOT / "tests/fixtures/parent_observation_20261102.json").read_text())
+        expected_sha = fixture["sha"]
+        if name in ROLLOUT_FIXTURES or name in LATEST_FIXTURES:
+            digest = hashlib.sha256(json.dumps(lock, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+            assert digest == fixture["lock_sha256"]
+            assert heads["heads"][name]["repository_id"] == fixture["repository_id"]
+        elif name in observed:
+            digest = hashlib.sha256(json.dumps(lock, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+            assert digest == observed[name]["lock_sha256"]
+            expected_sha = observed[name]["sha"]
+        assert_reviewed_or_advanced(heads, name, expected_sha)
+&gt;       assert vendor_consumers.compare(registry, lock, name)["matches"]
+E       assert False
+
+tests/test_vendor_contracts.py:271: AssertionError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_observed_lock_topology_and_immutable_revision[myon-bioinformatics/Ironmate]" time="0.006"><failure message="assert False">name = 'myon-bioinformatics/Ironmate'
+
+    @pytest.mark.parametrize("name", sorted(FIXTURES))
+    def test_observed_lock_topology_and_immutable_revision(name):
+        if name == "myon-bioinformatics/flutter_navigation_basic":
+            pytest.skip("archived 2026-11-18; dropped from live child-heads and vendor tracking")
+        heads = vendor_sync.validate_child_heads(pre_refresh_heads())
+        # Ironmate #237 has the same lock as #235, including pillow_min from
+        # tools/stdlib_min/. Keep the historical #223 contract for transition tests.
+        if name == "myon-bioinformatics/Ironmate":
+            registry = vendor_consumers.validate(json.loads((ROOT / "vendor-consumers.json").read_text()))
+            fixture = {
+                "sha": "4d3713b412f5ecf39df6146af5a3c2bf4c8740ab",
+                "repository_id": 1181998414,
+                "lock_sha256": "b2cf9a4d57ac53d46b84a350e6743900898b8675e600f67a18b480373d81c1f0",
+                "lock": json.loads((ROOT / "tests/fixtures/ironmate-stdlib-pillow-min-235.lock.json").read_text()),
+            }
+        else:
+            registry = baseline_registry(json.loads((ROOT / "vendor-consumers.json").read_text()))
+            fixture = LATEST_FIXTURES.get(name, ROLLOUT_FIXTURES.get(name, REFRESHED_FIXTURES.get(name, FIXTURES[name])))
+        lock = vendor_sync.validate(fixture["lock"])
+        registry = before_replacements(registry, name, lock)
+        observed = json.loads((ROOT / "tests/fixtures/parent_observation_20261102.json").read_text())
+        expected_sha = fixture["sha"]
+        if name in ROLLOUT_FIXTURES or name in LATEST_FIXTURES:
+            digest = hashlib.sha256(json.dumps(lock, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+            assert digest == fixture["lock_sha256"]
+            assert heads["heads"][name]["repository_id"] == fixture["repository_id"]
+        elif name in observed:
+            digest = hashlib.sha256(json.dumps(lock, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+            assert digest == observed[name]["lock_sha256"]
+            expected_sha = observed[name]["sha"]
+        assert_reviewed_or_advanced(heads, name, expected_sha)
+&gt;       assert vendor_consumers.compare(registry, lock, name)["matches"]
+E       assert False
+
+tests/test_vendor_contracts.py:271: AssertionError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_observed_lock_topology_and_immutable_revision[myon-bioinformatics/PySaiyanWeBoo]" time="0.003"><failure message="assert False">name = 'myon-bioinformatics/PySaiyanWeBoo'
+
+    @pytest.mark.parametrize("name", sorted(FIXTURES))
+    def test_observed_lock_topology_and_immutable_revision(name):
+        if name == "myon-bioinformatics/flutter_navigation_basic":
+            pytest.skip("archived 2026-11-18; dropped from live child-heads and vendor tracking")
+        heads = vendor_sync.validate_child_heads(pre_refresh_heads())
+        # Ironmate #237 has the same lock as #235, including pillow_min from
+        # tools/stdlib_min/. Keep the historical #223 contract for transition tests.
+        if name == "myon-bioinformatics/Ironmate":
+            registry = vendor_consumers.validate(json.loads((ROOT / "vendor-consumers.json").read_text()))
+            fixture = {
+                "sha": "4d3713b412f5ecf39df6146af5a3c2bf4c8740ab",
+                "repository_id": 1181998414,
+                "lock_sha256": "b2cf9a4d57ac53d46b84a350e6743900898b8675e600f67a18b480373d81c1f0",
+                "lock": json.loads((ROOT / "tests/fixtures/ironmate-stdlib-pillow-min-235.lock.json").read_text()),
+            }
+        else:
+            registry = baseline_registry(json.loads((ROOT / "vendor-consumers.json").read_text()))
+            fixture = LATEST_FIXTURES.get(name, ROLLOUT_FIXTURES.get(name, REFRESHED_FIXTURES.get(name, FIXTURES[name])))
+        lock = vendor_sync.validate(fixture["lock"])
+        registry = before_replacements(registry, name, lock)
+        observed = json.loads((ROOT / "tests/fixtures/parent_observation_20261102.json").read_text())
+        expected_sha = fixture["sha"]
+        if name in ROLLOUT_FIXTURES or name in LATEST_FIXTURES:
+            digest = hashlib.sha256(json.dumps(lock, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+            assert digest == fixture["lock_sha256"]
+            assert heads["heads"][name]["repository_id"] == fixture["repository_id"]
+        elif name in observed:
+            digest = hashlib.sha256(json.dumps(lock, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+            assert digest == observed[name]["lock_sha256"]
+            expected_sha = observed[name]["sha"]
+        assert_reviewed_or_advanced(heads, name, expected_sha)
+&gt;       assert vendor_consumers.compare(registry, lock, name)["matches"]
+E       assert False
+
+tests/test_vendor_contracts.py:271: AssertionError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_exact_old_observation_uses_old_contract_without_mutating_target" time="0.005"><failure message="ValueError: observation transition target contract changed">def test_exact_old_observation_uses_old_contract_without_mutating_target():
+        registry, heads, manifest, lock = inputs(); original = copy.deepcopy(registry)
+&gt;       result, reports = resolve(registry, heads, manifest, lock)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_vendor_contracts.py:483: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_vendor_contracts.py:478: in resolve
+    return sync._registry_for_recorded_transitions(registry, heads, manifest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+registry = {'schema': 'vendor-consumers/1', 'consumers': [{'repository': 'myon-bioinformatics/myon-bioinformatics', 'state': 'loc...ry': 'myon-bioinformatics/gh_identity', 'source': 'LICENSE', 'destination': 'vendor/gh_identity-LICENSE'}, ...]}, ...]}
+document = {'heads': {'myon-bioinformatics/Aoi': {'optional': {'repository_created_at': '2026-10-03T08:06:15Z'}, 'repository_id':...ry_id': 1181998414, 'sha': '3759429eae7138c952093c1e596b2c6414a58d0f'}, ...}, 'ref': 'main', 'schema': 'child-heads/1'}
+transitions = {'schema': 'vendor-observation-transitions/1', 'transitions': [{'consumer': 'myon-bioinformatics/mcp-toolcall-lab', 'r...8c952093c1e596b2c6414a58d0f', 'lock_sha256': '96aa59b26558a58206174175f0adb73643c657d6d4453e269af8710dd79c3360', ...}]}
+monitored = ['myon-bioinformatics/Ironmate'], token=&lt;redacted&gt;
+
+    def _registry_for_recorded_transitions(registry, document, transitions, monitored, *, token=&lt;redacted&gt;
+        """Audit explicitly frozen observations under their frozen contract, never skip bytes.
+    
+        The desired registry remains the child enrollment contract. Only an exact
+        reviewed observation and complete lock may use the recorded old entries.
+        Changed observations return to the normal strict desired-contract audit.
+        """
+        import vendor_consumers
+        registry = vendor_consumers.validate(registry)
+        if set(transitions) != {"schema", "transitions"} or transitions["schema"] != "vendor-observation-transitions/1":
+            raise ValueError("invalid observation transition manifest")
+        rows = transitions["transitions"]
+        if not isinstance(rows, list):
+            raise ValueError("invalid observation transitions")
+        result = copy.deepcopy(registry)
+        applied, seen = [], set()
+        for row in rows:
+            fields = {"consumer", "repository_id", "recorded_sha", "lock_sha256", "target_consumer_sha256", "old_entries", "reason"}
+            if not isinstance(row, dict) or set(row) != fields:
+                raise ValueError("invalid observation transition fields")
+            name = row["consumer"]
+            key = name.casefold()
+            if key in seen or key == PARENT_REPOSITORY.casefold():
+                raise ValueError("duplicate or parent observation transition")
+            seen.add(key)
+            if not re.fullmatch(r"[0-9a-f]{40}", row["recorded_sha"]) or any(
+                    not re.fullmatch(r"[0-9a-f]{64}", row[k]) for k in ("lock_sha256", "target_consumer_sha256")):
+                raise ValueError("invalid observation transition digest")
+            if not isinstance(row["reason"], str) or not row["reason"].strip():
+                raise ValueError("observation transition requires a reason")
+            consumer = vendor_consumers.get_consumer(registry, name)
+            if consumer["state"] != "locked" or _transition_digest(consumer) != row["target_consumer_sha256"]:
+&gt;               raise ValueError("observation transition target contract changed")
+E               ValueError: observation transition target contract changed
+
+vendor_sync.py:2127: ValueError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_changed_old_lock_fails_closed[digest]" time="0.005"><failure message="AssertionError: Regex pattern did not match.&#10;  Expected regex: 'lock changed'&#10;  Actual message: 'observation transition target contract changed'">change = 'digest'
+
+    @pytest.mark.parametrize('change', ['digest','source','missing','mixed'])
+    def test_changed_old_lock_fails_closed(change):
+        registry, heads, manifest, lock = inputs()
+        if change == 'digest': lock['files'][0]['sha256'] = '0' * 64
+        if change == 'source': lock['files'][0]['source'] = 'other.py'
+        if change == 'missing': lock['files'].pop()
+        if change == 'mixed': lock['files'].append(copy.deepcopy(lock['files'][0]))
+&gt;       with pytest.raises(ValueError, match='lock changed'): resolve(registry, heads, manifest, lock)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'lock changed'
+E         Actual message: 'observation transition target contract changed'
+
+tests/test_vendor_contracts.py:496: AssertionError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_changed_old_lock_fails_closed[source]" time="0.005"><failure message="AssertionError: Regex pattern did not match.&#10;  Expected regex: 'lock changed'&#10;  Actual message: 'observation transition target contract changed'">change = 'source'
+
+    @pytest.mark.parametrize('change', ['digest','source','missing','mixed'])
+    def test_changed_old_lock_fails_closed(change):
+        registry, heads, manifest, lock = inputs()
+        if change == 'digest': lock['files'][0]['sha256'] = '0' * 64
+        if change == 'source': lock['files'][0]['source'] = 'other.py'
+        if change == 'missing': lock['files'].pop()
+        if change == 'mixed': lock['files'].append(copy.deepcopy(lock['files'][0]))
+&gt;       with pytest.raises(ValueError, match='lock changed'): resolve(registry, heads, manifest, lock)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'lock changed'
+E         Actual message: 'observation transition target contract changed'
+
+tests/test_vendor_contracts.py:496: AssertionError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_changed_old_lock_fails_closed[missing]" time="0.005"><failure message="AssertionError: Regex pattern did not match.&#10;  Expected regex: 'lock changed'&#10;  Actual message: 'observation transition target contract changed'">change = 'missing'
+
+    @pytest.mark.parametrize('change', ['digest','source','missing','mixed'])
+    def test_changed_old_lock_fails_closed(change):
+        registry, heads, manifest, lock = inputs()
+        if change == 'digest': lock['files'][0]['sha256'] = '0' * 64
+        if change == 'source': lock['files'][0]['source'] = 'other.py'
+        if change == 'missing': lock['files'].pop()
+        if change == 'mixed': lock['files'].append(copy.deepcopy(lock['files'][0]))
+&gt;       with pytest.raises(ValueError, match='lock changed'): resolve(registry, heads, manifest, lock)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'lock changed'
+E         Actual message: 'observation transition target contract changed'
+
+tests/test_vendor_contracts.py:496: AssertionError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_changed_old_lock_fails_closed[mixed]" time="0.005"><failure message="AssertionError: Regex pattern did not match.&#10;  Expected regex: 'lock changed'&#10;  Actual message: 'observation transition target contract changed'">change = 'mixed'
+
+    @pytest.mark.parametrize('change', ['digest','source','missing','mixed'])
+    def test_changed_old_lock_fails_closed(change):
+        registry, heads, manifest, lock = inputs()
+        if change == 'digest': lock['files'][0]['sha256'] = '0' * 64
+        if change == 'source': lock['files'][0]['source'] = 'other.py'
+        if change == 'missing': lock['files'].pop()
+        if change == 'mixed': lock['files'].append(copy.deepcopy(lock['files'][0]))
+&gt;       with pytest.raises(ValueError, match='lock changed'): resolve(registry, heads, manifest, lock)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'lock changed'
+E         Actual message: 'observation transition target contract changed'
+
+tests/test_vendor_contracts.py:496: AssertionError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_unknown_observation_cannot_use_old_contract" time="0.005"><failure message="ValueError: observation transition target contract changed">def test_unknown_observation_cannot_use_old_contract():
+        registry, heads, manifest, lock = inputs(); heads['heads'][NAME]['sha'] = '1' * 40
+&gt;       result, reports = resolve(registry, heads, manifest, lock)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_vendor_contracts.py:500: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_vendor_contracts.py:478: in resolve
+    return sync._registry_for_recorded_transitions(registry, heads, manifest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+registry = {'schema': 'vendor-consumers/1', 'consumers': [{'repository': 'myon-bioinformatics/myon-bioinformatics', 'state': 'loc...ry': 'myon-bioinformatics/gh_identity', 'source': 'LICENSE', 'destination': 'vendor/gh_identity-LICENSE'}, ...]}, ...]}
+document = {'heads': {'myon-bioinformatics/Aoi': {'optional': {'repository_created_at': '2026-10-03T08:06:15Z'}, 'repository_id':...ry_id': 1181998414, 'sha': '1111111111111111111111111111111111111111'}, ...}, 'ref': 'main', 'schema': 'child-heads/1'}
+transitions = {'schema': 'vendor-observation-transitions/1', 'transitions': [{'consumer': 'myon-bioinformatics/mcp-toolcall-lab', 'r...8c952093c1e596b2c6414a58d0f', 'lock_sha256': '96aa59b26558a58206174175f0adb73643c657d6d4453e269af8710dd79c3360', ...}]}
+monitored = ['myon-bioinformatics/Ironmate'], token=&lt;redacted&gt;
+
+    def _registry_for_recorded_transitions(registry, document, transitions, monitored, *, token=&lt;redacted&gt;
+        """Audit explicitly frozen observations under their frozen contract, never skip bytes.
+    
+        The desired registry remains the child enrollment contract. Only an exact
+        reviewed observation and complete lock may use the recorded old entries.
+        Changed observations return to the normal strict desired-contract audit.
+        """
+        import vendor_consumers
+        registry = vendor_consumers.validate(registry)
+        if set(transitions) != {"schema", "transitions"} or transitions["schema"] != "vendor-observation-transitions/1":
+            raise ValueError("invalid observation transition manifest")
+        rows = transitions["transitions"]
+        if not isinstance(rows, list):
+            raise ValueError("invalid observation transitions")
+        result = copy.deepcopy(registry)
+        applied, seen = [], set()
+        for row in rows:
+            fields = {"consumer", "repository_id", "recorded_sha", "lock_sha256", "target_consumer_sha256", "old_entries", "reason"}
+            if not isinstance(row, dict) or set(row) != fields:
+                raise ValueError("invalid observation transition fields")
+            name = row["consumer"]
+            key = name.casefold()
+            if key in seen or key == PARENT_REPOSITORY.casefold():
+                raise ValueError("duplicate or parent observation transition")
+            seen.add(key)
+            if not re.fullmatch(r"[0-9a-f]{40}", row["recorded_sha"]) or any(
+                    not re.fullmatch(r"[0-9a-f]{64}", row[k]) for k in ("lock_sha256", "target_consumer_sha256")):
+                raise ValueError("invalid observation transition digest")
+            if not isinstance(row["reason"], str) or not row["reason"].strip():
+                raise ValueError("observation transition requires a reason")
+            consumer = vendor_consumers.get_consumer(registry, name)
+            if consumer["state"] != "locked" or _transition_digest(consumer) != row["target_consumer_sha256"]:
+&gt;               raise ValueError("observation transition target contract changed")
+E               ValueError: observation transition target contract changed
+
+vendor_sync.py:2127: ValueError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_identity_change_is_rejected" time="0.005"><failure message="AssertionError: Regex pattern did not match.&#10;  Expected regex: 'repository id'&#10;  Actual message: 'observation transition target contract changed'">def test_identity_change_is_rejected():
+        registry, heads, manifest, lock = inputs(); heads['heads'][NAME]['repository_id'] += 1
+&gt;       with pytest.raises(ValueError, match='repository id'): resolve(registry, heads, manifest, lock)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: Regex pattern did not match.
+E         Expected regex: 'repository id'
+E         Actual message: 'observation transition target contract changed'
+
+tests/test_vendor_contracts.py:505: AssertionError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_unmonitored_repo_is_never_read" time="0.005"><failure message="ValueError: observation transition target contract changed">def test_unmonitored_repo_is_never_read():
+        registry, heads, manifest, lock = inputs()
+        with patch.object(sync, '_load_recorded_child_lock', side_effect=AssertionError('unexpected fetch')):
+&gt;           _, reports = sync._registry_for_recorded_transitions(registry, heads, manifest, [])
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_vendor_contracts.py:515: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+registry = {'schema': 'vendor-consumers/1', 'consumers': [{'repository': 'myon-bioinformatics/myon-bioinformatics', 'state': 'loc...ry': 'myon-bioinformatics/gh_identity', 'source': 'LICENSE', 'destination': 'vendor/gh_identity-LICENSE'}, ...]}, ...]}
+document = {'heads': {'myon-bioinformatics/Aoi': {'optional': {'repository_created_at': '2026-10-03T08:06:15Z'}, 'repository_id':...ry_id': 1181998414, 'sha': '3759429eae7138c952093c1e596b2c6414a58d0f'}, ...}, 'ref': 'main', 'schema': 'child-heads/1'}
+transitions = {'schema': 'vendor-observation-transitions/1', 'transitions': [{'consumer': 'myon-bioinformatics/mcp-toolcall-lab', 'r...8c952093c1e596b2c6414a58d0f', 'lock_sha256': '96aa59b26558a58206174175f0adb73643c657d6d4453e269af8710dd79c3360', ...}]}
+monitored = [], token=&lt;redacted&gt;
+
+    def _registry_for_recorded_transitions(registry, document, transitions, monitored, *, token=&lt;redacted&gt;
+        """Audit explicitly frozen observations under their frozen contract, never skip bytes.
+    
+        The desired registry remains the child enrollment contract. Only an exact
+        reviewed observation and complete lock may use the recorded old entries.
+        Changed observations return to the normal strict desired-contract audit.
+        """
+        import vendor_consumers
+        registry = vendor_consumers.validate(registry)
+        if set(transitions) != {"schema", "transitions"} or transitions["schema"] != "vendor-observation-transitions/1":
+            raise ValueError("invalid observation transition manifest")
+        rows = transitions["transitions"]
+        if not isinstance(rows, list):
+            raise ValueError("invalid observation transitions")
+        result = copy.deepcopy(registry)
+        applied, seen = [], set()
+        for row in rows:
+            fields = {"consumer", "repository_id", "recorded_sha", "lock_sha256", "target_consumer_sha256", "old_entries", "reason"}
+            if not isinstance(row, dict) or set(row) != fields:
+                raise ValueError("invalid observation transition fields")
+            name = row["consumer"]
+            key = name.casefold()
+            if key in seen or key == PARENT_REPOSITORY.casefold():
+                raise ValueError("duplicate or parent observation transition")
+            seen.add(key)
+            if not re.fullmatch(r"[0-9a-f]{40}", row["recorded_sha"]) or any(
+                    not re.fullmatch(r"[0-9a-f]{64}", row[k]) for k in ("lock_sha256", "target_consumer_sha256")):
+                raise ValueError("invalid observation transition digest")
+            if not isinstance(row["reason"], str) or not row["reason"].strip():
+                raise ValueError("observation transition requires a reason")
+            consumer = vendor_consumers.get_consumer(registry, name)
+            if consumer["state"] != "locked" or _transition_digest(consumer) != row["target_consumer_sha256"]:
+&gt;               raise ValueError("observation transition target contract changed")
+E               ValueError: observation transition target contract changed
+
+vendor_sync.py:2127: ValueError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_failed_read_is_not_converted_to_permission" time="0.005"><failure message="AssertionError: Regex pattern did not match.&#10;  Expected regex: 'unavailable'&#10;  Actual message: 'observation transition target contract changed'">def test_failed_read_is_not_converted_to_permission():
+        registry, heads, manifest, lock = inputs()
+        with patch.object(sync, '_load_recorded_child_lock', side_effect=ValueError('unavailable')):
+&gt;           with pytest.raises(ValueError, match='unavailable'):
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           AssertionError: Regex pattern did not match.
+E             Expected regex: 'unavailable'
+E             Actual message: 'observation transition target contract changed'
+
+tests/test_vendor_contracts.py:521: AssertionError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_selected_old_contract_still_rejects_tampered_bytes[source]" time="0.005"><failure message="ValueError: observation transition target contract changed">bad = 'source'
+
+    @pytest.mark.parametrize('bad', ['source', 'child', 'clean', 'unmerged'])
+    def test_selected_old_contract_still_rejects_tampered_bytes(bad):
+        registry, heads, manifest, lock = inputs()
+&gt;       registry, _ = resolve(registry, heads, manifest, lock)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_vendor_contracts.py:527: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_vendor_contracts.py:478: in resolve
+    return sync._registry_for_recorded_transitions(registry, heads, manifest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+registry = {'schema': 'vendor-consumers/1', 'consumers': [{'repository': 'myon-bioinformatics/myon-bioinformatics', 'state': 'loc...ry': 'myon-bioinformatics/gh_identity', 'source': 'LICENSE', 'destination': 'vendor/gh_identity-LICENSE'}, ...]}, ...]}
+document = {'heads': {'myon-bioinformatics/Aoi': {'optional': {'repository_created_at': '2026-10-03T08:06:15Z'}, 'repository_id':...ry_id': 1181998414, 'sha': '3759429eae7138c952093c1e596b2c6414a58d0f'}, ...}, 'ref': 'main', 'schema': 'child-heads/1'}
+transitions = {'schema': 'vendor-observation-transitions/1', 'transitions': [{'consumer': 'myon-bioinformatics/mcp-toolcall-lab', 'r...8c952093c1e596b2c6414a58d0f', 'lock_sha256': '96aa59b26558a58206174175f0adb73643c657d6d4453e269af8710dd79c3360', ...}]}
+monitored = ['myon-bioinformatics/Ironmate'], token=&lt;redacted&gt;
+
+    def _registry_for_recorded_transitions(registry, document, transitions, monitored, *, token=&lt;redacted&gt;
+        """Audit explicitly frozen observations under their frozen contract, never skip bytes.
+    
+        The desired registry remains the child enrollment contract. Only an exact
+        reviewed observation and complete lock may use the recorded old entries.
+        Changed observations return to the normal strict desired-contract audit.
+        """
+        import vendor_consumers
+        registry = vendor_consumers.validate(registry)
+        if set(transitions) != {"schema", "transitions"} or transitions["schema"] != "vendor-observation-transitions/1":
+            raise ValueError("invalid observation transition manifest")
+        rows = transitions["transitions"]
+        if not isinstance(rows, list):
+            raise ValueError("invalid observation transitions")
+        result = copy.deepcopy(registry)
+        applied, seen = [], set()
+        for row in rows:
+            fields = {"consumer", "repository_id", "recorded_sha", "lock_sha256", "target_consumer_sha256", "old_entries", "reason"}
+            if not isinstance(row, dict) or set(row) != fields:
+                raise ValueError("invalid observation transition fields")
+            name = row["consumer"]
+            key = name.casefold()
+            if key in seen or key == PARENT_REPOSITORY.casefold():
+                raise ValueError("duplicate or parent observation transition")
+            seen.add(key)
+            if not re.fullmatch(r"[0-9a-f]{40}", row["recorded_sha"]) or any(
+                    not re.fullmatch(r"[0-9a-f]{64}", row[k]) for k in ("lock_sha256", "target_consumer_sha256")):
+                raise ValueError("invalid observation transition digest")
+            if not isinstance(row["reason"], str) or not row["reason"].strip():
+                raise ValueError("observation transition requires a reason")
+            consumer = vendor_consumers.get_consumer(registry, name)
+            if consumer["state"] != "locked" or _transition_digest(consumer) != row["target_consumer_sha256"]:
+&gt;               raise ValueError("observation transition target contract changed")
+E               ValueError: observation transition target contract changed
+
+vendor_sync.py:2127: ValueError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_selected_old_contract_still_rejects_tampered_bytes[child]" time="0.005"><failure message="ValueError: observation transition target contract changed">bad = 'child'
+
+    @pytest.mark.parametrize('bad', ['source', 'child', 'clean', 'unmerged'])
+    def test_selected_old_contract_still_rejects_tampered_bytes(bad):
+        registry, heads, manifest, lock = inputs()
+&gt;       registry, _ = resolve(registry, heads, manifest, lock)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_vendor_contracts.py:527: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_vendor_contracts.py:478: in resolve
+    return sync._registry_for_recorded_transitions(registry, heads, manifest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+registry = {'schema': 'vendor-consumers/1', 'consumers': [{'repository': 'myon-bioinformatics/myon-bioinformatics', 'state': 'loc...ry': 'myon-bioinformatics/gh_identity', 'source': 'LICENSE', 'destination': 'vendor/gh_identity-LICENSE'}, ...]}, ...]}
+document = {'heads': {'myon-bioinformatics/Aoi': {'optional': {'repository_created_at': '2026-10-03T08:06:15Z'}, 'repository_id':...ry_id': 1181998414, 'sha': '3759429eae7138c952093c1e596b2c6414a58d0f'}, ...}, 'ref': 'main', 'schema': 'child-heads/1'}
+transitions = {'schema': 'vendor-observation-transitions/1', 'transitions': [{'consumer': 'myon-bioinformatics/mcp-toolcall-lab', 'r...8c952093c1e596b2c6414a58d0f', 'lock_sha256': '96aa59b26558a58206174175f0adb73643c657d6d4453e269af8710dd79c3360', ...}]}
+monitored = ['myon-bioinformatics/Ironmate'], token=&lt;redacted&gt;
+
+    def _registry_for_recorded_transitions(registry, document, transitions, monitored, *, token=&lt;redacted&gt;
+        """Audit explicitly frozen observations under their frozen contract, never skip bytes.
+    
+        The desired registry remains the child enrollment contract. Only an exact
+        reviewed observation and complete lock may use the recorded old entries.
+        Changed observations return to the normal strict desired-contract audit.
+        """
+        import vendor_consumers
+        registry = vendor_consumers.validate(registry)
+        if set(transitions) != {"schema", "transitions"} or transitions["schema"] != "vendor-observation-transitions/1":
+            raise ValueError("invalid observation transition manifest")
+        rows = transitions["transitions"]
+        if not isinstance(rows, list):
+            raise ValueError("invalid observation transitions")
+        result = copy.deepcopy(registry)
+        applied, seen = [], set()
+        for row in rows:
+            fields = {"consumer", "repository_id", "recorded_sha", "lock_sha256", "target_consumer_sha256", "old_entries", "reason"}
+            if not isinstance(row, dict) or set(row) != fields:
+                raise ValueError("invalid observation transition fields")
+            name = row["consumer"]
+            key = name.casefold()
+            if key in seen or key == PARENT_REPOSITORY.casefold():
+                raise ValueError("duplicate or parent observation transition")
+            seen.add(key)
+            if not re.fullmatch(r"[0-9a-f]{40}", row["recorded_sha"]) or any(
+                    not re.fullmatch(r"[0-9a-f]{64}", row[k]) for k in ("lock_sha256", "target_consumer_sha256")):
+                raise ValueError("invalid observation transition digest")
+            if not isinstance(row["reason"], str) or not row["reason"].strip():
+                raise ValueError("observation transition requires a reason")
+            consumer = vendor_consumers.get_consumer(registry, name)
+            if consumer["state"] != "locked" or _transition_digest(consumer) != row["target_consumer_sha256"]:
+&gt;               raise ValueError("observation transition target contract changed")
+E               ValueError: observation transition target contract changed
+
+vendor_sync.py:2127: ValueError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_selected_old_contract_still_rejects_tampered_bytes[clean]" time="0.005"><failure message="ValueError: observation transition target contract changed">bad = 'clean'
+
+    @pytest.mark.parametrize('bad', ['source', 'child', 'clean', 'unmerged'])
+    def test_selected_old_contract_still_rejects_tampered_bytes(bad):
+        registry, heads, manifest, lock = inputs()
+&gt;       registry, _ = resolve(registry, heads, manifest, lock)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_vendor_contracts.py:527: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_vendor_contracts.py:478: in resolve
+    return sync._registry_for_recorded_transitions(registry, heads, manifest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+registry = {'schema': 'vendor-consumers/1', 'consumers': [{'repository': 'myon-bioinformatics/myon-bioinformatics', 'state': 'loc...ry': 'myon-bioinformatics/gh_identity', 'source': 'LICENSE', 'destination': 'vendor/gh_identity-LICENSE'}, ...]}, ...]}
+document = {'heads': {'myon-bioinformatics/Aoi': {'optional': {'repository_created_at': '2026-10-03T08:06:15Z'}, 'repository_id':...ry_id': 1181998414, 'sha': '3759429eae7138c952093c1e596b2c6414a58d0f'}, ...}, 'ref': 'main', 'schema': 'child-heads/1'}
+transitions = {'schema': 'vendor-observation-transitions/1', 'transitions': [{'consumer': 'myon-bioinformatics/mcp-toolcall-lab', 'r...8c952093c1e596b2c6414a58d0f', 'lock_sha256': '96aa59b26558a58206174175f0adb73643c657d6d4453e269af8710dd79c3360', ...}]}
+monitored = ['myon-bioinformatics/Ironmate'], token=&lt;redacted&gt;
+
+    def _registry_for_recorded_transitions(registry, document, transitions, monitored, *, token=&lt;redacted&gt;
+        """Audit explicitly frozen observations under their frozen contract, never skip bytes.
+    
+        The desired registry remains the child enrollment contract. Only an exact
+        reviewed observation and complete lock may use the recorded old entries.
+        Changed observations return to the normal strict desired-contract audit.
+        """
+        import vendor_consumers
+        registry = vendor_consumers.validate(registry)
+        if set(transitions) != {"schema", "transitions"} or transitions["schema"] != "vendor-observation-transitions/1":
+            raise ValueError("invalid observation transition manifest")
+        rows = transitions["transitions"]
+        if not isinstance(rows, list):
+            raise ValueError("invalid observation transitions")
+        result = copy.deepcopy(registry)
+        applied, seen = [], set()
+        for row in rows:
+            fields = {"consumer", "repository_id", "recorded_sha", "lock_sha256", "target_consumer_sha256", "old_entries", "reason"}
+            if not isinstance(row, dict) or set(row) != fields:
+                raise ValueError("invalid observation transition fields")
+            name = row["consumer"]
+            key = name.casefold()
+            if key in seen or key == PARENT_REPOSITORY.casefold():
+                raise ValueError("duplicate or parent observation transition")
+            seen.add(key)
+            if not re.fullmatch(r"[0-9a-f]{40}", row["recorded_sha"]) or any(
+                    not re.fullmatch(r"[0-9a-f]{64}", row[k]) for k in ("lock_sha256", "target_consumer_sha256")):
+                raise ValueError("invalid observation transition digest")
+            if not isinstance(row["reason"], str) or not row["reason"].strip():
+                raise ValueError("observation transition requires a reason")
+            consumer = vendor_consumers.get_consumer(registry, name)
+            if consumer["state"] != "locked" or _transition_digest(consumer) != row["target_consumer_sha256"]:
+&gt;               raise ValueError("observation transition target contract changed")
+E               ValueError: observation transition target contract changed
+
+vendor_sync.py:2127: ValueError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_selected_old_contract_still_rejects_tampered_bytes[unmerged]" time="0.005"><failure message="ValueError: observation transition target contract changed">bad = 'unmerged'
+
+    @pytest.mark.parametrize('bad', ['source', 'child', 'clean', 'unmerged'])
+    def test_selected_old_contract_still_rejects_tampered_bytes(bad):
+        registry, heads, manifest, lock = inputs()
+&gt;       registry, _ = resolve(registry, heads, manifest, lock)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_vendor_contracts.py:527: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_vendor_contracts.py:478: in resolve
+    return sync._registry_for_recorded_transitions(registry, heads, manifest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+registry = {'schema': 'vendor-consumers/1', 'consumers': [{'repository': 'myon-bioinformatics/myon-bioinformatics', 'state': 'loc...ry': 'myon-bioinformatics/gh_identity', 'source': 'LICENSE', 'destination': 'vendor/gh_identity-LICENSE'}, ...]}, ...]}
+document = {'heads': {'myon-bioinformatics/Aoi': {'optional': {'repository_created_at': '2026-10-03T08:06:15Z'}, 'repository_id':...ry_id': 1181998414, 'sha': '3759429eae7138c952093c1e596b2c6414a58d0f'}, ...}, 'ref': 'main', 'schema': 'child-heads/1'}
+transitions = {'schema': 'vendor-observation-transitions/1', 'transitions': [{'consumer': 'myon-bioinformatics/mcp-toolcall-lab', 'r...8c952093c1e596b2c6414a58d0f', 'lock_sha256': '96aa59b26558a58206174175f0adb73643c657d6d4453e269af8710dd79c3360', ...}]}
+monitored = ['myon-bioinformatics/Ironmate'], token=&lt;redacted&gt;
+
+    def _registry_for_recorded_transitions(registry, document, transitions, monitored, *, token=&lt;redacted&gt;
+        """Audit explicitly frozen observations under their frozen contract, never skip bytes.
+    
+        The desired registry remains the child enrollment contract. Only an exact
+        reviewed observation and complete lock may use the recorded old entries.
+        Changed observations return to the normal strict desired-contract audit.
+        """
+        import vendor_consumers
+        registry = vendor_consumers.validate(registry)
+        if set(transitions) != {"schema", "transitions"} or transitions["schema"] != "vendor-observation-transitions/1":
+            raise ValueError("invalid observation transition manifest")
+        rows = transitions["transitions"]
+        if not isinstance(rows, list):
+            raise ValueError("invalid observation transitions")
+        result = copy.deepcopy(registry)
+        applied, seen = [], set()
+        for row in rows:
+            fields = {"consumer", "repository_id", "recorded_sha", "lock_sha256", "target_consumer_sha256", "old_entries", "reason"}
+            if not isinstance(row, dict) or set(row) != fields:
+                raise ValueError("invalid observation transition fields")
+            name = row["consumer"]
+            key = name.casefold()
+            if key in seen or key == PARENT_REPOSITORY.casefold():
+                raise ValueError("duplicate or parent observation transition")
+            seen.add(key)
+            if not re.fullmatch(r"[0-9a-f]{40}", row["recorded_sha"]) or any(
+                    not re.fullmatch(r"[0-9a-f]{64}", row[k]) for k in ("lock_sha256", "target_consumer_sha256")):
+                raise ValueError("invalid observation transition digest")
+            if not isinstance(row["reason"], str) or not row["reason"].strip():
+                raise ValueError("observation transition requires a reason")
+            consumer = vendor_consumers.get_consumer(registry, name)
+            if consumer["state"] != "locked" or _transition_digest(consumer) != row["target_consumer_sha256"]:
+&gt;               raise ValueError("observation transition target contract changed")
+E               ValueError: observation transition target contract changed
+
+vendor_sync.py:2127: ValueError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_new_observation_uses_desired_contract_without_transition" time="0.005"><failure message="ValueError: observation transition target contract changed">def test_new_observation_uses_desired_contract_without_transition():
+        registry, heads, manifest, _ = inputs()
+        heads['heads'][NAME]['sha'] = '2' * 40
+        lock = json.loads((ROOT/'tests/fixtures/ironmate-flow-ascii-artist.lock.json').read_text())
+&gt;       result, reports = resolve(registry, heads, manifest, lock)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_vendor_contracts.py:550: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_vendor_contracts.py:478: in resolve
+    return sync._registry_for_recorded_transitions(registry, heads, manifest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+registry = {'schema': 'vendor-consumers/1', 'consumers': [{'repository': 'myon-bioinformatics/myon-bioinformatics', 'state': 'loc...ry': 'myon-bioinformatics/gh_identity', 'source': 'LICENSE', 'destination': 'vendor/gh_identity-LICENSE'}, ...]}, ...]}
+document = {'heads': {'myon-bioinformatics/Aoi': {'optional': {'repository_created_at': '2026-10-03T08:06:15Z'}, 'repository_id':...ry_id': 1181998414, 'sha': '2222222222222222222222222222222222222222'}, ...}, 'ref': 'main', 'schema': 'child-heads/1'}
+transitions = {'schema': 'vendor-observation-transitions/1', 'transitions': [{'consumer': 'myon-bioinformatics/mcp-toolcall-lab', 'r...8c952093c1e596b2c6414a58d0f', 'lock_sha256': '96aa59b26558a58206174175f0adb73643c657d6d4453e269af8710dd79c3360', ...}]}
+monitored = ['myon-bioinformatics/Ironmate'], token=&lt;redacted&gt;
+
+    def _registry_for_recorded_transitions(registry, document, transitions, monitored, *, token=&lt;redacted&gt;
+        """Audit explicitly frozen observations under their frozen contract, never skip bytes.
+    
+        The desired registry remains the child enrollment contract. Only an exact
+        reviewed observation and complete lock may use the recorded old entries.
+        Changed observations return to the normal strict desired-contract audit.
+        """
+        import vendor_consumers
+        registry = vendor_consumers.validate(registry)
+        if set(transitions) != {"schema", "transitions"} or transitions["schema"] != "vendor-observation-transitions/1":
+            raise ValueError("invalid observation transition manifest")
+        rows = transitions["transitions"]
+        if not isinstance(rows, list):
+            raise ValueError("invalid observation transitions")
+        result = copy.deepcopy(registry)
+        applied, seen = [], set()
+        for row in rows:
+            fields = {"consumer", "repository_id", "recorded_sha", "lock_sha256", "target_consumer_sha256", "old_entries", "reason"}
+            if not isinstance(row, dict) or set(row) != fields:
+                raise ValueError("invalid observation transition fields")
+            name = row["consumer"]
+            key = name.casefold()
+            if key in seen or key == PARENT_REPOSITORY.casefold():
+                raise ValueError("duplicate or parent observation transition")
+            seen.add(key)
+            if not re.fullmatch(r"[0-9a-f]{40}", row["recorded_sha"]) or any(
+                    not re.fullmatch(r"[0-9a-f]{64}", row[k]) for k in ("lock_sha256", "target_consumer_sha256")):
+                raise ValueError("invalid observation transition digest")
+            if not isinstance(row["reason"], str) or not row["reason"].strip():
+                raise ValueError("observation transition requires a reason")
+            consumer = vendor_consumers.get_consumer(registry, name)
+            if consumer["state"] != "locked" or _transition_digest(consumer) != row["target_consumer_sha256"]:
+&gt;               raise ValueError("observation transition target contract changed")
+E               ValueError: observation transition target contract changed
+
+vendor_sync.py:2127: ValueError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_exact_old_observation_uses_old_contract_without_mutating_target_mcp_pswb_observation_transition" time="0.009"><failure message="ValueError: observation transition target contract changed">def test_exact_old_observation_uses_old_contract_without_mutating_target_mcp_pswb_observation_transition():
+        registry, heads, manifest, lock = inputs_mcp_pswb_observation_transition(); original = copy.deepcopy(registry)
+&gt;       result, reports = resolve_mcp_pswb_observation_transition(registry, heads, manifest, lock)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_vendor_contracts.py:1011: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_vendor_contracts.py:1006: in resolve_mcp_pswb_observation_transition
+    return sync._registry_for_recorded_transitions(registry, heads, manifest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+registry = {'schema': 'vendor-consumers/1', 'consumers': [{'repository': 'myon-bioinformatics/myon-bioinformatics', 'state': 'loc...ry': 'myon-bioinformatics/gh_identity', 'source': 'LICENSE', 'destination': 'vendor/gh_identity-LICENSE'}, ...]}, ...]}
+document = {'heads': {'myon-bioinformatics/Aoi': {'optional': {'repository_created_at': '2026-10-03T08:06:15Z'}, 'repository_id':...ry_id': 1181998414, 'sha': '3759429eae7138c952093c1e596b2c6414a58d0f'}, ...}, 'ref': 'main', 'schema': 'child-heads/1'}
+transitions = {'schema': 'vendor-observation-transitions/1', 'transitions': [{'consumer': 'myon-bioinformatics/mcp-toolcall-lab', 'r...8c952093c1e596b2c6414a58d0f', 'lock_sha256': '96aa59b26558a58206174175f0adb73643c657d6d4453e269af8710dd79c3360', ...}]}
+monitored = ['myon-bioinformatics/mcp-toolcall-lab'], token=&lt;redacted&gt;
+
+    def _registry_for_recorded_transitions(registry, document, transitions, monitored, *, token=&lt;redacted&gt;
+        """Audit explicitly frozen observations under their frozen contract, never skip bytes.
+    
+        The desired registry remains the child enrollment contract. Only an exact
+        reviewed observation and complete lock may use the recorded old entries.
+        Changed observations return to the normal strict desired-contract audit.
+        """
+        import vendor_consumers
+        registry = vendor_consumers.validate(registry)
+        if set(transitions) != {"schema", "transitions"} or transitions["schema"] != "vendor-observation-transitions/1":
+            raise ValueError("invalid observation transition manifest")
+        rows = transitions["transitions"]
+        if not isinstance(rows, list):
+            raise ValueError("invalid observation transitions")
+        result = copy.deepcopy(registry)
+        applied, seen = [], set()
+        for row in rows:
+            fields = {"consumer", "repository_id", "recorded_sha", "lock_sha256", "target_consumer_sha256", "old_entries", "reason"}
+            if not isinstance(row, dict) or set(row) != fields:
+                raise ValueError("invalid observation transition fields")
+            name = row["consumer"]
+            key = name.casefold()
+            if key in seen or key == PARENT_REPOSITORY.casefold():
+                raise ValueError("duplicate or parent observation transition")
+            seen.add(key)
+            if not re.fullmatch(r"[0-9a-f]{40}", row["recorded_sha"]) or any(
+                    not re.fullmatch(r"[0-9a-f]{64}", row[k]) for k in ("lock_sha256", "target_consumer_sha256")):
+                raise ValueError("invalid observation transition digest")
+            if not isinstance(row["reason"], str) or not row["reason"].strip():
+                raise ValueError("observation transition requires a reason")
+            consumer = vendor_consumers.get_consumer(registry, name)
+            if consumer["state"] != "locked" or _transition_digest(consumer) != row["target_consumer_sha256"]:
+&gt;               raise ValueError("observation transition target contract changed")
+E               ValueError: observation transition target contract changed
+
+vendor_sync.py:2127: ValueError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_unknown_observation_cannot_use_old_contract_mcp_pswb_observation_transition" time="0.005"><failure message="ValueError: observation transition target contract changed">def test_unknown_observation_cannot_use_old_contract_mcp_pswb_observation_transition():
+        registry, heads, manifest, lock = inputs_mcp_pswb_observation_transition(); heads['heads'][MCP_PSWB_OBSERVATION_TRANSITION_NAME]['sha'] = '1' * 40
+&gt;       result, reports = resolve_mcp_pswb_observation_transition(registry, heads, manifest, lock)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_vendor_contracts.py:1028: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_vendor_contracts.py:1006: in resolve_mcp_pswb_observation_transition
+    return sync._registry_for_recorded_transitions(registry, heads, manifest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+registry = {'schema': 'vendor-consumers/1', 'consumers': [{'repository': 'myon-bioinformatics/myon-bioinformatics', 'state': 'loc...ry': 'myon-bioinformatics/gh_identity', 'source': 'LICENSE', 'destination': 'vendor/gh_identity-LICENSE'}, ...]}, ...]}
+document = {'heads': {'myon-bioinformatics/Aoi': {'optional': {'repository_created_at': '2026-10-03T08:06:15Z'}, 'repository_id':...ry_id': 1181998414, 'sha': '3759429eae7138c952093c1e596b2c6414a58d0f'}, ...}, 'ref': 'main', 'schema': 'child-heads/1'}
+transitions = {'schema': 'vendor-observation-transitions/1', 'transitions': [{'consumer': 'myon-bioinformatics/mcp-toolcall-lab', 'r...8c952093c1e596b2c6414a58d0f', 'lock_sha256': '96aa59b26558a58206174175f0adb73643c657d6d4453e269af8710dd79c3360', ...}]}
+monitored = ['myon-bioinformatics/mcp-toolcall-lab'], token=&lt;redacted&gt;
+
+    def _registry_for_recorded_transitions(registry, document, transitions, monitored, *, token=&lt;redacted&gt;
+        """Audit explicitly frozen observations under their frozen contract, never skip bytes.
+    
+        The desired registry remains the child enrollment contract. Only an exact
+        reviewed observation and complete lock may use the recorded old entries.
+        Changed observations return to the normal strict desired-contract audit.
+        """
+        import vendor_consumers
+        registry = vendor_consumers.validate(registry)
+        if set(transitions) != {"schema", "transitions"} or transitions["schema"] != "vendor-observation-transitions/1":
+            raise ValueError("invalid observation transition manifest")
+        rows = transitions["transitions"]
+        if not isinstance(rows, list):
+            raise ValueError("invalid observation transitions")
+        result = copy.deepcopy(registry)
+        applied, seen = [], set()
+        for row in rows:
+            fields = {"consumer", "repository_id", "recorded_sha", "lock_sha256", "target_consumer_sha256", "old_entries", "reason"}
+            if not isinstance(row, dict) or set(row) != fields:
+                raise ValueError("invalid observation transition fields")
+            name = row["consumer"]
+            key = name.casefold()
+            if key in seen or key == PARENT_REPOSITORY.casefold():
+                raise ValueError("duplicate or parent observation transition")
+            seen.add(key)
+            if not re.fullmatch(r"[0-9a-f]{40}", row["recorded_sha"]) or any(
+                    not re.fullmatch(r"[0-9a-f]{64}", row[k]) for k in ("lock_sha256", "target_consumer_sha256")):
+                raise ValueError("invalid observation transition digest")
+            if not isinstance(row["reason"], str) or not row["reason"].strip():
+                raise ValueError("observation transition requires a reason")
+            consumer = vendor_consumers.get_consumer(registry, name)
+            if consumer["state"] != "locked" or _transition_digest(consumer) != row["target_consumer_sha256"]:
+&gt;               raise ValueError("observation transition target contract changed")
+E               ValueError: observation transition target contract changed
+
+vendor_sync.py:2127: ValueError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_unmonitored_repo_is_never_read_mcp_pswb_observation_transition" time="0.005"><failure message="ValueError: observation transition target contract changed">def test_unmonitored_repo_is_never_read_mcp_pswb_observation_transition():
+        registry, heads, manifest, lock = inputs_mcp_pswb_observation_transition()
+        with patch.object(sync, '_load_recorded_child_lock', side_effect=AssertionError('unexpected fetch')):
+&gt;           _, reports = sync._registry_for_recorded_transitions(registry, heads, manifest, [])
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_vendor_contracts.py:1043: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+registry = {'schema': 'vendor-consumers/1', 'consumers': [{'repository': 'myon-bioinformatics/myon-bioinformatics', 'state': 'loc...ry': 'myon-bioinformatics/gh_identity', 'source': 'LICENSE', 'destination': 'vendor/gh_identity-LICENSE'}, ...]}, ...]}
+document = {'heads': {'myon-bioinformatics/Aoi': {'optional': {'repository_created_at': '2026-10-03T08:06:15Z'}, 'repository_id':...ry_id': 1181998414, 'sha': '3759429eae7138c952093c1e596b2c6414a58d0f'}, ...}, 'ref': 'main', 'schema': 'child-heads/1'}
+transitions = {'schema': 'vendor-observation-transitions/1', 'transitions': [{'consumer': 'myon-bioinformatics/mcp-toolcall-lab', 'r...8c952093c1e596b2c6414a58d0f', 'lock_sha256': '96aa59b26558a58206174175f0adb73643c657d6d4453e269af8710dd79c3360', ...}]}
+monitored = [], token=&lt;redacted&gt;
+
+    def _registry_for_recorded_transitions(registry, document, transitions, monitored, *, token=&lt;redacted&gt;
+        """Audit explicitly frozen observations under their frozen contract, never skip bytes.
+    
+        The desired registry remains the child enrollment contract. Only an exact
+        reviewed observation and complete lock may use the recorded old entries.
+        Changed observations return to the normal strict desired-contract audit.
+        """
+        import vendor_consumers
+        registry = vendor_consumers.validate(registry)
+        if set(transitions) != {"schema", "transitions"} or transitions["schema"] != "vendor-observation-transitions/1":
+            raise ValueError("invalid observation transition manifest")
+        rows = transitions["transitions"]
+        if not isinstance(rows, list):
+            raise ValueError("invalid observation transitions")
+        result = copy.deepcopy(registry)
+        applied, seen = [], set()
+        for row in rows:
+            fields = {"consumer", "repository_id", "recorded_sha", "lock_sha256", "target_consumer_sha256", "old_entries", "reason"}
+            if not isinstance(row, dict) or set(row) != fields:
+                raise ValueError("invalid observation transition fields")
+            name = row["consumer"]
+            key = name.casefold()
+            if key in seen or key == PARENT_REPOSITORY.casefold():
+                raise ValueError("duplicate or parent observation transition")
+            seen.add(key)
+            if not re.fullmatch(r"[0-9a-f]{40}", row["recorded_sha"]) or any(
+                    not re.fullmatch(r"[0-9a-f]{64}", row[k]) for k in ("lock_sha256", "target_consumer_sha256")):
+                raise ValueError("invalid observation transition digest")
+            if not isinstance(row["reason"], str) or not row["reason"].strip():
+                raise ValueError("observation transition requires a reason")
+            consumer = vendor_consumers.get_consumer(registry, name)
+            if consumer["state"] != "locked" or _transition_digest(consumer) != row["target_consumer_sha256"]:
+&gt;               raise ValueError("observation transition target contract changed")
+E               ValueError: observation transition target contract changed
+
+vendor_sync.py:2127: ValueError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_selected_old_contract_still_rejects_tampered_bytes_mcp_pswb_observation_transition[source]" time="0.008"><failure message="ValueError: observation transition target contract changed">bad = 'source'
+
+    @pytest.mark.parametrize('bad', ['source', 'child', 'clean', 'unmerged'])
+    def test_selected_old_contract_still_rejects_tampered_bytes_mcp_pswb_observation_transition(bad):
+        registry, heads, manifest, lock = inputs_mcp_pswb_observation_transition()
+&gt;       registry, _ = resolve_mcp_pswb_observation_transition(registry, heads, manifest, lock)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_vendor_contracts.py:1055: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_vendor_contracts.py:1006: in resolve_mcp_pswb_observation_transition
+    return sync._registry_for_recorded_transitions(registry, heads, manifest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+registry = {'schema': 'vendor-consumers/1', 'consumers': [{'repository': 'myon-bioinformatics/myon-bioinformatics', 'state': 'loc...ry': 'myon-bioinformatics/gh_identity', 'source': 'LICENSE', 'destination': 'vendor/gh_identity-LICENSE'}, ...]}, ...]}
+document = {'heads': {'myon-bioinformatics/Aoi': {'optional': {'repository_created_at': '2026-10-03T08:06:15Z'}, 'repository_id':...ry_id': 1181998414, 'sha': '3759429eae7138c952093c1e596b2c6414a58d0f'}, ...}, 'ref': 'main', 'schema': 'child-heads/1'}
+transitions = {'schema': 'vendor-observation-transitions/1', 'transitions': [{'consumer': 'myon-bioinformatics/mcp-toolcall-lab', 'r...8c952093c1e596b2c6414a58d0f', 'lock_sha256': '96aa59b26558a58206174175f0adb73643c657d6d4453e269af8710dd79c3360', ...}]}
+monitored = ['myon-bioinformatics/mcp-toolcall-lab'], token=&lt;redacted&gt;
+
+    def _registry_for_recorded_transitions(registry, document, transitions, monitored, *, token=&lt;redacted&gt;
+        """Audit explicitly frozen observations under their frozen contract, never skip bytes.
+    
+        The desired registry remains the child enrollment contract. Only an exact
+        reviewed observation and complete lock may use the recorded old entries.
+        Changed observations return to the normal strict desired-contract audit.
+        """
+        import vendor_consumers
+        registry = vendor_consumers.validate(registry)
+        if set(transitions) != {"schema", "transitions"} or transitions["schema"] != "vendor-observation-transitions/1":
+            raise ValueError("invalid observation transition manifest")
+        rows = transitions["transitions"]
+        if not isinstance(rows, list):
+            raise ValueError("invalid observation transitions")
+        result = copy.deepcopy(registry)
+        applied, seen = [], set()
+        for row in rows:
+            fields = {"consumer", "repository_id", "recorded_sha", "lock_sha256", "target_consumer_sha256", "old_entries", "reason"}
+            if not isinstance(row, dict) or set(row) != fields:
+                raise ValueError("invalid observation transition fields")
+            name = row["consumer"]
+            key = name.casefold()
+            if key in seen or key == PARENT_REPOSITORY.casefold():
+                raise ValueError("duplicate or parent observation transition")
+            seen.add(key)
+            if not re.fullmatch(r"[0-9a-f]{40}", row["recorded_sha"]) or any(
+                    not re.fullmatch(r"[0-9a-f]{64}", row[k]) for k in ("lock_sha256", "target_consumer_sha256")):
+                raise ValueError("invalid observation transition digest")
+            if not isinstance(row["reason"], str) or not row["reason"].strip():
+                raise ValueError("observation transition requires a reason")
+            consumer = vendor_consumers.get_consumer(registry, name)
+            if consumer["state"] != "locked" or _transition_digest(consumer) != row["target_consumer_sha256"]:
+&gt;               raise ValueError("observation transition target contract changed")
+E               ValueError: observation transition target contract changed
+
+vendor_sync.py:2127: ValueError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_selected_old_contract_still_rejects_tampered_bytes_mcp_pswb_observation_transition[child]" time="0.008"><failure message="ValueError: observation transition target contract changed">bad = 'child'
+
+    @pytest.mark.parametrize('bad', ['source', 'child', 'clean', 'unmerged'])
+    def test_selected_old_contract_still_rejects_tampered_bytes_mcp_pswb_observation_transition(bad):
+        registry, heads, manifest, lock = inputs_mcp_pswb_observation_transition()
+&gt;       registry, _ = resolve_mcp_pswb_observation_transition(registry, heads, manifest, lock)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_vendor_contracts.py:1055: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_vendor_contracts.py:1006: in resolve_mcp_pswb_observation_transition
+    return sync._registry_for_recorded_transitions(registry, heads, manifest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+registry = {'schema': 'vendor-consumers/1', 'consumers': [{'repository': 'myon-bioinformatics/myon-bioinformatics', 'state': 'loc...ry': 'myon-bioinformatics/gh_identity', 'source': 'LICENSE', 'destination': 'vendor/gh_identity-LICENSE'}, ...]}, ...]}
+document = {'heads': {'myon-bioinformatics/Aoi': {'optional': {'repository_created_at': '2026-10-03T08:06:15Z'}, 'repository_id':...ry_id': 1181998414, 'sha': '3759429eae7138c952093c1e596b2c6414a58d0f'}, ...}, 'ref': 'main', 'schema': 'child-heads/1'}
+transitions = {'schema': 'vendor-observation-transitions/1', 'transitions': [{'consumer': 'myon-bioinformatics/mcp-toolcall-lab', 'r...8c952093c1e596b2c6414a58d0f', 'lock_sha256': '96aa59b26558a58206174175f0adb73643c657d6d4453e269af8710dd79c3360', ...}]}
+monitored = ['myon-bioinformatics/mcp-toolcall-lab'], token=&lt;redacted&gt;
+
+    def _registry_for_recorded_transitions(registry, document, transitions, monitored, *, token=&lt;redacted&gt;
+        """Audit explicitly frozen observations under their frozen contract, never skip bytes.
+    
+        The desired registry remains the child enrollment contract. Only an exact
+        reviewed observation and complete lock may use the recorded old entries.
+        Changed observations return to the normal strict desired-contract audit.
+        """
+        import vendor_consumers
+        registry = vendor_consumers.validate(registry)
+        if set(transitions) != {"schema", "transitions"} or transitions["schema"] != "vendor-observation-transitions/1":
+            raise ValueError("invalid observation transition manifest")
+        rows = transitions["transitions"]
+        if not isinstance(rows, list):
+            raise ValueError("invalid observation transitions")
+        result = copy.deepcopy(registry)
+        applied, seen = [], set()
+        for row in rows:
+            fields = {"consumer", "repository_id", "recorded_sha", "lock_sha256", "target_consumer_sha256", "old_entries", "reason"}
+            if not isinstance(row, dict) or set(row) != fields:
+                raise ValueError("invalid observation transition fields")
+            name = row["consumer"]
+            key = name.casefold()
+            if key in seen or key == PARENT_REPOSITORY.casefold():
+                raise ValueError("duplicate or parent observation transition")
+            seen.add(key)
+            if not re.fullmatch(r"[0-9a-f]{40}", row["recorded_sha"]) or any(
+                    not re.fullmatch(r"[0-9a-f]{64}", row[k]) for k in ("lock_sha256", "target_consumer_sha256")):
+                raise ValueError("invalid observation transition digest")
+            if not isinstance(row["reason"], str) or not row["reason"].strip():
+                raise ValueError("observation transition requires a reason")
+            consumer = vendor_consumers.get_consumer(registry, name)
+            if consumer["state"] != "locked" or _transition_digest(consumer) != row["target_consumer_sha256"]:
+&gt;               raise ValueError("observation transition target contract changed")
+E               ValueError: observation transition target contract changed
+
+vendor_sync.py:2127: ValueError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_selected_old_contract_still_rejects_tampered_bytes_mcp_pswb_observation_transition[clean]" time="0.008"><failure message="ValueError: observation transition target contract changed">bad = 'clean'
+
+    @pytest.mark.parametrize('bad', ['source', 'child', 'clean', 'unmerged'])
+    def test_selected_old_contract_still_rejects_tampered_bytes_mcp_pswb_observation_transition(bad):
+        registry, heads, manifest, lock = inputs_mcp_pswb_observation_transition()
+&gt;       registry, _ = resolve_mcp_pswb_observation_transition(registry, heads, manifest, lock)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_vendor_contracts.py:1055: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_vendor_contracts.py:1006: in resolve_mcp_pswb_observation_transition
+    return sync._registry_for_recorded_transitions(registry, heads, manifest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+registry = {'schema': 'vendor-consumers/1', 'consumers': [{'repository': 'myon-bioinformatics/myon-bioinformatics', 'state': 'loc...ry': 'myon-bioinformatics/gh_identity', 'source': 'LICENSE', 'destination': 'vendor/gh_identity-LICENSE'}, ...]}, ...]}
+document = {'heads': {'myon-bioinformatics/Aoi': {'optional': {'repository_created_at': '2026-10-03T08:06:15Z'}, 'repository_id':...ry_id': 1181998414, 'sha': '3759429eae7138c952093c1e596b2c6414a58d0f'}, ...}, 'ref': 'main', 'schema': 'child-heads/1'}
+transitions = {'schema': 'vendor-observation-transitions/1', 'transitions': [{'consumer': 'myon-bioinformatics/mcp-toolcall-lab', 'r...8c952093c1e596b2c6414a58d0f', 'lock_sha256': '96aa59b26558a58206174175f0adb73643c657d6d4453e269af8710dd79c3360', ...}]}
+monitored = ['myon-bioinformatics/mcp-toolcall-lab'], token=&lt;redacted&gt;
+
+    def _registry_for_recorded_transitions(registry, document, transitions, monitored, *, token=&lt;redacted&gt;
+        """Audit explicitly frozen observations under their frozen contract, never skip bytes.
+    
+        The desired registry remains the child enrollment contract. Only an exact
+        reviewed observation and complete lock may use the recorded old entries.
+        Changed observations return to the normal strict desired-contract audit.
+        """
+        import vendor_consumers
+        registry = vendor_consumers.validate(registry)
+        if set(transitions) != {"schema", "transitions"} or transitions["schema"] != "vendor-observation-transitions/1":
+            raise ValueError("invalid observation transition manifest")
+        rows = transitions["transitions"]
+        if not isinstance(rows, list):
+            raise ValueError("invalid observation transitions")
+        result = copy.deepcopy(registry)
+        applied, seen = [], set()
+        for row in rows:
+            fields = {"consumer", "repository_id", "recorded_sha", "lock_sha256", "target_consumer_sha256", "old_entries", "reason"}
+            if not isinstance(row, dict) or set(row) != fields:
+                raise ValueError("invalid observation transition fields")
+            name = row["consumer"]
+            key = name.casefold()
+            if key in seen or key == PARENT_REPOSITORY.casefold():
+                raise ValueError("duplicate or parent observation transition")
+            seen.add(key)
+            if not re.fullmatch(r"[0-9a-f]{40}", row["recorded_sha"]) or any(
+                    not re.fullmatch(r"[0-9a-f]{64}", row[k]) for k in ("lock_sha256", "target_consumer_sha256")):
+                raise ValueError("invalid observation transition digest")
+            if not isinstance(row["reason"], str) or not row["reason"].strip():
+                raise ValueError("observation transition requires a reason")
+            consumer = vendor_consumers.get_consumer(registry, name)
+            if consumer["state"] != "locked" or _transition_digest(consumer) != row["target_consumer_sha256"]:
+&gt;               raise ValueError("observation transition target contract changed")
+E               ValueError: observation transition target contract changed
+
+vendor_sync.py:2127: ValueError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_selected_old_contract_still_rejects_tampered_bytes_mcp_pswb_observation_transition[unmerged]" time="0.008"><failure message="ValueError: observation transition target contract changed">bad = 'unmerged'
+
+    @pytest.mark.parametrize('bad', ['source', 'child', 'clean', 'unmerged'])
+    def test_selected_old_contract_still_rejects_tampered_bytes_mcp_pswb_observation_transition(bad):
+        registry, heads, manifest, lock = inputs_mcp_pswb_observation_transition()
+&gt;       registry, _ = resolve_mcp_pswb_observation_transition(registry, heads, manifest, lock)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_vendor_contracts.py:1055: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_vendor_contracts.py:1006: in resolve_mcp_pswb_observation_transition
+    return sync._registry_for_recorded_transitions(registry, heads, manifest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+registry = {'schema': 'vendor-consumers/1', 'consumers': [{'repository': 'myon-bioinformatics/myon-bioinformatics', 'state': 'loc...ry': 'myon-bioinformatics/gh_identity', 'source': 'LICENSE', 'destination': 'vendor/gh_identity-LICENSE'}, ...]}, ...]}
+document = {'heads': {'myon-bioinformatics/Aoi': {'optional': {'repository_created_at': '2026-10-03T08:06:15Z'}, 'repository_id':...ry_id': 1181998414, 'sha': '3759429eae7138c952093c1e596b2c6414a58d0f'}, ...}, 'ref': 'main', 'schema': 'child-heads/1'}
+transitions = {'schema': 'vendor-observation-transitions/1', 'transitions': [{'consumer': 'myon-bioinformatics/mcp-toolcall-lab', 'r...8c952093c1e596b2c6414a58d0f', 'lock_sha256': '96aa59b26558a58206174175f0adb73643c657d6d4453e269af8710dd79c3360', ...}]}
+monitored = ['myon-bioinformatics/mcp-toolcall-lab'], token=&lt;redacted&gt;
+
+    def _registry_for_recorded_transitions(registry, document, transitions, monitored, *, token=&lt;redacted&gt;
+        """Audit explicitly frozen observations under their frozen contract, never skip bytes.
+    
+        The desired registry remains the child enrollment contract. Only an exact
+        reviewed observation and complete lock may use the recorded old entries.
+        Changed observations return to the normal strict desired-contract audit.
+        """
+        import vendor_consumers
+        registry = vendor_consumers.validate(registry)
+        if set(transitions) != {"schema", "transitions"} or transitions["schema"] != "vendor-observation-transitions/1":
+            raise ValueError("invalid observation transition manifest")
+        rows = transitions["transitions"]
+        if not isinstance(rows, list):
+            raise ValueError("invalid observation transitions")
+        result = copy.deepcopy(registry)
+        applied, seen = [], set()
+        for row in rows:
+            fields = {"consumer", "repository_id", "recorded_sha", "lock_sha256", "target_consumer_sha256", "old_entries", "reason"}
+            if not isinstance(row, dict) or set(row) != fields:
+                raise ValueError("invalid observation transition fields")
+            name = row["consumer"]
+            key = name.casefold()
+            if key in seen or key == PARENT_REPOSITORY.casefold():
+                raise ValueError("duplicate or parent observation transition")
+            seen.add(key)
+            if not re.fullmatch(r"[0-9a-f]{40}", row["recorded_sha"]) or any(
+                    not re.fullmatch(r"[0-9a-f]{64}", row[k]) for k in ("lock_sha256", "target_consumer_sha256")):
+                raise ValueError("invalid observation transition digest")
+            if not isinstance(row["reason"], str) or not row["reason"].strip():
+                raise ValueError("observation transition requires a reason")
+            consumer = vendor_consumers.get_consumer(registry, name)
+            if consumer["state"] != "locked" or _transition_digest(consumer) != row["target_consumer_sha256"]:
+&gt;               raise ValueError("observation transition target contract changed")
+E               ValueError: observation transition target contract changed
+
+vendor_sync.py:2127: ValueError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_new_observation_uses_desired_contract_without_transition_mcp_pswb_observation_transition" time="0.008"><failure message="ValueError: observation transition target contract changed">def test_new_observation_uses_desired_contract_without_transition_mcp_pswb_observation_transition():
+        registry, heads, manifest, _ = inputs_mcp_pswb_observation_transition()
+        heads['heads'][MCP_PSWB_OBSERVATION_TRANSITION_NAME]['sha'] = '2' * 40
+        # The PSWB-only stage remains historical; desired topology now includes njs_launch.
+        historical = json.loads((ROOT/'tests/fixtures/mcp-pswb-observation-new.lock.json').read_text())
+        assert not consumers.compare(registry, historical, MCP_PSWB_OBSERVATION_TRANSITION_NAME)['matches']
+        lock = json.loads((ROOT/'tests/fixtures/njs-mcp-toolcall-lab-new.lock.json').read_text())
+&gt;       result, reports = resolve_mcp_pswb_observation_transition(registry, heads, manifest, lock)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_vendor_contracts.py:1081: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_vendor_contracts.py:1006: in resolve_mcp_pswb_observation_transition
+    return sync._registry_for_recorded_transitions(registry, heads, manifest,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+registry = {'schema': 'vendor-consumers/1', 'consumers': [{'repository': 'myon-bioinformatics/myon-bioinformatics', 'state': 'loc...ry': 'myon-bioinformatics/gh_identity', 'source': 'LICENSE', 'destination': 'vendor/gh_identity-LICENSE'}, ...]}, ...]}
+document = {'heads': {'myon-bioinformatics/Aoi': {'optional': {'repository_created_at': '2026-10-03T08:06:15Z'}, 'repository_id':...ry_id': 1181998414, 'sha': '3759429eae7138c952093c1e596b2c6414a58d0f'}, ...}, 'ref': 'main', 'schema': 'child-heads/1'}
+transitions = {'schema': 'vendor-observation-transitions/1', 'transitions': [{'consumer': 'myon-bioinformatics/mcp-toolcall-lab', 'r...8c952093c1e596b2c6414a58d0f', 'lock_sha256': '96aa59b26558a58206174175f0adb73643c657d6d4453e269af8710dd79c3360', ...}]}
+monitored = ['myon-bioinformatics/mcp-toolcall-lab'], token=&lt;redacted&gt;
+
+    def _registry_for_recorded_transitions(registry, document, transitions, monitored, *, token=&lt;redacted&gt;
+        """Audit explicitly frozen observations under their frozen contract, never skip bytes.
+    
+        The desired registry remains the child enrollment contract. Only an exact
+        reviewed observation and complete lock may use the recorded old entries.
+        Changed observations return to the normal strict desired-contract audit.
+        """
+        import vendor_consumers
+        registry = vendor_consumers.validate(registry)
+        if set(transitions) != {"schema", "transitions"} or transitions["schema"] != "vendor-observation-transitions/1":
+            raise ValueError("invalid observation transition manifest")
+        rows = transitions["transitions"]
+        if not isinstance(rows, list):
+            raise ValueError("invalid observation transitions")
+        result = copy.deepcopy(registry)
+        applied, seen = [], set()
+        for row in rows:
+            fields = {"consumer", "repository_id", "recorded_sha", "lock_sha256", "target_consumer_sha256", "old_entries", "reason"}
+            if not isinstance(row, dict) or set(row) != fields:
+                raise ValueError("invalid observation transition fields")
+            name = row["consumer"]
+            key = name.casefold()
+            if key in seen or key == PARENT_REPOSITORY.casefold():
+                raise ValueError("duplicate or parent observation transition")
+            seen.add(key)
+            if not re.fullmatch(r"[0-9a-f]{40}", row["recorded_sha"]) or any(
+                    not re.fullmatch(r"[0-9a-f]{64}", row[k]) for k in ("lock_sha256", "target_consumer_sha256")):
+                raise ValueError("invalid observation transition digest")
+            if not isinstance(row["reason"], str) or not row["reason"].strip():
+                raise ValueError("observation transition requires a reason")
+            consumer = vendor_consumers.get_consumer(registry, name)
+            if consumer["state"] != "locked" or _transition_digest(consumer) != row["target_consumer_sha256"]:
+&gt;               raise ValueError("observation transition target contract changed")
+E               ValueError: observation transition target contract changed
+
+vendor_sync.py:2127: ValueError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_exact_old_and_desired_new_contracts[mcp-toolcall-lab]" time="0.013"><failure message="ValueError: observation transition target contract changed">repo = 'mcp-toolcall-lab'
+
+    @pytest.mark.parametrize('repo',REPOS)
+    def test_exact_old_and_desired_new_contracts(repo):
+     name='myon-bioinformatics/'+repo
+     r=baseline_registry(load('vendor-consumers.json')); h,t=recorded_before_reobservation()
+     old=load('tests/fixtures/njs-'+repo+'-old.lock.json');new=load('tests/fixtures/njs-'+repo+'-new.lock.json');before=copy.deepcopy(r)
+     assert c.compare(r,new,name)['matches']
+     assert not c.compare(r,old,name)['matches']
+     with patch.object(s,'_load_recorded_child_lock',return_value=old):
+&gt;     restored,reports=s._registry_for_recorded_transitions(r,h,t,[name])
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_vendor_contracts.py:1098: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+registry = {'schema': 'vendor-consumers/1', 'consumers': [{'repository': 'myon-bioinformatics/myon-bioinformatics', 'state': 'loc...ry': 'myon-bioinformatics/gh_identity', 'source': 'LICENSE', 'destination': 'vendor/gh_identity-LICENSE'}, ...]}, ...]}
+document = {'heads': {'myon-bioinformatics/Aoi': {'optional': {'repository_created_at': '2026-10-03T08:06:15Z'}, 'repository_id':...ry_id': 1181998414, 'sha': '3759429eae7138c952093c1e596b2c6414a58d0f'}, ...}, 'ref': 'main', 'schema': 'child-heads/1'}
+transitions = {'schema': 'vendor-observation-transitions/1', 'transitions': [{'consumer': 'myon-bioinformatics/mcp-toolcall-lab', 'r...8c952093c1e596b2c6414a58d0f', 'lock_sha256': '96aa59b26558a58206174175f0adb73643c657d6d4453e269af8710dd79c3360', ...}]}
+monitored = ['myon-bioinformatics/mcp-toolcall-lab'], token=&lt;redacted&gt;
+
+    def _registry_for_recorded_transitions(registry, document, transitions, monitored, *, token=&lt;redacted&gt;
+        """Audit explicitly frozen observations under their frozen contract, never skip bytes.
+    
+        The desired registry remains the child enrollment contract. Only an exact
+        reviewed observation and complete lock may use the recorded old entries.
+        Changed observations return to the normal strict desired-contract audit.
+        """
+        import vendor_consumers
+        registry = vendor_consumers.validate(registry)
+        if set(transitions) != {"schema", "transitions"} or transitions["schema"] != "vendor-observation-transitions/1":
+            raise ValueError("invalid observation transition manifest")
+        rows = transitions["transitions"]
+        if not isinstance(rows, list):
+            raise ValueError("invalid observation transitions")
+        result = copy.deepcopy(registry)
+        applied, seen = [], set()
+        for row in rows:
+            fields = {"consumer", "repository_id", "recorded_sha", "lock_sha256", "target_consumer_sha256", "old_entries", "reason"}
+            if not isinstance(row, dict) or set(row) != fields:
+                raise ValueError("invalid observation transition fields")
+            name = row["consumer"]
+            key = name.casefold()
+            if key in seen or key == PARENT_REPOSITORY.casefold():
+                raise ValueError("duplicate or parent observation transition")
+            seen.add(key)
+            if not re.fullmatch(r"[0-9a-f]{40}", row["recorded_sha"]) or any(
+                    not re.fullmatch(r"[0-9a-f]{64}", row[k]) for k in ("lock_sha256", "target_consumer_sha256")):
+                raise ValueError("invalid observation transition digest")
+            if not isinstance(row["reason"], str) or not row["reason"].strip():
+                raise ValueError("observation transition requires a reason")
+            consumer = vendor_consumers.get_consumer(registry, name)
+            if consumer["state"] != "locked" or _transition_digest(consumer) != row["target_consumer_sha256"]:
+&gt;               raise ValueError("observation transition target contract changed")
+E               ValueError: observation transition target contract changed
+
+vendor_sync.py:2127: ValueError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_exact_old_and_desired_new_contracts[PySaiyanWeBoo]" time="0.003"><failure message="assert False">repo = 'PySaiyanWeBoo'
+
+    @pytest.mark.parametrize('repo',REPOS)
+    def test_exact_old_and_desired_new_contracts(repo):
+     name='myon-bioinformatics/'+repo
+     r=baseline_registry(load('vendor-consumers.json')); h,t=recorded_before_reobservation()
+     old=load('tests/fixtures/njs-'+repo+'-old.lock.json');new=load('tests/fixtures/njs-'+repo+'-new.lock.json');before=copy.deepcopy(r)
+&gt;    assert c.compare(r,new,name)['matches']
+E    assert False
+
+tests/test_vendor_contracts.py:1095: AssertionError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_exact_old_and_desired_new_contracts[markdown]" time="0.009"><failure message="ValueError: observation transition target contract changed">repo = 'markdown'
+
+    @pytest.mark.parametrize('repo',REPOS)
+    def test_exact_old_and_desired_new_contracts(repo):
+     name='myon-bioinformatics/'+repo
+     r=baseline_registry(load('vendor-consumers.json')); h,t=recorded_before_reobservation()
+     old=load('tests/fixtures/njs-'+repo+'-old.lock.json');new=load('tests/fixtures/njs-'+repo+'-new.lock.json');before=copy.deepcopy(r)
+     assert c.compare(r,new,name)['matches']
+     assert not c.compare(r,old,name)['matches']
+     with patch.object(s,'_load_recorded_child_lock',return_value=old):
+&gt;     restored,reports=s._registry_for_recorded_transitions(r,h,t,[name])
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_vendor_contracts.py:1098: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+registry = {'schema': 'vendor-consumers/1', 'consumers': [{'repository': 'myon-bioinformatics/myon-bioinformatics', 'state': 'loc...ry': 'myon-bioinformatics/gh_identity', 'source': 'LICENSE', 'destination': 'vendor/gh_identity-LICENSE'}, ...]}, ...]}
+document = {'heads': {'myon-bioinformatics/Aoi': {'optional': {'repository_created_at': '2026-10-03T08:06:15Z'}, 'repository_id':...ry_id': 1181998414, 'sha': '3759429eae7138c952093c1e596b2c6414a58d0f'}, ...}, 'ref': 'main', 'schema': 'child-heads/1'}
+transitions = {'schema': 'vendor-observation-transitions/1', 'transitions': [{'consumer': 'myon-bioinformatics/mcp-toolcall-lab', 'r...8c952093c1e596b2c6414a58d0f', 'lock_sha256': '96aa59b26558a58206174175f0adb73643c657d6d4453e269af8710dd79c3360', ...}]}
+monitored = ['myon-bioinformatics/markdown'], token=&lt;redacted&gt;
+
+    def _registry_for_recorded_transitions(registry, document, transitions, monitored, *, token=&lt;redacted&gt;
+        """Audit explicitly frozen observations under their frozen contract, never skip bytes.
+    
+        The desired registry remains the child enrollment contract. Only an exact
+        reviewed observation and complete lock may use the recorded old entries.
+        Changed observations return to the normal strict desired-contract audit.
+        """
+        import vendor_consumers
+        registry = vendor_consumers.validate(registry)
+        if set(transitions) != {"schema", "transitions"} or transitions["schema"] != "vendor-observation-transitions/1":
+            raise ValueError("invalid observation transition manifest")
+        rows = transitions["transitions"]
+        if not isinstance(rows, list):
+            raise ValueError("invalid observation transitions")
+        result = copy.deepcopy(registry)
+        applied, seen = [], set()
+        for row in rows:
+            fields = {"consumer", "repository_id", "recorded_sha", "lock_sha256", "target_consumer_sha256", "old_entries", "reason"}
+            if not isinstance(row, dict) or set(row) != fields:
+                raise ValueError("invalid observation transition fields")
+            name = row["consumer"]
+            key = name.casefold()
+            if key in seen or key == PARENT_REPOSITORY.casefold():
+                raise ValueError("duplicate or parent observation transition")
+            seen.add(key)
+            if not re.fullmatch(r"[0-9a-f]{40}", row["recorded_sha"]) or any(
+                    not re.fullmatch(r"[0-9a-f]{64}", row[k]) for k in ("lock_sha256", "target_consumer_sha256")):
+                raise ValueError("invalid observation transition digest")
+            if not isinstance(row["reason"], str) or not row["reason"].strip():
+                raise ValueError("observation transition requires a reason")
+            consumer = vendor_consumers.get_consumer(registry, name)
+            if consumer["state"] != "locked" or _transition_digest(consumer) != row["target_consumer_sha256"]:
+&gt;               raise ValueError("observation transition target contract changed")
+E               ValueError: observation transition target contract changed
+
+vendor_sync.py:2127: ValueError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_exact_old_and_desired_new_contracts[xprobe]" time="0.009"><failure message="ValueError: observation transition target contract changed">repo = 'xprobe'
+
+    @pytest.mark.parametrize('repo',REPOS)
+    def test_exact_old_and_desired_new_contracts(repo):
+     name='myon-bioinformatics/'+repo
+     r=baseline_registry(load('vendor-consumers.json')); h,t=recorded_before_reobservation()
+     old=load('tests/fixtures/njs-'+repo+'-old.lock.json');new=load('tests/fixtures/njs-'+repo+'-new.lock.json');before=copy.deepcopy(r)
+     assert c.compare(r,new,name)['matches']
+     assert not c.compare(r,old,name)['matches']
+     with patch.object(s,'_load_recorded_child_lock',return_value=old):
+&gt;     restored,reports=s._registry_for_recorded_transitions(r,h,t,[name])
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_vendor_contracts.py:1098: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+registry = {'schema': 'vendor-consumers/1', 'consumers': [{'repository': 'myon-bioinformatics/myon-bioinformatics', 'state': 'loc...ry': 'myon-bioinformatics/gh_identity', 'source': 'LICENSE', 'destination': 'vendor/gh_identity-LICENSE'}, ...]}, ...]}
+document = {'heads': {'myon-bioinformatics/Aoi': {'optional': {'repository_created_at': '2026-10-03T08:06:15Z'}, 'repository_id':...ry_id': 1181998414, 'sha': '3759429eae7138c952093c1e596b2c6414a58d0f'}, ...}, 'ref': 'main', 'schema': 'child-heads/1'}
+transitions = {'schema': 'vendor-observation-transitions/1', 'transitions': [{'consumer': 'myon-bioinformatics/mcp-toolcall-lab', 'r...8c952093c1e596b2c6414a58d0f', 'lock_sha256': '96aa59b26558a58206174175f0adb73643c657d6d4453e269af8710dd79c3360', ...}]}
+monitored = ['myon-bioinformatics/xprobe'], token=&lt;redacted&gt;
+
+    def _registry_for_recorded_transitions(registry, document, transitions, monitored, *, token=&lt;redacted&gt;
+        """Audit explicitly frozen observations under their frozen contract, never skip bytes.
+    
+        The desired registry remains the child enrollment contract. Only an exact
+        reviewed observation and complete lock may use the recorded old entries.
+        Changed observations return to the normal strict desired-contract audit.
+        """
+        import vendor_consumers
+        registry = vendor_consumers.validate(registry)
+        if set(transitions) != {"schema", "transitions"} or transitions["schema"] != "vendor-observation-transitions/1":
+            raise ValueError("invalid observation transition manifest")
+        rows = transitions["transitions"]
+        if not isinstance(rows, list):
+            raise ValueError("invalid observation transitions")
+        result = copy.deepcopy(registry)
+        applied, seen = [], set()
+        for row in rows:
+            fields = {"consumer", "repository_id", "recorded_sha", "lock_sha256", "target_consumer_sha256", "old_entries", "reason"}
+            if not isinstance(row, dict) or set(row) != fields:
+                raise ValueError("invalid observation transition fields")
+            name = row["consumer"]
+            key = name.casefold()
+            if key in seen or key == PARENT_REPOSITORY.casefold():
+                raise ValueError("duplicate or parent observation transition")
+            seen.add(key)
+            if not re.fullmatch(r"[0-9a-f]{40}", row["recorded_sha"]) or any(
+                    not re.fullmatch(r"[0-9a-f]{64}", row[k]) for k in ("lock_sha256", "target_consumer_sha256")):
+                raise ValueError("invalid observation transition digest")
+            if not isinstance(row["reason"], str) or not row["reason"].strip():
+                raise ValueError("observation transition requires a reason")
+            consumer = vendor_consumers.get_consumer(registry, name)
+            if consumer["state"] != "locked" or _transition_digest(consumer) != row["target_consumer_sha256"]:
+&gt;               raise ValueError("observation transition target contract changed")
+E               ValueError: observation transition target contract changed
+
+vendor_sync.py:2127: ValueError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_refreshed_observation_matches_merged_lock[myon-bioinformatics/Aoi]" time="0.003"><failure message="assert False">name = 'myon-bioinformatics/Aoi'
+
+    @pytest.mark.parametrize("name", REFRESH_20261119["adopted"])
+    def test_refreshed_observation_matches_merged_lock(name):
+        registry = json.loads((ROOT / "vendor-consumers.json").read_text())
+        heads = sync.validate_child_heads(json.loads((ROOT / "child-heads.json").read_text()))
+        snapshot = REFRESH_20261119["adopted"][name]
+        observed = heads["heads"][name]
+        assert_reviewed_or_advanced(heads, name, snapshot["sha"])
+        assert observed["repository_id"] == snapshot["repository_id"]
+        lock = sync.validate(snapshot["lock"])
+        assert sync._transition_digest(lock) == snapshot["lock_sha256"]
+&gt;       assert consumers.compare(registry, lock, name)["matches"]
+E       assert False
+
+tests/test_vendor_contracts.py:1142: AssertionError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_refreshed_observation_matches_merged_lock[myon-bioinformatics/PySaiyanWeBoo]" time="0.003"><failure message="assert False">name = 'myon-bioinformatics/PySaiyanWeBoo'
+
+    @pytest.mark.parametrize("name", REFRESH_20261119["adopted"])
+    def test_refreshed_observation_matches_merged_lock(name):
+        registry = json.loads((ROOT / "vendor-consumers.json").read_text())
+        heads = sync.validate_child_heads(json.loads((ROOT / "child-heads.json").read_text()))
+        snapshot = REFRESH_20261119["adopted"][name]
+        observed = heads["heads"][name]
+        assert_reviewed_or_advanced(heads, name, snapshot["sha"])
+        assert observed["repository_id"] == snapshot["repository_id"]
+        lock = sync.validate(snapshot["lock"])
+        assert sync._transition_digest(lock) == snapshot["lock_sha256"]
+&gt;       assert consumers.compare(registry, lock, name)["matches"]
+E       assert False
+
+tests/test_vendor_contracts.py:1142: AssertionError</failure></testcase><testcase classname="tests.test_vendor_contracts" name="test_current_transitions_and_aoi_observation_are_consistent" time="0.003"><failure message="assert False">def test_current_transitions_and_aoi_observation_are_consistent():
+        registry = json.loads((ROOT / 'vendor-consumers.json').read_text())
+        heads = json.loads((ROOT / 'child-heads.json').read_text())
+        transitions = json.loads((ROOT / 'vendor-observation-transitions.json').read_text())
+        for row in transitions['transitions']:
+            assert sync._transition_digest(consumers.get_consumer(registry, row['consumer'])) == row['target_consumer_sha256']
+        name = 'myon-bioinformatics/Aoi'
+        assert name not in {row['consumer'] for row in transitions['transitions']}
+        snapshot = REFRESH_20261119["adopted"][name]
+        assert_reviewed_or_advanced(heads, name, snapshot['sha'])
+        assert heads['heads'][name]['repository_id'] == snapshot['repository_id']
+        assert sync._transition_digest(snapshot['lock']) == snapshot['lock_sha256']
+        with patch.object(sync, '_load_recorded_child_lock', side_effect=AssertionError('retired observation read')):
+            resolved, reports = sync._registry_for_recorded_transitions(registry, heads, transitions, [name])
+        assert reports == []
+&gt;       assert consumers._compare_exact(resolved, snapshot['lock'], name)['matches']
+E       assert False
+
+tests/test_vendor_contracts.py:1162: AssertionError</failure></testcase><testcase classname="tests.test_vendor_registry_sync" name="test_ironmate_registry_matches_reviewed_flow_lock" time="0.004"><failure message="assert False">def test_ironmate_registry_matches_reviewed_flow_lock():
+        registry = baseline_registry(load('vendor-consumers.json'))   # enrollments after this lock are dropped
+        lock = load('tests/fixtures/ironmate-flow-ascii-artist.lock.json')
+        assert len(lock['files']) == 55
+        assert not [x for x in lock['files'] if x['repository'].endswith('/PySaiyanWeBoo')]   # web-ui has no flow code now
+&gt;       assert vendor_consumers.compare(registry, lock, IRONMATE)['matches']
+E       assert False
+
+tests/test_vendor_registry_sync.py:68: AssertionError</failure></testcase><testcase classname="tests.test_vendor_registry_sync" name="test_retired_sources_are_not_proposed_for_reenrollment" time="0.002"><failure message="assert 31 == 30">def test_retired_sources_are_not_proposed_for_reenrollment():
+        result = vendor_fleet_plan.plan(load('vendor-catalog.json'), load('vendor-consumers.json'),
+                                       active_consumers=[IRONMATE])
+        for source in ('git_inspector.py', 'vendor_sync.py'):
+            rows = [x for x in result['rows'] if x['tool_repository'] ==
+                    'myon-bioinformatics/myon-bioinformatics' and x['source'] == source]
+            assert len(rows) == 1 and rows[0]['action'] == 'skipped'
+&gt;       assert result['counts']['registered'] == 30   # + vendor/pillow_min.py from tools/stdlib_min/
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       assert 31 == 30
+
+tests/test_vendor_registry_sync.py:83: AssertionError</failure></testcase><testcase classname="tests.test_vendor_registry_sync" name="test_web_ui_flow_workspace_lock_is_not_accepted_after_the_move_to_ascii_artist" time="0.004"><failure message="AssertionError: assert [('myon-bioin...llow_min.py')] == [('myon-bioin...llow_min.py')]&#10;  &#10;  At index 1 diff: ('myon-bioinformatics/myon-bioinformatics', 'fleet_check.py') != ('myon-bioinformatics/myon-bioinformatics', 'tools/stdlib_min/pillow_min.py')&#10;  Left contains one more item: ('myon-bioinformatics/myon-bioinformatics', 'tools/stdlib_min/pillow_min.py')&#10;  &#10;  Full diff: (-: missing in left side, +: extra in left side)&#10;    [&#10;        (&#10;            'myon-bioinformatics/ascii_artist',&#10;[+11 more lines; full report in element text]">def test_web_ui_flow_workspace_lock_is_not_accepted_after_the_move_to_ascii_artist():
+        old = load('tests/fixtures/ironmate-flow-workspace.lock.json')
+        result = vendor_consumers.compare(load('vendor-consumers.json'), old, IRONMATE)
+        assert not result['matches'] and len(old['files']) == 61
+        assert {x['repository'] for x in result['unexpected']} == {'myon-bioinformatics/PySaiyanWeBoo'}
+&gt;       assert sorted((x['repository'], x['source']) for x in result['missing']) == [
+            ('myon-bioinformatics/ascii_artist', 'examples/pr-flow.json'),
+            ('myon-bioinformatics/myon-bioinformatics', 'tools/stdlib_min/pillow_min.py')]
+E       AssertionError: assert [('myon-bioin...llow_min.py')] == [('myon-bioin...llow_min.py')]
+E         
+E         At index 1 diff: ('myon-bioinformatics/myon-bioinformatics', 'fleet_check.py') != ('myon-bioinformatics/myon-bioinformatics', 'tools/stdlib_min/pillow_min.py')
+E         Left contains one more item: ('myon-bioinformatics/myon-bioinformatics', 'tools/stdlib_min/pillow_min.py')
+E         
+E         Full diff: (-: missing in left side, +: extra in left side)
+E           [
+E               (
+E                   'myon-bioinformatics/ascii_artist',
+E                   'examples/pr-flow.json',
+E               ),
+E               (
+E                   'myon-bioinformatics/myon-bioinformatics',
+E         +         'fleet_check.py',
+E         +     ),
+E         +     (
+E         +         'myon-bioinformatics/myon-bioinformatics',
+E                   'tools/stdlib_min/pillow_min.py',
+E               ),
+E           ]
+
+tests/test_vendor_registry_sync.py:103: AssertionError</failure></testcase><testcase classname="tests.test_vendor_registry_sync" name="test_current_planner_registration_matches_immutable_child_lock" time="0.009"><failure message="ValueError: observation transition target contract changed">def test_current_planner_registration_matches_immutable_child_lock():
+        import hashlib
+        import vendor_sync
+    
+        snapshot = load("tests/fixtures/reviewed_mcp_planner_lock_20261109.json")[MCP_TOOLCALL_LAB]
+        old = load("tests/fixtures/reviewed_mcp_lock_20261109.json")[MCP_TOOLCALL_LAB]
+        assert old["sha"] == "31ff99fbe4c13b3feb570ae3ba1fc7cf972f8a16"
+        assert snapshot["sha"] == "cd04472040f0db991c5138144c01f56a2b79e44b"
+        heads = recorded_heads()["heads"][MCP_TOOLCALL_LAB]
+        assert (heads["sha"], heads["repository_id"]) == (snapshot["sha"], snapshot["repository_id"])
+        lock = vendor_sync.validate(snapshot["lock"])
+        assert hashlib.sha256(json.dumps(lock, sort_keys=True, separators=(",", ":")).encode()).hexdigest() == snapshot["lock_sha256"]
+        registry = baseline_registry(load("vendor-consumers.json"))
+        assert not vendor_consumers._compare_exact(registry, lock, MCP_TOOLCALL_LAB)["matches"]
+        from unittest.mock import patch
+        with patch.object(vendor_sync, '_load_recorded_child_lock', return_value=lock):
+&gt;           registry, reports = vendor_sync._registry_for_recorded_transitions(
+                registry, recorded_heads(), NJS_RECORDED['transitions'], [MCP_TOOLCALL_LAB])
+
+tests/test_vendor_registry_sync.py:216: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+registry = {'schema': 'vendor-consumers/1', 'consumers': [{'repository': 'myon-bioinformatics/myon-bioinformatics', 'state': 'loc...ry': 'myon-bioinformatics/gh_identity', 'source': 'LICENSE', 'destination': 'vendor/gh_identity-LICENSE'}, ...]}, ...]}
+document = {'heads': {'myon-bioinformatics/Aoi': {'optional': {'repository_created_at': '2026-10-03T08:06:15Z'}, 'pull_number': 2...ry_id': 1181998414, 'sha': '3759429eae7138c952093c1e596b2c6414a58d0f'}, ...}, 'ref': 'main', 'schema': 'child-heads/1'}
+transitions = {'schema': 'vendor-observation-transitions/1', 'transitions': [{'consumer': 'myon-bioinformatics/mcp-toolcall-lab', 'r...8c952093c1e596b2c6414a58d0f', 'lock_sha256': '96aa59b26558a58206174175f0adb73643c657d6d4453e269af8710dd79c3360', ...}]}
+monitored = ['myon-bioinformatics/mcp-toolcall-lab'], token=&lt;redacted&gt;
+
+    def _registry_for_recorded_transitions(registry, document, transitions, monitored, *, token=&lt;redacted&gt;
+        """Audit explicitly frozen observations under their frozen contract, never skip bytes.
+    
+        The desired registry remains the child enrollment contract. Only an exact
+        reviewed observation and complete lock may use the recorded old entries.
+        Changed observations return to the normal strict desired-contract audit.
+        """
+        import vendor_consumers
+        registry = vendor_consumers.validate(registry)
+        if set(transitions) != {"schema", "transitions"} or transitions["schema"] != "vendor-observation-transitions/1":
+            raise ValueError("invalid observation transition manifest")
+        rows = transitions["transitions"]
+        if not isinstance(rows, list):
+            raise ValueError("invalid observation transitions")
+        result = copy.deepcopy(registry)
+        applied, seen = [], set()
+        for row in rows:
+            fields = {"consumer", "repository_id", "recorded_sha", "lock_sha256", "target_consumer_sha256", "old_entries", "reason"}
+            if not isinstance(row, dict) or set(row) != fields:
+                raise ValueError("invalid observation transition fields")
+            name = row["consumer"]
+            key = name.casefold()
+            if key in seen or key == PARENT_REPOSITORY.casefold():
+                raise ValueError("duplicate or parent observation transition")
+            seen.add(key)
+            if not re.fullmatch(r"[0-9a-f]{40}", row["recorded_sha"]) or any(
+                    not re.fullmatch(r"[0-9a-f]{64}", row[k]) for k in ("lock_sha256", "target_consumer_sha256")):
+                raise ValueError("invalid observation transition digest")
+            if not isinstance(row["reason"], str) or not row["reason"].strip():
+                raise ValueError("observation transition requires a reason")
+            consumer = vendor_consumers.get_consumer(registry, name)
+            if consumer["state"] != "locked" or _transition_digest(consumer) != row["target_consumer_sha256"]:
+&gt;               raise ValueError("observation transition target contract changed")
+E               ValueError: observation transition target contract changed
+
+vendor_sync.py:2127: ValueError</failure></testcase></testsuite></testsuites>
