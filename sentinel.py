@@ -1894,7 +1894,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--version",
         action="version",
         version=f"%(prog)s {__version__}",
-    )
+    help="show the version and exit")
     parser.add_argument(
         "command",
         nargs=argparse.REMAINDER,
