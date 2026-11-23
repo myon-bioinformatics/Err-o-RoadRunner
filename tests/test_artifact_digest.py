@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
-import json, subprocess, sys, zipfile
+import json, zipfile
 from pathlib import Path
 
+from vendor.cli_args import CliResult, run_cli
 from triage import digest
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -90,13 +91,8 @@ def test_cli_exit_codes_and_python_dash_S(tmp_path: Path) -> None:
     unsafe = tmp_path / "unsafe.xml"
     unsafe.write_bytes(b'<!DOCTYPE testsuite><testsuite/>')
 
-    def run(*args: str) -> subprocess.CompletedProcess[str]:
-        return subprocess.run(
-            [sys.executable, "-S", str(TRIAGE), "digest", *args],
-            capture_output=True,
-            text=True,
-            cwd=ROOT,
-        )
+    def run(*args: str) -> CliResult:
+        return run_cli(TRIAGE, "digest", *args, python_options=("-S",), cwd=ROOT)
 
     assert run(str(ok)).returncode == 0
     assert run(str(bad)).returncode == 1
@@ -119,12 +115,7 @@ def test_mixed_multiple_files_preserve_separate_failure_and_problem_counts(tmp_p
     assert "valid.xml" in text and "unsafe.xml" in text
     assert "failing testcases: 1" in text
     assert "unverifiable inputs: 1" in text
-    result = subprocess.run(
-        [sys.executable, "-S", str(TRIAGE), "digest", str(valid), str(unsafe)],
-        capture_output=True,
-        text=True,
-        cwd=ROOT,
-    )
+    result = run_cli(TRIAGE, "digest", str(valid), str(unsafe), python_options=("-S",), cwd=ROOT)
     assert result.returncode == 2
 
 
@@ -136,12 +127,7 @@ def test_invalid_receipt_json_is_an_input_problem_and_exits_nonzero(tmp_path: Pa
     assert problems == 1
     assert any(line.startswith("problem route-audit.json: invalid JSON") for line in lines)
 
-    result = subprocess.run(
-        [sys.executable, "-S", str(TRIAGE), "digest", str(receipt)],
-        capture_output=True,
-        text=True,
-        cwd=ROOT,
-    )
+    result = run_cli(TRIAGE, "digest", str(receipt), python_options=("-S",), cwd=ROOT)
     assert result.returncode == 2
 
 
@@ -219,8 +205,7 @@ def test_browser_receipts_aggregate_with_junit_and_redact(tmp_path):
 def test_browser_receipt_cli_codes_and_custom_names(tmp_path):
     path = tmp_path / "capture.json"
     def run():
-        return subprocess.run([sys.executable, "-S", str(TRIAGE), "digest", str(path),
-                               "--json", "capture.json"], capture_output=True, text=True)
+        return run_cli(TRIAGE, "digest", str(path), "--json", "capture.json", python_options=("-S",))
     path.write_bytes(browser_receipt())
     assert run().returncode == 1
     path.write_bytes(browser_receipt("pass"))

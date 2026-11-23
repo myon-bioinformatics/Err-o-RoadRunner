@@ -7,6 +7,7 @@ import subprocess, sys, tomllib
 from pathlib import Path
 
 from vendor import fleet_check as fleet
+from vendor.cli_args import run_cli
 
 
 # ──── standalone_build ────────────────────────────────────────────
@@ -15,11 +16,13 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def build(target):
-    return subprocess.run([sys.executable, str(ROOT / 'scripts/build_standalone.py'), str(target)], check=True, capture_output=True, text=True)
+    proc = run_cli(ROOT / 'scripts/build_standalone.py', target)
+    assert proc.returncode == 0, proc.stderr
+    return proc
 
 
 def execute(target, *args, stdin=None, cwd=None):
-    return subprocess.run([sys.executable, '-S', str(target), *args], input=stdin, cwd=cwd, capture_output=True, text=True)
+    return run_cli(target, *args, python_options=('-S',), stdin=stdin, cwd=cwd)
 
 
 def test_standalone_and_package_agree_on_traceback(tmp_path):
@@ -98,11 +101,10 @@ assert 'possible Python exception' in result.stdout
 
 def test_common_package_preserves_bundle_and_command_names(tmp_path):
     olnm = tmp_path / "ErroRR.py"
-    subprocess.run([sys.executable, "-S", str(ROOT / "scripts/build_standalone.py"),
-                    str(olnm)], check=True)
+    built = run_cli(ROOT / "scripts/build_standalone.py", olnm, python_options=("-S",))
+    assert built.returncode == 0, built.stderr
     out = tmp_path / "package"
-    result = subprocess.run([sys.executable, "-S", str(ROOT / "scripts/build_standalone.py"),
-                             "--uv-tool", str(out)], capture_output=True, text=True)
+    result = run_cli(ROOT / "scripts/build_standalone.py", "--uv-tool", str(out), python_options=("-S",))
     assert result.returncode == 0, result.stderr
     assert (out / "erroroadrunner.py").read_bytes() == olnm.read_bytes()
     config = tomllib.loads((out / "pyproject.toml").read_text())
@@ -113,12 +115,10 @@ def test_common_package_preserves_bundle_and_command_names(tmp_path):
     assert config["project"]["scripts"] == {
         "erroroadrunner": "erroroadrunner:main"}
     assert config["tool"]["setuptools"]["py-modules"] == ["erroroadrunner"]
-    run = subprocess.run([sys.executable, "-S", str(out / "erroroadrunner.py"),
-                          "ValueError:", "example"], cwd=tmp_path, text=True, capture_output=True)
+    run = run_cli(out / "erroroadrunner.py", "ValueError:", "example", python_options=("-S",), cwd=tmp_path)
     assert run.returncode == 0, run.stderr
     assert "possible Python exception" in run.stdout
-    second = subprocess.run([sys.executable, "-S", str(ROOT / "scripts/build_standalone.py"),
-                             "--uv-tool", str(out)], capture_output=True, text=True)
+    second = run_cli(ROOT / "scripts/build_standalone.py", "--uv-tool", str(out), python_options=("-S",))
     assert second.returncode != 0
     assert (out / "erroroadrunner.py").read_bytes() == olnm.read_bytes()
 

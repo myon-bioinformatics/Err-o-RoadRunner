@@ -11,6 +11,7 @@ import pytest
 from errlib.junit_redact import find_corpus_leaks
 from scripts import harvest_corpus
 from tests.support import FIXTURES, ROOT, triage_actions_log_cli
+from vendor.cli_args import run_cli
 
 CASES = json.loads(
     (FIXTURES / "actions_logs/synthetic/apt-setup-timeouts.json").read_text(encoding="utf-8")
@@ -51,11 +52,12 @@ def test_fake_setup_failure_survives_junit_harvest_and_digest(tmp_path, observed
     step = observed["setup_step"]
     outcome = "failure" if process.returncode else "success"
     raw_setup = tmp_path / "setup.xml"
-    subprocess.run(
-        [sys.executable, "-S", str(ROOT / "scripts/ci_setup_junit.py"), observed["id"], str(raw_setup)],
+    emitted = run_cli(
+        ROOT / "scripts/ci_setup_junit.py", observed["id"], str(raw_setup),
+        python_options=("-S",),
         env={**os.environ, "SETUP_OUTCOMES": f"checkout=success\n{step}={outcome}\nproduct tests=skipped\n"},
-        check=True,
     )
+    assert emitted.returncode == 0, emitted.stderr
     assert not (tmp_path / "junit.xml").exists(), "must not pretend product tests ran"
     failures = []
     entry, pending = harvest_corpus._harvest_file(
@@ -74,9 +76,6 @@ def test_fake_setup_failure_survives_junit_harvest_and_digest(tmp_path, observed
     redacted = tmp_path / "redacted.xml"
     redacted.write_text(pending.content, encoding="utf-8")
     assert not find_corpus_leaks(pending.content)
-    digest = subprocess.run(
-        [sys.executable, "-S", str(ROOT / "triage.py"), "digest", str(redacted)],
-        check=False, capture_output=True, text=True,
-    )
+    digest = run_cli(ROOT / "triage.py", "digest", str(redacted), python_options=("-S",))
     assert digest.returncode == 1, digest.stderr
     assert f"ci.setup.{observed['id']}::{step}: {step} failed" in digest.stdout

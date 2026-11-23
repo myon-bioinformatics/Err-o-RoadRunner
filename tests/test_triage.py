@@ -15,6 +15,7 @@ from unittest import mock
 
 import pytest
 
+from vendor import cli_args
 import triage as triage_module
 from errlib import actions_log
 from triage import (
@@ -774,20 +775,16 @@ def test_direct_text_and_stderr_conflict(capsys):
 
 
 def test_paste_multiline_from_stdin():
-    import subprocess
-    import sys
     from pathlib import Path
     script = Path(triage_module.__file__)
     text = 'Traceback (most recent call last):\n  File "app.py", line 1, in <module>\nValueError: bad input\n'
-    result = subprocess.run([sys.executable, str(script), '--paste'], input=text, text=True, capture_output=True)
+    result = cli_args.run_cli(script, '--paste', stdin=text)
     assert result.returncode == 0
     assert 'python exception type: ValueError' in result.stdout
 
 
 def test_direct_tokens_from_shell():
-    import subprocess
-    import sys
-    result = subprocess.run([sys.executable, triage_module.__file__, 'ModuleNotFoundError:', 'No', 'module', 'named', 'example'], text=True, capture_output=True)
+    result = cli_args.run_cli(triage_module.__file__, 'ModuleNotFoundError:', 'No', 'module', 'named', 'example')
     assert result.returncode == 0
     assert 'possible Python exception' in result.stdout
 
@@ -1419,12 +1416,6 @@ def test_typescript_plain_compiler_error_structured_hint(path: str) -> None:
 
 
 def test_combo_mutation_script_zero_survivors() -> None:
-    proc = subprocess.run(
-        [sys.executable, str(ROOT / "scripts" / "check_mutations.py"), "combo"],
-        cwd=ROOT,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    proc = cli_args.run_cli(ROOT / "scripts" / "check_mutations.py", "combo", cwd=ROOT)
     assert proc.returncode == 0, proc.stdout + proc.stderr
     assert "survivors: 0" in proc.stdout.lower() or "0 survivor" in proc.stdout.lower()
