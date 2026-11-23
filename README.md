@@ -4,6 +4,8 @@
 
 # Err-o-RoadRunner
 
+🌐 [GitHub Pages](https://myon-bioinformatics.github.io/Err-o-RoadRunner/) · 🏠 [Portfolio](https://myon-bioinformatics.github.io/)
+
 Err-o-RoadRunner is a tool that does nothing in normal times. It starts working only after an error has happened. The name combines "Error" and "Road Runner".
 
 Researching the cause of a Python, Node, Go or TypeScript failure, or a GitHub Actions CI failure, currently takes a lot of time. Most error messages are well known, and a web search often turns up hints. This project automates that first investigation **without depending on an AI agent**. It lists what it found and what it did not find on stdout, as a plain report.
