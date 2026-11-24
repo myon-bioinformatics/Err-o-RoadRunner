@@ -2,7 +2,6 @@
 
 import json
 import os
-import subprocess
 import sys
 from xml.etree import ElementTree as ET
 
@@ -11,7 +10,7 @@ import pytest
 from errlib.junit_redact import find_corpus_leaks
 from scripts import harvest_corpus
 from tests.support import FIXTURES, ROOT, triage_actions_log_cli
-from vendor.cli_args import run_cli
+from vendor.cli_args import Command, run_cli, run_command
 
 CASES = json.loads(
     (FIXTURES / "actions_logs/synthetic/apt-setup-timeouts.json").read_text(encoding="utf-8")
@@ -47,7 +46,7 @@ def test_setup_timeout_is_primary_not_the_missing_artifact(tmp_path, observed):
 
 def test_fake_setup_failure_survives_junit_harvest_and_digest(tmp_path, observed):
     """Exit in a disposable local process; do not run the upstream workflow."""
-    process = subprocess.run([sys.executable, "-S", "-c", "raise SystemExit(17)"], cwd=tmp_path)
+    process = run_command(Command((sys.executable, "-S", "-c", "raise SystemExit(17)")), cwd=tmp_path)
     assert process.returncode == 17
     step = observed["setup_step"]
     outcome = "failure" if process.returncode else "success"

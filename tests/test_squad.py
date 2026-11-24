@@ -13,6 +13,7 @@ from unittest import mock
 
 import pytest
 
+from vendor import cli_args
 import squad
 from sentinel import (
     build_escalation_report,
@@ -30,7 +31,7 @@ from tests.support import CORPUS_CASES, corpus_cases, ROOT, run_benchmark
 
 AOI_GLOB = "Aoi_37561005125_junit-py3.*_*.xml"
 AOI_CASES = sorted(CORPUS_CASES.glob(AOI_GLOB))
-SENTINEL_CLI = [sys.executable, str(ROOT / "sentinel.py")]
+SENTINEL = ROOT / "sentinel.py"
 
 
 @pytest.fixture
@@ -103,25 +104,21 @@ def test_benchmark_default_corpus_keeps_nineteen_records(tmp_path: Path) -> None
 
     junit_args = sum([["--junit", str(p)] for p in AOI_CASES], [])
     report = tmp_path / "bench.json"
-    subprocess.run(
-        [
-            *SENTINEL_CLI,
-            "--squads",
-            "code,history",
-            "--offline",
-            "--report-json",
-            str(report),
-            *junit_args,
-            "--",
-            "sh",
-            "-c",
-            "exit 0",
-        ],
+    proc = cli_args.run_cli(
+        SENTINEL,
+        "--squads",
+        "code,history",
+        "--offline",
+        "--report-json",
+        str(report),
+        *junit_args,
+        "--",
+        "sh",
+        "-c",
+        "exit 0",
         cwd=ROOT,
-        capture_output=True,
-        text=True,
-        check=True,
     )
+    assert proc.returncode == 0, proc.stderr
     doc = json.loads(report.read_text(encoding="utf-8"))
     records = doc.get("records") or []
     assert len(records) == 19
@@ -139,24 +136,20 @@ def test_triage_dedupe_across_identical_junit_files(tmp_path: Path) -> None:
     report = tmp_path / "r.json"
 
     def _run(extra_junit: list[str]) -> dict:
-        subprocess.run(
-            [
-                *SENTINEL_CLI,
-                "--squads",
-                "none",
-                "--report-json",
-                str(report),
-                *extra_junit,
-                "--",
-                "sh",
-                "-c",
-                "exit 0",
-            ],
+        proc = cli_args.run_cli(
+            SENTINEL,
+            "--squads",
+            "none",
+            "--report-json",
+            str(report),
+            *extra_junit,
+            "--",
+            "sh",
+            "-c",
+            "exit 0",
             cwd=ROOT,
-            capture_output=True,
-            text=True,
-            check=True,
         )
+        assert proc.returncode == 0, proc.stderr
         return json.loads(report.read_text(encoding="utf-8"))
 
     multi = _run(junit_args)
@@ -169,24 +162,20 @@ def test_triage_dedupe_across_identical_junit_files(tmp_path: Path) -> None:
 @pytest.mark.sentinel
 def test_short_stdout_dedupes_junit_variants(tmp_path: Path) -> None:
     junit_args = sum([["--junit", str(p)] for p in AOI_CASES], [])
-    proc = subprocess.run(
-        [
-            *SENTINEL_CLI,
-            "--squads",
-            "none",
-            "--format",
-            "short",
-            *junit_args,
-            "--",
-            "sh",
-            "-c",
-            "exit 0",
-        ],
+    proc = cli_args.run_cli(
+        SENTINEL,
+        "--squads",
+        "none",
+        "--format",
+        "short",
+        *junit_args,
+        "--",
+        "sh",
+        "-c",
+        "exit 0",
         cwd=ROOT,
-        capture_output=True,
-        text=True,
-        check=True,
     )
+    assert proc.returncode == 0, proc.stderr
     assert proc.stdout.count("variants") >= 1
     assert proc.stdout.count("junit failures") == 1
 
@@ -194,24 +183,20 @@ def test_short_stdout_dedupes_junit_variants(tmp_path: Path) -> None:
 @pytest.mark.sentinel
 def test_porcelain_stdout_dedupes_junit_variants(tmp_path: Path) -> None:
     junit_args = sum([["--junit", str(p)] for p in AOI_CASES], [])
-    proc = subprocess.run(
-        [
-            *SENTINEL_CLI,
-            "--squads",
-            "none",
-            "--format",
-            "porcelain",
-            *junit_args,
-            "--",
-            "sh",
-            "-c",
-            "exit 0",
-        ],
+    proc = cli_args.run_cli(
+        SENTINEL,
+        "--squads",
+        "none",
+        "--format",
+        "porcelain",
+        *junit_args,
+        "--",
+        "sh",
+        "-c",
+        "exit 0",
         cwd=ROOT,
-        capture_output=True,
-        text=True,
-        check=True,
     )
+    assert proc.returncode == 0, proc.stderr
     found_rows = [ln for ln in proc.stdout.splitlines() if ln.startswith("F\tfound\t")]
     junit_rows = [ln for ln in found_rows if "junit failures" in ln]
     assert len(junit_rows) == 1
@@ -448,26 +433,11 @@ def test_code_squad_skips_repo_walk_without_resolved_tests(tmp_path: Path) -> No
 @pytest.mark.sentinel
 def test_sentinel_exit_code_unchanged_with_squads(tmp_path: Path) -> None:
     junit = AOI_CASES[0]
-    common = [
-        sys.executable,
-        str(ROOT / "sentinel.py"),
-        "--junit",
-        str(junit),
-        "--report-json",
-        str(tmp_path / "a.json"),
-        "--",
-        "sh",
-        "-c",
-        "exit 0",
-    ]
-    code_none = subprocess.run(
-        [*common[:6], "--squads", "none", *common[6:]], cwd=ROOT, capture_output=True, text=True
-    ).returncode
-    code_squads = subprocess.run(
-        [*common[:6], "--squads", "code,history", "--offline", *common[6:]],
-        cwd=ROOT,
-        capture_output=True,
-        text=True,
+    common = ["--junit", str(junit), "--report-json", str(tmp_path / "a.json")]
+    wrapped = ["--", "sh", "-c", "exit 0"]
+    code_none = cli_args.run_cli(SENTINEL, *common, "--squads", "none", *wrapped, cwd=ROOT).returncode
+    code_squads = cli_args.run_cli(
+        SENTINEL, *common, "--squads", "code,history", "--offline", *wrapped, cwd=ROOT
     ).returncode
     assert code_none == code_squads == 0
 
@@ -498,11 +468,12 @@ if bad:
 
 
 def _median_subprocess_seconds(cmd: list[str], *, rounds: int = 8) -> float:
-    subprocess.run(cmd, cwd=ROOT, capture_output=True, check=False)
+    command = cli_args.Command(cmd)
+    cli_args.run_command(command, cwd=ROOT)
     samples: list[float] = []
     for _ in range(rounds):
         started = time.perf_counter()
-        subprocess.run(cmd, cwd=ROOT, capture_output=True, check=False)
+        cli_args.run_command(command, cwd=ROOT)
         samples.append(time.perf_counter() - started)
     return statistics.median(samples)
 
@@ -510,20 +481,14 @@ def _median_subprocess_seconds(cmd: list[str], *, rounds: int = 8) -> float:
 @pytest.mark.sentinel
 def test_sentinel_stop_path_does_not_import_squad_or_urllib() -> None:
     probe = _STOP_PATH_IMPORT_PROBE.format(root=repr(str(ROOT)))
-    completed = subprocess.run(
-        [sys.executable, "-c", probe],
-        cwd=ROOT,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    completed = cli_args.run_command(cli_args.Command((sys.executable, "-c", probe)), cwd=ROOT)
     assert completed.returncode == 0, completed.stderr or completed.stdout
 
 
 @pytest.mark.sentinel
 def test_sentinel_stop_path_timing_sane_vs_baseline() -> None:
     baseline_cmd = [sys.executable, "-c", "pass"]
-    sentinel_cmd = [*SENTINEL_CLI, "--", "true"]
+    sentinel_cmd = [sys.executable, str(SENTINEL), "--", "true"]
     baseline = _median_subprocess_seconds(baseline_cmd)
     sentinel = _median_subprocess_seconds(sentinel_cmd)
     assert sentinel < 0.5, f"sentinel -- true median {sentinel:.3f}s exceeds 500ms"

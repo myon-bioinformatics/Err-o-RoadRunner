@@ -9,6 +9,7 @@ from pathlib import Path
 import pytest
 
 from vendor import fleet_check as fleet
+from vendor.cli_args import Command, run_cli, run_command
 
 
 # ──── parent_tools ────────────────────────────────────────────────
@@ -23,8 +24,7 @@ def test_parent_tools_match_recorded_bytes():
 
 
 def test_gh_ops_help_is_standalone():
-    result = subprocess.run([sys.executable, "-S", str(VENDOR / "gh_ops.py"), "--help"],
-                            capture_output=True, text=True, timeout=20)
+    result = run_cli(VENDOR / "gh_ops.py", "--help", python_options=("-S",), timeout=20)
     assert result.returncode == 0, result.stderr
     assert "git-push" in result.stdout
 
@@ -56,8 +56,7 @@ receipt = gh_ops.git_push(cwd=sys.argv[2], write=False, timeout=10)
 assert calls == ['branch', 'check-ref-format', 'rev-parse', 'remote']
 print(json.dumps(receipt))
 """
-    result = subprocess.run([sys.executable, "-S", "-c", code, str(VENDOR), str(tmp_path)],
-                            capture_output=True, text=True, timeout=20)
+    result = run_command(Command((sys.executable, "-S", "-c", code, str(VENDOR), str(tmp_path))), timeout=20)
     assert result.returncode == 0, result.stderr
     receipt = json.loads(result.stdout)
     assert receipt["ok"] and receipt["dry_run"]
@@ -86,9 +85,10 @@ MODULES = (
 @pytest.mark.parametrize("name", MODULES)
 def test_shared_toolkit_compiles_and_imports_standalone(name: str) -> None:
     path = VENDOR / name
-    subprocess.run([sys.executable, "-m", "py_compile", str(path)], check=True)
-    subprocess.run(
-        [
+    compiled = run_command(Command((sys.executable, "-m", "py_compile", str(path))))
+    assert compiled.returncode == 0, compiled.stderr
+    imported = run_command(
+        Command((
             sys.executable,
             "-S",
             "-c",
@@ -97,22 +97,17 @@ def test_shared_toolkit_compiles_and_imports_standalone(name: str) -> None:
             + "'); __import__('"
             + name[:-3]
             + "')",
-        ],
-        check=True,
+        )),
         cwd=ROOT,
     )
+    assert imported.returncode == 0, imported.stderr
 
 
 def test_environment_probe_is_safe_no_argument_json() -> None:
-    result = subprocess.run(
-        [sys.executable, "-S", str(VENDOR / "yourself.py"), "--minimal", "--format", "json"],
-        cwd=ROOT,
-        capture_output=True,
-        text=True,
-        timeout=10,
-    )
+    result = run_cli(VENDOR / "yourself.py", "--minimal", "--format", "json",
+                     python_options=("-S",), cwd=ROOT, timeout=10)
     assert result.returncode == 0, result.stderr
-    payload = json.loads(result.stdout)
+    payload = result.json()
     assert payload["schema_version"] == 1
     assert set(payload) == {"schema_version", "os", "runtime", "host", "directory"}
 

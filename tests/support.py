@@ -1,19 +1,21 @@
 """Shared test helpers (not collected): run triage / sentinel the way the goldens are captured and checked.
 
 ``scripts/capture_goldens.py`` and ``scripts/harvest_corpus.py`` import the same runner and masks, so a
-captured golden and the test that compares it see the same command. Standard library only at import time.
+captured golden and the test that compares it see the same command. Standard library plus the vendored,
+stdlib-only ``vendor/cli_args.py`` at import time.
 """
 
 from __future__ import annotations
 
-import json, os, re, subprocess, sys, tempfile
+import json, os, re, sys, tempfile
 from copy import deepcopy; from pathlib import Path; from typing import Any, Mapping, Sequence
+
+from vendor.cli_args import Command, run_cli, run_command
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = ROOT / "tests" / "fixtures"
 EMPTY = FIXTURES / "failure_suite" / "empty_root"
 CORPUS_CASES = FIXTURES / "junit_corpus" / "cases"
-SENTINEL_CLI = [sys.executable, str(ROOT / "sentinel.py")]
 
 _RUNTIME_LINE_PREFIXES = (
     "FOUND: python version:",
@@ -30,7 +32,7 @@ _RUNTIME_LINE_PREFIXES = (
 def triage_cli(*args: object, project_root: Path = EMPTY, exit_code: int = 1, check: bool = True) -> str:
     """stdout of ``python -m triage --exit-code N --project-root DIR ARGS`` run from the checkout."""
     cmd = [sys.executable, "-m", "triage", "--exit-code", str(exit_code), "--project-root", str(project_root)]
-    proc = subprocess.run([*cmd, *map(str, args)], cwd=ROOT, capture_output=True, text=True, check=False)
+    proc = run_command(Command((*cmd, *map(str, args))), cwd=ROOT)
     if check and proc.returncode != 0:
         raise AssertionError(proc.stderr)
     return proc.stdout
@@ -217,28 +219,25 @@ def run_benchmark(
     extra: list[str] = []
     if max_records is not None:
         extra.extend(["--max-records", str(max_records)])
-    proc = subprocess.run(
-        [
-            *SENTINEL_CLI,
-            "--squads",
-            squads,
-            "--offline",
-            "--format",
-            "short",
-            "--report-json",
-            report_path,
-            *extra,
-            *junit_args,
-            "--",
-            "sh",
-            "-c",
-            "exit 0",
-        ],
+    proc = run_cli(
+        ROOT / "sentinel.py",
+        "--squads",
+        squads,
+        "--offline",
+        "--format",
+        "short",
+        "--report-json",
+        report_path,
+        *extra,
+        *junit_args,
+        "--",
+        "sh",
+        "-c",
+        "exit 0",
         cwd=ROOT,
-        capture_output=True,
-        text=True,
-        check=True,
     )
+    if proc.returncode != 0:
+        raise AssertionError(proc.stderr)
     report = json.loads(Path(report_path).read_text(encoding="utf-8"))
     Path(report_path).unlink(missing_ok=True)
     return proc.stdout, normalize_report_benchmark(report)

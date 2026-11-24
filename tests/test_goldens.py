@@ -6,11 +6,12 @@
 
 from __future__ import annotations
 
-import json, os, subprocess
+import json, os
 
 import pytest
 
 from tests.support import EMPTY, FIXTURES, normalize_report, ROOT, triage_cli
+from vendor import fleet_check as fleet
 
 
 # ──── failure_suite_golden ────────────────────────────────────────
@@ -39,7 +40,7 @@ def run_entry(entry: dict) -> str:
     ids=lambda e: e["id"],
 )
 def test_failure_suite_golden(entry: dict) -> None:
-    if entry.get("category") == "node" and subprocess.run(["which", "node"], capture_output=True).returncode != 0:
+    if entry.get("category") == "node" and not fleet.node(minimum=0, ci_jobs=()):
         pytest.skip("node not available")
     expected = normalize_report((ROOT / entry["golden"]).read_text(encoding="utf-8"))
     actual = normalize_report(run_entry(entry))
@@ -79,9 +80,8 @@ def run_example(entry: dict) -> str:
 
 @pytest.mark.parametrize("entry", json.loads(README_MANIFEST.read_text(encoding="utf-8")), ids=lambda e: e["id"])
 def test_readme_golden_example(entry: dict) -> None:
-    if entry["id"].startswith("node_"):
-        if subprocess.run(["which", "node"], capture_output=True).returncode != 0:
-            pytest.skip("node not available")
+    if entry["id"].startswith("node_") and not fleet.node(minimum=0, ci_jobs=()):
+        pytest.skip("node not available")
     golden_path = ROOT / entry["golden"]
     expected = normalize_report(golden_path.read_text(encoding="utf-8"))
     actual = normalize_report(run_example(entry))

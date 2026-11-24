@@ -6,12 +6,13 @@
 
 from __future__ import annotations
 
-import itertools, os, shutil, subprocess, sys
+import itertools, os, shutil, sys
 from pathlib import Path
 from unittest import mock
 
 import pytest
 
+from vendor import cli_args
 import triage
 from errlib.project_version import (
     DISTRIBUTION_NAME,
@@ -40,13 +41,7 @@ def test_triage_version_matches_pyproject_in_checkout() -> None:
 
 
 def test_cli_version_flag_matches_pyproject_in_checkout() -> None:
-    proc = subprocess.run(
-        [sys.executable, str(ROOT / "triage.py"), "--version"],
-        cwd=ROOT,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    proc = cli_args.run_cli(ROOT / "triage.py", "--version", cwd=ROOT)
     assert proc.returncode == 0
     expected = read_pyproject_version(PYPROJECT)
     assert expected is not None
@@ -428,11 +423,8 @@ def write_wheel_build_pyproject(sandbox: Path, pyproject_state: str, version: st
 
 
 def build_wheel(sandbox: Path, wheel_dir: Path) -> Path:
-    proc = subprocess.run(
-        [sys.executable, "-m", "pip", "wheel", str(sandbox), "-w", str(wheel_dir), "-q"],
-        capture_output=True,
-        text=True,
-        check=False,
+    proc = cli_args.run_command(
+        cli_args.Command((sys.executable, "-m", "pip", "wheel", str(sandbox), "-w", str(wheel_dir), "-q"))
     )
     if proc.returncode != 0:
         raise RuntimeError(f"pip wheel failed: {proc.stderr}")
@@ -448,7 +440,7 @@ def run_version_cli(
     run_mode: str,
     env: dict[str, str],
     wheel: Path | None = None,
-) -> subprocess.CompletedProcess[str]:
+) -> cli_args.CommandResult:
     if run_mode == "checkout_script":
         cmd = [*ISOLATED_RUNNER, str(sandbox), "--version"]
         cwd = sandbox
@@ -461,37 +453,22 @@ def run_version_cli(
     elif run_mode == "wheel_console":
         prefix = sandbox / "prefix"
         assert wheel is not None
-        subprocess.run(
-            [
-                sys.executable,
-                "-m",
-                "pip",
-                "install",
-                "-q",
-                "--no-deps",
-                "--prefix",
-                str(prefix),
-                str(wheel),
-            ],
-            check=True,
-            capture_output=True,
+        installed = cli_args.run_command(
+            cli_args.Command((sys.executable, "-m", "pip", "install", "-q", "--no-deps", "--prefix", str(prefix), str(wheel)))
         )
+        assert installed.returncode == 0, installed.stderr
         console = next(prefix.rglob("erroroadrunner"), None)
         if console is None:
             raise RuntimeError("erroroadrunner console script not found after wheel install")
         cmd = [str(console), "--version"]
         cwd = sandbox
-        wheel_env = os.environ.copy()
         site = prefix / "lib" / f"python{sys.version_info.major}.{sys.version_info.minor}" / "site-packages"
         local_site = prefix / "local" / "lib" / f"python{sys.version_info.major}.{sys.version_info.minor}" / "dist-packages"
         paths = [str(p) for p in (site, local_site) if p.is_dir()]
-        wheel_env["PYTHONPATH"] = os.pathsep.join(paths)
-        return subprocess.run(cmd, cwd=cwd, env=wheel_env, capture_output=True, text=True, check=False)
+        env = {"PYTHONPATH": os.pathsep.join(paths)}  # the installed wheel only; the caller's PYTHONPATH is dropped
     else:
         raise ValueError(run_mode)
-    merged = os.environ.copy()
-    merged.update(env)
-    return subprocess.run(cmd, cwd=cwd, env=merged, capture_output=True, text=True, check=False)
+    return cli_args.run_command(cli_args.Command(cmd), cwd=cwd, env=cli_args.build_env(env))
 
 
 def matrix_totals() -> tuple[int, int, int]:
@@ -574,14 +551,7 @@ def test_version_resolution_matrix_cell(
         else:
             cmd = [*ISOLATED_RUNNER, str(sandbox), "--exit-code", "0"]
             cwd = sandbox
-        proc2 = subprocess.run(
-            cmd,
-            cwd=cwd,
-            env=merged,
-            capture_output=True,
-            text=True,
-            check=False,
-        )
+        proc2 = cli_args.run_command(cli_args.Command(cmd), cwd=cwd, env=merged)
         assert proc2.returncode == 0
         assert "FOUND: exit code: 0" in proc2.stdout
 
@@ -644,23 +614,11 @@ def test_import_succeeds_with_unknown_version(
     copy_runtime_modules(sandbox)
     env = os.environ.copy()
     env["PYTHONPATH"] = str(sandbox)
-    proc = subprocess.run(
-        [*ISOLATED_RUNNER, str(sandbox), "--version"],
-        cwd=sandbox,
-        env=env,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    proc = cli_args.run_command(cli_args.Command((*ISOLATED_RUNNER, str(sandbox), "--version")), cwd=sandbox, env=env)
     assert proc.returncode == 0, proc.stderr
     assert proc.stdout.strip() == "err-o-roadrunner unknown"
-    proc2 = subprocess.run(
-        [*ISOLATED_RUNNER, str(sandbox), "--exit-code", "0"],
-        cwd=sandbox,
-        env=env,
-        capture_output=True,
-        text=True,
-        check=False,
+    proc2 = cli_args.run_command(
+        cli_args.Command((*ISOLATED_RUNNER, str(sandbox), "--exit-code", "0")), cwd=sandbox, env=env
     )
     assert proc2.returncode == 0, proc2.stderr
 

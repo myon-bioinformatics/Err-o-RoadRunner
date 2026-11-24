@@ -9,7 +9,7 @@
 
 from __future__ import annotations
 
-import json, sys, unittest
+import json, unittest
 
 try:
     import pytest
@@ -116,34 +116,15 @@ def test_actions_log_preprocess_crlf_and_bom() -> None:
 
 @pytest.mark.actions
 def test_actions_log_cli_read_cap() -> None:
-    import subprocess
-
     marker = b"ACTIONS_LOG_BEYOND_CAP"
     path = FIX / "_tmp_huge_actions.log"
     try:
         path.write_bytes(b"z" * MAX_READ_BYTES + marker)
-        proc = subprocess.run(
-            [
-                sys.executable,
-                "-m",
-                "triage",
-                "--exit-code",
-                "1",
-                "--actions-log",
-                str(path),
-                "--project-root",
-                str(ROOT),
-            ],
-            cwd=ROOT,
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        assert proc.returncode == 0
-        assert "ACTIONS_LOG_BEYOND_CAP" not in proc.stdout
-        assert f"input truncated (size {MAX_READ_BYTES + len(marker)} > {MAX_READ_BYTES})" in proc.stdout
-        assert marker.decode() not in proc.stdout
-        assert proc.stdout.count("z") <= MAX_READ_BYTES
+        out = triage_actions_log_cli(path)  # raises unless the exit code is 0
+        assert "ACTIONS_LOG_BEYOND_CAP" not in out
+        assert f"input truncated (size {MAX_READ_BYTES + len(marker)} > {MAX_READ_BYTES})" in out
+        assert marker.decode() not in out
+        assert out.count("z") <= MAX_READ_BYTES
     finally:
         if path.exists():
             path.unlink()
