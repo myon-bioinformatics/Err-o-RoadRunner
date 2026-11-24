@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="36" tests="2816" time="109.839" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_workflows" name="test_pages_guide_inputs_reach_the_shell_through_env_and_the_renderer_is_pinned_once" time="0.005"><failure message="assert 'python -m pysaiyanweboo --page &quot;$GUIDE_PAGE&quot; --repository &quot;$GUIDE_REPOSITORY&quot; &gt; &quot;$ARTIFACT_PATH/index.html&quot;' in 'mkdir -p &quot;$ARTIFACT_PATH&quot;\nread -r -a pairs &lt;&lt;&lt; &quot;$GUIDE_ASSETS&quot;\nfor pair in &quot;${pairs[@]}&quot;; do\n  target=&quot;$ARTIFACT_P...-repository &quot;$GUIDE_REPOSITORY&quot; &gt; &quot;$ARTIFACT_PATH/index.html&quot;\ngrep -qF \'data-ui-back\' &quot;$ARTIFACT_PATH/index.html&quot;\n'">def test_pages_guide_inputs_reach_the_shell_through_env_and_the_renderer_is_pinned_once():
+        doc, build, _ = _pages()
+        guide = next(s for s in build["steps"] if s.get("name") == "Build the guide")
+        assert guide["if"] == "inputs.guide_page != ''" and "${{" not in guide["run"]
+        assert guide["env"] == {"GUIDE_PAGE": "${{ inputs.guide_page }}", "GUIDE_ASSETS": "${{ inputs.guide_assets }}",
+                                "ARTIFACT_PATH": "${{ inputs.artifact_path }}",
+                                "GUIDE_REPOSITORY": "${{ github.repository }}"}
+&gt;       assert ('python -m pysaiyanweboo --page "$GUIDE_PAGE" --repository "$GUIDE_REPOSITORY" &gt; "$ARTIFACT_PATH/index.html"'
+                in guide["run"])  # 🏠 the way back comes from the pinned renderer, not a second copy of its HTML
+E       assert 'python -m pysaiyanweboo --page "$GUIDE_PAGE" --repository "$GUIDE_REPOSITORY" &gt; "$ARTIFACT_PATH/index.html"' in 'mkdir -p "$ARTIFACT_PATH"\nread -r -a pairs &lt;&lt;&lt; "$GUIDE_ASSETS"\nfor pair in "${pairs[@]}"; do\n  target="$ARTIFACT_P...-repository "$GUIDE_REPOSITORY" &gt; "$ARTIFACT_PATH/index.html"\ngrep -qF \'data-ui-back\' "$ARTIFACT_PATH/index.html"\n'
+
+tests/test_workflows.py:992: AssertionError</failure></testcase><testcase classname="tests.test_workflows" name="test_pages_guide_step_renders_the_spec_and_copies_named_assets" time="0.031"><failure message="subprocess.CalledProcessError: Command ['bash', '-e', '-o', 'pipefail', '-c', 'mkdir -p &quot;$ARTIFACT_PATH&quot;\nread -r -a pairs &lt;&lt;&lt; &quot;$GUIDE_ASSETS&quot;\nfor pair in &quot;${pairs[@]}&quot;; do\n  target=&quot;$ARTIFACT_PATH/${pair#*=}&quot;\n  mkdir -p &quot;$(dirname &quot;$target&quot;)&quot;\n  cp -R &quot;${pair%%=*}&quot; &quot;$target&quot;\ndone\n# 📲 A guide with an icon also gets square icon-180/192/512.png, manifest.webmanifest and the spec with its\n# Base64 cache (home) next to the page, so &quot;Add to Home Screen&quot; and shortcuts show the repository\'s own ...&#10;[truncated; full report in element text]">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_pages_guide_step_renders_0')
+
+    def test_pages_guide_step_renders_the_spec_and_copies_named_assets(tmp_path):
+        _, build, _ = _pages()
+        guide = next(s for s in build["steps"] if s.get("name") == "Build the guide")
+        (tmp_path / "bin").mkdir()
+        (tmp_path / "bin/uv").write_text(  # stands in for the renderer; it echoes the arguments it was given
+            "#!/bin/sh\nprintf '&lt;main class=\"ui-page\"&gt;&lt;nav data-ui-back&gt;%s&lt;/nav&gt;&lt;/main&gt;' \"$*\"\n", encoding="utf-8")
+        (tmp_path / "bin/uv").chmod(0o755)
+        (tmp_path / "icon.png").write_bytes(b"icon")
+        (tmp_path / "docs/demos").mkdir(parents=True)
+        (tmp_path / "docs/demos/D01.gif").write_bytes(b"gif")
+        env = {**os.environ, "PATH": f"{tmp_path / 'bin'}{os.pathsep}{os.environ['PATH']}", "WEB_UI": "pinned",
+               "GUIDE_PAGE": "docs/guide.page.json", "ARTIFACT_PATH": "_site",
+               "GUIDE_ASSETS": "icon.png=favicon.png icon.png=assets/brand/icon.png docs/demos=demos",
+               "GUIDE_REPOSITORY": "example/widget"}
+&gt;       subprocess.run(["bash", "-e", "-o", "pipefail", "-c", guide["run"]], cwd=tmp_path, env=env, check=True)
+
+tests/test_workflows.py:1017: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['bash', '-e', '-o', 'pipefail', '-c', 'mkdir -p "$ARTIFACT_PATH"\nread -r -a pairs &lt;&lt;&lt; "$GUIDE_ASSETS"\nfor pair in ...pository "$GUIDE_REPOSITORY" &gt; "$ARTIFACT_PATH/index.html"\ngrep -qF \'data-ui-back\' "$ARTIFACT_PATH/index.html"\n'],)
+kwargs = {'cwd': PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_pages_guide_step_renders_0'), 'env': {'ACCEPT_EULA': 'Y', 'ACTI...IONS_RUNNER_ACTION_ARCHIVE_CACHE': '/opt/actionarchivecache', 'ACTIONS_RUNNER_RETURN_JOB_RESULT_FOR_HOSTED': '1', ...}}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output &amp; stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+&gt;               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command ['bash', '-e', '-o', 'pipefail', '-c', 'mkdir -p "$ARTIFACT_PATH"\nread -r -a pairs &lt;&lt;&lt; "$GUIDE_ASSETS"\nfor pair in "${pairs[@]}"; do\n  target="$ARTIFACT_PATH/${pair#*=}"\n  mkdir -p "$(dirname "$target")"\n  cp -R "${pair%%=*}" "$target"\ndone\n# 📲 A guide with an icon also gets square icon-180/192/512.png, manifest.webmanifest and the spec with its\n# Base64 cache (home) next to the page, so "Add to Home Screen" and shortcuts show the repository\'s own icon.\ncp "$GUIDE_PAGE" "$ARTIFACT_PATH/guide.page.json"\nhome=()\nif python3 -c \'import json, sys; sys.exit(0 if "icon" in json.load(open(sys.argv[1], encoding="utf-8")) else 1)\' "$GUIDE_PAGE"; then\n  home=(--home-screen "$ARTIFACT_PATH")\nfi\n# 🏠 portfolio · 🐙 repository: the way back comes from the pinned renderer (back_nav_html).\nuv run --no-project --with "$WEB_UI" python -m pysaiyanweboo --page "$ARTIFACT_PATH/guide.page.json" "${home[@]}" \\\n  --repository "$GUIDE_REPOSITORY" &gt; "$ARTIFACT_PATH/index.html"\ngrep -qF \'data-ui-back\' "$ARTIFACT_PATH/index.html"\n'] returned non-zero exit status 1.
+
+../../_temp/uv-python-dir/cpython-3.15.2-linux-x86_64-gnu/lib/python3.15/subprocess.py:692: CalledProcessError</failure></testcase></testsuite></testsuites>

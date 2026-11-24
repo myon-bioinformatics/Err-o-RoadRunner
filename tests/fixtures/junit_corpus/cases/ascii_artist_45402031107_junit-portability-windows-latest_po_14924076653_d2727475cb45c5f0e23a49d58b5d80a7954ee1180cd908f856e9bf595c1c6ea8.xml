@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="19" tests="270" time="18.149" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_ascii_artist_cli" name="test_box_mutation_unmutated_passes" time="0.400"><failure message="AssertionError: assert 1 == 0&#10; +  where 1 = _box_check(WindowsPath('C:&lt;user-home&gt;/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_box_mutation_unmutated_pa0'))">tmp_path = WindowsPath('C:&lt;user-home&gt;/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_box_mutation_unmutated_pa0')
+
+    def test_box_mutation_unmutated_passes(tmp_path):
+&gt;       assert _box_check(tmp_path) == 0
+E       AssertionError: assert 1 == 0
+E        +  where 1 = _box_check(WindowsPath('C:&lt;user-home&gt;/AppData/Local/Temp/pytest-of-runneradmin/pytest-0/test_box_mutation_unmutated_pa0'))
+
+tests\test_ascii_artist_cli.py:343: AssertionError</failure></testcase></testsuite></testsuites>
