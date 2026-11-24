@@ -182,6 +182,7 @@ def list_artifacts(repo: str, run_id: int, failures: list[HarvestFailure]) -> li
         [
             "api",
             f"repos/{ORG}/{repo}/actions/runs/{run_id}/artifacts",
+            "--paginate",
             "--jq",
             ".artifacts[] | {name,id,expired}",
         ],
@@ -214,6 +215,56 @@ def list_artifacts(repo: str, run_id: int, failures: list[HarvestFailure]) -> li
                 )
             )
     return items
+
+
+def is_identity_artifact(name: str) -> bool:
+    """The parent reusable workflow also permits a prefix on its output name."""
+    lower = name.lower()
+    return lower == "failure-identity" or lower.endswith("-failure-identity")
+
+
+def inspect_identity_evidence(folder: Path) -> str | None:
+    """Validate the existing parent collection contract without importing its corpus.
+
+    A complete identity receipt is evidence of prior measurement, not a raw
+    result. In particular an empty JSONL file is normal with zero failures.
+    Return a stable diagnostic code or None; never copy receipt contents.
+    """
+    try:
+        summary = json.loads((folder / "collection.json").read_text(encoding="utf-8"))
+        reports = summary["reports"]
+        missing = summary["missing_reports"]
+        unexpected = summary["unexpected_reports"]
+        if (type(summary["complete"]) is not bool or not isinstance(reports, list)
+                or not isinstance(missing, list) or not isinstance(unexpected, list)
+                or any(not isinstance(item, str) for item in missing + unexpected)):
+            return "invalid_evidence"
+        ids = set()
+        failures = 0
+        for report in reports:
+            rid = report["report_id"]
+            if (not isinstance(rid, str) or not rid or rid in ids
+                    or type(report["measured"]) is not bool):
+                return "invalid_evidence"
+            ids.add(rid)
+            if report["measured"]:
+                count = report["failures"]
+                if type(count) is not int or count < 0 or type(report["truncated"]) is not bool:
+                    return "invalid_evidence"
+                failures += count
+        rows = [json.loads(line) for line in
+                (folder / "failure-identity.jsonl").read_text(encoding="utf-8").splitlines()
+                if line.strip()]
+        if any(not isinstance(row, dict) or not row for row in rows):
+            return "invalid_evidence"
+        if (failures == 0) != (not rows) or len(rows) > failures:
+            return "invalid_evidence"
+        if (not summary["complete"] or not reports or missing or unexpected
+                or any(not r["measured"] or r["truncated"] for r in reports)):
+            return "incomplete_evidence"
+    except (OSError, ValueError, UnicodeError, KeyError, TypeError):
+        return "invalid_evidence"
+    return None
 
 
 def _valid_artifact_id(value: object) -> bool:
@@ -276,8 +327,8 @@ def download_artifact(
         return False
     try:
         safe_extract(proc.stdout, dest)
-    except zipfile.BadZipFile as exc:
-        failures.append(HarvestFailure(repo=repo, run_id=run_id, artifact=name, stage="download_artifact", detail=f"bad zip: {exc}"[:500], artifact_id=artifact_id))
+    except (zipfile.BadZipFile, RuntimeError, NotImplementedError, OSError) as exc:
+        failures.append(HarvestFailure(repo=repo, run_id=run_id, artifact=name, stage="corrupt_archive", detail=type(exc).__name__, artifact_id=artifact_id))
         return False
     return True
 
@@ -535,6 +586,9 @@ def harvest(
             if count >= entries_limit_per_repo:
                 break
             run_id = int(run["databaseId"])
+            run_start = len(failures)
+            run_checked = checked
+            evidence_seen = False
             listed = list_artifacts(repo, run_id, failures)
             ids_by_name: dict[str, set[int]] = {}
             for art in listed:
@@ -545,6 +599,8 @@ def harvest(
                 name, artifact_id = art["name"], art["id"]
                 if not is_junit_artifact(name):
                     continue
+                identity = is_identity_artifact(name)
+                evidence_seen |= identity
                 if art.get("expired"):
                     failures.append(
                         HarvestFailure(repo=repo, run_id=run_id, artifact=name, stage="artifact_expired", detail="artifact expired", artifact_id=artifact_id)
@@ -556,8 +612,17 @@ def harvest(
                         continue
                     files = sorted(p for p in dest.rglob("*") if p.is_file())
                     valid_files = [p for p in files if is_valid_result(p)]
-                    if not valid_files:
-                        failures.append(HarvestFailure(repo, run_id, name, "inspect_artifact", "no valid test result files", artifact_id=artifact_id))
+                    if identity:
+                        diagnostic = inspect_identity_evidence(dest)
+                        if diagnostic:
+                            failures.append(HarvestFailure(repo, run_id, name, diagnostic, "identity receipt validation failed", artifact_id=artifact_id))
+                        # Receipts are not raw results; only process separately
+                        # recognized result members if a mixed archive contains them.
+                        files = [p for p in files if p.name not in ("collection.json", "failure-identity.jsonl")]
+                        valid_files = [p for p in files if is_valid_result(p)]
+                    elif not valid_files:
+                        stage = "invalid_result" if files else "missing_result"
+                        failures.append(HarvestFailure(repo, run_id, name, stage, "no valid test result files", artifact_id=artifact_id))
                     checked += len(valid_files)
                     for path in files:
                         if count >= entries_limit_per_repo:
@@ -585,6 +650,8 @@ def harvest(
                         pending.append(write)
                         entries.append(entry)
                         count += 1
+            if checked == run_checked and evidence_seen and len(failures) == run_start:
+                failures.append(HarvestFailure(repo, run_id, None, "missing_result", "identity receipt exists but raw test results are unavailable"))
         issues = failures[start:]
         confirmed_empty = not runs and not issues
         usable = checked > 0 or confirmed_empty
