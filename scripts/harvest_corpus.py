@@ -27,7 +27,7 @@ identical redacted content are skipped, and new entries are appended.
 from __future__ import annotations
 
 import argparse, hashlib, io, json, os, re, subprocess, sys, tempfile, xml.etree.ElementTree as ET, zipfile
-from collections import Counter; from dataclasses import dataclass; from pathlib import Path
+from collections import Counter; from dataclasses import dataclass; from datetime import datetime, timedelta, timezone; from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = ROOT / "tests" / "fixtures"
@@ -51,6 +51,12 @@ SKIP_WORKFLOWS = frozenset(_SOURCES["skip_workflows"])
 MAX_ARTIFACT_BYTES = 50 * 1024 * 1024
 MAX_STRING_CHARS = 4000
 MAX_RECORDS = 200
+# Fleet result artifacts are uploaded with ``retention-days: 14``. A failed run last updated
+# before that can only still hold long-lived receipts (failure-identity keeps 90 days), so the
+# daily harvest has already had its chance at the raw results: it is outside the scope.
+RUN_WINDOW_DAYS = 14
+# Failed runs per repository dropped by that window in the latest ``list_failed_runs`` call.
+OUTSIDE_WINDOW: dict[str, int] = {}
 FAIL_STATES = frozenset({"failed", "failure", "error", "errored", "timedout", "unexpected", "interrupted", "crashed"})
 
 
@@ -120,12 +126,29 @@ def run_gh(args: list[str], failures: list[HarvestFailure], *, repo: str, run_id
     return proc.stdout
 
 
-def list_failed_runs(repo: str, failures: list[HarvestFailure], limit: int = 15) -> list[dict]:
+def list_failed_runs(repo: str, failures: list[HarvestFailure], limit: int = 15, *, now: datetime | None = None) -> list[dict]:
     """Failed runs, ignoring Copilot review runs (they never carry test results and used to
-    crowd test runs out of the window)."""
+    crowd test runs out of the window) and runs older than ``RUN_WINDOW_DAYS``."""
     runs = _list_failed_runs_raw(repo, failures, limit=limit * 3)
     kept = [r for r in runs if (r.get("workflowName") or "") not in SKIP_WORKFLOWS]
-    return kept[:limit]
+    cutoff = (now or datetime.now(timezone.utc)) - timedelta(days=RUN_WINDOW_DAYS)
+    recent = [r for r in kept if not _older_than(r, cutoff)]
+    OUTSIDE_WINDOW[repo] = len(kept) - len(recent)
+    return recent[:limit]
+
+
+def _older_than(run: dict, cutoff: datetime) -> bool:
+    """True only for a readable timestamp before ``cutoff``; an unknown age stays in scope."""
+    stamp = run.get("updatedAt") or run.get("createdAt")
+    if not isinstance(stamp, str):
+        return False
+    try:
+        when = datetime.fromisoformat(stamp)
+    except ValueError:
+        return False
+    if when.tzinfo is None:
+        return False
+    return when < cutoff
 
 
 def _list_failed_runs_raw(repo: str, failures: list[HarvestFailure], limit: int) -> list[dict]:
@@ -140,7 +163,7 @@ def _list_failed_runs_raw(repo: str, failures: list[HarvestFailure], limit: int)
             "--limit",
             str(limit),
             "--json",
-            "databaseId,displayTitle,createdAt,workflowName",
+            "databaseId,displayTitle,createdAt,updatedAt,workflowName",
         ],
         failures,
         repo=repo,
@@ -635,6 +658,10 @@ def report_markdown(report: dict) -> str:
              "", "| Repository | Status | Checked files |", "| --- | --- | --- |"]
     for repo, item in report["repositories"].items():
         lines.append(f"| {cell(repo)} | {item['status']} | {item['checked_files']} |")
+    older = [(repo, item["older_failed_runs"]) for repo, item in report["repositories"].items() if item.get("older_failed_runs")]
+    if older:
+        lines += ["", f"Failed runs last updated more than {report['run_window_days']} days ago (raw result retention) are outside the scope:", ""]
+        lines.extend(f"- {cell(repo)}: {count}" for repo, count in older)
     lines += ["", "### Collection failures / expired artifacts", ""]
     for f in report["failures"]:
         artifact_id = f" (ID {f['artifact_id']})" if f.get('artifact_id') is not None else ""
@@ -743,7 +770,10 @@ def run_harvest(args: argparse.Namespace) -> int:
     existing_xml = _load_manifest(MANIFEST)
     existing_json = _load_manifest(RESULTS_MANIFEST)
     coverage: dict = {}
+    OUTSIDE_WINDOW.clear()
     entries, failures, pending = harvest(entries_limit_per_repo=args.per_repo, existing=existing_xml + existing_json, coverage=coverage)
+    for repo, item in coverage.items():
+        item["older_failed_runs"] = OUTSIDE_WINDOW.get(repo, 0)
     usable = any(item["status"] in ("complete", "partial") for item in coverage.values())
     blocked = not usable or (bool(failures) and not args.allow_partial)
     status = "unavailable" if not usable else ("partial" if failures else "complete")
@@ -752,6 +782,7 @@ def run_harvest(args: argparse.Namespace) -> int:
         "exit_code": int(blocked),
         "repositories": coverage,
         "new_entries": len(entries),
+        "run_window_days": RUN_WINDOW_DAYS,
         "by_repo": {},
         "failures": [f.as_dict() for f in failures],
     }
