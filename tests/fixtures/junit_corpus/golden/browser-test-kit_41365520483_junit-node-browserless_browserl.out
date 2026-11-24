@@ -3,6 +3,8 @@ FOUND: junit failures (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit
 FOUND: junit failure (first) (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_41365520483_junit-node-browserless_browserl.xml): page-inspect-scenario.spec.mjs:5:1 › platform fixture state machines and Node runtime contract ───\n\n    Error: ✖ workspace selects Node 24 and this test uses a supported runtime (5.536618ms)\n    ✔ notification and location queries do not request location coordinates (15.97905ms)\n    ✔ permission probe records each change with a new generation (1.182715ms)\n    ✔ unsupported and broken permissi
 FOUND: junit failure groups (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_41365520483_junit-node-browserless_browserl.xml): 1 failure in 1 group
 FOUND: junit testcase classname (first) (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_41365520483_junit-node-browserless_browserl.xml): page-inspect-scenario.spec.mjs
+FOUND: junit playwright test (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_41365520483_junit-node-browserless_browserl.xml): page-inspect-scenario.spec.mjs:5:1 › platform fixture state machines and Node runtime contract
+FOUND: junit playwright error (<repo>/tests/fixtures/junit_corpus/cases/browser-test-kit_41365520483_junit-node-browserless_browserl.xml): Error: ✖ workspace selects Node 24 and this test uses a supported runtime (5.536618ms)
 FOUND: python version: 3.15.2 (cpython)
 FOUND: node version: v24.22.3
 FOUND: gh version: gh version 2.104.0 (2026-11-12)

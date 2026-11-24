@@ -17,7 +17,7 @@ FIXTURES = ROOT / "tests" / "fixtures"
 EMPTY = FIXTURES / "failure_suite" / "empty_root"
 CORPUS_CASES = FIXTURES / "junit_corpus" / "cases"
 
-_RUNTIME_LINE_PREFIXES = (
+RUNTIME_LINE_PREFIXES = (
     "FOUND: python version:",
     "FOUND: node version:",
     "FOUND: gh version:",
@@ -48,7 +48,7 @@ def normalize_report(text: str) -> str:
     text = re.sub(r"/usr/lib/python3\.\d+/", "<pylib>/", mask_repo(text))
     lines: list[str] = []
     for line in text.splitlines():
-        prefix = next((p for p in _RUNTIME_LINE_PREFIXES if line.startswith(p)), None)
+        prefix = next((p for p in RUNTIME_LINE_PREFIXES if line.startswith(p)), None)
         if prefix:
             line = f"{prefix} <runtime>"
         elif "node stack frame" in line or line.startswith("FOUND: node error"):

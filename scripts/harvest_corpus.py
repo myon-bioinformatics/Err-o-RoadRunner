@@ -958,6 +958,8 @@ KEY_FOUND = (
     "junit collection error (first)",
     "junit system-err (first line)",
     "junit testcase classname (first)",
+    "junit playwright error",
+    "junit collection import mismatch",
 )
 
 

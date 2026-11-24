@@ -804,6 +804,8 @@ PYTEST_LOCATION_EXC_RE = re.compile(
     r"^\s*\S+?:\d+:\s+(?P<exc>[A-Za-z_][\w.]*(?:Error|Exception|Failed|Timeout))\s*$"
 )
 PYTEST_E_FAILED_LINE_RE = re.compile(r"^\s*E\s+Failed:")
+# ``E   StopIteration`` — a builtin whose name has no Error/Exception suffix (or is that bare word).
+PYTEST_E_NAME_LINE_RE = re.compile(r"^\s*E\s+(?P<exc>[A-Za-z_][\w.]*)\s*(?::|$)")
 PYTEST_DID_NOT_RAISE_RE = re.compile(r"DID NOT RAISE\s+(?:<class '(?P<cls>[^']+)'>|(?P<exc>[A-Za-z_][\w.]*))")
 PYTEST_IMPORT_MISMATCH_RE = re.compile(
     r"import file mismatch:\s*imported module '(?P<module>[^']+)' has this __file__ attribute:\s*"
@@ -812,7 +814,7 @@ PYTEST_IMPORT_MISMATCH_RE = re.compile(
 )
 # Playwright reporter block: ``[chromium] › a.spec.ts:12:7 › Suite › title`` then ``Error: ...``.
 PLAYWRIGHT_HEADER_RE = re.compile(
-    r"^\[(?P<project>[^\]\s]+)\]\s+›\s+(?P<location>\S+?\.(?:spec|test)\.[cm]?[jt]sx?:\d+:\d+)\s+›\s+(?P<title>.+)$"
+    r"^(?:\[(?P<project>[^\]\s]+)\]\s+›\s+)?(?P<location>\S+?\.(?:spec|test)\.[cm]?[jt]sx?:\d+:\d+)\s+›\s+(?P<title>.+)$"
 )
 PLAYWRIGHT_ERROR_LINE_RE = re.compile(r"^(?P<type>[A-Za-z]*Error):\s+(?P<rest>.+)$")
 FLUTTER_TEST_DESCRIPTION_RE = re.compile(r"The test description was:\s*(?P<desc>.+)")
@@ -1092,13 +1094,15 @@ def _junit_is_pytest_collection_failure(error_elem: ET.Element, blob: str) -> bo
     return "importerror while importing" in low or "collection error" in low
 
 
-def _junit_pytest_exception_type(blob: str, message: str = "") -> str:
+def _junit_pytest_exception_type(blob: str, message: str = "", type_attr: str = "") -> str:
     """Exception type of a pytest failure, with the corpus-measured fallbacks.
 
     Order: an ``E   SomeError`` line; the trailing ``path:LINE: SomeError`` location
     pytest prints after the source excerpt; a rewritten ``assert`` (pytest raises
     ``AssertionError`` for it by definition); ``E   Failed:`` outcomes such as
-    ``DID NOT RAISE``. Each fallback was a "partial" class in the harvested corpus.
+    ``DID NOT RAISE``; an ``E   StopIteration`` line naming a builtin exception; the JUnit
+    ``type=`` attribute when it is an exception class name (``SetupError``). Each fallback
+    was a "partial" class in the harvested corpus.
     """
     for line in blob.splitlines():
         m = PYTEST_E_EXC_LINE_RE.match(line)
@@ -1118,6 +1122,13 @@ def _junit_pytest_exception_type(blob: str, message: str = "") -> str:
         return "AssertionError"
     if any(PYTEST_E_FAILED_LINE_RE.match(line) for line in blob.splitlines()):
         return "Failed"
+    for line in blob.splitlines():
+        m = PYTEST_E_NAME_LINE_RE.match(line)
+        if m and m.group("exc").rsplit(".", 1)[-1] in PYTHON_BUILTIN_EXCEPTIONS:
+            return m.group("exc")
+    attr = (type_attr or "").strip()
+    if JUNIT_BARE_EXCEPTION_NAME_RE.match(attr) and is_python_exception_type_name(attr):
+        return attr
     return ""
 
 
@@ -1141,7 +1152,9 @@ def _junit_playwright_block(blob: str) -> tuple[str, str, bool]:
         if not header:
             m = PLAYWRIGHT_HEADER_RE.match(stripped)
             if m:
-                header = f"[{m.group('project')}] {m.group('location')} › {m.group('title').strip()}"
+                title = m.group("title").rstrip("─ ").strip()
+                project = f"[{m.group('project')}] " if m.group("project") else ""
+                header = f"{project}{m.group('location')} › {title}"
                 continue
         if header and not error_line:
             m = PLAYWRIGHT_ERROR_LINE_RE.match(stripped)
@@ -1161,19 +1174,33 @@ def _junit_flutter_test_description(message: str, blob: str) -> str:
     return m.group("desc").strip()[:300] if m else ""
 
 
-def _junit_import_mismatch_hint(blobs: Sequence[str]) -> str:
+def _junit_import_mismatch(blobs: Sequence[str]) -> tuple[str, str, str] | None:
+    """(module, already-imported path, path collection wants) from pytest's import file mismatch."""
     for blob in blobs:
         m = PYTEST_IMPORT_MISMATCH_RE.search(blob)
         if m:
-            module = m.group("module")
-            imported = m.group("imported").strip()
-            wanted = m.group("wanted").strip()
-            return (
-                f"pytest import file mismatch: module '{module}' is already imported from "
-                f"{imported} but collection wants {wanted}; give test files unique basenames, "
-                "add __init__.py to each tests directory, or run pytest with --import-mode=importlib"
-            )[:500]
-    return ""
+            return m.group("module"), m.group("imported").strip(), m.group("wanted").strip()
+    return None
+
+
+def _junit_import_mismatch_found(blobs: Sequence[str]) -> str:
+    found = _junit_import_mismatch(blobs)
+    if found is None:
+        return ""
+    module, imported, wanted = found
+    return f"module '{module}' imported from {imported}, collection wants {wanted}"[:500]
+
+
+def _junit_import_mismatch_hint(blobs: Sequence[str]) -> str:
+    found = _junit_import_mismatch(blobs)
+    if found is None:
+        return ""
+    module, imported, wanted = found
+    return (
+        f"pytest import file mismatch: module '{module}' is already imported from "
+        f"{imported} but collection wants {wanted}; give test files unique basenames, "
+        "add __init__.py to each tests directory, or run pytest with --import-mode=importlib"
+    )[:500]
 
 
 def _junit_pytest_assert_hint(blob: str) -> str:
@@ -1257,6 +1284,7 @@ def parse_junit_xml(text: str, source: str, report: Report) -> None:
     failing_type_attrs: list[str] = []
     failing_testcases: list[ET.Element] = []
     first_classname = ""
+    primary_type_attr = ""
     collection_errors: list[str] = []
     collection_blobs: list[str] = []
     try:
@@ -1274,6 +1302,8 @@ def parse_junit_xml(text: str, source: str, report: Report) -> None:
                             first_classname = (testcase.attrib.get("classname") or "").strip()
                         failing_testcases.append(testcase)
                         blob = _junit_failure_blob(testcase, child)
+                        if not failure_blobs:
+                            primary_type_attr = child.attrib.get("type") or ""
                         failure_blobs.append(blob)
                         failures.append(_junit_snippet(child, testcase))
                         msg_attr = sanitize_report_text(
@@ -1288,6 +1318,8 @@ def parse_junit_xml(text: str, source: str, report: Report) -> None:
                             first_classname = (testcase.attrib.get("classname") or "").strip()
                         failing_testcases.append(testcase)
                         blob = _junit_failure_blob(testcase, child)
+                        if not failure_blobs:
+                            primary_type_attr = child.attrib.get("type") or ""
                         failure_blobs.append(blob)
                         errors.append(_junit_snippet(child, testcase))
                         if not _junit_is_pytest_collection_failure(child, blob):
@@ -1359,7 +1391,7 @@ def parse_junit_xml(text: str, source: str, report: Report) -> None:
 
     if primary_blob:
         primary_message = failing_messages[0] if failing_messages else ""
-        exc_type = _junit_pytest_exception_type(primary_blob, primary_message)
+        exc_type = _junit_pytest_exception_type(primary_blob, primary_message, primary_type_attr)
         if exc_type:
             report.add_found(f"junit pytest exception type ({source}): {exc_type}")
         else:
@@ -1411,6 +1443,9 @@ def parse_junit_xml(text: str, source: str, report: Report) -> None:
     if collection_errors:
         report.add_found(f"junit collection errors ({source}): {len(collection_errors)}")
         report.add_found(f"junit collection error (first) ({source}): {collection_errors[0][:300]}")
+        mismatch_found = _junit_import_mismatch_found(collection_blobs)
+        if mismatch_found:
+            report.add_found(f"junit collection import mismatch ({source}): {mismatch_found}")
         mismatch = _junit_import_mismatch_hint(collection_blobs)
         if mismatch:
             report.add_hint(f"junit collection ({source}): {mismatch}")

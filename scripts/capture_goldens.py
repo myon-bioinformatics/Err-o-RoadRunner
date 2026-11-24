@@ -16,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
 from errlib.junit_redact import redact_xml_document
-from tests.support import EMPTY, FIXTURES, mask_repo, triage_cli as _triage_cli
+from tests.support import EMPTY, FIXTURES, RUNTIME_LINE_PREFIXES, mask_repo, triage_cli as _triage_cli
 
 README_FIX = FIXTURES / "readme"
 
@@ -489,8 +489,33 @@ def capture_junit_corpus(missing_only: bool = False) -> None:
         if missing_only and golden.exists():
             continue
         golden.parent.mkdir(parents=True, exist_ok=True)
-        golden.write_text(triage_golden(EMPTY, "--junit", xml), encoding="utf-8")
+        text = triage_golden(EMPTY, "--junit", xml)
+        if golden.exists():
+            text = keep_runtime_lines(text, golden.read_text(encoding="utf-8"))
+        golden.write_text(text, encoding="utf-8")
     print(f"Wrote {len(entries)} goldens")
+
+
+def keep_runtime_lines(text: str, committed: str) -> str:
+    """``text`` with each runtime line (Python/Node/gh version, env names) taken from ``committed``.
+
+    Those lines describe the machine that captured a golden, and the golden comparison masks
+    them. Carrying the committed ones over keeps a re-capture byte-for-byte identical unless a
+    triage rule changed the report; a prefix the committed golden lacks keeps the new line.
+    """
+    kept: dict[str, str] = {}
+    for line in committed.splitlines():
+        prefix = next((p for p in RUNTIME_LINE_PREFIXES if line.startswith(p)), None)
+        if prefix is not None and prefix not in kept:
+            kept[prefix] = line
+    out = []
+    for line in text.splitlines(keepends=True):
+        body = line.rstrip("\r\n")
+        prefix = next((p for p in RUNTIME_LINE_PREFIXES if body.startswith(p)), None)
+        if prefix in kept:
+            line = kept[prefix] + line[len(body):]
+        out.append(line)
+    return "".join(out)
 
 
 def main(argv: list[str] | None = None) -> int:
