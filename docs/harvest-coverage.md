@@ -29,6 +29,14 @@ evidence that no failures occurred. Without `--allow-partial`, any recorded fail
 still prevents writes and exits 1. All statuses describe the configured recent-run
 window and per-repository new-entry limit, rather than unlimited historical coverage.
 
+That window is the raw-result retention, 14 days (`RUN_WINDOW_DAYS`): a failed run last
+updated earlier keeps only its 90-day `failure-identity` receipt, so the daily harvest
+already had its chance at the raw results. Such runs are left out of the query and
+counted per repository as `older_failed_runs` (listed in the summary), so a repository
+with only aged failures is `complete` for the window rather than `unavailable`. A run
+without a readable timestamp stays in scope. `Dependabot Updates` runs are skipped like
+Copilot review runs: they never upload test results.
+
 A successful empty run query is affirmative evidence that no collection is needed
 in that scope, so it counts as complete even without an artifact. A failed run
 query returning invalid/empty response text does not count as that evidence.

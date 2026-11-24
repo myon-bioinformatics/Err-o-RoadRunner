@@ -1,6 +1,6 @@
 {
   "org": "myon-bioinformatics",
-  "note": "Public, non-archived repositories whose failed CI runs feed the failure corpus (24 as of 2026-11-07; browser-test-kit -> BrowserTestKit, web-ui -> PySaiyanWeBoo). Refresh with: gh repo list myon-bioinformatics --visibility public --no-archived",
+  "note": "Public, non-archived repositories whose failed CI runs feed the failure corpus (29 as of 2026-11-24, plus archived flutter_navigation_basic kept for its corpus history; browser-test-kit -> BrowserTestKit, web-ui -> PySaiyanWeBoo). Refresh with: gh repo list myon-bioinformatics --visibility public --no-archived",
   "repos": [
     "Aoi",
     "ascii_artist",
@@ -9,6 +9,7 @@
     "cli_args",
     "DRAgoWing",
     "Err-o-RoadRunner",
+    "FluidFullSpeedSimulation",
     "flutter_navigation_basic",
     "gh_identity",
     "Ironmate",
@@ -18,15 +19,20 @@
     "myon-bioinformatics.github.io",
     "NagoyAction",
     "nvd_nist_known_vulns",
+    "OneLaunchNumerousModules",
+    "OnTautoLogy",
+    "ONTO",
     "PySaiyanWeBoo",
     "PythDRagoras",
     "QueRyu",
     "SakAnalytics",
     "search_seq_including_spaces",
     "TalkCompress",
+    "TaxOntOy",
+    "TopOntoLogy",
     "xprobe",
     "yourself"
   ],
   "artifact_markers": ["junit", "failure-identity", "test-report", "test-results", "playwright-report", "pytest-events", "results"],
-  "skip_workflows": ["Copilot", "copilot-pull-request-reviewer", "Copilot code review"]
+  "skip_workflows": ["Copilot", "copilot-pull-request-reviewer", "Copilot code review", "Dependabot Updates"]
 }
