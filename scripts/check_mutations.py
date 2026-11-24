@@ -280,10 +280,12 @@ PARTIAL_MUTATIONS: list[Mutation] = [
 
 
 # suite -> (mutations, guard tests, also pairwise, guard must pass unmutated first)
+# ⚡ this interpreter (already the project environment) instead of `uv run` per mutant; -x: the first failure kills it
+_PYTEST = [sys.executable, "-m", "pytest", "-q", "-x", "-p", "no:cacheprovider"]
 SUITES = {
-    "combo": (COMBO_MUTATIONS, ["uv", "run", "pytest", "-q", "tests/test_triage.py", "-m", "mutation_guard"], True, True),
-    "partial": (PARTIAL_MUTATIONS, ["uv", "run", "pytest", "-q", "tests/test_corpus_partial.py", "-m", "mutation_guard"], False, True),
-    "version": (VERSION_MUTATIONS, ["uv", "run", "pytest", "-q", "tests/test_version.py", "-k", "mutation_guard"], False, False),
+    "combo": (COMBO_MUTATIONS, [*_PYTEST, "tests/test_triage.py", "-m", "mutation_guard"], True, True),
+    "partial": (PARTIAL_MUTATIONS, [*_PYTEST, "tests/test_corpus_partial.py", "-m", "mutation_guard"], False, True),
+    "version": (VERSION_MUTATIONS, [*_PYTEST, "tests/test_version.py", "-k", "mutation_guard"], False, False),
 }
 
 
