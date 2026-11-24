@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/icon.png" alt="Err-o-RoadRunner app icon (a roadrunner with a warning sign)" width="160">
+  <img src="https://myon-bioinformatics.github.io/Err-o-RoadRunner/icon.png" alt="Err-o-RoadRunner app icon (a roadrunner with a warning sign)" width="160">
 </p>
 
 # Err-o-RoadRunner
@@ -11,7 +11,7 @@ Err-o-RoadRunner is a tool that does nothing in normal times. It starts working 
 Researching the cause of a Python, Node, Go or TypeScript failure, or a GitHub Actions CI failure, currently takes a lot of time. Most error messages are well known, and a web search often turns up hints. This project automates that first investigation **without depending on an AI agent**. It lists what it found and what it did not find on stdout, as a plain report.
 
 <p align="center">
-  <img src="docs/assets/concept.png" alt="Err-o-RoadRunner concept diagram: the flow from an error through triage and the stdout report to the next action, with supported inputs and design principles" width="900">
+  <img src="docs/assets/repository-concept-v0.png" alt="Err-o-RoadRunner concept diagram: the flow from an error through triage and the stdout report to the next action, with supported inputs and design principles" width="900">
 </p>
 
 *The diagram shows the core `triage` flow; `sentinel` adds always-on monitoring and escalation on top. The “single module triage.py” label reflects the diagram’s original scope.*
@@ -20,13 +20,13 @@ Researching the cause of a Python, Node, Go or TypeScript failure, or a GitHub A
 
 ## Concept overview
 
-![Err-o-RoadRunner concept: failure logs are matched against known patterns, then reported as FOUND, NOT FOUND and HINT with examples and tests as evidence](docs/images/concept-overview.png)
+![Err-o-RoadRunner concept: failure logs are matched against known patterns, then reported as FOUND, NOT FOUND and HINT with examples and tests as evidence](docs/images/repository-concept.png)
 
 The supplied diagram summarizes the failure-triggered, read-only triage flow. Matching is best effort: hints are not verified root causes, and the tool does not repair code or run a resident monitor. See the current CLI and supported inputs below.
 
 ### Challenges, responsibilities and intended outcomes
 
-![Err-o-RoadRunner concept: investigate CI failures through detection, known-pattern matching and FOUND, NOT FOUND or HINT reports](docs/images/concept-overview-v2.png)
+![Err-o-RoadRunner concept: investigate CI failures through detection, known-pattern matching and FOUND, NOT FOUND or HINT reports](docs/images/repository-concept-v2.png)
 
 This complementary supplied panel shows the challenges, roles and intended outcomes alongside the flow above. Detection relies on failure information passed by the caller or wrapper, not background monitoring. Investigation time savings are a design goal, not a measured guarantee. The optional `sentinel` wrapper now available in the CLI provides light capture for an explicitly wrapped command and escalates on failure; the two supplied panels are not a complete inventory of that wrapper’s behavior.
 
