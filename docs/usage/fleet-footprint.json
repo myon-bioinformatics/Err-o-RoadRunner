@@ -153,7 +153,7 @@
     },
     {
       "archived": false,
-      "harvest_source": false,
+      "harvest_source": true,
       "repository": "myon-bioinformatics/FluidFullSpeedSimulation",
       "triage": {
         "cases": 0,
@@ -325,7 +325,7 @@
     },
     {
       "archived": false,
-      "harvest_source": false,
+      "harvest_source": true,
       "repository": "myon-bioinformatics/OneLaunchNumerousModules",
       "triage": {
         "cases": 0,
@@ -338,7 +338,7 @@
     },
     {
       "archived": false,
-      "harvest_source": false,
+      "harvest_source": true,
       "repository": "myon-bioinformatics/ONTO",
       "triage": {
         "cases": 0,
@@ -351,7 +351,7 @@
     },
     {
       "archived": false,
-      "harvest_source": false,
+      "harvest_source": true,
       "repository": "myon-bioinformatics/OnTautoLogy",
       "triage": {
         "cases": 0,
@@ -450,7 +450,7 @@
     },
     {
       "archived": false,
-      "harvest_source": false,
+      "harvest_source": true,
       "repository": "myon-bioinformatics/TaxOntOy",
       "triage": {
         "cases": 0,
@@ -463,7 +463,7 @@
     },
     {
       "archived": false,
-      "harvest_source": false,
+      "harvest_source": true,
       "repository": "myon-bioinformatics/TopOntoLogy",
       "triage": {
         "cases": 0,

@@ -237,3 +237,12 @@ def test_committed_snapshot_matches_the_checker():
         python_options=("-S",), cwd=ROOT,
     )
     assert checked.returncode == 0, checked.stderr
+
+
+def test_committed_snapshot_harvest_sources_match_the_source_list():
+    """The checker validates vocabulary only, so compare ``harvest_source`` with the list itself."""
+    footprint = json.loads((ROOT / "docs" / "usage" / "fleet-footprint.json").read_text(encoding="utf-8"))
+    sources = json.loads((ROOT / "scripts" / "harvest_sources.json").read_text(encoding="utf-8"))
+    expected = {"%s/%s" % (sources["org"], name) for name in sources["repos"]}
+    flagged = {row["repository"] for row in footprint["repositories"] if row["harvest_source"]}
+    assert flagged == expected
