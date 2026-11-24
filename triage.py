@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-import argparse, collections, fnmatch, json, os, re, shutil, stat, subprocess, sys, xml.etree.ElementTree as ET, zipfile
+import argparse, collections, fnmatch, functools, json, os, re, shutil, stat, subprocess, sys, xml.etree.ElementTree as ET, zipfile
 from dataclasses import dataclass, field; from pathlib import Path; from typing import Iterator, Sequence
 
 from errlib.error_input import python_exception_candidate
@@ -1573,6 +1573,7 @@ def _is_node_syntax_error_line(stripped: str) -> bool:
 
 
 
+@functools.lru_cache(maxsize=64)  # ⚡ a pure function of the text; the Node error scan asks it once per line with the whole log (O(n²))
 def _has_python_failure_signal(text: str) -> bool:
     if "Traceback (most recent call last):" in text or any(m in text for m in PYTHON_CHAIN_MARKERS):
         return True
