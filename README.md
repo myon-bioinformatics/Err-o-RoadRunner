@@ -59,6 +59,10 @@ This complementary supplied panel shows the challenges, roles and intended outco
 
 **Current slice:** read-only triage for Python tracebacks, Node stacks, Go panics and compiler errors, TypeScript compiler diagnostics, JUnit XML (pytest including rewritten `assert` / `DID NOT RAISE` / `import file mismatch`, Playwright reporter blocks, Flutter test descriptions), `flutter test --machine` JSON lines (`--test-events`), and downloaded GitHub Actions job logs (`--actions-log`). The JUnit rules are measured against the harvested failure corpus (`tests/fixtures/junit_corpus`, 458 cases from 24 repositories as of 2026-11-07; `scripts/harvest_corpus.py classify` reports 435 well handled / 23 partial). Go and TypeScript detection is best effort and reported as `HINT`. Summarize a downloaded CI artifact zip (or directory / single XML or JSON) in place with `digest` (JUnit counts and failing cases, receipt JSON fields, extension counts for everything else). Wrap commands with **`sentinel`** for always-on light capture and automatic escalation plus JSON for agents (`docs/sentinel-report-schema.md`).
 
+## Fleet footprint
+
+Which public repositories actually call ErrORR, and what the harvested JUnit goldens say after triage, is summarized in [`docs/usage/fleet-graph.md`](docs/usage/fleet-graph.md). The record shape is [`docs/errorr-footprint.md`](docs/errorr-footprint.md). Regenerate the snapshot with `python3 -S scripts/usage_graph.py from-checkout` (add an ONTO checkout on `PYTHONPATH` for the Mermaid page). It is a point-in-time view, not a live counter.
+
 ## CLI usage
 
 Install the distribution as **`err-o-roadrunner`** (PyPI-style package name). The console command is **`erroroadrunner`**:

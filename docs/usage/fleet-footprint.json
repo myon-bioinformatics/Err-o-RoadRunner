@@ -1,0 +1,571 @@
+{
+  "classification_file_rows": 458,
+  "colliding_manifest_rows": 7,
+  "duplicate_manifest_rows": 0,
+  "manifest_rows": 599,
+  "observed_at": "2026-11-24",
+  "renames": [
+    {
+      "evidence": "https://github.com/myon-bioinformatics/Err-o-RoadRunner/blob/main/scripts/harvest_sources.json",
+      "from": "myon-bioinformatics/browser-test-kit",
+      "to": "myon-bioinformatics/BrowserTestKit"
+    },
+    {
+      "evidence": "https://github.com/myon-bioinformatics/Err-o-RoadRunner/blob/main/scripts/harvest_sources.json",
+      "from": "myon-bioinformatics/web-ui",
+      "to": "myon-bioinformatics/PySaiyanWeBoo"
+    }
+  ],
+  "repositories": [
+    {
+      "archived": false,
+      "harvest_source": true,
+      "repository": "myon-bioinformatics/Aoi",
+      "triage": {
+        "cases": 75,
+        "exception_types": {
+          "AssertionError": 32,
+          "ImportError": 6,
+          "ModuleNotFoundError": 17,
+          "research_digest.DigestError": 10
+        },
+        "partial": 10,
+        "unknown": 0,
+        "well_handled": 65
+      },
+      "uses": []
+    },
+    {
+      "archived": false,
+      "harvest_source": true,
+      "repository": "myon-bioinformatics/ascii_artist",
+      "triage": {
+        "cases": 38,
+        "exception_types": {
+          "AssertionError": 37,
+          "UnicodeDecodeError": 1
+        },
+        "partial": 0,
+        "unknown": 0,
+        "well_handled": 38
+      },
+      "uses": []
+    },
+    {
+      "archived": false,
+      "harvest_source": true,
+      "repository": "myon-bioinformatics/BlueProbe",
+      "triage": {
+        "cases": 5,
+        "exception_types": {
+          "AssertionError": 5
+        },
+        "partial": 0,
+        "unknown": 0,
+        "well_handled": 5
+      },
+      "uses": []
+    },
+    {
+      "archived": false,
+      "harvest_source": true,
+      "repository": "myon-bioinformatics/BrowserTestKit",
+      "triage": {
+        "cases": 3,
+        "exception_types": {
+          "AssertionError": 3
+        },
+        "partial": 0,
+        "unknown": 0,
+        "well_handled": 3
+      },
+      "uses": [
+        {
+          "evidence": "https://github.com/myon-bioinformatics/BrowserTestKit/blob/main/docs/screenshot-evidence.md",
+          "feature": "digest",
+          "kind": "documented"
+        },
+        {
+          "evidence": "https://github.com/myon-bioinformatics/BrowserTestKit/blob/main/docs/screenshot-evidence.md",
+          "feature": "sentinel",
+          "kind": "documented"
+        }
+      ]
+    },
+    {
+      "archived": false,
+      "harvest_source": true,
+      "repository": "myon-bioinformatics/cli_args",
+      "triage": {
+        "cases": 14,
+        "exception_types": {
+          "AssertionError": 9,
+          "Failed": 5
+        },
+        "partial": 0,
+        "unknown": 0,
+        "well_handled": 14
+      },
+      "uses": []
+    },
+    {
+      "archived": false,
+      "harvest_source": true,
+      "repository": "myon-bioinformatics/DRAgoWing",
+      "triage": {
+        "cases": 20,
+        "exception_types": {
+          "AssertionError": 15,
+          "ImportError": 5
+        },
+        "partial": 0,
+        "unknown": 0,
+        "well_handled": 20
+      },
+      "uses": []
+    },
+    {
+      "archived": false,
+      "harvest_source": true,
+      "repository": "myon-bioinformatics/Err-o-RoadRunner",
+      "triage": {
+        "cases": 21,
+        "exception_types": {
+          "AssertionError": 20,
+          "AttributeError": 1
+        },
+        "partial": 0,
+        "unknown": 0,
+        "well_handled": 21
+      },
+      "uses": [
+        {
+          "evidence": "https://github.com/myon-bioinformatics/Err-o-RoadRunner/blob/71e069dcfd3ebdcdf1fc7dc719bbbb3a3a622164/.github/workflows/harvest-corpus.yml",
+          "feature": "triage",
+          "kind": "harvest-step"
+        },
+        {
+          "evidence": "https://github.com/myon-bioinformatics/Err-o-RoadRunner/blob/71e069dcfd3ebdcdf1fc7dc719bbbb3a3a622164/.github/workflows/harvest-corpus.yml",
+          "feature": "corpus-harvest",
+          "kind": "workflow"
+        }
+      ]
+    },
+    {
+      "archived": false,
+      "harvest_source": false,
+      "repository": "myon-bioinformatics/FluidFullSpeedSimulation",
+      "triage": {
+        "cases": 0,
+        "exception_types": {},
+        "partial": 0,
+        "unknown": 0,
+        "well_handled": 0
+      },
+      "uses": []
+    },
+    {
+      "archived": true,
+      "harvest_source": true,
+      "repository": "myon-bioinformatics/flutter_navigation_basic",
+      "triage": {
+        "cases": 42,
+        "exception_types": {
+          "AssertionError": 26,
+          "lib/shared/catalog/catalog_search.dart:7:6: Error: Type 'ScreenData' not found.": 4
+        },
+        "partial": 12,
+        "unknown": 0,
+        "well_handled": 30
+      },
+      "uses": []
+    },
+    {
+      "archived": false,
+      "harvest_source": true,
+      "repository": "myon-bioinformatics/gh_identity",
+      "triage": {
+        "cases": 49,
+        "exception_types": {
+          "AssertionError": 49
+        },
+        "partial": 0,
+        "unknown": 0,
+        "well_handled": 49
+      },
+      "uses": []
+    },
+    {
+      "archived": false,
+      "harvest_source": true,
+      "repository": "myon-bioinformatics/Ironmate",
+      "triage": {
+        "cases": 48,
+        "exception_types": {
+          "AssertionError": 35,
+          "FileNotFoundError": 1,
+          "NameError": 1,
+          "RuntimeError": 2,
+          "TypeError": 3
+        },
+        "partial": 6,
+        "unknown": 0,
+        "well_handled": 42
+      },
+      "uses": []
+    },
+    {
+      "archived": false,
+      "harvest_source": true,
+      "repository": "myon-bioinformatics/markdown",
+      "triage": {
+        "cases": 25,
+        "exception_types": {
+          "AssertionError": 25
+        },
+        "partial": 0,
+        "unknown": 0,
+        "well_handled": 25
+      },
+      "uses": []
+    },
+    {
+      "archived": false,
+      "harvest_source": true,
+      "repository": "myon-bioinformatics/mcp-toolcall-lab",
+      "triage": {
+        "cases": 16,
+        "exception_types": {
+          "AssertionError": 14,
+          "SyntaxError": 2
+        },
+        "partial": 0,
+        "unknown": 0,
+        "well_handled": 16
+      },
+      "uses": []
+    },
+    {
+      "archived": false,
+      "harvest_source": true,
+      "repository": "myon-bioinformatics/myon-bioinformatics",
+      "triage": {
+        "cases": 24,
+        "exception_types": {
+          "AssertionError": 15,
+          "ValueError": 8,
+          "urllib.error.HTTPError": 1
+        },
+        "partial": 0,
+        "unknown": 0,
+        "well_handled": 24
+      },
+      "uses": [
+        {
+          "evidence": "https://github.com/myon-bioinformatics/myon-bioinformatics/blob/main/docs/cross-repository-use-cases.json",
+          "feature": "digest",
+          "kind": "documented"
+        }
+      ]
+    },
+    {
+      "archived": false,
+      "harvest_source": true,
+      "repository": "myon-bioinformatics/myon-bioinformatics.github.io",
+      "triage": {
+        "cases": 3,
+        "exception_types": {
+          "AssertionError": 2,
+          "FileNotFoundError": 1
+        },
+        "partial": 0,
+        "unknown": 0,
+        "well_handled": 3
+      },
+      "uses": [
+        {
+          "evidence": "https://github.com/myon-bioinformatics/myon-bioinformatics.github.io/blob/main/projects.json",
+          "feature": "triage",
+          "kind": "catalog"
+        }
+      ]
+    },
+    {
+      "archived": false,
+      "harvest_source": true,
+      "repository": "myon-bioinformatics/NagoyAction",
+      "triage": {
+        "cases": 25,
+        "exception_types": {
+          "AssertionError": 15,
+          "ModuleNotFoundError": 10
+        },
+        "partial": 0,
+        "unknown": 0,
+        "well_handled": 25
+      },
+      "uses": []
+    },
+    {
+      "archived": false,
+      "harvest_source": true,
+      "repository": "myon-bioinformatics/nvd_nist_known_vulns",
+      "triage": {
+        "cases": 27,
+        "exception_types": {
+          "AssertionError": 27
+        },
+        "partial": 0,
+        "unknown": 0,
+        "well_handled": 27
+      },
+      "uses": []
+    },
+    {
+      "archived": false,
+      "harvest_source": false,
+      "repository": "myon-bioinformatics/OneLaunchNumerousModules",
+      "triage": {
+        "cases": 0,
+        "exception_types": {},
+        "partial": 0,
+        "unknown": 0,
+        "well_handled": 0
+      },
+      "uses": []
+    },
+    {
+      "archived": false,
+      "harvest_source": false,
+      "repository": "myon-bioinformatics/ONTO",
+      "triage": {
+        "cases": 0,
+        "exception_types": {},
+        "partial": 0,
+        "unknown": 0,
+        "well_handled": 0
+      },
+      "uses": []
+    },
+    {
+      "archived": false,
+      "harvest_source": false,
+      "repository": "myon-bioinformatics/OnTautoLogy",
+      "triage": {
+        "cases": 0,
+        "exception_types": {},
+        "partial": 0,
+        "unknown": 0,
+        "well_handled": 0
+      },
+      "uses": []
+    },
+    {
+      "archived": false,
+      "harvest_source": true,
+      "repository": "myon-bioinformatics/PySaiyanWeBoo",
+      "triage": {
+        "cases": 8,
+        "exception_types": {
+          "AssertionError": 8
+        },
+        "partial": 0,
+        "unknown": 0,
+        "well_handled": 8
+      },
+      "uses": []
+    },
+    {
+      "archived": false,
+      "harvest_source": true,
+      "repository": "myon-bioinformatics/PythDRagoras",
+      "triage": {
+        "cases": 25,
+        "exception_types": {
+          "AssertionError": 25
+        },
+        "partial": 0,
+        "unknown": 0,
+        "well_handled": 25
+      },
+      "uses": []
+    },
+    {
+      "archived": false,
+      "harvest_source": true,
+      "repository": "myon-bioinformatics/QueRyu",
+      "triage": {
+        "cases": 0,
+        "exception_types": {},
+        "partial": 0,
+        "unknown": 0,
+        "well_handled": 0
+      },
+      "uses": []
+    },
+    {
+      "archived": false,
+      "harvest_source": true,
+      "repository": "myon-bioinformatics/SakAnalytics",
+      "triage": {
+        "cases": 10,
+        "exception_types": {
+          "AssertionError": 10
+        },
+        "partial": 0,
+        "unknown": 0,
+        "well_handled": 10
+      },
+      "uses": []
+    },
+    {
+      "archived": false,
+      "harvest_source": true,
+      "repository": "myon-bioinformatics/search_seq_including_spaces",
+      "triage": {
+        "cases": 2,
+        "exception_types": {
+          "AssertionError": 2
+        },
+        "partial": 0,
+        "unknown": 0,
+        "well_handled": 2
+      },
+      "uses": []
+    },
+    {
+      "archived": false,
+      "harvest_source": true,
+      "repository": "myon-bioinformatics/TalkCompress",
+      "triage": {
+        "cases": 0,
+        "exception_types": {},
+        "partial": 0,
+        "unknown": 0,
+        "well_handled": 0
+      },
+      "uses": []
+    },
+    {
+      "archived": false,
+      "harvest_source": false,
+      "repository": "myon-bioinformatics/TaxOntOy",
+      "triage": {
+        "cases": 0,
+        "exception_types": {},
+        "partial": 0,
+        "unknown": 0,
+        "well_handled": 0
+      },
+      "uses": []
+    },
+    {
+      "archived": false,
+      "harvest_source": false,
+      "repository": "myon-bioinformatics/TopOntoLogy",
+      "triage": {
+        "cases": 0,
+        "exception_types": {},
+        "partial": 0,
+        "unknown": 0,
+        "well_handled": 0
+      },
+      "uses": []
+    },
+    {
+      "archived": false,
+      "harvest_source": true,
+      "repository": "myon-bioinformatics/xprobe",
+      "triage": {
+        "cases": 12,
+        "exception_types": {
+          "AssertionError": 12
+        },
+        "partial": 0,
+        "unknown": 0,
+        "well_handled": 12
+      },
+      "uses": []
+    },
+    {
+      "archived": false,
+      "harvest_source": true,
+      "repository": "myon-bioinformatics/yourself",
+      "triage": {
+        "cases": 26,
+        "exception_types": {
+          "AssertionError": 25,
+          "KeyError": 1
+        },
+        "partial": 0,
+        "unknown": 0,
+        "well_handled": 26
+      },
+      "uses": []
+    },
+    {
+      "archived": false,
+      "harvest_source": false,
+      "repository": "myon-bioinformatics/browser-test-kit",
+      "triage": {
+        "cases": 33,
+        "exception_types": {
+          "AssertionError": 27,
+          "AttributeError": 1,
+          "ModuleNotFoundError": 3,
+          "SyntaxError": 1
+        },
+        "partial": 1,
+        "unknown": 0,
+        "well_handled": 32
+      },
+      "uses": []
+    },
+    {
+      "archived": false,
+      "harvest_source": false,
+      "repository": "myon-bioinformatics/web-ui",
+      "triage": {
+        "cases": 41,
+        "exception_types": {
+          "AssertionError": 39,
+          "AttributeError": 2
+        },
+        "partial": 0,
+        "unknown": 0,
+        "well_handled": 41
+      },
+      "uses": []
+    }
+  ],
+  "schema": "errorr-footprint/v1",
+  "scope": "Public non-archived repositories of myon-bioinformatics on 2026-11-24, plus the archived harvest source flutter_navigation_basic. Private repository names are not recorded.",
+  "subject": "myon-bioinformatics/Err-o-RoadRunner",
+  "totals": {
+    "cases": 592,
+    "exception_types": {
+      "AssertionError": 477,
+      "AttributeError": 4,
+      "Failed": 5,
+      "FileNotFoundError": 2,
+      "ImportError": 11,
+      "KeyError": 1,
+      "ModuleNotFoundError": 30,
+      "NameError": 1,
+      "RuntimeError": 2,
+      "SyntaxError": 3,
+      "TypeError": 3,
+      "UnicodeDecodeError": 1,
+      "ValueError": 8,
+      "lib/shared/catalog/catalog_search.dart:7:6: Error: Type 'ScreenData' not found.": 4,
+      "research_digest.DigestError": 10,
+      "urllib.error.HTTPError": 1
+    },
+    "partial": 29,
+    "unknown": 0,
+    "well_handled": 563
+  },
+  "vendor_entries_sourcing_errorr": 0,
+  "vendor_evidence": "https://github.com/myon-bioinformatics/myon-bioinformatics/blob/main/vendor-consumers.json",
+  "workflow_invocations_outside_errorr": []
+}
