@@ -63,8 +63,7 @@ flowchart TD
   n0 -->|"harvests #40;source-list#41;"| n28
   n0 -->|"harvests #40;source-list#41;"| n30
   n0 -->|"harvests #40;source-list#41;"| n31
-  n6 -->|"triaged #40;10#41;"| n4
-  n6 -->|"triaged #40;65#41;"| n5
+  n6 -->|"triaged #40;75#41;"| n5
   n7 -->|"triaged #40;5#41;"| n5
   n8 -->|"observed_use #40;documented#41;"| n1
   n8 -->|"observed_use #40;documented#41;"| n2
@@ -73,19 +72,17 @@ flowchart TD
   n10 -->|"observed_use #40;harvest-step#41;"| n3
   n10 -->|"observed_use #40;workflow#41;"| n0
   n10 -->|"triaged #40;21#41;"| n5
-  n11 -->|"triaged #40;42#41;"| n5
-  n11 -->|"triaged #40;6#41;"| n4
+  n11 -->|"triaged #40;48#41;"| n5
   n12 -->|"triaged #40;25#41;"| n5
   n13 -->|"triaged #40;8#41;"| n5
   n14 -->|"triaged #40;25#41;"| n5
   n16 -->|"triaged #40;10#41;"| n5
   n18 -->|"triaged #40;38#41;"| n5
   n19 -->|"same_as #40;renamed#41;"| n8
-  n19 -->|"triaged #40;1#41;"| n4
-  n19 -->|"triaged #40;32#41;"| n5
+  n19 -->|"triaged #40;33#41;"| n5
   n20 -->|"triaged #40;14#41;"| n5
-  n21 -->|"triaged #40;12#41;"| n4
-  n21 -->|"triaged #40;30#41;"| n5
+  n21 -->|"triaged #40;37#41;"| n5
+  n21 -->|"triaged #40;5#41;"| n4
   n22 -->|"triaged #40;49#41;"| n5
   n23 -->|"triaged #40;25#41;"| n5
   n24 -->|"triaged #40;16#41;"| n5
@@ -113,10 +110,10 @@ flowchart TD
 | duplicate rows collapsed | 0 |
 | colliding rows not in the surviving file | 7 |
 | cases | 592 |
-| well_handled | 563 |
-| partial | 29 |
+| well_handled | 587 |
+| partial | 5 |
 | unknown | 0 |
-| classification.json rows | 458 |
+| classification.json rows | 599 |
 
 Exception types named on `FOUND: junit pytest exception type` or the first Dart error line:
 
@@ -127,11 +124,13 @@ Exception types named on `FOUND: junit pytest exception type` or the first Dart 
 - ValueError: 8
 - Failed: 5
 - AttributeError: 4
+- StopIteration: 4
 - lib/shared/catalog/catalog_search.dart:7:6: Error: Type 'ScreenData' not found.: 4
 - SyntaxError: 3
 - TypeError: 3
 - FileNotFoundError: 2
 - RuntimeError: 2
+- SetupError: 2
 - KeyError: 1
 - NameError: 1
 - UnicodeDecodeError: 1
