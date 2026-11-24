@@ -31,7 +31,7 @@ golden file; the event keeps the join keys and the headline.
 | `classification` | `well_handled`, `partial`, or `unknown` (same rule as `harvest_corpus.classify`) |
 | `exception_type` | Pytest exception type, or the first Dart error line, capped at 80 characters |
 | `failure_count`, `error_count` | Integers from the `junit failures` / `junit errors` FOUND lines, or null |
-| `found_keys` | Which richness keys were present on FOUND lines |
+| `found_keys` | Which richness keys were present on FOUND lines (`KEY_FOUND`: pytest exception type, Dart error, collection error, system-err, testcase classname, Playwright error, collection import mismatch; two or more is `well_handled`, one is `partial`) |
 
 `case_id` is a key of the events file after shaping, not of the raw manifest.
 Exact repeated rows collapse (`duplicate_manifest_rows`). When several different

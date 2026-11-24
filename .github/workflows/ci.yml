@@ -131,6 +131,8 @@ jobs:
         run: uv run --locked python scripts/check_mutations.py combo
       - name: Version mutation (zero survivors)
         run: uv run --locked python scripts/check_mutations.py version
+      - name: Partial-case mutation (zero survivors)
+        run: uv run --locked python scripts/check_mutations.py partial
       - name: Tests with JUnit
         run: |
           mkdir -p reports

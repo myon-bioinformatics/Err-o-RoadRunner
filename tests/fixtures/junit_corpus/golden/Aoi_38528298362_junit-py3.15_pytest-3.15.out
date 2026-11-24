@@ -3,6 +3,7 @@ FOUND: junit errors (<repo>/tests/fixtures/junit_corpus/cases/Aoi_38528298362_ju
 FOUND: junit error (first) (<repo>/tests/fixtures/junit_corpus/cases/Aoi_38528298362_junit-py3.15_pytest-3.15.xml): collection failure\nimport file mismatch:\nimported module 'test_vendor_lock' has this __file__ attribute:\n  <runner-work>/tests/test_vendor_lock.py\nwhich is not the same as the test file we want to collect:\n  <runner-work>/blueprobe/tests/test_vendor_lock.py\nHINT: remove __pycache__ / .pyc files and/or use a unique basename for your test file modules
 FOUND: junit collection errors (<repo>/tests/fixtures/junit_corpus/cases/Aoi_38528298362_junit-py3.15_pytest-3.15.xml): 1
 FOUND: junit collection error (first) (<repo>/tests/fixtures/junit_corpus/cases/Aoi_38528298362_junit-py3.15_pytest-3.15.xml): collection failure\ncollection failure\nimport file mismatch:\nimported module 'test_vendor_lock' has this __file__ attribute:\n  <runner-work>/tests/test_vendor_lock.py\nwhich is not the same as the test file we want to col
+FOUND: junit collection import mismatch (<repo>/tests/fixtures/junit_corpus/cases/Aoi_38528298362_junit-py3.15_pytest-3.15.xml): module 'test_vendor_lock' imported from <runner-work>/tests/test_vendor_lock.py, collection wants <runner-work>/blueprobe/tests/test_vendor_lock.py
 FOUND: python version: 3.15.2 (cpython)
 FOUND: node version: v24.22.3
 FOUND: gh version: gh version 2.104.0 (2026-11-12)

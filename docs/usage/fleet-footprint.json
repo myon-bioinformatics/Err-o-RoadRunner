@@ -1,5 +1,5 @@
 {
-  "classification_file_rows": 458,
+  "classification_file_rows": 599,
   "colliding_manifest_rows": 7,
   "duplicate_manifest_rows": 0,
   "manifest_rows": 599,
@@ -29,9 +29,9 @@
           "ModuleNotFoundError": 17,
           "research_digest.DigestError": 10
         },
-        "partial": 10,
+        "partial": 0,
         "unknown": 0,
-        "well_handled": 65
+        "well_handled": 75
       },
       "uses": []
     },
@@ -174,9 +174,9 @@
           "AssertionError": 26,
           "lib/shared/catalog/catalog_search.dart:7:6: Error: Type 'ScreenData' not found.": 4
         },
-        "partial": 12,
+        "partial": 5,
         "unknown": 0,
-        "well_handled": 30
+        "well_handled": 37
       },
       "uses": []
     },
@@ -206,11 +206,13 @@
           "FileNotFoundError": 1,
           "NameError": 1,
           "RuntimeError": 2,
+          "SetupError": 2,
+          "StopIteration": 4,
           "TypeError": 3
         },
-        "partial": 6,
+        "partial": 0,
         "unknown": 0,
-        "well_handled": 42
+        "well_handled": 48
       },
       "uses": []
     },
@@ -515,9 +517,9 @@
           "ModuleNotFoundError": 3,
           "SyntaxError": 1
         },
-        "partial": 1,
+        "partial": 0,
         "unknown": 0,
-        "well_handled": 32
+        "well_handled": 33
       },
       "uses": []
     },
@@ -553,6 +555,8 @@
       "ModuleNotFoundError": 30,
       "NameError": 1,
       "RuntimeError": 2,
+      "SetupError": 2,
+      "StopIteration": 4,
       "SyntaxError": 3,
       "TypeError": 3,
       "UnicodeDecodeError": 1,
@@ -561,9 +565,9 @@
       "research_digest.DigestError": 10,
       "urllib.error.HTTPError": 1
     },
-    "partial": 29,
+    "partial": 5,
     "unknown": 0,
-    "well_handled": 563
+    "well_handled": 587
   },
   "vendor_entries_sourcing_errorr": 0,
   "vendor_evidence": "https://github.com/myon-bioinformatics/myon-bioinformatics/blob/main/vendor-consumers.json",

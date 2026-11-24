@@ -3,6 +3,7 @@
 
   python scripts/check_mutations.py combo     # triage / actions_log, single and pairwise
   python scripts/check_mutations.py version   # errlib/project_version resolution order and name guard
+  python scripts/check_mutations.py partial   # rules that classify the former partial JUnit corpus cases
 """
 
 from __future__ import annotations
@@ -159,9 +160,129 @@ VERSION_MUTATIONS: list[Mutation] = [
 ]
 
 
+# Each rule that moved a harvested "partial" JUnit corpus case to "well_handled", reverted.
+PARTIAL_MUTATIONS: list[Mutation] = [
+    Mutation(
+        "drop_builtin_e_line_fallback",
+        ROOT / "triage.py",
+        "        m = PYTEST_E_NAME_LINE_RE.match(line)\n        if m and",
+        "        m = None\n        if m and",
+    ),
+    Mutation(
+        "builtin_fallback_accepts_any_name",
+        ROOT / "triage.py",
+        'if m and m.group("exc").rsplit(".", 1)[-1] in PYTHON_BUILTIN_EXCEPTIONS:',
+        "if m:",
+    ),
+    Mutation(
+        "drop_type_attr_fallback",
+        ROOT / "triage.py",
+        "    if JUNIT_BARE_EXCEPTION_NAME_RE.match(attr) and is_python_exception_type_name(attr):\n        return attr",
+        "    if False:\n        return attr",
+    ),
+    Mutation(
+        "type_attr_unchecked",
+        ROOT / "triage.py",
+        "    if JUNIT_BARE_EXCEPTION_NAME_RE.match(attr) and is_python_exception_type_name(attr):",
+        "    if attr:",
+    ),
+    Mutation(
+        "type_attr_from_last_failure",
+        ROOT / "triage.py",
+        "                        if not failure_blobs:\n                            primary_type_attr = child.attrib.get(\"type\") or \"\"\n                        failure_blobs.append(blob)\n                        failures.append(",
+        "                        if True:\n                            primary_type_attr = child.attrib.get(\"type\") or \"\"\n                        failure_blobs.append(blob)\n                        failures.append(",
+    ),
+    Mutation(
+        "type_attr_from_last_error",
+        ROOT / "triage.py",
+        "                        if not failure_blobs:\n                            primary_type_attr = child.attrib.get(\"type\") or \"\"\n                        failure_blobs.append(blob)\n                        errors.append(",
+        "                        if True:\n                            primary_type_attr = child.attrib.get(\"type\") or \"\"\n                        failure_blobs.append(blob)\n                        errors.append(",
+    ),
+    Mutation(
+        "type_attr_not_passed",
+        ROOT / "triage.py",
+        "_junit_pytest_exception_type(primary_blob, primary_message, primary_type_attr)",
+        "_junit_pytest_exception_type(primary_blob, primary_message)",
+    ),
+    Mutation(
+        "playwright_project_required",
+        ROOT / "triage.py",
+        'r"^(?:\\[(?P<project>[^\\]\\s]+)\\]\\s+›\\s+)?(?P<location>',
+        'r"^\\[(?P<project>[^\\]\\s]+)\\]\\s+›\\s+(?P<location>',
+    ),
+    Mutation(
+        "playwright_keep_trailing_rule",
+        ROOT / "triage.py",
+        'title = m.group("title").rstrip("─ ").strip()',
+        'title = m.group("title").strip()',
+    ),
+    Mutation(
+        "playwright_always_bracket_project",
+        ROOT / "triage.py",
+        "project = f\"[{m.group('project')}] \" if m.group(\"project\") else \"\"",
+        "project = f\"[{m.group('project')}] \"",
+    ),
+    Mutation(
+        "drop_import_mismatch_found",
+        ROOT / "triage.py",
+        "        if mismatch_found:\n            report.add_found(",
+        "        if False:\n            report.add_found(",
+    ),
+    Mutation(
+        "harvest_key_drop_playwright_error",
+        ROOT / "scripts" / "harvest_corpus.py",
+        '    "junit playwright error",\n',
+        "",
+    ),
+    Mutation(
+        "harvest_key_drop_import_mismatch",
+        ROOT / "scripts" / "harvest_corpus.py",
+        '    "junit collection import mismatch",\n',
+        "",
+    ),
+    Mutation(
+        "usage_graph_key_drop_playwright_error",
+        ROOT / "scripts" / "usage_graph.py",
+        '    "junit playwright error",\n',
+        "",
+    ),
+    Mutation(
+        "usage_graph_key_drop_import_mismatch",
+        ROOT / "scripts" / "usage_graph.py",
+        '    "junit collection import mismatch",\n',
+        "",
+    ),
+    Mutation(
+        "recapture_ignores_committed_runtime",
+        ROOT / "scripts" / "capture_goldens.py",
+        "        if prefix in kept:\n",
+        "        if False:\n",
+    ),
+    Mutation(
+        "recapture_last_committed_runtime_wins",
+        ROOT / "scripts" / "capture_goldens.py",
+        "        if prefix is not None and prefix not in kept:\n",
+        "        if prefix is not None:\n",
+    ),
+    Mutation(
+        "recapture_drops_line_ending",
+        ROOT / "scripts" / "capture_goldens.py",
+        "            line = kept[prefix] + line[len(body):]\n",
+        "            line = kept[prefix] + \"\\n\"\n",
+    ),
+    Mutation(
+        "recapture_skips_existing_golden",
+        ROOT / "scripts" / "capture_goldens.py",
+        "        if golden.exists():\n            text = keep_runtime_lines(",
+        "        if False:\n            text = keep_runtime_lines(",
+    ),
+]
+
+
 # suite -> (mutations, guard tests, also pairwise, guard must pass unmutated first)
 SUITES = {
     "combo": (COMBO_MUTATIONS, ["uv", "run", "pytest", "-q", "tests/test_triage.py", "-m", "mutation_guard"], True, True),
+    "partial": (PARTIAL_MUTATIONS, ["uv", "run", "pytest", "-q", "tests/test_corpus_partial.py", "-m", "mutation_guard"], False, True),
     "version": (VERSION_MUTATIONS, ["uv", "run", "pytest", "-q", "tests/test_version.py", "-k", "mutation_guard"], False, False),
 }
 
@@ -239,7 +360,7 @@ def check_mutations(suite: str) -> int:
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    ap.add_argument("suite", choices=sorted(SUITES), help="combo: triage/actions_log, pairwise too; version: project_version")
+    ap.add_argument("suite", choices=sorted(SUITES), help="combo: triage/actions_log, pairwise too; version: project_version; partial: JUnit corpus partial-case rules")
     return check_mutations(ap.parse_args(sys.argv[1:] if argv is None else argv).suite)
 
 
