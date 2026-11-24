@@ -613,3 +613,47 @@ def test_invalid_listed_artifact_ids_fail_without_download(value, tmp_path, monk
     monkeypatch.setattr(mod.subprocess, "run", lambda *a, **k: pytest.fail("invalid ID reached download"))
     assert not mod.download_artifact("r", 1, "junit", tmp_path, failures, artifact_id=value)
     assert failures[-1].detail == "invalid listed artifact id"
+
+
+@pytest.mark.parametrize("scenario,expected_status,expected_stages", [
+    ("valid", "complete", []),
+    ("receipt_only", "unavailable", ["missing_result"]),
+    ("incomplete", "partial", ["incomplete_evidence"]),
+    ("malformed", "partial", ["invalid_evidence"]),
+    ("expired", "partial", ["artifact_expired"]),
+])
+def test_shared_identity_receipt_is_not_raw_result(monkeypatch, scenario, expected_status, expected_stages):
+    mod = _load_harvest_module()
+    monkeypatch.setattr(mod, "REPOS", ["repo"])
+    monkeypatch.setattr(mod, "list_failed_runs", lambda *args: [{"databaseId": 1}])
+    artifacts = [{"name": "python-failure-identity", "id": 1, "expired": scenario == "expired"}]
+    if scenario != "receipt_only":
+        artifacts.append({"name": "junit-py3.15", "id": 2, "expired": False})
+    monkeypatch.setattr(mod, "list_artifacts", lambda *args: artifacts)
+
+    def download(repo, run_id, name, dest, failures, *, artifact_id):
+        if artifact_id == 1:
+            summary = {"complete": scenario != "incomplete", "missing_reports": [],
+                       "unexpected_reports": [], "reports": [
+                           {"report_id": "junit-1", "measured": True, "truncated": False, "failures": 0}]}
+            (dest / "collection.json").write_text("{" if scenario == "malformed" else json.dumps(summary), encoding="utf-8")
+            (dest / "failure-identity.jsonl").write_text("", encoding="utf-8")
+        else:
+            (dest / "junit.xml").write_text('<testsuite><testcase name="passing"/></testsuite>', encoding="utf-8")
+        return True
+
+    monkeypatch.setattr(mod, "download_artifact", download)
+    coverage = {}
+    entries, failures, pending = mod.harvest(coverage=coverage)
+    assert not entries and not pending
+    assert coverage["repo"]["status"] == expected_status
+    assert [f.stage for f in failures] == expected_stages
+    assert coverage["repo"]["checked_files"] == (0 if scenario == "receipt_only" else 1)
+
+
+def test_identity_receipt_requires_both_files(tmp_path):
+    (tmp_path / "collection.json").write_text(json.dumps({
+        "complete": True, "missing_reports": [], "unexpected_reports": [],
+        "reports": [{"report_id": "junit-1", "measured": True, "truncated": False, "failures": 0}]
+    }), encoding="utf-8")
+    assert harvest.inspect_identity_evidence(tmp_path) == "invalid_evidence"
