@@ -1,6 +1,6 @@
 {
   "org": "myon-bioinformatics",
-  "note": "Public, non-archived repositories whose failed CI runs feed the failure corpus (29 as of 2026-11-24, plus archived flutter_navigation_basic kept for its corpus history; browser-test-kit -> BrowserTestKit, web-ui -> PySaiyanWeBoo). Refresh with: gh repo list myon-bioinformatics --visibility public --no-archived",
+  "note": "Public, non-archived repositories whose failed CI runs feed the failure corpus (29 of the 30 as of 2026-11-24: CaChereCyCle has no workflow yet, so it has no runs to harvest; plus archived flutter_navigation_basic kept for its corpus history; browser-test-kit -> BrowserTestKit, web-ui -> PySaiyanWeBoo). Refresh with: gh repo list myon-bioinformatics --visibility public --no-archived",
   "repos": [
     "Aoi",
     "ascii_artist",
