@@ -3,11 +3,11 @@
 - standalone_build: ErroRR.py agrees with the checkout, is deterministic and isolated from host modules.
 - uv_tool_build: The shared packager must preserve the maintained standalone bundle.
 """
-import subprocess, sys, tomllib
+import sys, tomllib
 from pathlib import Path
 
 from vendor import fleet_check as fleet
-from vendor.cli_args import run_cli
+from vendor.cli_args import Command, run_cli, run_command
 
 
 # ──── standalone_build ────────────────────────────────────────────
@@ -80,7 +80,7 @@ with contextlib.redirect_stdout(output):
 assert result == 0 and 'possible Python exception' in output.getvalue()
 assert namespace['main'](['--version']) == 0
 """
-    proc = subprocess.run([sys.executable, '-S', '-c', harness, str(target)], cwd=tmp_path, capture_output=True, text=True)
+    proc = run_command(Command((sys.executable, '-S', '-c', harness, str(target))), cwd=tmp_path)
     assert proc.returncode == 0, proc.stderr
 
 
@@ -93,7 +93,7 @@ result = subprocess.run([sys.executable, '-S', sys.argv[1], 'ValueError:', 'bad'
 assert result.returncode == 0, result.stderr
 assert 'possible Python exception' in result.stdout
 '''
-    proc = subprocess.run([sys.executable, '-S', '-c', harness, str(target)], cwd=tmp_path, capture_output=True, text=True)
+    proc = run_command(Command((sys.executable, '-S', '-c', harness, str(target))), cwd=tmp_path)
     assert proc.returncode == 0, proc.stderr
 
 

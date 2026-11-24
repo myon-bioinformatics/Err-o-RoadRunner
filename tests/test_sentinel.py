@@ -7,12 +7,13 @@
 
 from __future__ import annotations
 
-import json, os, statistics, subprocess, sys, time
+import json, statistics, sys, time
 from pathlib import Path
 from unittest import mock
 
 import pytest
 
+from vendor import cli_args
 from errlib.junit_redact import find_corpus_leaks
 from sentinel import (
     _fix_rules,
@@ -47,30 +48,21 @@ ROOT = Path(__file__).resolve().parents[1]
 FIX = ROOT / "tests" / "fixtures"
 README_STDERR = FIX / "readme" / "inputs" / "python_module_not_found.stderr"
 ACTIONS_LOG = FIX / "actions_logs" / "two_failing_steps.log"
-SENTINEL_CLI = [sys.executable, str(ROOT / "sentinel.py")]
 
 
 def _run_sentinel(
     *cmd: str,
     env: dict[str, str] | None = None,
     **kwargs: str | bool,
-) -> subprocess.CompletedProcess[str]:
-    argv = [sys.executable, "-m", "triage", "sentinel"]
+) -> cli_args.CommandResult:
+    command = cli_args.Command((sys.executable, "-m", "triage", "sentinel"))
     for key, value in kwargs.items():
         flag = "--" + key.replace("_", "-")
         if value is True:
-            argv.append(flag)
+            command = command.flag(flag)
         elif value:
-            argv.extend([flag, str(value)])
-    argv.extend(["--", *cmd])
-    return subprocess.run(
-        argv,
-        capture_output=True,
-        text=True,
-        env={**os.environ, **(env or {})},
-        cwd=ROOT,
-        check=False,
-    )
+            command = command.option(flag, str(value))
+    return cli_args.run_command(command.passthrough(cmd, separator=True), cwd=ROOT, env=cli_args.build_env(env))
 
 
 @pytest.mark.sentinel
@@ -312,12 +304,7 @@ def test_stop_path_subprocess_overhead_median() -> None:
     times: list[float] = []
     for _ in range(12):
         start = time.perf_counter()
-        proc = subprocess.run(
-            [*SENTINEL_CLI, "--", "true"],
-            cwd=ROOT,
-            capture_output=True,
-            check=False,
-        )
+        proc = cli_args.run_cli(ROOT / "sentinel.py", "--", "true", cwd=ROOT)
         assert proc.returncode == 0
         times.append(time.perf_counter() - start)
     median = statistics.median(times)
@@ -590,24 +577,12 @@ def test_stop_porcelain_empty() -> None:
 @pytest.mark.sentinel
 def test_report_json_includes_fix_candidates_and_groups(tmp_path: Path) -> None:
     report = tmp_path / "r.json"
-    proc = subprocess.run(
-        [
-            sys.executable,
-            "-m",
-            "triage",
-            "sentinel",
-            "--report-json",
-            str(report),
-            "--print-triage",
-            "--",
-            sys.executable,
-            "-c",
-            "raise ModuleNotFoundError('no_pkg_xyz')",
-        ],
-        cwd=ROOT,
-        capture_output=True,
-        text=True,
-        check=False,
+    proc = _run_sentinel(
+        sys.executable,
+        "-c",
+        "raise ModuleNotFoundError('no_pkg_xyz')",
+        report_json=str(report),
+        print_triage=True,
     )
     assert proc.returncode != 0
     doc = json.loads(report.read_text(encoding="utf-8"))
@@ -664,25 +639,12 @@ def test_location_group_uses_traceback_frame() -> None:
 def test_command_and_capture_secrets_redacted(tmp_path: Path) -> None:
     leak = "api_key=supersecretvalue123"
     report = tmp_path / "r.json"
-    proc = subprocess.run(
-        [
-            sys.executable,
-            "-m",
-            "triage",
-            "sentinel",
-            "--report-json",
-            str(report),
-            "--format",
-            "short",
-            "--",
-            "sh",
-            "-c",
-            f"printf '%s\\n' '{leak}' 1>&2; exit 1",
-        ],
-        cwd=ROOT,
-        capture_output=True,
-        text=True,
-        check=False,
+    proc = _run_sentinel(
+        "sh",
+        "-c",
+        f"printf '%s\\n' '{leak}' 1>&2; exit 1",
+        report_json=str(report),
+        format="short",
     )
     doc = json.loads(report.read_text(encoding="utf-8"))
     sentinel_stdout = "\n".join(

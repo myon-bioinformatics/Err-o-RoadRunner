@@ -435,7 +435,7 @@ def sandbox(tmp_path: Path) -> Path:
     for name in ("triage.py", "errlib/__init__.py", "errlib/junit_redact.py", "errlib/error_input.py",
                  "errlib/project_version.py", "pyproject.toml",
                  "scripts/harvest_corpus.py", "scripts/harvest_sources.json", "scripts/capture_goldens.py",
-                 "tests/support.py", "tests/test_corpus.py"):
+                 "tests/support.py", "tests/test_corpus.py", "vendor/cli_args.py"):
         dest = tmp_path / name
         dest.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(ROOT / name, dest)

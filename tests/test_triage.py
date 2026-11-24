@@ -9,7 +9,7 @@
 
 from __future__ import annotations
 
-import io, os, re, subprocess, sys, textwrap
+import io, os, re, sys, textwrap
 from pathlib import Path
 from unittest import mock
 
@@ -39,14 +39,8 @@ ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = Path(__file__).resolve().parent / "fixtures"
 
 
-def run_cli(*args: str) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(
-        [sys.executable, "-m", "triage", *args],
-        cwd=ROOT,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+def run_cli(*args: str) -> cli_args.CommandResult:
+    return cli_args.run_command(cli_args.Command((sys.executable, "-m", "triage", *args)), cwd=ROOT)
 
 
 def lines_of(text: str) -> list[str]:
@@ -613,15 +607,7 @@ def test_safe_read_enforces_max_bytes_via_cli(tmp_path: Path) -> None:
     marker = b"BEYOND_CAP_MARKER"
     path = tmp_path / "huge.log"
     path.write_bytes(b"z" * MAX_READ_BYTES + marker)
-    import subprocess
-
-    proc = subprocess.run(
-        [sys.executable, "-m", "triage", "--exit-code", "1", "--log", str(path)],
-        cwd=ROOT,
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    proc = run_cli("--exit-code", "1", "--log", str(path))
     assert proc.returncode == 0
     assert "BEYOND_CAP_MARKER" not in proc.stdout
     assert f"input truncated (size {MAX_READ_BYTES + len(marker)} > {MAX_READ_BYTES})" in proc.stdout
