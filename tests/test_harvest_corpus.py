@@ -559,7 +559,7 @@ def test_harvest_downloads_listed_ids_without_reresolving_names(tmp_path, monkey
 
     def list_gh(args, *rest, **kwargs):
         assert args == ["api", f"repos/{mod.ORG}/{repo}/actions/runs/{run_id}/artifacts",
-                        "--jq", ".artifacts[] | {name,id,expired}"]
+                        "--paginate", "--jq", ".artifacts[] | {name,id,expired}"]
         listing_calls.append(args)
         return "\n".join(json.dumps(item) for item in listed)
 
