@@ -15,53 +15,74 @@
       ]
     },
     {
-      "type": "section",
-      "title": "📥 取得",
-      "blocks": [
+      "type": "tabs",
+      "id": "guide",
+      "tabs": [
         {
-          "type": "text",
-          "text": "Python 3.11+、git、uv が必要です。以下の例はリポジトリ全体を取得して実行します。"
-        },
-        {
-          "type": "output",
-          "text": "git clone https://github.com/myon-bioinformatics/Err-o-RoadRunner.git\ncd Err-o-RoadRunner"
-        }
-      ]
-    },
-    {
-      "type": "section",
-      "title": "▶️ 実行",
-      "blocks": [
-        {
-          "type": "card",
-          "title": "📦 準備",
-          "text": "依存を入れます。",
+          "label": "🧩 機能一覧",
           "blocks": [
             {
-              "type": "output",
-              "text": "$ uv sync"
+              "type": "section",
+              "title": "📥 取得",
+              "blocks": [
+                {
+                  "type": "text",
+                  "text": "Python 3.11+、git、uv が必要です。以下の例はリポジトリ全体を取得して実行します。"
+                },
+                {
+                  "type": "output",
+                  "text": "git clone https://github.com/myon-bioinformatics/Err-o-RoadRunner.git\ncd Err-o-RoadRunner"
+                }
+              ]
+            },
+            {
+              "type": "section",
+              "title": "▶️ 実行",
+              "blocks": [
+                {
+                  "type": "card",
+                  "title": "📦 準備",
+                  "text": "依存を入れます。",
+                  "blocks": [
+                    {
+                      "type": "output",
+                      "text": "$ uv sync"
+                    }
+                  ]
+                },
+                {
+                  "type": "card",
+                  "title": "🔎 失敗を調べる",
+                  "text": "手がかりは最善の照合結果で、検証済みの原因ではありません。コードの修復はしません。",
+                  "blocks": [
+                    {
+                      "type": "output",
+                      "text": "$ uv run erroroadrunner --exit-code \"$?\" --stderr /path/to/stderr.txt --junit reports/junit.xml"
+                    }
+                  ]
+                },
+                {
+                  "type": "card",
+                  "title": "❓ ヘルプ",
+                  "text": "引数の一覧です。",
+                  "blocks": [
+                    {
+                      "type": "output",
+                      "text": "$ uv run erroroadrunner --help"
+                    }
+                  ]
+                }
+              ]
             }
           ]
         },
         {
-          "type": "card",
-          "title": "🔎 失敗を調べる",
-          "text": "手がかりは最善の照合結果で、検証済みの原因ではありません。コードの修復はしません。",
+          "label": "🎞 GIF デモ",
           "blocks": [
             {
-              "type": "output",
-              "text": "$ uv run erroroadrunner --exit-code \"$?\" --stderr /path/to/stderr.txt --junit reports/junit.xml"
-            }
-          ]
-        },
-        {
-          "type": "card",
-          "title": "❓ ヘルプ",
-          "text": "引数の一覧です。",
-          "blocks": [
-            {
-              "type": "output",
-              "text": "$ uv run erroroadrunner --help"
+              "type": "text",
+              "text": "🎞 まだ GIF はありません。ブラウザテストや実行の様子を GIF にしたら、ここに並びます。",
+              "muted": true
             }
           ]
         }
