@@ -1,0 +1,96 @@
+{
+  "schema": "errorr-adoption/v1",
+  "observed_at": "2026-11-24",
+  "scope": "Public non-archived repositories of myon-bioinformatics on 2026-11-24, plus the archived harvest source flutter_navigation_basic. Private repository names are not recorded.",
+  "inventory": [
+    {"repository": "myon-bioinformatics/Aoi", "archived": false},
+    {"repository": "myon-bioinformatics/ascii_artist", "archived": false},
+    {"repository": "myon-bioinformatics/BlueProbe", "archived": false},
+    {"repository": "myon-bioinformatics/BrowserTestKit", "archived": false},
+    {"repository": "myon-bioinformatics/cli_args", "archived": false},
+    {"repository": "myon-bioinformatics/DRAgoWing", "archived": false},
+    {"repository": "myon-bioinformatics/Err-o-RoadRunner", "archived": false},
+    {"repository": "myon-bioinformatics/FluidFullSpeedSimulation", "archived": false},
+    {"repository": "myon-bioinformatics/flutter_navigation_basic", "archived": true},
+    {"repository": "myon-bioinformatics/gh_identity", "archived": false},
+    {"repository": "myon-bioinformatics/Ironmate", "archived": false},
+    {"repository": "myon-bioinformatics/markdown", "archived": false},
+    {"repository": "myon-bioinformatics/mcp-toolcall-lab", "archived": false},
+    {"repository": "myon-bioinformatics/myon-bioinformatics", "archived": false},
+    {"repository": "myon-bioinformatics/myon-bioinformatics.github.io", "archived": false},
+    {"repository": "myon-bioinformatics/NagoyAction", "archived": false},
+    {"repository": "myon-bioinformatics/nvd_nist_known_vulns", "archived": false},
+    {"repository": "myon-bioinformatics/OneLaunchNumerousModules", "archived": false},
+    {"repository": "myon-bioinformatics/ONTO", "archived": false},
+    {"repository": "myon-bioinformatics/OnTautoLogy", "archived": false},
+    {"repository": "myon-bioinformatics/PySaiyanWeBoo", "archived": false},
+    {"repository": "myon-bioinformatics/PythDRagoras", "archived": false},
+    {"repository": "myon-bioinformatics/QueRyu", "archived": false},
+    {"repository": "myon-bioinformatics/SakAnalytics", "archived": false},
+    {"repository": "myon-bioinformatics/search_seq_including_spaces", "archived": false},
+    {"repository": "myon-bioinformatics/TalkCompress", "archived": false},
+    {"repository": "myon-bioinformatics/TaxOntOy", "archived": false},
+    {"repository": "myon-bioinformatics/TopOntoLogy", "archived": false},
+    {"repository": "myon-bioinformatics/xprobe", "archived": false},
+    {"repository": "myon-bioinformatics/yourself", "archived": false}
+  ],
+  "uses": [
+    {
+      "repository": "myon-bioinformatics/BrowserTestKit",
+      "feature": "digest",
+      "kind": "documented",
+      "evidence": "https://github.com/myon-bioinformatics/BrowserTestKit/blob/main/docs/screenshot-evidence.md"
+    },
+    {
+      "repository": "myon-bioinformatics/BrowserTestKit",
+      "feature": "sentinel",
+      "kind": "documented",
+      "evidence": "https://github.com/myon-bioinformatics/BrowserTestKit/blob/main/docs/screenshot-evidence.md"
+    },
+    {
+      "repository": "myon-bioinformatics/myon-bioinformatics",
+      "feature": "digest",
+      "kind": "documented",
+      "evidence": "https://github.com/myon-bioinformatics/myon-bioinformatics/blob/main/docs/cross-repository-use-cases.json"
+    },
+    {
+      "repository": "myon-bioinformatics/myon-bioinformatics.github.io",
+      "feature": "triage",
+      "kind": "catalog",
+      "evidence": "https://github.com/myon-bioinformatics/myon-bioinformatics.github.io/blob/main/projects.json"
+    },
+    {
+      "repository": "myon-bioinformatics/Err-o-RoadRunner",
+      "feature": "triage",
+      "kind": "harvest-step",
+      "evidence": "https://github.com/myon-bioinformatics/Err-o-RoadRunner/blob/71e069dcfd3ebdcdf1fc7dc719bbbb3a3a622164/.github/workflows/harvest-corpus.yml"
+    },
+    {
+      "repository": "myon-bioinformatics/Err-o-RoadRunner",
+      "feature": "corpus-harvest",
+      "kind": "workflow",
+      "evidence": "https://github.com/myon-bioinformatics/Err-o-RoadRunner/blob/71e069dcfd3ebdcdf1fc7dc719bbbb3a3a622164/.github/workflows/harvest-corpus.yml"
+    }
+  ],
+  "renames": [
+    {
+      "from": "myon-bioinformatics/browser-test-kit",
+      "to": "myon-bioinformatics/BrowserTestKit",
+      "evidence": "https://github.com/myon-bioinformatics/Err-o-RoadRunner/blob/main/scripts/harvest_sources.json"
+    },
+    {
+      "from": "myon-bioinformatics/web-ui",
+      "to": "myon-bioinformatics/PySaiyanWeBoo",
+      "evidence": "https://github.com/myon-bioinformatics/Err-o-RoadRunner/blob/main/scripts/harvest_sources.json"
+    }
+  ],
+  "workflow_scan": {
+    "observed_at": "2026-11-24",
+    "method": "Downloaded each .github/workflows file from the public non-archived inventory plus flutter_navigation_basic and searched for Err-o-RoadRunner, erroroadrunner, ErroRR, triage.py, and sentinel.py. A separate code search for capture_goldens returned only this repository.",
+    "invocations_outside_errorr": []
+  },
+  "vendor_consumers": {
+    "evidence": "https://github.com/myon-bioinformatics/myon-bioinformatics/blob/main/vendor-consumers.json",
+    "entries_sourcing_errorr": 0
+  }
+}
