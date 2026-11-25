@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="14" tests="402" time="11.025" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_tooling" name="test_refresh_and_cli_output_are_reproducible" time="0.074"><failure message="AssertionError: Traceback (most recent call last):&#10;    File &quot;&lt;pytest-tmp&gt;/pytest-0/test_refresh_and_cli_output_ar0/source/scripts/project_pages.py&quot;, line 689, in &lt;module&gt;&#10;      _STUDIO_ROUTES = load_module('studio_routes', '_src/tools/studio_routes.py')&#10;    File &quot;&lt;pytest-tmp&gt;/pytest-0/test_refresh_and_cli_output_ar0/source/scripts/project_pages.py&quot;, line 250, in load_module&#10;      raise FileNotFoundError(f&quot;Vendor module file not found: {path}&quot;)&#10;[+4 more lines; full report in element text]">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_refresh_and_cli_output_ar0')
+
+    def test_refresh_and_cli_output_are_reproducible(tmp_path):
+        import subprocess
+        import sys
+        root = tmp_path / 'source'
+        (root / 'scripts').mkdir(parents=True)
+        shutil.copyfile(ROOT / 'pyproject.toml', root / 'pyproject.toml')
+        shutil.copyfile(ROOT / 'scripts/project_pages.py', root / 'scripts/project_pages.py')
+        shutil.copyfile(ROOT / 'scripts/front_page.py', root / 'scripts/front_page.py')         # the front page is generated too
+        shutil.copyfile(ROOT / 'scripts/map_tool.py', root / 'scripts/map_tool.py')
+        shutil.copyfile(ROOT / 'scripts/world.py', root / 'scripts/world.py')                 # 🌍 the world pages and Parallel Tokyo
+        (root / 'api').mkdir()
+        for name in ('profile.json', 'api/repos.json'):                                       # ... from these and projects.json
+            shutil.copyfile(ROOT / name, root / name)
+        shutil.copyfile(ROOT / 'projects.json', root / 'projects.json')                       # the project pages come from it
+        output = tmp_path / 'cli-output'
+        result = subprocess.run([sys.executable, str(root / 'scripts/project_pages.py'),
+                                 '--refresh-lock', '--output', str(output)], capture_output=True, text=True)
+&gt;       assert result.returncode == 0, result.stderr
+E       AssertionError: Traceback (most recent call last):
+E           File "&lt;pytest-tmp&gt;/pytest-0/test_refresh_and_cli_output_ar0/source/scripts/project_pages.py", line 689, in &lt;module&gt;
+E             _STUDIO_ROUTES = load_module('studio_routes', '_src/tools/studio_routes.py')
+E           File "&lt;pytest-tmp&gt;/pytest-0/test_refresh_and_cli_output_ar0/source/scripts/project_pages.py", line 250, in load_module
+E             raise FileNotFoundError(f"Vendor module file not found: {path}")
+E         FileNotFoundError: Vendor module file not found: &lt;pytest-tmp&gt;/pytest-0/test_refresh_and_cli_output_ar0/source/_src/tools/studio_routes.py
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['&lt;runner-work&gt;/.venv/bin/python...e file not found: &lt;pytest-tmp&gt;/pytest-0/test_refresh_and_cli_output_ar0/source/_src/tools/studio_routes.py\n').returncode
+
+tests/test_tooling.py:295: AssertionError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="5" skipped="53" tests="3311" time="269.533" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_harvest_corpus" name="test_harvest_downloads_listed_ids_without_reresolving_names[new]" time="0.003"><failure message="AssertionError: assert ['api', 'repo...,id,expired}'] == ['api', 'repo...,id,expired}']&#10;  &#10;  At index 2 diff: '--paginate' != '--jq'&#10;  Left contains one more item: '.artifacts[] | {name,id,expired}'&#10;  &#10;  Full diff:&#10;    [&#10;        'api',&#10;        'repos/myon-bioinformatics/Ironmate/actions/runs/12345/artifacts',&#10;  +     '--paginate',&#10;        '--jq',&#10;        '.artifacts[] | {name,id,expired}',&#10;    ]">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-7/test_harvest_downloads_listed_0')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+mode = 'new'
+
+    @pytest.mark.parametrize("mode", ["new", "hashed-legacy", "single-newer", "unhashed-legacy", "same-content"])
+    def test_harvest_downloads_listed_ids_without_reresolving_names(tmp_path, monkeypatch, mode):
+        import io
+        import zipfile
+    
+        mod = _load_harvest_module()
+        repo = "Ironmate"
+        run_id = 12345
+        name = "junit-" + "same-name-" * 9
+        source_path = "nested/results.xml"
+        old_id, new_id = 14524043122, 14527477725
+        old_case = '&lt;testsuite&gt;&lt;testcase name="same"&gt;&lt;failure&gt;old failure&lt;/failure&gt;&lt;/testcase&gt;&lt;/testsuite&gt;'
+        new_case = '&lt;testsuite&gt;&lt;testcase name="same"&gt;&lt;failure&gt;new failure&lt;/failure&gt;&lt;/testcase&gt;&lt;/testsuite&gt;'
+        archives = {old_id: old_case, new_id: old_case if mode == "same-content" else new_case}
+        artifact_ids = [new_id] if mode in {"single-newer", "unhashed-legacy"} else [old_id, new_id]
+        listed = [{"name": name, "id": aid, "expired": False} for aid in artifact_ids]
+        listing_calls = []
+        download_ids = []
+    
+        def list_gh(args, *rest, **kwargs):
+            assert args == ["api", f"repos/{mod.ORG}/{repo}/actions/runs/{run_id}/artifacts",
+                            "--jq", ".artifacts[] | {name,id,expired}"]
+            listing_calls.append(args)
+            return "\n".join(json.dumps(item) for item in listed)
+    
+        def download_gh(argv, **kwargs):
+            assert len(argv) == 3 and argv[:2] == ["gh", "api"]
+            aid = int(argv[2].split("/")[-2])
+            assert argv[2] == f"repos/{mod.ORG}/{repo}/actions/artifacts/{aid}/zip"
+            download_ids.append(aid)
+            out = io.BytesIO()
+            with zipfile.ZipFile(out, "w") as zf:
+                zf.writestr(source_path, archives[aid])
+            return subprocess.CompletedProcess(argv, 0, out.getvalue(), b"")
+    
+        previous = []
+        if mode in {"hashed-legacy", "single-newer", "unhashed-legacy"}:
+            raw = tmp_path / "raw.xml"
+            raw.write_text(old_case)
+            legacy, pending = mod._harvest_file(repo, {"databaseId": run_id}, name, raw, source_path, [])
+            if mode == "unhashed-legacy":
+                legacy.pop("sha256")
+                monkeypatch.setattr(mod, "CORPUS", tmp_path / "nonexistent-corpus")
+            previous = [legacy]
+            old_id_path = (legacy["id"], legacy["xml"], legacy["golden"])
+        monkeypatch.setattr(mod, "REPOS", [repo])
+        monkeypatch.setattr(mod, "list_failed_runs", lambda *args: [{"databaseId": run_id}])
+        monkeypatch.setattr(mod, "run_gh", list_gh)
+        monkeypatch.setattr(mod.subprocess, "run", download_gh)
+&gt;       entries, failures, pending = mod.harvest(existing=previous)
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_harvest_corpus.py:590: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/harvest_corpus.py:592: in harvest
+    listed = list_artifacts(repo, run_id, failures)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/harvest_corpus.py:181: in list_artifacts
+    out = run_gh(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = ['api', 'repos/myon-bioinformatics/Ironmate/actions/runs/12345/artifacts', '--paginate', '--jq', '.artifacts[] | {name,id,expired}']
+rest = ([],)
+kwargs = {'repo': 'Ironmate', 'run_id': 12345, 'artifact': None, 'stage': 'list_artifacts'}
+
+    def list_gh(args, *rest, **kwargs):
+&gt;       assert args == ["api", f"repos/{mod.ORG}/{repo}/actions/runs/{run_id}/artifacts",
+                        "--jq", ".artifacts[] | {name,id,expired}"]
+E       AssertionError: assert ['api', 'repo...,id,expired}'] == ['api', 'repo...,id,expired}']
+E         
+E         At index 2 diff: '--paginate' != '--jq'
+E         Left contains one more item: '.artifacts[] | {name,id,expired}'
+E         
+E         Full diff:
+E           [
+E               'api',
+E               'repos/myon-bioinformatics/Ironmate/actions/runs/12345/artifacts',
+E         +     '--paginate',
+E               '--jq',
+E               '.artifacts[] | {name,id,expired}',
+E           ]
+
+tests/test_harvest_corpus.py:561: AssertionError</failure></testcase><testcase classname="tests.test_harvest_corpus" name="test_harvest_downloads_listed_ids_without_reresolving_names[hashed-legacy]" time="0.003"><failure message="AssertionError: assert ['api', 'repo...,id,expired}'] == ['api', 'repo...,id,expired}']&#10;  &#10;  At index 2 diff: '--paginate' != '--jq'&#10;  Left contains one more item: '.artifacts[] | {name,id,expired}'&#10;  &#10;  Full diff:&#10;    [&#10;        'api',&#10;        'repos/myon-bioinformatics/Ironmate/actions/runs/12345/artifacts',&#10;  +     '--paginate',&#10;        '--jq',&#10;        '.artifacts[] | {name,id,expired}',&#10;    ]">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-7/test_harvest_downloads_listed_1')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+mode = 'hashed-legacy'
+
+    @pytest.mark.parametrize("mode", ["new", "hashed-legacy", "single-newer", "unhashed-legacy", "same-content"])
+    def test_harvest_downloads_listed_ids_without_reresolving_names(tmp_path, monkeypatch, mode):
+        import io
+        import zipfile
+    
+        mod = _load_harvest_module()
+        repo = "Ironmate"
+        run_id = 12345
+        name = "junit-" + "same-name-" * 9
+        source_path = "nested/results.xml"
+        old_id, new_id = 14524043122, 14527477725
+        old_case = '&lt;testsuite&gt;&lt;testcase name="same"&gt;&lt;failure&gt;old failure&lt;/failure&gt;&lt;/testcase&gt;&lt;/testsuite&gt;'
+        new_case = '&lt;testsuite&gt;&lt;testcase name="same"&gt;&lt;failure&gt;new failure&lt;/failure&gt;&lt;/testcase&gt;&lt;/testsuite&gt;'
+        archives = {old_id: old_case, new_id: old_case if mode == "same-content" else new_case}
+        artifact_ids = [new_id] if mode in {"single-newer", "unhashed-legacy"} else [old_id, new_id]
+        listed = [{"name": name, "id": aid, "expired": False} for aid in artifact_ids]
+        listing_calls = []
+        download_ids = []
+    
+        def list_gh(args, *rest, **kwargs):
+            assert args == ["api", f"repos/{mod.ORG}/{repo}/actions/runs/{run_id}/artifacts",
+                            "--jq", ".artifacts[] | {name,id,expired}"]
+            listing_calls.append(args)
+            return "\n".join(json.dumps(item) for item in listed)
+    
+        def download_gh(argv, **kwargs):
+            assert len(argv) == 3 and argv[:2] == ["gh", "api"]
+            aid = int(argv[2].split("/")[-2])
+            assert argv[2] == f"repos/{mod.ORG}/{repo}/actions/artifacts/{aid}/zip"
+            download_ids.append(aid)
+            out = io.BytesIO()
+            with zipfile.ZipFile(out, "w") as zf:
+                zf.writestr(source_path, archives[aid])
+            return subprocess.CompletedProcess(argv, 0, out.getvalue(), b"")
+    
+        previous = []
+        if mode in {"hashed-legacy", "single-newer", "unhashed-legacy"}:
+            raw = tmp_path / "raw.xml"
+            raw.write_text(old_case)
+            legacy, pending = mod._harvest_file(repo, {"databaseId": run_id}, name, raw, source_path, [])
+            if mode == "unhashed-legacy":
+                legacy.pop("sha256")
+                monkeypatch.setattr(mod, "CORPUS", tmp_path / "nonexistent-corpus")
+            previous = [legacy]
+            old_id_path = (legacy["id"], legacy["xml"], legacy["golden"])
+        monkeypatch.setattr(mod, "REPOS", [repo])
+        monkeypatch.setattr(mod, "list_failed_runs", lambda *args: [{"databaseId": run_id}])
+        monkeypatch.setattr(mod, "run_gh", list_gh)
+        monkeypatch.setattr(mod.subprocess, "run", download_gh)
+&gt;       entries, failures, pending = mod.harvest(existing=previous)
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_harvest_corpus.py:590: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/harvest_corpus.py:592: in harvest
+    listed = list_artifacts(repo, run_id, failures)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/harvest_corpus.py:181: in list_artifacts
+    out = run_gh(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = ['api', 'repos/myon-bioinformatics/Ironmate/actions/runs/12345/artifacts', '--paginate', '--jq', '.artifacts[] | {name,id,expired}']
+rest = ([],)
+kwargs = {'repo': 'Ironmate', 'run_id': 12345, 'artifact': None, 'stage': 'list_artifacts'}
+
+    def list_gh(args, *rest, **kwargs):
+&gt;       assert args == ["api", f"repos/{mod.ORG}/{repo}/actions/runs/{run_id}/artifacts",
+                        "--jq", ".artifacts[] | {name,id,expired}"]
+E       AssertionError: assert ['api', 'repo...,id,expired}'] == ['api', 'repo...,id,expired}']
+E         
+E         At index 2 diff: '--paginate' != '--jq'
+E         Left contains one more item: '.artifacts[] | {name,id,expired}'
+E         
+E         Full diff:
+E           [
+E               'api',
+E               'repos/myon-bioinformatics/Ironmate/actions/runs/12345/artifacts',
+E         +     '--paginate',
+E               '--jq',
+E               '.artifacts[] | {name,id,expired}',
+E           ]
+
+tests/test_harvest_corpus.py:561: AssertionError</failure></testcase><testcase classname="tests.test_harvest_corpus" name="test_harvest_downloads_listed_ids_without_reresolving_names[single-newer]" time="0.003"><failure message="AssertionError: assert ['api', 'repo...,id,expired}'] == ['api', 'repo...,id,expired}']&#10;  &#10;  At index 2 diff: '--paginate' != '--jq'&#10;  Left contains one more item: '.artifacts[] | {name,id,expired}'&#10;  &#10;  Full diff:&#10;    [&#10;        'api',&#10;        'repos/myon-bioinformatics/Ironmate/actions/runs/12345/artifacts',&#10;  +     '--paginate',&#10;        '--jq',&#10;        '.artifacts[] | {name,id,expired}',&#10;    ]">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-7/test_harvest_downloads_listed_2')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+mode = 'single-newer'
+
+    @pytest.mark.parametrize("mode", ["new", "hashed-legacy", "single-newer", "unhashed-legacy", "same-content"])
+    def test_harvest_downloads_listed_ids_without_reresolving_names(tmp_path, monkeypatch, mode):
+        import io
+        import zipfile
+    
+        mod = _load_harvest_module()
+        repo = "Ironmate"
+        run_id = 12345
+        name = "junit-" + "same-name-" * 9
+        source_path = "nested/results.xml"
+        old_id, new_id = 14524043122, 14527477725
+        old_case = '&lt;testsuite&gt;&lt;testcase name="same"&gt;&lt;failure&gt;old failure&lt;/failure&gt;&lt;/testcase&gt;&lt;/testsuite&gt;'
+        new_case = '&lt;testsuite&gt;&lt;testcase name="same"&gt;&lt;failure&gt;new failure&lt;/failure&gt;&lt;/testcase&gt;&lt;/testsuite&gt;'
+        archives = {old_id: old_case, new_id: old_case if mode == "same-content" else new_case}
+        artifact_ids = [new_id] if mode in {"single-newer", "unhashed-legacy"} else [old_id, new_id]
+        listed = [{"name": name, "id": aid, "expired": False} for aid in artifact_ids]
+        listing_calls = []
+        download_ids = []
+    
+        def list_gh(args, *rest, **kwargs):
+            assert args == ["api", f"repos/{mod.ORG}/{repo}/actions/runs/{run_id}/artifacts",
+                            "--jq", ".artifacts[] | {name,id,expired}"]
+            listing_calls.append(args)
+            return "\n".join(json.dumps(item) for item in listed)
+    
+        def download_gh(argv, **kwargs):
+            assert len(argv) == 3 and argv[:2] == ["gh", "api"]
+            aid = int(argv[2].split("/")[-2])
+            assert argv[2] == f"repos/{mod.ORG}/{repo}/actions/artifacts/{aid}/zip"
+            download_ids.append(aid)
+            out = io.BytesIO()
+            with zipfile.ZipFile(out, "w") as zf:
+                zf.writestr(source_path, archives[aid])
+            return subprocess.CompletedProcess(argv, 0, out.getvalue(), b"")
+    
+        previous = []
+        if mode in {"hashed-legacy", "single-newer", "unhashed-legacy"}:
+            raw = tmp_path / "raw.xml"
+            raw.write_text(old_case)
+            legacy, pending = mod._harvest_file(repo, {"databaseId": run_id}, name, raw, source_path, [])
+            if mode == "unhashed-legacy":
+                legacy.pop("sha256")
+                monkeypatch.setattr(mod, "CORPUS", tmp_path / "nonexistent-corpus")
+            previous = [legacy]
+            old_id_path = (legacy["id"], legacy["xml"], legacy["golden"])
+        monkeypatch.setattr(mod, "REPOS", [repo])
+        monkeypatch.setattr(mod, "list_failed_runs", lambda *args: [{"databaseId": run_id}])
+        monkeypatch.setattr(mod, "run_gh", list_gh)
+        monkeypatch.setattr(mod.subprocess, "run", download_gh)
+&gt;       entries, failures, pending = mod.harvest(existing=previous)
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_harvest_corpus.py:590: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/harvest_corpus.py:592: in harvest
+    listed = list_artifacts(repo, run_id, failures)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/harvest_corpus.py:181: in list_artifacts
+    out = run_gh(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = ['api', 'repos/myon-bioinformatics/Ironmate/actions/runs/12345/artifacts', '--paginate', '--jq', '.artifacts[] | {name,id,expired}']
+rest = ([],)
+kwargs = {'repo': 'Ironmate', 'run_id': 12345, 'artifact': None, 'stage': 'list_artifacts'}
+
+    def list_gh(args, *rest, **kwargs):
+&gt;       assert args == ["api", f"repos/{mod.ORG}/{repo}/actions/runs/{run_id}/artifacts",
+                        "--jq", ".artifacts[] | {name,id,expired}"]
+E       AssertionError: assert ['api', 'repo...,id,expired}'] == ['api', 'repo...,id,expired}']
+E         
+E         At index 2 diff: '--paginate' != '--jq'
+E         Left contains one more item: '.artifacts[] | {name,id,expired}'
+E         
+E         Full diff:
+E           [
+E               'api',
+E               'repos/myon-bioinformatics/Ironmate/actions/runs/12345/artifacts',
+E         +     '--paginate',
+E               '--jq',
+E               '.artifacts[] | {name,id,expired}',
+E           ]
+
+tests/test_harvest_corpus.py:561: AssertionError</failure></testcase><testcase classname="tests.test_harvest_corpus" name="test_harvest_downloads_listed_ids_without_reresolving_names[unhashed-legacy]" time="0.002"><failure message="AssertionError: assert ['api', 'repo...,id,expired}'] == ['api', 'repo...,id,expired}']&#10;  &#10;  At index 2 diff: '--paginate' != '--jq'&#10;  Left contains one more item: '.artifacts[] | {name,id,expired}'&#10;  &#10;  Full diff:&#10;    [&#10;        'api',&#10;        'repos/myon-bioinformatics/Ironmate/actions/runs/12345/artifacts',&#10;  +     '--paginate',&#10;        '--jq',&#10;        '.artifacts[] | {name,id,expired}',&#10;    ]">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-7/test_harvest_downloads_listed_3')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+mode = 'unhashed-legacy'
+
+    @pytest.mark.parametrize("mode", ["new", "hashed-legacy", "single-newer", "unhashed-legacy", "same-content"])
+    def test_harvest_downloads_listed_ids_without_reresolving_names(tmp_path, monkeypatch, mode):
+        import io
+        import zipfile
+    
+        mod = _load_harvest_module()
+        repo = "Ironmate"
+        run_id = 12345
+        name = "junit-" + "same-name-" * 9
+        source_path = "nested/results.xml"
+        old_id, new_id = 14524043122, 14527477725
+        old_case = '&lt;testsuite&gt;&lt;testcase name="same"&gt;&lt;failure&gt;old failure&lt;/failure&gt;&lt;/testcase&gt;&lt;/testsuite&gt;'
+        new_case = '&lt;testsuite&gt;&lt;testcase name="same"&gt;&lt;failure&gt;new failure&lt;/failure&gt;&lt;/testcase&gt;&lt;/testsuite&gt;'
+        archives = {old_id: old_case, new_id: old_case if mode == "same-content" else new_case}
+        artifact_ids = [new_id] if mode in {"single-newer", "unhashed-legacy"} else [old_id, new_id]
+        listed = [{"name": name, "id": aid, "expired": False} for aid in artifact_ids]
+        listing_calls = []
+        download_ids = []
+    
+        def list_gh(args, *rest, **kwargs):
+            assert args == ["api", f"repos/{mod.ORG}/{repo}/actions/runs/{run_id}/artifacts",
+                            "--jq", ".artifacts[] | {name,id,expired}"]
+            listing_calls.append(args)
+            return "\n".join(json.dumps(item) for item in listed)
+    
+        def download_gh(argv, **kwargs):
+            assert len(argv) == 3 and argv[:2] == ["gh", "api"]
+            aid = int(argv[2].split("/")[-2])
+            assert argv[2] == f"repos/{mod.ORG}/{repo}/actions/artifacts/{aid}/zip"
+            download_ids.append(aid)
+            out = io.BytesIO()
+            with zipfile.ZipFile(out, "w") as zf:
+                zf.writestr(source_path, archives[aid])
+            return subprocess.CompletedProcess(argv, 0, out.getvalue(), b"")
+    
+        previous = []
+        if mode in {"hashed-legacy", "single-newer", "unhashed-legacy"}:
+            raw = tmp_path / "raw.xml"
+            raw.write_text(old_case)
+            legacy, pending = mod._harvest_file(repo, {"databaseId": run_id}, name, raw, source_path, [])
+            if mode == "unhashed-legacy":
+                legacy.pop("sha256")
+                monkeypatch.setattr(mod, "CORPUS", tmp_path / "nonexistent-corpus")
+            previous = [legacy]
+            old_id_path = (legacy["id"], legacy["xml"], legacy["golden"])
+        monkeypatch.setattr(mod, "REPOS", [repo])
+        monkeypatch.setattr(mod, "list_failed_runs", lambda *args: [{"databaseId": run_id}])
+        monkeypatch.setattr(mod, "run_gh", list_gh)
+        monkeypatch.setattr(mod.subprocess, "run", download_gh)
+&gt;       entries, failures, pending = mod.harvest(existing=previous)
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_harvest_corpus.py:590: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/harvest_corpus.py:592: in harvest
+    listed = list_artifacts(repo, run_id, failures)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/harvest_corpus.py:181: in list_artifacts
+    out = run_gh(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = ['api', 'repos/myon-bioinformatics/Ironmate/actions/runs/12345/artifacts', '--paginate', '--jq', '.artifacts[] | {name,id,expired}']
+rest = ([],)
+kwargs = {'repo': 'Ironmate', 'run_id': 12345, 'artifact': None, 'stage': 'list_artifacts'}
+
+    def list_gh(args, *rest, **kwargs):
+&gt;       assert args == ["api", f"repos/{mod.ORG}/{repo}/actions/runs/{run_id}/artifacts",
+                        "--jq", ".artifacts[] | {name,id,expired}"]
+E       AssertionError: assert ['api', 'repo...,id,expired}'] == ['api', 'repo...,id,expired}']
+E         
+E         At index 2 diff: '--paginate' != '--jq'
+E         Left contains one more item: '.artifacts[] | {name,id,expired}'
+E         
+E         Full diff:
+E           [
+E               'api',
+E               'repos/myon-bioinformatics/Ironmate/actions/runs/12345/artifacts',
+E         +     '--paginate',
+E               '--jq',
+E               '.artifacts[] | {name,id,expired}',
+E           ]
+
+tests/test_harvest_corpus.py:561: AssertionError</failure></testcase><testcase classname="tests.test_harvest_corpus" name="test_harvest_downloads_listed_ids_without_reresolving_names[same-content]" time="0.002"><failure message="AssertionError: assert ['api', 'repo...,id,expired}'] == ['api', 'repo...,id,expired}']&#10;  &#10;  At index 2 diff: '--paginate' != '--jq'&#10;  Left contains one more item: '.artifacts[] | {name,id,expired}'&#10;  &#10;  Full diff:&#10;    [&#10;        'api',&#10;        'repos/myon-bioinformatics/Ironmate/actions/runs/12345/artifacts',&#10;  +     '--paginate',&#10;        '--jq',&#10;        '.artifacts[] | {name,id,expired}',&#10;    ]">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-7/test_harvest_downloads_listed_4')
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+mode = 'same-content'
+
+    @pytest.mark.parametrize("mode", ["new", "hashed-legacy", "single-newer", "unhashed-legacy", "same-content"])
+    def test_harvest_downloads_listed_ids_without_reresolving_names(tmp_path, monkeypatch, mode):
+        import io
+        import zipfile
+    
+        mod = _load_harvest_module()
+        repo = "Ironmate"
+        run_id = 12345
+        name = "junit-" + "same-name-" * 9
+        source_path = "nested/results.xml"
+        old_id, new_id = 14524043122, 14527477725
+        old_case = '&lt;testsuite&gt;&lt;testcase name="same"&gt;&lt;failure&gt;old failure&lt;/failure&gt;&lt;/testcase&gt;&lt;/testsuite&gt;'
+        new_case = '&lt;testsuite&gt;&lt;testcase name="same"&gt;&lt;failure&gt;new failure&lt;/failure&gt;&lt;/testcase&gt;&lt;/testsuite&gt;'
+        archives = {old_id: old_case, new_id: old_case if mode == "same-content" else new_case}
+        artifact_ids = [new_id] if mode in {"single-newer", "unhashed-legacy"} else [old_id, new_id]
+        listed = [{"name": name, "id": aid, "expired": False} for aid in artifact_ids]
+        listing_calls = []
+        download_ids = []
+    
+        def list_gh(args, *rest, **kwargs):
+            assert args == ["api", f"repos/{mod.ORG}/{repo}/actions/runs/{run_id}/artifacts",
+                            "--jq", ".artifacts[] | {name,id,expired}"]
+            listing_calls.append(args)
+            return "\n".join(json.dumps(item) for item in listed)
+    
+        def download_gh(argv, **kwargs):
+            assert len(argv) == 3 and argv[:2] == ["gh", "api"]
+            aid = int(argv[2].split("/")[-2])
+            assert argv[2] == f"repos/{mod.ORG}/{repo}/actions/artifacts/{aid}/zip"
+            download_ids.append(aid)
+            out = io.BytesIO()
+            with zipfile.ZipFile(out, "w") as zf:
+                zf.writestr(source_path, archives[aid])
+            return subprocess.CompletedProcess(argv, 0, out.getvalue(), b"")
+    
+        previous = []
+        if mode in {"hashed-legacy", "single-newer", "unhashed-legacy"}:
+            raw = tmp_path / "raw.xml"
+            raw.write_text(old_case)
+            legacy, pending = mod._harvest_file(repo, {"databaseId": run_id}, name, raw, source_path, [])
+            if mode == "unhashed-legacy":
+                legacy.pop("sha256")
+                monkeypatch.setattr(mod, "CORPUS", tmp_path / "nonexistent-corpus")
+            previous = [legacy]
+            old_id_path = (legacy["id"], legacy["xml"], legacy["golden"])
+        monkeypatch.setattr(mod, "REPOS", [repo])
+        monkeypatch.setattr(mod, "list_failed_runs", lambda *args: [{"databaseId": run_id}])
+        monkeypatch.setattr(mod, "run_gh", list_gh)
+        monkeypatch.setattr(mod.subprocess, "run", download_gh)
+&gt;       entries, failures, pending = mod.harvest(existing=previous)
+                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_harvest_corpus.py:590: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+scripts/harvest_corpus.py:592: in harvest
+    listed = list_artifacts(repo, run_id, failures)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+scripts/harvest_corpus.py:181: in list_artifacts
+    out = run_gh(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = ['api', 'repos/myon-bioinformatics/Ironmate/actions/runs/12345/artifacts', '--paginate', '--jq', '.artifacts[] | {name,id,expired}']
+rest = ([],)
+kwargs = {'repo': 'Ironmate', 'run_id': 12345, 'artifact': None, 'stage': 'list_artifacts'}
+
+    def list_gh(args, *rest, **kwargs):
+&gt;       assert args == ["api", f"repos/{mod.ORG}/{repo}/actions/runs/{run_id}/artifacts",
+                        "--jq", ".artifacts[] | {name,id,expired}"]
+E       AssertionError: assert ['api', 'repo...,id,expired}'] == ['api', 'repo...,id,expired}']
+E         
+E         At index 2 diff: '--paginate' != '--jq'
+E         Left contains one more item: '.artifacts[] | {name,id,expired}'
+E         
+E         Full diff:
+E           [
+E               'api',
+E               'repos/myon-bioinformatics/Ironmate/actions/runs/12345/artifacts',
+E         +     '--paginate',
+E               '--jq',
+E               '.artifacts[] | {name,id,expired}',
+E           ]
+
+tests/test_harvest_corpus.py:561: AssertionError</failure></testcase></testsuite></testsuites>

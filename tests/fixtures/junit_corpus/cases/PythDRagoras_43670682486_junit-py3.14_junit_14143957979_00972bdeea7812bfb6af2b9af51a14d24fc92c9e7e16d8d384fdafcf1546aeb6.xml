@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="2" tests="567" time="10.513" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_littlebit_holdout_drift" name="test_littlebit_committed_provenance_matches_current_sources_and_untouched_evidence" time="0.001"><failure message="AssertionError: pythdragoras/pythdragoras.py: SHA-256 drift; review provenance, never auto-rebaseline">def test_littlebit_committed_provenance_matches_current_sources_and_untouched_evidence():
+        root = _REPO_ROOT
+        manifest = json.loads((root / PROVENANCE_PATH).read_text(encoding="utf-8"))
+&gt;       _verify_provenance(root, manifest, SOURCE_ROOT, report_source_drift=_source_hash_report_only())
+
+tests/test_littlebit_holdout_drift.py:127: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('&lt;runner-work&gt;/.test-deps/aoi')
+manifest = {'artifacts_sha256': {'cycles/c001-chunichi/outputs/exploratory/littlebit-holdout/holdout.json': '02bb8e1b6ae89133b38a...cal years remain a temporal backtest, not independent confirmation on wholly unseen data.', 'posthoc': True, ...}, ...}
+source_root = PosixPath('&lt;runner-work&gt;')
+report_source_drift = False
+
+    def _verify_provenance(root, manifest, source_root=None, report_source_drift=False):
+        """Fail closed on missing coverage, missing files, or any unreviewed byte change.
+    
+        Inputs and artifacts are read under ``root`` (Aoi). Sources are read under
+        ``source_root`` (default ``root / "pythdragoras"``); manifest keys keep the
+        ``pythdragoras/`` prefix. ``report_source_drift`` warns on source-hash
+        mismatch only. Callers default to strict; the env flag is opt-in.
+        """
+        if source_root is None:
+            source_root = root / SOURCE_PREFIX
+        assert manifest["schema"] == "littlebit-holdout-provenance/1"
+        diverged = _source_divergence(manifest)
+        for group, paths in PROVENANCE_GROUPS.items():
+            expected = manifest[group]
+            assert set(expected) == set(paths), f"{group}: incomplete or unexpected coverage"
+            for name in paths:
+                path = _source_file(source_root, name) if group == "source_sha256" else root / name
+                digest = hashlib.sha256(path.read_bytes()).hexdigest()
+                if name in diverged:
+                    assert group == "source_sha256"
+                    row = diverged[name]
+                    assert row["evidence_sha256"] == expected[name]
+                    recorded = row["current_sha256"]
+                else:
+                    recorded = expected[name]
+                if digest != recorded:
+                    message = f"{name}: {_SOURCE_DRIFT}"
+                    if group == "source_sha256" and report_source_drift:
+                        _warn_source_drift(message)
+                    else:
+&gt;                       raise AssertionError(message)
+E                       AssertionError: pythdragoras/pythdragoras.py: SHA-256 drift; review provenance, never auto-rebaseline
+
+tests/test_littlebit_holdout_drift.py:121: AssertionError</failure></testcase><testcase classname="tests.test_littlebit_holdout_drift" name="test_littlebit_change_to_own_source_is_detected_even_if_aoi_copy_is_unchanged" time="0.001"><failure message="AssertionError: pythdragoras/pythdragoras.py: SHA-256 drift; review provenance, never auto-rebaseline">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_littlebit_change_to_own_s0')
+
+    def test_littlebit_change_to_own_source_is_detected_even_if_aoi_copy_is_unchanged(tmp_path):
+        root = _REPO_ROOT
+        manifest = json.loads((root / PROVENANCE_PATH).read_text(encoding="utf-8"))
+        own = tmp_path / "own"
+        own.mkdir()
+        for name in SOURCE_PATHS:
+            (own / name[len(SOURCE_PREFIX):]).write_bytes(_source_file(SOURCE_ROOT, name).read_bytes())
+&gt;       _verify_provenance(root, manifest, own, report_source_drift=_source_hash_report_only())
+
+tests/test_littlebit_holdout_drift.py:151: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('&lt;runner-work&gt;/.test-deps/aoi')
+manifest = {'artifacts_sha256': {'cycles/c001-chunichi/outputs/exploratory/littlebit-holdout/holdout.json': '02bb8e1b6ae89133b38a...cal years remain a temporal backtest, not independent confirmation on wholly unseen data.', 'posthoc': True, ...}, ...}
+source_root = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_littlebit_change_to_own_s0/own')
+report_source_drift = False
+
+    def _verify_provenance(root, manifest, source_root=None, report_source_drift=False):
+        """Fail closed on missing coverage, missing files, or any unreviewed byte change.
+    
+        Inputs and artifacts are read under ``root`` (Aoi). Sources are read under
+        ``source_root`` (default ``root / "pythdragoras"``); manifest keys keep the
+        ``pythdragoras/`` prefix. ``report_source_drift`` warns on source-hash
+        mismatch only. Callers default to strict; the env flag is opt-in.
+        """
+        if source_root is None:
+            source_root = root / SOURCE_PREFIX
+        assert manifest["schema"] == "littlebit-holdout-provenance/1"
+        diverged = _source_divergence(manifest)
+        for group, paths in PROVENANCE_GROUPS.items():
+            expected = manifest[group]
+            assert set(expected) == set(paths), f"{group}: incomplete or unexpected coverage"
+            for name in paths:
+                path = _source_file(source_root, name) if group == "source_sha256" else root / name
+                digest = hashlib.sha256(path.read_bytes()).hexdigest()
+                if name in diverged:
+                    assert group == "source_sha256"
+                    row = diverged[name]
+                    assert row["evidence_sha256"] == expected[name]
+                    recorded = row["current_sha256"]
+                else:
+                    recorded = expected[name]
+                if digest != recorded:
+                    message = f"{name}: {_SOURCE_DRIFT}"
+                    if group == "source_sha256" and report_source_drift:
+                        _warn_source_drift(message)
+                    else:
+&gt;                       raise AssertionError(message)
+E                       AssertionError: pythdragoras/pythdragoras.py: SHA-256 drift; review provenance, never auto-rebaseline
+
+tests/test_littlebit_holdout_drift.py:121: AssertionError</failure></testcase></testsuite></testsuites>
