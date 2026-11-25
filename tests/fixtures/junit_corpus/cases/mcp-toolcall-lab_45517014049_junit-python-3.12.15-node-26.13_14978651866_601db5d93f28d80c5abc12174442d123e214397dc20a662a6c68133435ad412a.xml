@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="9" tests="1757" time="214.682" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_fleet" name="test_parent_workflow_references_use_reviewed_rollout_commit" time="0.003"><failure message="AssertionError: ['9e3da7ae1846e9604ebc24bb5178f7de094a4e77', '9e3da7ae1846e9604ebc24bb5178f7de094a4e77', '9e3da7ae1846e9604ebc24bb5178f7de094a4e77', '9e3da7ae1846e9604ebc24bb5178f7de094a4e77', 'fb4a58060e0f28e5336752d8e33d827545c1ce53']&#10;assert {'9e3da7ae184...827545c1ce53'} == {'9e3da7ae184...f7de094a4e77'}&#10;  &#10;  Extra items in the left set:&#10;  'fb4a58060e0f28e5336752d8e33d827545c1ce53'&#10;  &#10;  Full diff:&#10;    {&#10;        '9e3da7ae1846e9604ebc24bb5178f7de094a4e77',&#10;  +     'fb4a58060e0f28e5336752d8e33d827545c1ce53',&#10;    }">def test_parent_workflow_references_use_reviewed_rollout_commit():
+        # Local rollout contract; adopted vendor locks are deliberately independent.
+        pins = fleet.parent_refs(ROOT, skip=(".vendor-sync-tools",))
+        assert pins, "shared parent references must remain observable"
+&gt;       assert set(pins) == {PARENT_WORKFLOW_PIN}, pins
+E       AssertionError: ['9e3da7ae1846e9604ebc24bb5178f7de094a4e77', '9e3da7ae1846e9604ebc24bb5178f7de094a4e77', '9e3da7ae1846e9604ebc24bb5178f7de094a4e77', '9e3da7ae1846e9604ebc24bb5178f7de094a4e77', 'fb4a58060e0f28e5336752d8e33d827545c1ce53']
+E       assert {'9e3da7ae184...827545c1ce53'} == {'9e3da7ae184...f7de094a4e77'}
+E         
+E         Extra items in the left set:
+E         'fb4a58060e0f28e5336752d8e33d827545c1ce53'
+E         
+E         Full diff:
+E           {
+E               '9e3da7ae1846e9604ebc24bb5178f7de094a4e77',
+E         +     'fb4a58060e0f28e5336752d8e33d827545c1ce53',
+E           }
+
+tests/test_fleet.py:32: AssertionError</failure></testcase><testcase classname="tests.test_stub_pages" name="test_legacy_redirect_preserves_routes_and_public_export_is_still_retained" time="0.131"><failure message="AssertionError: assert not True&#10; +  where True = exists()&#10; +    where exists = (PosixPath('&lt;runner-work&gt;') / '.github/workflows/pages.yml').exists">def test_legacy_redirect_preserves_routes_and_public_export_is_still_retained():
+        script = ROOT / 'scripts/write_portfolio_redirect.py'
+        import tempfile
+    
+        with tempfile.TemporaryDirectory() as directory:
+            subprocess.run(['python', '-S', str(script), directory], check=True)
+            html = (Path(directory) / 'index.html').read_text()
+            assert 'https://myon-bioinformatics.github.io/tools/mcp-toolcall-lab/' in html
+            assert 'rel="icon" type="image/png" href="execution/assets/mcp-toolcall-lab-favicon-artwork.png"' in html
+            assert 'rel="apple-touch-icon"' in html
+            assert 'src="execution/assets/mcp-toolcall-lab-logo.png"' in html
+            js = html.split('&lt;script&gt;')[1].split('&lt;/script&gt;')[0]
+            for route in ('#wiki', '#pixiv', '#pokemon', ''):
+                node = "let result; const location={search:'?view=wiki',hash:" + repr(route) + ",replace:v=&gt;{result=v}};" + js + ";process.stdout.write(result)"
+                result = subprocess.run(['node', '-e', node], text=True, capture_output=True, check=True)
+                assert result.stdout.endswith('?view=wiki' + route)
+        workflow = (ROOT / '.github/workflows/stub-pages.yml').read_text()
+        assert 'actions/deploy-pages' not in workflow
+&gt;       assert not (ROOT / '.github/workflows/pages.yml').exists()  # no Pages publisher since 2026-11-13
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: assert not True
+E        +  where True = exists()
+E        +    where exists = (PosixPath('&lt;runner-work&gt;') / '.github/workflows/pages.yml').exists
+
+tests/test_stub_pages.py:1040: AssertionError</failure></testcase></testsuite></testsuites>
