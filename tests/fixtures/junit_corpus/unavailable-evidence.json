@@ -1,0 +1,126 @@
+{
+  "schema": "junit-corpus-unavailable-evidence/1",
+  "observed_at": "2026-11-25",
+  "reason": "legacy-id-collision-no-matching-xml",
+  "records": [
+    {
+      "original_manifest_row": {
+        "id": "xprobe_41283935484_test-report-ubuntu-latest-py3.13_junit",
+        "repo": "myon-bioinformatics/xprobe",
+        "run_id": 41283935484,
+        "artifact": "test-report-ubuntu-latest-py3.13",
+        "job": null,
+        "workflow": "CI",
+        "date": "2026-11-01T07:13:42Z",
+        "source_file": "controlled-failure/junit.xml",
+        "format": "junit-xml",
+        "xml": "cases/xprobe_41283935484_test-report-ubuntu-latest-py3.13_junit.xml",
+        "golden": "golden/xprobe_41283935484_test-report-ubuntu-latest-py3.13_junit.out",
+        "sha256": "b433a652d4883b3e47a0438260f593bd90f7f3849f7a85206ca58a5a148ee0e7"
+      },
+      "surviving_sha256": "a2ff07903a32818f7d264864ae78312b0d0dc2e66bb210aa7bb177bacbee626e"
+    },
+    {
+      "original_manifest_row": {
+        "id": "xprobe_41283935484_test-report-ubuntu-latest-py3.14_junit",
+        "repo": "myon-bioinformatics/xprobe",
+        "run_id": 41283935484,
+        "artifact": "test-report-ubuntu-latest-py3.14",
+        "job": null,
+        "workflow": "CI",
+        "date": "2026-11-01T07:13:42Z",
+        "source_file": "controlled-failure/junit.xml",
+        "format": "junit-xml",
+        "xml": "cases/xprobe_41283935484_test-report-ubuntu-latest-py3.14_junit.xml",
+        "golden": "golden/xprobe_41283935484_test-report-ubuntu-latest-py3.14_junit.out",
+        "sha256": "849f4d8c5890452974fcf4436099fd863a4381d17c8cc0e487c9e025e35c9e81"
+      },
+      "surviving_sha256": "7facfe97f1af00a899e81c30ac4298734c81ab48baa7965330ff9412ac90c4ff"
+    },
+    {
+      "original_manifest_row": {
+        "id": "xprobe_41283935484_test-report-macos-latest-py3.15_junit",
+        "repo": "myon-bioinformatics/xprobe",
+        "run_id": 41283935484,
+        "artifact": "test-report-macos-latest-py3.15",
+        "job": null,
+        "workflow": "CI",
+        "date": "2026-11-01T07:13:42Z",
+        "source_file": "controlled-failure/junit.xml",
+        "format": "junit-xml",
+        "xml": "cases/xprobe_41283935484_test-report-macos-latest-py3.15_junit.xml",
+        "golden": "golden/xprobe_41283935484_test-report-macos-latest-py3.15_junit.out",
+        "sha256": "c6f8b4e988eb264d6a5ff27473baf49565057d94efe8c34c9be7665272456967"
+      },
+      "surviving_sha256": "890a5981eea09ff1e168d274d3e611ce2c71076c9695b77006ebd90e79cec369"
+    },
+    {
+      "original_manifest_row": {
+        "id": "xprobe_41283935484_test-report-ubuntu-latest-py3.11_junit",
+        "repo": "myon-bioinformatics/xprobe",
+        "run_id": 41283935484,
+        "artifact": "test-report-ubuntu-latest-py3.11",
+        "job": null,
+        "workflow": "CI",
+        "date": "2026-11-01T07:13:42Z",
+        "source_file": "controlled-failure/junit.xml",
+        "format": "junit-xml",
+        "xml": "cases/xprobe_41283935484_test-report-ubuntu-latest-py3.11_junit.xml",
+        "golden": "golden/xprobe_41283935484_test-report-ubuntu-latest-py3.11_junit.out",
+        "sha256": "a6eb4fec94bc53e7f8771e72ef5d85898a0343dd4db463006356b4312bdfa263"
+      },
+      "surviving_sha256": "a7caf5b6f54f94045c5449384e8577fd1172a924cf1d87841ec520901afe6d2e"
+    },
+    {
+      "original_manifest_row": {
+        "id": "xprobe_41283935484_test-report-ubuntu-latest-py3.15_junit",
+        "repo": "myon-bioinformatics/xprobe",
+        "run_id": 41283935484,
+        "artifact": "test-report-ubuntu-latest-py3.15",
+        "job": null,
+        "workflow": "CI",
+        "date": "2026-11-01T07:13:42Z",
+        "source_file": "controlled-failure/junit.xml",
+        "format": "junit-xml",
+        "xml": "cases/xprobe_41283935484_test-report-ubuntu-latest-py3.15_junit.xml",
+        "golden": "golden/xprobe_41283935484_test-report-ubuntu-latest-py3.15_junit.out",
+        "sha256": "e24ac56dfe8fd40fd2589a83dff67b6e4a8ea94d841a866414187743566937a4"
+      },
+      "surviving_sha256": "6fb97526f32c0ba31dff72dcb228607f660c227bc8012ef05cd649069a047a08"
+    },
+    {
+      "original_manifest_row": {
+        "id": "xprobe_41283935484_test-report-windows-latest-py3.15_junit",
+        "repo": "myon-bioinformatics/xprobe",
+        "run_id": 41283935484,
+        "artifact": "test-report-windows-latest-py3.15",
+        "job": null,
+        "workflow": "CI",
+        "date": "2026-11-01T07:13:42Z",
+        "source_file": "controlled-failure/junit.xml",
+        "format": "junit-xml",
+        "xml": "cases/xprobe_41283935484_test-report-windows-latest-py3.15_junit.xml",
+        "golden": "golden/xprobe_41283935484_test-report-windows-latest-py3.15_junit.out",
+        "sha256": "e583803b28806d9587bc4081bfedd9a171f73140ef3a9ae30d18a1a9daeb422e"
+      },
+      "surviving_sha256": "f71138499b626e029f1eb1dd6aaa4890c69aab6b1da698cec9ce77b43360f260"
+    },
+    {
+      "original_manifest_row": {
+        "id": "xprobe_40047853401_test-report-windows-latest-py3.12_junit",
+        "repo": "myon-bioinformatics/xprobe",
+        "run_id": 40047853401,
+        "artifact": "test-report-windows-latest-py3.12",
+        "job": null,
+        "workflow": "CI",
+        "date": "2026-10-24T01:01:29Z",
+        "source_file": "controlled-failure/junit.xml",
+        "format": "junit-xml",
+        "xml": "cases/xprobe_40047853401_test-report-windows-latest-py3.12_junit.xml",
+        "golden": "golden/xprobe_40047853401_test-report-windows-latest-py3.12_junit.out",
+        "sha256": "9fb1cd17364c5c4d36c1f14e2e3a8a81cf37661aa160f17126418a7fc40df436"
+      },
+      "surviving_sha256": "2631f04a41ca0b76854482180d995a373393e38f14c41e3928ecd866376b395e"
+    }
+  ]
+}

@@ -79,29 +79,30 @@ flowchart TD
   n7 -->|"triaged #40;5#41;"| n5
   n8 -->|"observed_use #40;documented#41;"| n1
   n8 -->|"observed_use #40;documented#41;"| n2
-  n8 -->|"triaged #40;3#41;"| n5
+  n8 -->|"triaged #40;5#41;"| n5
   n9 -->|"triaged #40;20#41;"| n5
   n10 -->|"observed_use #40;harvest-step#41;"| n3
   n10 -->|"observed_use #40;workflow#41;"| n0
-  n10 -->|"triaged #40;21#41;"| n5
+  n10 -->|"triaged #40;27#41;"| n5
   n12 -->|"triaged #40;48#41;"| n5
   n13 -->|"triaged #40;25#41;"| n5
-  n17 -->|"triaged #40;8#41;"| n5
-  n18 -->|"triaged #40;25#41;"| n5
+  n17 -->|"triaged #40;12#41;"| n5
+  n18 -->|"triaged #40;30#41;"| n5
+  n19 -->|"triaged #40;1#41;"| n5
   n20 -->|"triaged #40;10#41;"| n5
-  n24 -->|"triaged #40;38#41;"| n5
+  n24 -->|"triaged #40;40#41;"| n5
   n25 -->|"same_as #40;renamed#41;"| n8
   n25 -->|"triaged #40;33#41;"| n5
-  n26 -->|"triaged #40;14#41;"| n5
+  n26 -->|"triaged #40;15#41;"| n5
   n27 -->|"triaged #40;37#41;"| n5
   n27 -->|"triaged #40;5#41;"| n4
   n28 -->|"triaged #40;49#41;"| n5
   n29 -->|"triaged #40;25#41;"| n5
-  n30 -->|"triaged #40;16#41;"| n5
+  n30 -->|"triaged #40;22#41;"| n5
   n31 -->|"observed_use #40;documented#41;"| n1
-  n31 -->|"triaged #40;24#41;"| n5
+  n31 -->|"triaged #40;29#41;"| n5
   n32 -->|"observed_use #40;catalog#41;"| n3
-  n32 -->|"triaged #40;3#41;"| n5
+  n32 -->|"triaged #40;7#41;"| n5
   n33 -->|"triaged #40;27#41;"| n5
   n34 -->|"triaged #40;2#41;"| n5
   n35 -->|"same_as #40;renamed#41;"| n17
@@ -118,22 +119,23 @@ flowchart TD
 
 | | |
 | --- | --- |
-| manifest rows | 599 |
+| manifest rows | 628 |
 | duplicate rows collapsed | 0 |
-| colliding rows not in the surviving file | 7 |
-| cases | 592 |
-| well_handled | 587 |
+| colliding rows not in the surviving file | 0 |
+| historical rows with unavailable evidence | 7 |
+| cases | 628 |
+| well_handled | 623 |
 | partial | 5 |
 | unknown | 0 |
-| classification.json rows | 599 |
+| classification.json rows | 628 |
 
 Exception types named on `FOUND: junit pytest exception type` or the first Dart error line:
 
-- AssertionError: 477
+- AssertionError: 511
 - ModuleNotFoundError: 30
 - ImportError: 11
 - research_digest.DigestError: 10
-- ValueError: 8
+- ValueError: 9
 - Failed: 5
 - AttributeError: 4
 - StopIteration: 4
@@ -143,9 +145,9 @@ Exception types named on `FOUND: junit pytest exception type` or the first Dart 
 - FileNotFoundError: 2
 - RuntimeError: 2
 - SetupError: 2
+- UnicodeDecodeError: 2
 - KeyError: 1
 - NameError: 1
-- UnicodeDecodeError: 1
 - urllib.error.HTTPError: 1
 
 ## Repositories in the diagram
@@ -153,28 +155,28 @@ Exception types named on `FOUND: junit pytest exception type` or the first Dart 
 | Repository | Harvest source | Cases | Uses |
 | --- | --- | --- | --- |
 | `myon-bioinformatics/Aoi` | yes | 75 | — |
-| `myon-bioinformatics/ascii_artist` | yes | 38 | — |
+| `myon-bioinformatics/ascii_artist` | yes | 40 | — |
 | `myon-bioinformatics/BlueProbe` | yes | 5 | — |
-| `myon-bioinformatics/BrowserTestKit` | yes | 3 | digest (documented), sentinel (documented) |
-| `myon-bioinformatics/cli_args` | yes | 14 | — |
+| `myon-bioinformatics/BrowserTestKit` | yes | 5 | digest (documented), sentinel (documented) |
+| `myon-bioinformatics/cli_args` | yes | 15 | — |
 | `myon-bioinformatics/DRAgoWing` | yes | 20 | — |
-| `myon-bioinformatics/Err-o-RoadRunner` | yes | 21 | triage (harvest-step), corpus-harvest (workflow) |
+| `myon-bioinformatics/Err-o-RoadRunner` | yes | 27 | triage (harvest-step), corpus-harvest (workflow) |
 | `myon-bioinformatics/FluidFullSpeedSimulation` | yes | 0 | — |
 | `myon-bioinformatics/flutter_navigation_basic` | yes | 42 | — |
 | `myon-bioinformatics/gh_identity` | yes | 49 | — |
 | `myon-bioinformatics/Ironmate` | yes | 48 | — |
 | `myon-bioinformatics/markdown` | yes | 25 | — |
-| `myon-bioinformatics/mcp-toolcall-lab` | yes | 16 | — |
-| `myon-bioinformatics/myon-bioinformatics` | yes | 24 | digest (documented) |
-| `myon-bioinformatics/myon-bioinformatics.github.io` | yes | 3 | triage (catalog) |
+| `myon-bioinformatics/mcp-toolcall-lab` | yes | 22 | — |
+| `myon-bioinformatics/myon-bioinformatics` | yes | 29 | digest (documented) |
+| `myon-bioinformatics/myon-bioinformatics.github.io` | yes | 7 | triage (catalog) |
 | `myon-bioinformatics/NagoyAction` | yes | 25 | — |
 | `myon-bioinformatics/nvd_nist_known_vulns` | yes | 27 | — |
 | `myon-bioinformatics/OneLaunchNumerousModules` | yes | 0 | — |
 | `myon-bioinformatics/ONTO` | yes | 0 | — |
 | `myon-bioinformatics/OnTautoLogy` | yes | 0 | — |
-| `myon-bioinformatics/PySaiyanWeBoo` | yes | 8 | — |
-| `myon-bioinformatics/PythDRagoras` | yes | 25 | — |
-| `myon-bioinformatics/QueRyu` | yes | 0 | — |
+| `myon-bioinformatics/PySaiyanWeBoo` | yes | 12 | — |
+| `myon-bioinformatics/PythDRagoras` | yes | 30 | — |
+| `myon-bioinformatics/QueRyu` | yes | 1 | — |
 | `myon-bioinformatics/SakAnalytics` | yes | 10 | — |
 | `myon-bioinformatics/search_seq_including_spaces` | yes | 2 | — |
 | `myon-bioinformatics/TalkCompress` | yes | 0 | — |

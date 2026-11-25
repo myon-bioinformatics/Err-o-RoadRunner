@@ -12,6 +12,17 @@ Real failing testcases harvested from `myon-bioinformatics/*` GitHub Actions run
 
 The scheduled workflow reuses `junit_redact.py` before golden generation and validates both XML and generated goldens for leaks before opening a PR. Redaction or validation failures block PR creation; collection coverage reports are preserved even on failure.
 
+## Historical unavailable evidence
+
+Seven historical xprobe `controlled-failure/junit.xml` entries collided with
+`junit.xml` entries. The checked-in XML matches only the latter SHA-256 in each
+pair; the original runs (41283935484 and 40047853401) list no downloadable
+artifacts. `unavailable-evidence.json` retains the original rows and both
+checksums without treating the surviving XML or golden as the missing record.
+Only available evidence belongs in the active manifest, classifier and
+ONTO events. Restore a row only after finding matching bytes, assigning
+distinct paths and passing redaction and golden checks.
+
 ## Promotion and publication
 
 `golden/*.out` means expected CLI output; generating one does not itself grant Gold status.

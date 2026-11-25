@@ -324,6 +324,7 @@ def footprint_from_parts(adoption, harvest_sources, events, classification_rows=
         "manifest_rows": (manifest_stats or {}).get("manifest_rows", len(events)),
         "duplicate_manifest_rows": (manifest_stats or {}).get("duplicate_manifest_rows", 0),
         "colliding_manifest_rows": (manifest_stats or {}).get("colliding_manifest_rows", 0),
+        "unavailable_evidence_rows": (manifest_stats or {}).get("unavailable_evidence_rows", 0),
         "renames": renames,
         "totals": {
             "cases": totals["cases"],
@@ -577,6 +578,7 @@ def markdown_view(doc, diagram):
         "| manifest rows | %s |" % doc.get("manifest_rows"),
         "| duplicate rows collapsed | %s |" % doc.get("duplicate_manifest_rows"),
         "| colliding rows not in the surviving file | %s |" % doc.get("colliding_manifest_rows"),
+        "| historical rows with unavailable evidence | %s |" % doc.get("unavailable_evidence_rows", 0),
         "| cases | %s |" % totals["cases"],
         "| well_handled | %s |" % totals["well_handled"],
         "| partial | %s |" % totals["partial"],
@@ -625,6 +627,9 @@ def from_checkout(adoption_path, corpus, harvest_path, footprint_path, events_pa
     adoption = load_json(adoption_path)
     harvest = load_json(harvest_path)
     events, manifest_stats = events_from_corpus(corpus)
+    unavailable_path = Path(corpus) / "unavailable-evidence.json"
+    if unavailable_path.is_file():
+        manifest_stats["unavailable_evidence_rows"] = len(load_json(unavailable_path)["records"])
     classification_path = Path(corpus) / "classification.json"
     classification_rows = None
     if classification_path.is_file():
