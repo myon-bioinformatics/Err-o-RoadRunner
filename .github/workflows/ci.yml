@@ -15,7 +15,7 @@ concurrency:
 jobs:
   changes:
     name: Change detection
-    uses: myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-change-detection.yml@0778ede0c872d609bb2dc590f9f9898a39a18668
+    uses: myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-change-detection.yml@0361d4d81add261ba15073fc32f2a524d2b7e2de
 
   vendor-locked:
     name: Vendor locked baseline
@@ -153,7 +153,7 @@ jobs:
     permissions:
       contents: read
       actions: read
-    uses: myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-junit-identity.yml@0778ede0c872d609bb2dc590f9f9898a39a18668
+    uses: myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-junit-identity.yml@0361d4d81add261ba15073fc32f2a524d2b7e2de
     with:
       expected-reports: ${{ github.event_name == 'pull_request' && '["junit-py3.11/junit.xml","junit-py3.15/junit.xml"]' || '["junit-py3.11/junit.xml","junit-py3.12/junit.xml","junit-py3.13/junit.xml","junit-py3.14/junit.xml","junit-py3.15/junit.xml","junit-py3.x/junit.xml"]' }}
       artifact-pattern: "junit-py*"
@@ -166,7 +166,7 @@ jobs:
     permissions:
       contents: read
       actions: read
-    uses: myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-junit-identity.yml@0778ede0c872d609bb2dc590f9f9898a39a18668
+    uses: myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-junit-identity.yml@0361d4d81add261ba15073fc32f2a524d2b7e2de
     with:
       # A failed vendor gate blocks the entire pytest matrix; do not invent its setup reports.
       expected-reports: ${{ needs.vendor-locked.result != 'success' && '["junit-setup-vendor/setup.xml"]' || github.event_name == 'pull_request' && '["junit-setup-vendor/setup.xml","junit-setup-py3.11/setup.xml","junit-setup-py3.15/setup.xml"]' || '["junit-setup-vendor/setup.xml","junit-setup-py3.11/setup.xml","junit-setup-py3.12/setup.xml","junit-setup-py3.13/setup.xml","junit-setup-py3.14/setup.xml","junit-setup-py3.15/setup.xml","junit-setup-py3.x/setup.xml"]' }}
@@ -177,4 +177,4 @@ jobs:
   actionlint:
     needs: changes
     if: needs.changes.outputs.workflow_changed == 'true'
-    uses: myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-actionlint.yml@0778ede0c872d609bb2dc590f9f9898a39a18668
+    uses: myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-actionlint.yml@0361d4d81add261ba15073fc32f2a524d2b7e2de

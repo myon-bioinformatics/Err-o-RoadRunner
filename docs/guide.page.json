@@ -77,6 +77,38 @@
           ]
         },
         {
+          "label": "🔬 検証ガイド",
+          "blocks": [
+            {
+              "type": "runbook",
+              "id": "verify",
+              "books": [
+                {
+                  "label": "⚡ uv（プロジェクト）",
+                  "intro": "🤖 のついた手順は CI で実際に動かし、出た結果をそのまま載せています。",
+                  "runbook": {
+                    "key": "err-o-roadrunner/uv",
+                    "steps": [
+                      {
+                        "id": "help",
+                        "title": "❓ ヘルプ",
+                        "command": "uv run erroroadrunner --help",
+                        "run": true
+                      },
+                      {
+                        "id": "triage",
+                        "title": "🔎 失敗を調べる",
+                        "command": "printf 'ModuleNotFoundError: No module named \"yaml\"\\n' > stderr.txt\nuv run erroroadrunner --exit-code 1 --stderr stderr.txt",
+                        "run": true
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
           "label": "🎞 GIF デモ",
           "blocks": [
             {
