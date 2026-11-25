@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="9" tests="1757" time="148.549" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_fleet" name="test_parent_workflow_references_use_reviewed_rollout_commit" time="0.002"><failure message="AssertionError: ['9e3da7ae1846e9604ebc24bb5178f7de094a4e77', '9e3da7ae1846e9604ebc24bb5178f7de094a4e77', '9e3da7ae1846e9604ebc24bb5178f7de094a4e77', '9e3da7ae1846e9604ebc24bb5178f7de094a4e77', 'fb4a58060e0f28e5336752d8e33d827545c1ce53']&#10;assert {'9e3da7ae184...827545c1ce53'} == {'9e3da7ae184...f7de094a4e77'}&#10;  &#10;  Extra items in the left set:&#10;  'fb4a58060e0f28e5336752d8e33d827545c1ce53'&#10;  &#10;  Full diff:&#10;    {&#10;        '9e3da7ae1846e9604ebc24bb5178f7de094a4e77',&#10;  +     'fb4a58060e0f28e5336752d8e33d827545c1ce53',&#10;    }">def test_parent_workflow_references_use_reviewed_rollout_commit():
+        # Local rollout contract; adopted vendor locks are deliberately independent.
+        pins = fleet.parent_refs(ROOT, skip=(".vendor-sync-tools",))
+        assert pins, "shared parent references must remain observable"
+&gt;       assert set(pins) == {PARENT_WORKFLOW_PIN}, pins
+E       AssertionError: ['9e3da7ae1846e9604ebc24bb5178f7de094a4e77', '9e3da7ae1846e9604ebc24bb5178f7de094a4e77', '9e3da7ae1846e9604ebc24bb5178f7de094a4e77', '9e3da7ae1846e9604ebc24bb5178f7de094a4e77', 'fb4a58060e0f28e5336752d8e33d827545c1ce53']
+E       assert {'9e3da7ae184...827545c1ce53'} == {'9e3da7ae184...f7de094a4e77'}
+E         
+E         Extra items in the left set:
+E         'fb4a58060e0f28e5336752d8e33d827545c1ce53'
+E         
+E         Full diff:
+E           {
+E               '9e3da7ae1846e9604ebc24bb5178f7de094a4e77',
+E         +     'fb4a58060e0f28e5336752d8e33d827545c1ce53',
+E           }
+
+tests/test_fleet.py:32: AssertionError</failure></testcase></testsuite></testsuites>

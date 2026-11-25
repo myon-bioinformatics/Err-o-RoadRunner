@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="19" tests="302" time="20.765" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_tooling" name="test_pages_lane_requires_original_and_card_evidence" time="0.001"><failure message="UnicodeDecodeError: 'charmap' codec can't decode byte 0x8f in position 4175: character maps to &lt;undefined&gt;">def test_pages_lane_requires_original_and_card_evidence():
+&gt;       workflow = (ROOT / ".github/workflows/pages.yml").read_text()
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_tooling.py:390: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\hostedtoolcache\windows\Python\3.11.9\x64\Lib\pathlib.py:1059: in read_text
+    return f.read()
+           ^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = &lt;encodings.cp1252.IncrementalDecoder object at 0x&lt;addr&gt;&gt;
+input = b'name: Pages\r\n\r\non:\r\n  push:\r\n    branches: [main]\r\n    paths:\r\n      - "docs/brand/**"\r\n      - "docs/...\r\n      - id: deployment\r\n        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1\r\n'
+final = True
+
+    def decode(self, input, final=False):
+&gt;       return codecs.charmap_decode(input,self.errors,decoding_table)[0]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       UnicodeDecodeError: 'charmap' codec can't decode byte 0x8f in position 4175: character maps to &lt;undefined&gt;
+
+C:\hostedtoolcache\windows\Python\3.11.9\x64\Lib\encodings\cp1252.py:23: UnicodeDecodeError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="15" tests="417" time="21.914" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_tooling" name="test_refresh_and_cli_output_are_reproducible" time="0.568"><failure message="AssertionError: Traceback (most recent call last):&#10;    File &quot;&lt;pytest-tmp&gt;/pytest-0/test_refresh_and_cli_output_ar0/source/scripts/project_pages.py&quot;, line 1279, in &lt;module&gt;&#10;      raise SystemExit(main())&#10;                       ~~~~^^&#10;    File &quot;&lt;pytest-tmp&gt;/pytest-0/test_refresh_and_cli_output_ar0/source/scripts/project_pages.py&quot;, line 1270, in main&#10;      build(args.output)&#10;      ~~~~~^^^^^^^^^^^^^&#10;[+14 more lines; full report in element text]">tmp_path = PosixPath('&lt;pytest-tmp&gt;/pytest-0/test_refresh_and_cli_output_ar0')
+
+    def test_refresh_and_cli_output_are_reproducible(tmp_path):
+        import subprocess
+        import sys
+        root = tmp_path / 'source'
+        (root / 'scripts').mkdir(parents=True)
+        shutil.copyfile(ROOT / 'pyproject.toml', root / 'pyproject.toml')
+        shutil.copyfile(ROOT / 'scripts/project_pages.py', root / 'scripts/project_pages.py')
+        (root / '_src/tools').mkdir(parents=True)
+        shutil.copyfile(ROOT / '_src/tools/studio_routes.py', root / '_src/tools/studio_routes.py')
+        shutil.copyfile(ROOT / 'scripts/front_page.py', root / 'scripts/front_page.py')         # the front page is generated too
+        shutil.copyfile(ROOT / 'scripts/map_tool.py', root / 'scripts/map_tool.py')
+        shutil.copyfile(ROOT / 'scripts/world.py', root / 'scripts/world.py')                 # 🌍 the world pages and Parallel Tokyo
+        shutil.copyfile(ROOT / 'scripts/chat.py', root / 'scripts/chat.py')                   # 💬 the chat page runs it in Pyodide
+        (root / 'api').mkdir()
+        for name in ('profile.json', 'api/repos.json'):                                       # ... from these and projects.json
+            shutil.copyfile(ROOT / name, root / name)
+        shutil.copyfile(ROOT / 'projects.json', root / 'projects.json')                       # the project pages come from it
+        output = tmp_path / 'cli-output'
+        result = subprocess.run([sys.executable, str(root / 'scripts/project_pages.py'),
+                                 '--refresh-lock', '--output', str(output)], capture_output=True, text=True)
+&gt;       assert result.returncode == 0, result.stderr
+E       AssertionError: Traceback (most recent call last):
+E           File "&lt;pytest-tmp&gt;/pytest-0/test_refresh_and_cli_output_ar0/source/scripts/project_pages.py", line 1279, in &lt;module&gt;
+E             raise SystemExit(main())
+E                              ~~~~^^
+E           File "&lt;pytest-tmp&gt;/pytest-0/test_refresh_and_cli_output_ar0/source/scripts/project_pages.py", line 1270, in main
+E             build(args.output)
+E             ~~~~~^^^^^^^^^^^^^
+E           File "&lt;pytest-tmp&gt;/pytest-0/test_refresh_and_cli_output_ar0/source/scripts/project_pages.py", line 1176, in build
+E             payload = {**generate(root), **render_front(root, recorded_samples(output)), **render_flow(ui, output), **render_map(ui, output),
+E                                            ~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           File "&lt;pytest-tmp&gt;/pytest-0/test_refresh_and_cli_output_ar0/source/scripts/project_pages.py", line 295, in render_front
+E             return {'index.html': load_module('front_page', 'scripts/front_page.py').document(root, samples=samples).encode('utf-8')}
+E                                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+E           File "&lt;pytest-tmp&gt;/pytest-0/test_refresh_and_cli_output_ar0/source/scripts/front_page.py", line 376, in document
+E             weekly = markdown_fragment(root, 'docs/weekly-view.md')
+E           File "&lt;pytest-tmp&gt;/pytest-0/test_refresh_and_cli_output_ar0/source/scripts/front_page.py", line 360, in markdown_fragment
+E             raise ValueError('Markdown source must be an existing repository .md file')
+E         ValueError: Markdown source must be an existing repository .md file
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['&lt;runner-work&gt;/.venv/bin/python...rce must be an existing repository .md file\')\nValueError: Markdown source must be an existing repository .md file\n').returncode
+
+tests/test_tooling.py:298: AssertionError</failure></testcase></testsuite></testsuites>

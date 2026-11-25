@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="238" time="8.598" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_fleet" name="test_parent_workflow_references_use_reviewed_rollout_commit" time="0.002"><failure message="AssertionError: ['0778ede0c872d609bb2dc590f9f9898a39a18668', '0778ede0c872d609bb2dc590f9f9898a39a18668', '0778ede0c872d609bb2dc590f9f9898a39a18668', 'def72acfe886769fef417afd832028f66193f5d0']&#10;assert {'0778ede0c87...28f66193f5d0'} == {'0778ede0c87...898a39a18668'}&#10;  &#10;  Extra items in the left set:&#10;  'def72acfe886769fef417afd832028f66193f5d0'&#10;  &#10;  Full diff:&#10;    {&#10;        '0778ede0c872d609bb2dc590f9f9898a39a18668',&#10;  +     'def72acfe886769fef417afd832028f66193f5d0',&#10;    }">def test_parent_workflow_references_use_reviewed_rollout_commit():
+        pins = fleet.parent_refs(ROOT)
+        assert pins, "shared parent references must remain observable"
+&gt;       assert set(pins) == {PARENT_WORKFLOW_PIN}, pins
+E       AssertionError: ['0778ede0c872d609bb2dc590f9f9898a39a18668', '0778ede0c872d609bb2dc590f9f9898a39a18668', '0778ede0c872d609bb2dc590f9f9898a39a18668', 'def72acfe886769fef417afd832028f66193f5d0']
+E       assert {'0778ede0c87...28f66193f5d0'} == {'0778ede0c87...898a39a18668'}
+E         
+E         Extra items in the left set:
+E         'def72acfe886769fef417afd832028f66193f5d0'
+E         
+E         Full diff:
+E           {
+E               '0778ede0c872d609bb2dc590f9f9898a39a18668',
+E         +     'def72acfe886769fef417afd832028f66193f5d0',
+E           }
+
+tests/test_fleet.py:39: AssertionError</failure></testcase></testsuite></testsuites>
