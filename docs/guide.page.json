@@ -1,7 +1,7 @@
 {
   "schema": "web-ui-page/1",
   "title": "Err-o-RoadRunner 利用ガイド",
-  "theme": "auto",
+  "theme": "modern",
   "description": "普段は何もせず、エラーが起きたあとにだけ動くツール。失敗の情報（stderr・終了コード・JUnit・ログ）を読み、調べる手がかりを返します。",
   "icon": "./icon.png",
   "favicon": "./favicon.png",
