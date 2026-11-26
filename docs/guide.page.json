@@ -63,6 +63,22 @@
                 },
                 {
                   "type": "card",
+                  "title": "🧯 ブラウザで調べる",
+                  "text": "入れずに、ログを貼るだけ。ポートフォリオの 🧰 Tools がこの triage.py をページの中で動かす（ログはどこにも送らない）。",
+                  "blocks": [
+                    {
+                      "type": "links",
+                      "items": [
+                        {
+                          "label": "🧯 ログを貼る →",
+                          "href": "https://myon-bioinformatics.github.io/tools/demos/chat.html?triage"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "card",
                   "title": "❓ ヘルプ",
                   "text": "引数の一覧です。",
                   "blocks": [
