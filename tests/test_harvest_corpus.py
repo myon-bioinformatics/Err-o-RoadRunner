@@ -482,13 +482,23 @@ def test_prepare_redacts_existing_xml_refreshes_goldens_and_hashes(sandbox: Path
     assert redacted.returncode == 0, redacted.stdout + redacted.stderr
     prepared = _run_step(sandbox, "Prepare corpus goldens")
     assert prepared.returncode == 0, prepared.stdout + prepared.stderr
-    for entry in json.loads((corpus / "manifest.json").read_text()):
+    prepared_entries = json.loads((corpus / "manifest.json").read_text())
+    for entry in prepared_entries:
         xml = corpus / entry["xml"]
         assert entry["sha256"] == hashlib.sha256(xml.read_bytes()).hexdigest()
         for path in (xml, corpus / entry["golden"]):
             assert find_corpus_leaks(path.read_text()) == []
         assert "FOUND: junit failures" in (corpus / entry["golden"]).read_text()
     assert outside.read_text() == '<testsuite name="untouched"/>'
+    # The real validator requires a ledger even in this isolated synthetic corpus.
+    surviving = prepared_entries[0]
+    unavailable = {**surviving, "source_file": "legacy/pytest-3.9.xml",
+                   "sha256": hashlib.sha256(b"unavailable legacy fixture").hexdigest()}
+    (corpus / "unavailable-evidence.json").write_text(json.dumps({
+        "schema": "junit-corpus-unavailable-evidence/1",
+        "reason": "legacy-id-collision-no-matching-xml",
+        "records": [{"original_manifest_row": unavailable, "surviving_sha256": surviving["sha256"]}],
+    }), encoding="utf-8")
     checked = _run_step(sandbox, "Validate corpus")
     assert checked.returncode == 0, checked.stdout + checked.stderr
     # A later leak in a generated golden must block reaching PR creation.
