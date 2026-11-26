@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="36" tests="2834" time="103.747" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_tools" name="test_fleet_check_scripts_holds_for_the_parent_itself" time="0.310"><failure message="AssertionError: ⌨️ reads sys.argv without argparse or cli_args: ['scripts/verify_pages_artifact.py']">def test_fleet_check_scripts_holds_for_the_parent_itself():
+&gt;       fleet_check.check_scripts(ROOT, passthrough=("njs_launch.py",))      # forwards argv to node untouched
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_tools.py:615: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('&lt;runner-work&gt;')
+patterns = ('*.py', '*.mjs', '*.cjs', 'scripts/*', 'tools/*', 'examples/*')
+passthrough = ('njs_launch.py',)
+
+    def check_scripts(root, patterns=("*.py", "*.mjs", "*.cjs", "scripts/*", "tools/*", "examples/*"), passthrough=()) -&gt; dict:
+        """📝 Every script the globs match (.py / .mjs / .cjs) describes itself, and ⌨️ one that reads ``sys.argv``
+        declares its arguments with argparse or cli_args, except ``passthrough`` launchers that hand argv on untouched.
+    
+        ``script_catalog`` turns the same facts into a table. Returns ``script_facts`` by path.
+        """
+        root = Path(root)
+        found = {p.relative_to(root).as_posix(): script_facts(p) for pattern in patterns for p in sorted(root.glob(pattern))
+                 if p.is_file() and p.suffix in (".py", ".mjs", ".cjs") and p.name not in ("conftest.py", "__init__.py")}
+        found = dict(sorted(found.items()))
+        undescribed = [path for path, facts in found.items() if not facts["summary"]]
+        undeclared = [path for path, facts in found.items() if facts["argv"] and not facts["argparse"] and path not in passthrough]
+        assert not undescribed, f"📝 no docstring / leading comment: {undescribed}"
+&gt;       assert not undeclared, f"⌨️ reads sys.argv without argparse or cli_args: {undeclared}"
+               ^^^^^^^^^^^^^^
+E       AssertionError: ⌨️ reads sys.argv without argparse or cli_args: ['scripts/verify_pages_artifact.py']
+
+fleet_check.py:92: AssertionError</failure></testcase></testsuite></testsuites>
