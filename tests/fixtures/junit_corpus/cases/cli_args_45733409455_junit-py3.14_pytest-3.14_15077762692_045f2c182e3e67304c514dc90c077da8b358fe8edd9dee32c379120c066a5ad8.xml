@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="4" tests="344" time="17.573" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_fleet.CiPythonSetupTests" name="test_project_and_lock_declare_python311_without_runtime_dependencies" time="0.002"><failure message="AssertionError: runtime-compatibility.yml: job runtime: matrix [] does not start at the floor 3.11">tests/test_fleet.py:127: in test_project_and_lock_declare_python311_without_runtime_dependencies
+    self.assertEqual(fleet.python_floor(ROOT), ("3.11", ["3.11", "3.12", "3.13", "3.14"]))
+                     ^^^^^^^^^^^^^^^^^^^^^^^^
+vendor/fleet_check.py:416: in python_floor
+    assert order and order[0] == project[2], f"{where}: matrix {versions} does not start at the floor {project[2]}"
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AssertionError: runtime-compatibility.yml: job runtime: matrix [] does not start at the floor 3.11</failure></testcase><testcase classname="tests.test_fleet.CiPythonSetupTests" name="test_supported_runtime_versions_keep_existing_os_coverage" time="0.000"><failure message="AssertionError: unexpectedly None">tests/test_fleet.py:136: in test_supported_runtime_versions_keep_existing_os_coverage
+    self.assertIsNotNone(matrix)
+E   AssertionError: unexpectedly None</failure></testcase></testsuite></testsuites>

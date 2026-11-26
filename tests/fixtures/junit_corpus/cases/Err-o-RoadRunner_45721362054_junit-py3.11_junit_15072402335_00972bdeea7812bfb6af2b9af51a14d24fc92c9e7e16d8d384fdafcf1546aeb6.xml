@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="53" tests="3551" time="259.718" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_harvest_corpus" name="test_prepare_redacts_existing_xml_refreshes_goldens_and_hashes" time="0.579"><failure message="AssertionError: ..F.s......                                                              [100%]&#10;  =================================== FAILURES ===================================&#10;  _____________ test_junit_evidence_identity_and_unavailable_records _____________&#10;  &#10;      def test_junit_evidence_identity_and_unavailable_records() -&gt; None:&#10;          ids = [entry[&quot;id&quot;] for entry in JUNIT_ENTRIES]&#10;          assert len(ids) == len(set(ids))&#10;          for key in (&quot;xml&quot;, &quot;golden&quot;):&#10;              assert len({entry[key] for entry in JUNIT_ENTRIES}) == len(ids)&#10;      &#10;  &gt;       ledger = json.loads((CORPUS / &quot;unavailable-evidence.json&quot;).read_text(encoding=&quot;utf-8&quot;))&#10;                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^&#10;  &#10;  tests/test_corpus.py:51: &#10;  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ &#10;  &lt;runner-work&gt;/cpython-3.11.18-linux-x86_64-gnu/lib/python3.11/pathlib.py:1058: in read_text&#10;      with self.open(mode='r', encoding=encoding, errors=errors) as f:&#10;           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^&#10;  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ &#10;  &#10;  self = PosixPath('&lt;pytest-tmp&gt;/pytest-9/test_prepare_redacts_existing_0/tests/fixtures/junit_corpus/unavailable-evidence.json')&#10;  mode = 'r', buffering = -1, encoding = 'utf-8', errors = None, newline = None&#10;  &#10;      def open(self, mode='r', buffering=-1, encoding=None,&#10;               errors=None, newline=None):&#10;          &quot;&quot;&quot;&#10;          Open the file pointed by this path and return a file object, as&#10;          the built-in open() function does.&#10;          &quot;&quot;&quot;&#10;          if &quot;b&quot; not in mode:&#10;              encoding = io.text_encoding(encoding)&#10;  &gt;       return io.open(self, mode, buffering, encoding, errors, newline)&#10;                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^&#10;  E       FileNotFoundError: [Errno 2] No such file or directory: '&lt;pytest-tmp&gt;/pytest-9/test_prepare_redacts_existing_0/tests/fixtures/junit_corpus/unavailable-evidence.json'&#10;  &#10;  &lt;runner-work&gt;/cpython-3.11.18-linux-x86_64-gnu/lib/python3.11/pathlib.py:1044: FileNotFoundError&#10;  =========================== short test summary info ============================&#10;  FAILED tests/test_corpus.py::test_junit_evidence_identity_and_unavailable_records - FileNotFoundError: [Errno 2] No such file or directory: '&lt;pytest-tmp&gt;/pytest-9/test_prepare_redacts_existing_0/tests/fixtures/junit_corpus/unavailable-evidence.json'&#10;  1 failed, 9 passed, 1 skipped in 0.16s&#10;  &#10;assert 1 == 0&#10; +  where 1 = CompletedProcess(args=['bash', '-e', '-c', 'uv run --project &lt;runner-work&gt; --off...isting_0/tests/fixtures/junit_corpus/unavailable-evidence.json\'\n1 failed, 9 passed, 1 skipped in 0.16s\n', stderr='').returncode">sandbox = PosixPath('&lt;pytest-tmp&gt;/pytest-9/test_prepare_redacts_existing_0')
+
+    def test_prepare_redacts_existing_xml_refreshes_goldens_and_hashes(sandbox: Path) -&gt; None:
+        corpus = sandbox / "tests/fixtures/junit_corpus"
+        entries = []
+        for run in (38908321131, 38908363336):
+            raw = '&lt;testsuite&gt;&lt;testcase name="bad"&gt;&lt;failure&gt;AssertionError: paths = [PosixPath(\'&lt;runner-work&gt;')]&lt;/failure&gt;&lt;/testcase&gt;&lt;/testsuite&gt;'
+            source = sandbox / f"{run}.xml"
+            source.write_text(raw)
+            # The collector must still keep failing cases, omit passing cases, and use shared redaction.
+            tree = ET.fromstring(raw)
+            ET.SubElement(tree, "testcase", {"name": "passing"})
+            assert len(harvest.extract_failing_xml(ET.ElementTree(tree)).getroot().findall(".//testcase")) == 1
+            entry, write = harvest._harvest_file("markdown", {"databaseId": run}, "junit-py3.9", source, "pytest-3.9.xml", [])
+            assert find_corpus_leaks(write.content) == []
+            entries.append(entry)
+            # Simulate a corpus written by the old collector and an already-existing leaky golden.
+            (corpus / entry["xml"]).write_text(raw)
+            (corpus / entry["golden"]).write_text("stale &lt;runner-work&gt;")
+            entry["sha256"] = hashlib.sha256(raw.encode()).hexdigest()
+        (corpus / "manifest.json").write_text(json.dumps(entries))
+        outside = sandbox / "tests/fixtures/unrelated.xml"
+        outside.write_text('&lt;testsuite name="untouched"/&gt;')
+        redacted = _run_step(sandbox, "Redact corpus (Silver)")
+        assert redacted.returncode == 0, redacted.stdout + redacted.stderr
+        prepared = _run_step(sandbox, "Prepare corpus goldens")
+        assert prepared.returncode == 0, prepared.stdout + prepared.stderr
+        for entry in json.loads((corpus / "manifest.json").read_text()):
+            xml = corpus / entry["xml"]
+            assert entry["sha256"] == hashlib.sha256(xml.read_bytes()).hexdigest()
+            for path in (xml, corpus / entry["golden"]):
+                assert find_corpus_leaks(path.read_text()) == []
+            assert "FOUND: junit failures" in (corpus / entry["golden"]).read_text()
+        assert outside.read_text() == '&lt;testsuite name="untouched"/&gt;'
+        checked = _run_step(sandbox, "Validate corpus")
+&gt;       assert checked.returncode == 0, checked.stdout + checked.stderr
+E       AssertionError: ..F.s......                                                              [100%]
+E         =================================== FAILURES ===================================
+E         _____________ test_junit_evidence_identity_and_unavailable_records _____________
+E         
+E             def test_junit_evidence_identity_and_unavailable_records() -&gt; None:
+E                 ids = [entry["id"] for entry in JUNIT_ENTRIES]
+E                 assert len(ids) == len(set(ids))
+E                 for key in ("xml", "golden"):
+E                     assert len({entry[key] for entry in JUNIT_ENTRIES}) == len(ids)
+E             
+E         &gt;       ledger = json.loads((CORPUS / "unavailable-evidence.json").read_text(encoding="utf-8"))
+E                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E         
+E         tests/test_corpus.py:51: 
+E         _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+E         &lt;runner-work&gt;/cpython-3.11.18-linux-x86_64-gnu/lib/python3.11/pathlib.py:1058: in read_text
+E             with self.open(mode='r', encoding=encoding, errors=errors) as f:
+E                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E         _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+E         
+E         self = PosixPath('&lt;pytest-tmp&gt;/pytest-9/test_prepare_redacts_existing_0/tests/fixtures/junit_corpus/unavailable-evidence.json')
+E         mode = 'r', buffering = -1, encoding = 'utf-8', errors = None, newline = None
+E         
+E             def open(self, mode='r', buffering=-1, encoding=None,
+E                      errors=None, newline=None):
+E                 """
+E                 Open the file pointed by this path and return a file object, as
+E                 the built-in open() function does.
+E                 """
+E                 if "b" not in mode:
+E                     encoding = io.text_encoding(encoding)
+E         &gt;       return io.open(self, mode, buffering, encoding, errors, newline)
+E                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E         E       FileNotFoundError: [Errno 2] No such file or directory: '&lt;pytest-tmp&gt;/pytest-9/test_prepare_redacts_existing_0/tests/fixtures/junit_corpus/unavailable-evidence.json'
+E         
+E         &lt;runner-work&gt;/cpython-3.11.18-linux-x86_64-gnu/lib/python3.11/pathlib.py:1044: FileNotFoundError
+E         =========================== short test summary info ============================
+E         FAILED tests/test_corpus.py::test_junit_evidence_identity_and_unavailable_records - FileNotFoundError: [Errno 2] No such file or directory: '&lt;pytest-tmp&gt;/pytest-9/test_prepare_redacts_existing_0/tests/fixtures/junit_corpus/unavailable-evidence.json'
+E         1 failed, 9 passed, 1 skipped in 0.16s
+E         
+E       assert 1 == 0
+E        +  where 1 = CompletedProcess(args=['bash', '-e', '-c', 'uv run --project &lt;runner-work&gt; --off...isting_0/tests/fixtures/junit_corpus/unavailable-evidence.json\'\n1 failed, 9 passed, 1 skipped in 0.16s\n', stderr='').returncode
+
+tests/test_harvest_corpus.py:493: AssertionError</failure></testcase></testsuite></testsuites>

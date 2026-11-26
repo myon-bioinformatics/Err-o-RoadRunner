@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="2" tests="285" time="13.076" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_forms" name="test_missing_sibling_names_aoi_py" time="0.000"><failure message="Failed: DID NOT RAISE ModuleNotFoundError">monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0x&lt;addr&gt;&gt;
+
+    def test_missing_sibling_names_aoi_py(monkeypatch):
+        # 兄弟の場所は呼び出し側（Aoi の aoi.py）が入れる。DRAgoWing は探さず、aoi.py を案内して止まる
+        import dragowing.dragowing as forms
+        monkeypatch.setitem(sys.modules, "ask", None)
+&gt;       with pytest.raises(ModuleNotFoundError, match=r"aoi\.py") as caught:
+E       Failed: DID NOT RAISE ModuleNotFoundError
+
+tests/test_forms.py:132: Failed</failure></testcase></testsuite></testsuites>

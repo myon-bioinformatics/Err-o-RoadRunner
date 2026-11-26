@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="302" time="17.596" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_fleet" name="test_project_and_lock_declare_python311_without_runtime_dependencies" time="0.001"><failure message="AssertionError: runtime-compatibility.yml: job runtime: matrix [] does not start at the floor 3.11">def test_project_and_lock_declare_python311_without_runtime_dependencies():
+        project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+        # pyproject and uv.lock agree on the floor, and the runtime matrix starts there (shared check).
+&gt;       assert fleet.python_floor(ROOT) == ("3.11", ["3.11", "3.12", "3.13", "3.14"])
+               ^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_fleet.py:113: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+root = PosixPath('&lt;runner-work&gt;'), job = 'runtime'
+workflow = 'runtime-compatibility.yml'
+
+    def python_floor(root, job="runtime", workflow="runtime-compatibility.yml") -&gt; tuple:
+        """``(floor, versions)``: the supported Python floor and the stdlib runtime job's version list.
+    
+        ``[project] requires-python`` of ``pyproject.toml`` is ``&gt;=FLOOR`` and equals
+        the ``requires-python`` of ``uv.lock``; the job's matrix ``python`` (or
+        ``python-version``) list starts at that floor, every ``include`` row names
+        a listed version, and the job runs ``python -S -m unittest`` without
+        ``continue-on-error``. The matrix itself stays the child's expectation.
+        """
+        root = Path(root)
+        section = re.split(r"(?m)^\[", ("\n" + (root / "pyproject.toml").read_text(encoding="utf-8")).partition("\n[project]\n")[2])[0]
+        project = re.search(r'(?m)^requires-python\s*=\s*"(&gt;=(\d+\.\d+))"', section)
+        assert project, "pyproject.toml: [project] requires-python is not &gt;=X.Y"
+        lock = re.search(r'(?m)^requires-python\s*=\s*"([^"]*)"', (root / "uv.lock").read_text(encoding="utf-8"))
+        assert lock and lock[1] == project[1], f"uv.lock requires-python differs from pyproject.toml {project[1]}"
+        body, where = workflow_job(root, job, workflow), f"{workflow}: job {job}"
+        listed = re.search(r"(?m)^\s+python(?:-version)?:\s*\[([^\]]*)\]", body)
+        versions = re.findall(r"\d+\.\d+", listed[1]) if listed else []
+        order = sorted(versions, key=lambda version: tuple(map(int, version.split("."))))
+&gt;       assert order and order[0] == project[2], f"{where}: matrix {versions} does not start at the floor {project[2]}"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: runtime-compatibility.yml: job runtime: matrix [] does not start at the floor 3.11
+
+vendor/fleet_check.py:416: AssertionError</failure></testcase><testcase classname="tests.test_fleet" name="test_supported_runtime_versions_keep_existing_os_coverage" time="0.001"><failure message="assert None is not None">def test_supported_runtime_versions_keep_existing_os_coverage():
+        block = fleet.workflow_job(ROOT, "runtime", "runtime-compatibility.yml")
+        matrix = re.search(r"(?ms)^      matrix:\n(.*?)(?=^    steps:)", block)
+&gt;       assert matrix is not None
+E       assert None is not None
+
+tests/test_fleet.py:122: AssertionError</failure></testcase></testsuite></testsuites>
