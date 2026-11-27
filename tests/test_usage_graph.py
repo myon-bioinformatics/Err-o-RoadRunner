@@ -246,3 +246,38 @@ def test_committed_snapshot_harvest_sources_match_the_source_list():
     expected = {"%s/%s" % (sources["org"], name) for name in sources["repos"]}
     flagged = {row["repository"] for row in footprint["repositories"] if row["harvest_source"]}
     assert flagged == expected
+
+
+def test_case_graph_links_saved_evidence_from_cli_and_shares_ci_run(tmp_path):
+    corpus = _corpus(tmp_path)
+    (corpus / "cases").mkdir()
+    (corpus / "cases/demo.xml").write_text("<testsuite/>", encoding="utf-8")
+    manifest = json.loads((corpus / "manifest.json").read_text())
+    manifest.append(dict(manifest[0], id="demo_2"))
+    (corpus / "manifest.json").write_text(json.dumps(manifest))
+    graph = usage_graph.case_graph_from_corpus(corpus)
+    assert usage_graph.violations(graph, usage_graph.CASE_VOCABULARY) == []
+    assert len([n for n in graph["nodes"] if n["type"] == "CIRun"]) == 1
+    expected = {"source": "case:demo_1:assessment", "relation": "supported_by",
+                "target": "case:demo_1:triage"}
+    assert expected in graph["edges"] and expected in graph["expected_links"]
+    result = run_cli(SCRIPT, "case-graph", "--corpus", str(corpus), "--case", "demo_2",
+                     python_options=("-S",), cwd=ROOT)
+    assert result.returncode == 0, result.stderr
+    assert [n["id"] for n in json.loads(result.stdout)["nodes"] if n["type"] == "FailureCase"] == ["case:demo_2"]
+
+
+def test_case_graph_distinguishes_missing_file_and_historical_collision(tmp_path):
+    corpus = _corpus(tmp_path)
+    row = json.loads((corpus / "manifest.json").read_text())[0]
+    (corpus / "unavailable-evidence.json").write_text(json.dumps({"records": [
+        {"original_manifest_row": dict(row, sha256="lost"), "surviving_sha256": "current"}
+    ]}))
+    graph = usage_graph.case_graph_from_corpus(corpus, case_id="demo_1")
+    nodes = [n for n in graph["nodes"] if n["type"] == "JUnitEvidence"]
+    assert {n["status"] for n in nodes} == {"lost-original", "missing"}
+    assert all(n["available"] is False for n in nodes)
+    assert len([e for e in graph["expected_links"] if e["relation"] == "has_junit"]) == 2
+    assert not any(e["relation"] == "has_junit" for e in graph["edges"])
+    assert any(e["relation"] == "documented_by" for e in graph["edges"])
+    assert all(not n.get("path") for n in nodes if n["status"] == "lost-original")

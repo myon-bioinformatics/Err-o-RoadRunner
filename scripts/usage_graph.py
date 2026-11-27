@@ -21,6 +21,7 @@ import json
 import sys
 from collections import Counter
 from pathlib import Path
+from urllib.parse import quote
 
 ROOT = Path(__file__).resolve().parents[1]
 FOOTPRINT_SCHEMA = "errorr-footprint/v1"
@@ -172,8 +173,8 @@ def _select_manifest_row(corpus, rows):
     return matched[0], omitted, duplicates + len(omitted)
 
 
-def events_from_corpus(corpus):
-    """Read manifest.json and each golden. Returns ``(events, stats)``."""
+def _corpus_rows(corpus):
+    """Resolve each manifest ID to its surviving row, retaining collision accounting."""
     corpus = Path(corpus)
     manifest = load_json(corpus / "manifest.json")
     if not isinstance(manifest, list):
@@ -186,7 +187,7 @@ def events_from_corpus(corpus):
             groups[case_id] = []
             order.append(case_id)
         groups[case_id].append(entry)
-    events = []
+    rows = []
     duplicates = 0
     collisions = 0
     for case_id in order:
@@ -194,20 +195,29 @@ def events_from_corpus(corpus):
         duplicates += dropped - len(omitted)
         collisions += len(omitted)
         _require_repo(entry["repo"], case_id)
+        rows.append((entry, omitted))
+    return rows, {
+        "manifest_rows": len(manifest),
+        "duplicate_manifest_rows": duplicates,
+        "colliding_manifest_rows": collisions,
+    }
+
+
+def events_from_corpus(corpus):
+    """Read manifest.json and each golden. Returns ``(events, stats)``."""
+    corpus = Path(corpus)
+    rows, stats = _corpus_rows(corpus)
+    events = []
+    for entry, omitted in rows:
         golden = corpus / entry["golden"]
         if not golden.is_file():
-            raise ValueError("missing golden for %s" % case_id)
+            raise ValueError("missing golden for %s" % entry["id"])
         event = event_from_golden(entry, golden.read_text(encoding="utf-8"))
         event["source_file"] = entry.get("source_file") or ""
         event["sha256"] = entry.get("sha256") or ""
         event["colliding_sources"] = omitted
         events.append(event)
     events.sort(key=lambda item: (item["observed_at"], item["repository"], item["case_id"]))
-    stats = {
-        "manifest_rows": len(manifest),
-        "duplicate_manifest_rows": duplicates,
-        "colliding_manifest_rows": collisions,
-    }
     return events, stats
 
 
@@ -417,6 +427,152 @@ def graph_from_footprint(doc):
     nodes.sort(key=lambda node: node["id"])
     edges.sort(key=lambda edge: (edge["relation"], edge["source"], edge["target"], edge.get("basis") or ""))
     return {"nodes": nodes, "edges": edges}
+
+CASE_VOCABULARY = {
+    "ran": (["Repository"], "CIRun"),
+    "collected": (["CIRun"], "FailureCase"),
+    "has_junit": (["FailureCase"], "JUnitEvidence"),
+    "has_triage": (["FailureCase"], "TriageEvidence"),
+    "derived_from": (["TriageEvidence"], "JUnitEvidence"),
+    "has_assessment": (["FailureCase"], "TriageAssessment"),
+    "supported_by": (["TriageAssessment"], "TriageEvidence"),
+    "records_missing": (["FailureCase"], "UnavailableRecord"),
+    "documented_by": (["UnavailableRecord"], "EvidenceLedger"),
+    "explains_unavailable": (["UnavailableRecord"], "JUnitEvidence"),
+}
+
+
+def _evidence_path(corpus, relative):
+    relative = Path(relative)
+    path = corpus / relative
+    if relative.is_absolute() or ".." in relative.parts or not path.resolve().is_relative_to(corpus.resolve()):
+        raise ValueError("evidence path outside corpus: %s" % relative)
+    return path
+
+
+def case_graph_from_corpus(corpus, *, case_id=None, repository=None):
+    """Project the saved, redacted evidence into a case-level ONTO graph."""
+    corpus = Path(corpus)
+    rows, _ = _corpus_rows(corpus)
+    ledger_path = corpus / "unavailable-evidence.json"
+    ledger = load_json(ledger_path)["records"] if ledger_path.is_file() else []
+    nodes, edges, cases = {}, [], {}
+
+    def node(id_, kind, name, **fields):
+        nodes.setdefault(id_, {"id": id_, "type": kind, "name": name, **fields})
+        return id_
+
+    def edge(source, relation, target, *, present=True):
+        if present:
+            edges.append({"source": source, "relation": relation, "target": target})
+
+    def selected(row):
+        return (case_id is None or case_id == row["id"]) and (
+            repository is None or repository.casefold() == row["repo"].casefold())
+
+    def place_case(row, id_, **fields):
+        name = _require_repo(row["repo"], row["id"])
+        run = int(row["run_id"])
+        repo = node("repo:" + name.casefold(), "Repository", name)
+        ci = node(f"run:{name.casefold()}:{run}", "CIRun", f"CI run {run}",
+                  url=f"https://github.com/{name}/actions/runs/{run}")
+        case = node(id_, "FailureCase", row["id"], repository=name, run_id=run,
+                    artifact=row.get("artifact"), source_file=row.get("source_file"),
+                    observed_at=row.get("date"), **fields)
+        edge(repo, "ran", ci)
+        cases[case] = ci
+        edge(ci, "collected", case)
+        return case
+
+    for row, _ in rows:
+        if not selected(row):
+            continue
+        case = place_case(row, "case:" + quote(row["id"], safe=""))
+        xml = _evidence_path(corpus, row["xml"])
+        golden = _evidence_path(corpus, row["golden"])
+        has_xml = xml.is_file()
+        has_golden = golden.is_file()
+        declared_sha = row.get("sha256")
+        actual_sha = _sha256(xml) if has_xml else None
+        matches = has_xml and (not declared_sha or declared_sha == actual_sha)
+        junit = node(case + ":junit", "JUnitEvidence", "JUnit XML", available=bool(matches),
+                     path=row["xml"], sha256=actual_sha, expected_sha256=declared_sha,
+                     status="available" if matches else ("digest-mismatch" if has_xml else "missing"))
+        triage = node(case + ":triage", "TriageEvidence", "Saved triage output",
+                      available=has_golden, path=row["golden"],
+                      sha256=_sha256(golden) if has_golden else None)
+        edge(case, "has_junit", junit, present=matches)
+        edge(case, "has_triage", triage, present=has_golden)
+        edge(triage, "derived_from", junit, present=has_golden and matches)
+        if has_golden:
+            event = event_from_golden(row, golden.read_text(encoding="utf-8"))
+            assessment = node(case + ":assessment", "TriageAssessment", event["classification"],
+                              **{k: event[k] for k in ("failure_count", "error_count", "found_keys")})
+            edge(case, "has_assessment", assessment)
+            edge(assessment, "supported_by", triage)
+
+    for item in ledger:
+        row = item["original_manifest_row"]
+        if not selected(row):
+            continue
+        # A recorded path may now hold a different artifact. Never attach it to the historical case.
+        token = hashlib.sha256(json.dumps(row, sort_keys=True).encode()).hexdigest()
+        case = place_case(row, "historical:" + token, historical=True)
+        missing = node(case + ":missing", "UnavailableRecord", "Original evidence unavailable",
+                       expected_sha256=row.get("sha256"), surviving_sha256=item.get("surviving_sha256"))
+        ledger_node = node("ledger:unavailable", "EvidenceLedger", "Unavailable evidence ledger",
+                           path=ledger_path.name, available=True)
+        junit = node(case + ":junit", "JUnitEvidence", "Historical JUnit XML", available=False,
+                     status="lost-original", expected_sha256=row.get("sha256"))
+        edge(case, "records_missing", missing)
+        edge(missing, "explains_unavailable", junit)
+        edge(missing, "documented_by", ledger_node)
+
+    if case_id is not None and not cases:
+        raise ValueError("case not found: %s" % case_id)
+
+    # Declare the coverage contract independently of the edges produced above.
+    expected = []
+    for case, run in cases.items():
+        junit, triage, assessment = (case + ":" + role for role in ("junit", "triage", "assessment"))
+        required = [(run, "collected", case), (case, "has_junit", junit)]
+        if not nodes[case].get("historical"):
+            required.extend([(case, "has_triage", triage), (triage, "derived_from", junit)])
+        if assessment in nodes:
+            required.extend([(case, "has_assessment", assessment), (assessment, "supported_by", triage)])
+        expected.extend({"source": a, "relation": b, "target": c} for a, b, c in required)
+
+    def key(e):
+        return e["source"], e["relation"], e["target"]
+
+    graph = {"schema": "errorr-case-graph/v1", "nodes": list(nodes.values()),
+             "edges": list({key(e): e for e in edges}.values()), "expected_links": expected}
+    graph["nodes"].sort(key=lambda n: n["id"])
+    graph["edges"].sort(key=key)
+    expected.sort(key=key)
+    findings = violations(graph, CASE_VOCABULARY)
+    if findings:
+        raise ValueError("case graph violates its vocabulary: %s" % findings[0]["detail"])
+    return graph
+
+
+def case_markdown(graph):
+    """A small Mermaid view plus original evidence links; no inline evidence bodies."""
+    linkroot = "https://github.com/myon-bioinformatics/Err-o-RoadRunner/blob/main/tests/fixtures/junit_corpus/"
+    out = ["# ErrORR case evidence", "", mermaid_from_graph(graph).rstrip(), "",
+           "Triage assessments describe available failure signals, not confirmed root causes.", "",
+           "## Sources", ""]
+    for n in graph["nodes"]:
+        if n["type"] == "CIRun":
+            out.append(f"- [{n['name']}]({n['url']})")
+        if n.get("path") and n.get("available"):
+            suffix = " (SHA-256: `%s`)" % n["sha256"] if n.get("sha256") else ""
+            out.append(f"- [{n['name']}]({linkroot}{quote(n['path'])}){suffix}")
+        if n["type"] == "UnavailableRecord":
+            out.append("- Historical original unavailable; the current file is not its evidence.")
+        elif n.get("available") is False:
+            out.append(f"- {n['name']}: unavailable or does not match the recorded digest.")
+    return "\n".join(out) + "\n"
 
 
 def violations(graph, relations=None):
@@ -683,8 +839,26 @@ def main(argv=None):
     html.add_argument("footprint", type=Path)
     html.add_argument("-o", "--output", type=Path, required=True)
 
+    detail = sub.add_parser("case-graph", help="build case-level evidence nodes from the current local corpus")
+    detail.add_argument("--corpus", type=Path, default=ROOT / "tests" / "fixtures" / "junit_corpus")
+    detail.add_argument("--case", dest="case_id", help="focus on one manifest case ID")
+    detail.add_argument("--repository", help="filter by owner/name")
+    detail.add_argument("--format", choices=("json", "mermaid", "markdown"), default="json")
     args = parser.parse_args(argv)
     try:
+        if args.command == "case-graph":
+            if args.format != "json" and not args.case_id:
+                parser.error("--format mermaid/markdown requires --case to keep the view readable")
+            if args.format == "markdown" and args.corpus.resolve() != (ROOT / "tests" / "fixtures" / "junit_corpus").resolve():
+                parser.error("Markdown source links require the checked-in corpus; use JSON for a custom corpus")
+            detail_graph = case_graph_from_corpus(args.corpus, case_id=args.case_id, repository=args.repository)
+            if args.format == "json":
+                print(json.dumps(detail_graph, indent=2, ensure_ascii=False))
+            elif args.format == "mermaid":
+                print(mermaid_from_graph(detail_graph), end="")
+            else:
+                print(case_markdown(detail_graph), end="")
+            return 0
         if args.command == "from-checkout":
             from_checkout(
                 args.adoption, args.corpus, args.harvest_sources, args.out, args.events,

@@ -63,6 +63,16 @@ This complementary supplied panel shows the challenges, roles and intended outco
 
 Which public repositories actually call ErrORR, and what the harvested JUnit goldens say after triage, is summarized in [`docs/usage/fleet-graph.md`](docs/usage/fleet-graph.md). The record shape is [`docs/errorr-footprint.md`](docs/errorr-footprint.md). Regenerate the snapshot with `python3 -S scripts/usage_graph.py from-checkout` (add an ONTO checkout on `PYTHONPATH` for the Mermaid page). It is a point-in-time view, not a live counter.
 
+For **case-level provenance** from the current checkout (no API or CCCC copy), use:
+```bash
+python3 -S scripts/usage_graph.py case-graph > failures.json
+PYTHONPATH=/path/to/ONTO python3 -S scripts/usage_graph.py case-graph \
+  --case gh_identity_38137922161_junit-py3.10_0 --format markdown
+```
+Use `--repository OWNER/NAME` for a smaller JSON graph. The Markdown view links
+the original Actions run, the redacted JUnit XML and saved triage output.
+See [case graph semantics](docs/errorr-footprint.md#case-level-provenance). See the [rendered case example](docs/usage/case-example.md).
+
 ## CLI usage
 
 Install the distribution as **`err-o-roadrunner`** (PyPI-style package name). The console command is **`erroroadrunner`**:
