@@ -66,7 +66,7 @@ def test_latest_python_policy_is_applied_during_setup_only():
     assert "activate-environment: true" in step
     assert text.count("UV_PYTHON_PREFERENCE") == 1
     assert "UV_PYTHON_PREFERENCE" not in job.split("steps:", 1)[0]
-    assert """python-version: ${{ github.event_name == 'pull_request' && fromJSON('["3.11", "3.15"]') || fromJSON('["3.11", "3.12", "3.13", "3.14", "3.15", "3.x"]') }}""" in job
+    assert """python-version: ${{ github.event_name == 'pull_request' && fromJSON('["3.15"]') || fromJSON('["3.11", "3.12", "3.13", "3.14", "3.15", "3.x"]') }}""" in job
     assert "junit-py3.x/junit.xml" in text
 
 
