@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="17" tests="485" time="24.940" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_site" name="test_tools_built_from_other_repositories_never_404" time="0.001"><failure message="AssertionError: tools/image-studio/index.html&#10;assert '&lt;a href=&quot;../../index.html#tools&quot;&gt;' in '&lt;!doctype html&gt;\n&lt;html lang=&quot;en&quot;&gt;&lt;head&gt;&lt;meta charset=&quot;utf-8&quot;&gt;&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width,initia...th,mulberry32,doorDraw,doorOptions,bindDoor};\nif(typeof document!==&quot;undefined&quot;)bindDoor();\n&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;\n'">def test_tools_built_from_other_repositories_never_404():
+        """🧰 Without a recording (tests, a failed clone) every entry of a tool built from another repository is a ⏸ page with
+        the way back at its own depth; a failed rebuild keeps what was there."""
+        for key, (repository, folder, entries) in PAGES.TOOL_SOURCES.items():
+            for entry in entries:
+                name = f'{folder}/{entry}index.html'
+                html = (SITE / name).read_text(encoding='utf-8')
+                if key in MADE:                                   # built from a pinned checkout: the way back, no ⏸
+                    assert '⏸' not in html, name
+                    if key == 'ironmate':
+                        assert 'data-testid="portfolio-back"' not in html, name
+                        assert f'&lt;a class="ui-world-home" href="{"../" * name.count("/")}index.html#tools"' in html, name
+                    else:
+                        assert 'data-testid="portfolio-back"' in html, name
+                    continue
+                assert '⏸' in html and f'https://github.com/{repository}' in html, name
+&gt;               assert f'&lt;a href="{"../" * name.count("/")}index.html#tools"&gt;' in html, name
+E               AssertionError: tools/image-studio/index.html
+E               assert '&lt;a href="../../index.html#tools"&gt;' in '&lt;!doctype html&gt;\n&lt;html lang="en"&gt;&lt;head&gt;&lt;meta charset="utf-8"&gt;&lt;meta name="viewport" content="width=device-width,initia...th,mulberry32,doorDraw,doorOptions,bindDoor};\nif(typeof document!=="undefined")bindDoor();\n&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;\n'
+
+tests/test_site.py:401: AssertionError</failure></testcase></testsuite></testsuites>

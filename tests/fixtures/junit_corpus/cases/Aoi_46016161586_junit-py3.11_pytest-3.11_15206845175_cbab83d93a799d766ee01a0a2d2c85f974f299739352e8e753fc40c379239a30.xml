@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="43" tests="4602" time="341.131" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_workflows" name="test_parent_reusable_workflow_uses_are_one_full_sha" time="0.001"><failure message="AssertionError: ['6c2558c4251698c50bc07bad86fb49f902b2738f', '6c2558c4251698c50bc07bad86fb49f902b2738f', '6c2558c4251698c50bc07bad86fb...698c50bc07bad86fb49f902b2738f', '6c2558c4251698c50bc07bad86fb49f902b2738f', '6c2558c4251698c50bc07bad86fb49f902b2738f']&#10;assert {'6c2558c4251...49f902b2738f'} == {'43cfe1df924...18102c38f7f3'}&#10;  &#10;  Extra items in the left set:&#10;  '6c2558c4251698c50bc07bad86fb49f902b2738f'&#10;  Extra items in the right set:&#10;  '43cfe1df924ea96ca44f47a6771c18102c38f7f3'&#10;  &#10;  Full diff:&#10;    {&#10;  -     '43cfe1df924ea96ca44f47a6771c18102c38f7f3',&#10;  +     '6c2558c4251698c50bc07bad86fb49f902b2738f',&#10;    }">def test_parent_reusable_workflow_uses_are_one_full_sha():
+        """Parent reusable-workflow uses refs are the reviewed 40-character SHA.
+    
+        Runtime tool checkouts are resolved separately and are outside this contract.
+        """
+        at = chr(64)
+        pattern = re.compile(
+            r"uses:\s*['\"]?"
+            + re.escape(PARENT)
+            + r"/\.github/workflows/[^\s'\"]+"
+            + at
+            + r"([^\s'\"]+)"
+        )
+        pins = []
+        for path in sorted((PINS_ROOT / ".github/workflows").glob("*")):
+            if path.suffix not in (".yml", ".yaml"):
+                continue
+            pins.extend(pattern.findall(path.read_text(encoding="utf-8")))
+        assert pins, "parent reusable workflow uses must remain observable"
+&gt;       assert set(pins) == {PARENT_WORKFLOW_PIN}, pins
+E       AssertionError: ['6c2558c4251698c50bc07bad86fb49f902b2738f', '6c2558c4251698c50bc07bad86fb49f902b2738f', '6c2558c4251698c50bc07bad86fb...698c50bc07bad86fb49f902b2738f', '6c2558c4251698c50bc07bad86fb49f902b2738f', '6c2558c4251698c50bc07bad86fb49f902b2738f']
+E       assert {'6c2558c4251...49f902b2738f'} == {'43cfe1df924...18102c38f7f3'}
+E         
+E         Extra items in the left set:
+E         '6c2558c4251698c50bc07bad86fb49f902b2738f'
+E         Extra items in the right set:
+E         '43cfe1df924ea96ca44f47a6771c18102c38f7f3'
+E         
+E         Full diff:
+E           {
+E         -     '43cfe1df924ea96ca44f47a6771c18102c38f7f3',
+E         +     '6c2558c4251698c50bc07bad86fb49f902b2738f',
+E           }
+
+tests/test_workflows.py:676: AssertionError</failure></testcase></testsuite></testsuites>

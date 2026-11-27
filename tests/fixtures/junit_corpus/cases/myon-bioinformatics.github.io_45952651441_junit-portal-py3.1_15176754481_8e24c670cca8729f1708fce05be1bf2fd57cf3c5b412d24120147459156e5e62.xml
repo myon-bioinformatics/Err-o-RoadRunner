@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="17" tests="484" time="10.954" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_site" name="test_home_screen_every_local_link_and_asset_resolves" time="0.812"><failure message="AssertionError: ('tools/demos/world.html', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAPCAYAAADkmO9VAAAAt3RFWHRpcm9ubWF0ZQB7...aWAzj9C4uF8A0wOSxGYg3Mgh5DWYoXgNxhRVy0iDJQPTEim4YusFEeZkYrxJtGHoYorsWW9iSnOWQCwOYZmxi6AAAvXBsoeTic1QAAAAASUVORK5CYII=')&#10;assert ('data' == 'https'&#10;  &#10;  - https&#10;  + data or False)&#10; +  where False = &lt;built-in method startswith of str object at 0x&lt;addr&gt;&gt;('/tools/mcp/execution/')&#10;[+1 more line; full report in element text]">def test_home_screen_every_local_link_and_asset_resolves():
+        for name in ("index.html", *TOOL_PAGES):
+            page = parse_page(SITE / name)
+            for ref in page.refs:
+                url = urlparse(ref)
+                if url.scheme or ref.startswith("/"):                   # 🌐 other sites, or the lab's Pages on this host
+&gt;                   assert url.scheme == "https" or ref.startswith("/tools/mcp/execution/"), (name, ref)
+E                   AssertionError: ('tools/demos/world.html', 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAPCAYAAADkmO9VAAAAt3RFWHRpcm9ubWF0ZQB7...aWAzj9C4uF8A0wOSxGYg3Mgh5DWYoXgNxhRVy0iDJQPTEim4YusFEeZkYrxJtGHoYorsWW9iSnOWQCwOYZmxi6AAAvXBsoeTic1QAAAAASUVORK5CYII=')
+E                   assert ('data' == 'https'
+E                     
+E                     - https
+E                     + data or False)
+E                    +  where False = &lt;built-in method startswith of str object at 0x&lt;addr&gt;&gt;('/tools/mcp/execution/')
+E                    +    where &lt;built-in method startswith of str object at 0x&lt;addr&gt;&gt; = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAPCAYAAADkmO9VAAAAt3RFWHRpcm9ubWF0ZQB7InNjaGVtYSI6Imlyb25tYXRlLXB...IaWAzj9C4uF8A0wOSxGYg3Mgh5DWYoXgNxhRVy0iDJQPTEim4YusFEeZkYrxJtGHoYorsWW9iSnOWQCwOYZmxi6AAAvXBsoeTic1QAAAAASUVORK5CYII='.startswith
+
+tests/test_site.py:902: AssertionError</failure></testcase></testsuite></testsuites>

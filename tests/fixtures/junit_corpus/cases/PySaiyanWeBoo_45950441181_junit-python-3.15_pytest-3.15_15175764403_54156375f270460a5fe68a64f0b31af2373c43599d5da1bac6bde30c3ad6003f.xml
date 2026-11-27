@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="3" tests="6381" time="111.691" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_pages.BtkAdapterTests" name="test_adapters_meet_the_contract_and_name_real_pages" time="0.030"><failure message="KeyError: 'click'">self = &lt;test_pages.BtkAdapterTests testMethod=test_adapters_meet_the_contract_and_name_real_pages&gt;
+
+    def test_adapters_meet_the_contract_and_name_real_pages(self):
+        w = pysaiyanweboo
+        pages = w.example_pages()
+        self.assertEqual(sorted(w.BTK_ADAPTERS), ["web-ui-clipboard-shelf", "web-ui-coordinates", "web-ui-current-item", "web-ui-door", "web-ui-image-stamp", "web-ui-image-studio", "web-ui-irony", "web-ui-mcp-lab", "web-ui-mcp-send", "web-ui-native-patterns", "web-ui-pattern-run", "web-ui-patterns", "web-ui-photo-studio", "web-ui-playground", "web-ui-screens", "web-ui-showcase", "web-ui-test-report"])
+        for adapter_id in w.BTK_ADAPTERS:
+&gt;           config = w.btk_adapter(adapter_id)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_pages.py:1889: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+adapter_id = 'web-ui-current-item', url = None
+
+    def btk_adapter(adapter_id: str, url: str | None = None) -&gt; dict[str, Any]:
+        """The ``btk-platform-adapter/1`` for one of ``BTK_ADAPTERS``; ``url`` replaces the default local address (``BTK_ADAPTER_BASE`` + the page)."""
+        try:
+            spec = BTK_ADAPTERS[adapter_id]
+        except KeyError:
+            raise ValueError(f"unknown adapter: {adapter_id!r}; one of {', '.join(sorted(BTK_ADAPTERS))}") from None
+&gt;       return {"schema": "btk-platform-adapter/1", "id": adapter_id, "url": url or btk_adapter_url(spec), "elements": list(spec["elements"]), "click": dict(spec["click"])}
+                                                                                                                                                             ^^^^^^^^^^^^^
+E       KeyError: 'click'
+
+pysaiyanweboo.py:7113: KeyError</failure></testcase></testsuite></testsuites>

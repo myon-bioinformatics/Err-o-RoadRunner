@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="16" tests="2517" time="114.053" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_pages_tools" name="test_static_allowlist_excludes_private_scenes_and_generation_inputs" time="0.136"><failure message="AssertionError: assert {'.nojekyll',...een.svg', ...} == {'.nojekyll',...een.svg', ...}&#10;  &#10;  Extra items in the left set:&#10;  'tools/records.js'&#10;  'tools/async-task.js'&#10;  &#10;  Full diff:&#10;    {&#10;        '.nojekyll',&#10;        'brand/app-192.png',&#10;        'brand/app-512.png',&#10;        'brand/app-maskable-512.png',&#10;        'brand/apple-touch-icon.png',&#10;        'brand/dark-green.svg',&#10;        'brand/famicom.svg',&#10;        'brand/favicon-16.png',&#10;        'brand/favicon-32.png',&#10;        'brand/favicon-48.png',&#10;        'brand/favicon.ico',&#10;        'brand/gameboy.svg',&#10;        'brand/heatmap.svg',&#10;        'brand/hero.svg',&#10;        'brand/icon-192.png',&#10;        'brand/icon.svg',&#10;        'brand/index.html',&#10;        'brand/manifest.webmanifest',&#10;        'brand/mono.svg',&#10;        'brand/pixel-3d.svg',&#10;        'index.html',&#10;        'slides/index.html',&#10;        'slides/phone/index.html',&#10;        'studio.js',&#10;        'style.css',&#10;  +     'tools/async-task.js',&#10;        'tools/index.html',&#10;  +     'tools/records.js',&#10;    }">tests/test_pages_tools.py:45: in test_static_allowlist_excludes_private_scenes_and_generation_inputs
+    assert {p.relative_to(target).as_posix() for p in target.rglob('*') if p.is_file()} == {
+E   AssertionError: assert {'.nojekyll',...een.svg', ...} == {'.nojekyll',...een.svg', ...}
+E     
+E     Extra items in the left set:
+E     'tools/records.js'
+E     'tools/async-task.js'
+E     
+E     Full diff:
+E       {
+E           '.nojekyll',
+E           'brand/app-192.png',
+E           'brand/app-512.png',
+E           'brand/app-maskable-512.png',
+E           'brand/apple-touch-icon.png',
+E           'brand/dark-green.svg',
+E           'brand/famicom.svg',
+E           'brand/favicon-16.png',
+E           'brand/favicon-32.png',
+E           'brand/favicon-48.png',
+E           'brand/favicon.ico',
+E           'brand/gameboy.svg',
+E           'brand/heatmap.svg',
+E           'brand/hero.svg',
+E           'brand/icon-192.png',
+E           'brand/icon.svg',
+E           'brand/index.html',
+E           'brand/manifest.webmanifest',
+E           'brand/mono.svg',
+E           'brand/pixel-3d.svg',
+E           'index.html',
+E           'slides/index.html',
+E           'slides/phone/index.html',
+E           'studio.js',
+E           'style.css',
+E     +     'tools/async-task.js',
+E           'tools/index.html',
+E     +     'tools/records.js',
+E       }</failure></testcase></testsuite></testsuites>
