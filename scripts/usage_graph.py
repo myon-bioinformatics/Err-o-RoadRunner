@@ -450,6 +450,13 @@ def _evidence_path(corpus, relative):
     return path
 
 
+def _add_case_assessment(node, edge, case, triage, event):
+    assessment = node(case + ":assessment", "TriageAssessment", event["classification"],
+                      **{k: event[k] for k in ("failure_count", "error_count", "found_keys")})
+    edge(case, "has_assessment", assessment)
+    edge(assessment, "supported_by", triage)
+
+
 def case_graph_from_corpus(corpus, *, case_id=None, repository=None):
     """Project the saved, redacted evidence into a case-level ONTO graph."""
     corpus = Path(corpus)
@@ -457,6 +464,7 @@ def case_graph_from_corpus(corpus, *, case_id=None, repository=None):
     ledger_path = corpus / "unavailable-evidence.json"
     ledger = load_json(ledger_path)["records"] if ledger_path.is_file() else []
     nodes, edges, cases = {}, [], {}
+    saved_triage = set()
 
     def node(id_, kind, name, **fields):
         nodes.setdefault(id_, {"id": id_, "type": kind, "name": name, **fields})
@@ -492,6 +500,8 @@ def case_graph_from_corpus(corpus, *, case_id=None, repository=None):
         golden = _evidence_path(corpus, row["golden"])
         has_xml = xml.is_file()
         has_golden = golden.is_file()
+        if has_golden:
+            saved_triage.add(case)
         declared_sha = row.get("sha256")
         actual_sha = _sha256(xml) if has_xml else None
         matches = has_xml and (not declared_sha or declared_sha == actual_sha)
@@ -506,10 +516,7 @@ def case_graph_from_corpus(corpus, *, case_id=None, repository=None):
         edge(triage, "derived_from", junit, present=has_golden and matches)
         if has_golden:
             event = event_from_golden(row, golden.read_text(encoding="utf-8"))
-            assessment = node(case + ":assessment", "TriageAssessment", event["classification"],
-                              **{k: event[k] for k in ("failure_count", "error_count", "found_keys")})
-            edge(case, "has_assessment", assessment)
-            edge(assessment, "supported_by", triage)
+            _add_case_assessment(node, edge, case, triage, event)
 
     for item in ledger:
         row = item["original_manifest_row"]
@@ -538,7 +545,7 @@ def case_graph_from_corpus(corpus, *, case_id=None, repository=None):
         required = [(run, "collected", case), (case, "has_junit", junit)]
         if not nodes[case].get("historical"):
             required.extend([(case, "has_triage", triage), (triage, "derived_from", junit)])
-        if assessment in nodes:
+        if case in saved_triage:
             required.extend([(case, "has_assessment", assessment), (assessment, "supported_by", triage)])
         expected.extend({"source": a, "relation": b, "target": c} for a, b, c in required)
 
@@ -556,9 +563,11 @@ def case_graph_from_corpus(corpus, *, case_id=None, repository=None):
     return graph
 
 
-def case_markdown(graph):
-    """A small Mermaid view plus original evidence links; no inline evidence bodies."""
-    linkroot = "https://github.com/myon-bioinformatics/Err-o-RoadRunner/blob/main/tests/fixtures/junit_corpus/"
+def case_markdown(graph, revision):
+    """Render source links pinned to the caller's known corpus revision."""
+    if not revision or len(revision) != 40 or any(c not in "0123456789abcdef" for c in revision):
+        raise ValueError("Markdown evidence links require --revision with a full Git commit SHA")
+    linkroot = f"https://github.com/myon-bioinformatics/Err-o-RoadRunner/blob/{revision}/tests/fixtures/junit_corpus/"
     out = ["# ErrORR case evidence", "", mermaid_from_graph(graph).rstrip(), "",
            "Triage assessments describe available failure signals, not confirmed root causes.", "",
            "## Sources", ""]
@@ -844,6 +853,7 @@ def main(argv=None):
     detail.add_argument("--case", dest="case_id", help="focus on one manifest case ID")
     detail.add_argument("--repository", help="filter by owner/name")
     detail.add_argument("--format", choices=("json", "mermaid", "markdown"), default="json")
+    detail.add_argument("--revision", help="full Git commit SHA of the inspected corpus (required for Markdown)")
     args = parser.parse_args(argv)
     try:
         if args.command == "case-graph":
@@ -857,7 +867,7 @@ def main(argv=None):
             elif args.format == "mermaid":
                 print(mermaid_from_graph(detail_graph), end="")
             else:
-                print(case_markdown(detail_graph), end="")
+                print(case_markdown(detail_graph, args.revision), end="")
             return 0
         if args.command == "from-checkout":
             from_checkout(

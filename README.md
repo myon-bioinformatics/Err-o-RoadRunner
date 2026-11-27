@@ -67,7 +67,7 @@ For **case-level provenance** from the current checkout (no API or CCCC copy), u
 ```bash
 python3 -S scripts/usage_graph.py case-graph > failures.json
 PYTHONPATH=/path/to/ONTO python3 -S scripts/usage_graph.py case-graph \
-  --case gh_identity_38137922161_junit-py3.10_0 --format markdown
+  --case gh_identity_38137922161_junit-py3.10_0 --format markdown --revision "$(git rev-parse HEAD)"
 ```
 Use `--repository OWNER/NAME` for a smaller JSON graph. The Markdown view links
 the original Actions run, the redacted JUnit XML and saved triage output.

@@ -94,5 +94,7 @@ JSON uses ONTO's `nodes` and `edges` shape, with an independent
 consumer to tell whether a required link is absent despite both endpoints
 being available, or whether an endpoint is missing or explicitly unavailable.
 A missing file or checksum mismatch is not counted as linked evidence.
-`--format markdown` requires ONTO on `PYTHONPATH` and a case ID. Its GitHub
-file links point to main; the digests identify the inspected content.
+`--format markdown` requires ONTO on `PYTHONPATH`, a case ID, and
+`--revision` with the full Git commit SHA of the inspected corpus. For an
+unmodified checked-in corpus, use `git rev-parse HEAD`. GitHub file links
+use that commit and the displayed digests identify the inspected content.

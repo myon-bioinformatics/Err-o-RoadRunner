@@ -281,3 +281,27 @@ def test_case_graph_distinguishes_missing_file_and_historical_collision(tmp_path
     assert not any(e["relation"] == "has_junit" for e in graph["edges"])
     assert any(e["relation"] == "documented_by" for e in graph["edges"])
     assert all(not n.get("path") for n in nodes if n["status"] == "lost-original")
+
+
+def test_case_graph_keeps_expectations_when_producer_omits_assessment(tmp_path, monkeypatch):
+    corpus = _corpus(tmp_path)
+    monkeypatch.setattr(usage_graph, "_add_case_assessment", lambda *args: None)
+    graph = usage_graph.case_graph_from_corpus(corpus)
+    assert not any(n["type"] == "TriageAssessment" for n in graph["nodes"])
+    assert any(n["type"] == "TriageEvidence" and n["available"] for n in graph["nodes"])
+    assert {e["relation"] for e in graph["expected_links"] if "case:demo_1:assessment" in e.values()} == {
+        "has_assessment", "supported_by",
+    }
+
+
+def test_case_markdown_requires_pinned_source(monkeypatch):
+    graph = {"nodes": [{"type": "JUnitEvidence", "name": "JUnit XML", "available": True,
+                       "path": "cases/a.xml", "sha256": "abc"}], "edges": []}
+    monkeypatch.setattr(usage_graph, "mermaid_from_graph", lambda graph: "```mermaid\nflowchart TD\n```\n")
+    for invalid in (None, "main", "a" * 39):
+        with pytest.raises(ValueError, match="full Git commit SHA"):
+            usage_graph.case_markdown(graph, invalid)
+    sha = "a" * 40
+    output = usage_graph.case_markdown(graph, sha)
+    assert f"/blob/{sha}/tests/fixtures/junit_corpus/cases/a.xml" in output
+    assert "SHA-256: `abc`" in output
