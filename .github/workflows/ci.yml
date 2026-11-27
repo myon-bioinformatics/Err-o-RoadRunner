@@ -77,10 +77,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     strategy:
-      fail-fast: false
+      fail-fast: ${{ github.event_name == 'pull_request' }}
       matrix:
-        # ⏱ PRs run the oldest and the newest Python; main runs all six
-        python-version: ${{ github.event_name == 'pull_request' && fromJSON('["3.11", "3.15"]') || fromJSON('["3.11", "3.12", "3.13", "3.14", "3.15", "3.x"]') }}
+        # ⏱ PRs run the newest Python only; main runs all six
+        python-version: ${{ github.event_name == 'pull_request' && fromJSON('["3.15"]') || fromJSON('["3.11", "3.12", "3.13", "3.14", "3.15", "3.x"]') }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -129,10 +129,13 @@ jobs:
           if-no-files-found: error
           retention-days: 14
       - name: Combo mutation (zero survivors)
+        if: github.event_name != 'pull_request'
         run: uv run --locked python scripts/check_mutations.py combo
       - name: Version mutation (zero survivors)
+        if: github.event_name != 'pull_request'
         run: uv run --locked python scripts/check_mutations.py version
       - name: Partial-case mutation (zero survivors)
+        if: github.event_name != 'pull_request'
         run: uv run --locked python scripts/check_mutations.py partial
       - name: Tests with JUnit
         run: |
@@ -155,7 +158,7 @@ jobs:
       actions: read
     uses: myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-junit-identity.yml@0361d4d81add261ba15073fc32f2a524d2b7e2de
     with:
-      expected-reports: ${{ github.event_name == 'pull_request' && '["junit-py3.11/junit.xml","junit-py3.15/junit.xml"]' || '["junit-py3.11/junit.xml","junit-py3.12/junit.xml","junit-py3.13/junit.xml","junit-py3.14/junit.xml","junit-py3.15/junit.xml","junit-py3.x/junit.xml"]' }}
+      expected-reports: ${{ github.event_name == 'pull_request' && '["junit-py3.15/junit.xml"]' || '["junit-py3.11/junit.xml","junit-py3.12/junit.xml","junit-py3.13/junit.xml","junit-py3.14/junit.xml","junit-py3.15/junit.xml","junit-py3.x/junit.xml"]' }}
       artifact-pattern: "junit-py*"
       output-artifact: failure-identity
       commit-sha: ${{ github.sha }}
@@ -169,7 +172,7 @@ jobs:
     uses: myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-junit-identity.yml@0361d4d81add261ba15073fc32f2a524d2b7e2de
     with:
       # A failed vendor gate blocks the entire pytest matrix; do not invent its setup reports.
-      expected-reports: ${{ needs.vendor-locked.result != 'success' && '["junit-setup-vendor/setup.xml"]' || github.event_name == 'pull_request' && '["junit-setup-vendor/setup.xml","junit-setup-py3.11/setup.xml","junit-setup-py3.15/setup.xml"]' || '["junit-setup-vendor/setup.xml","junit-setup-py3.11/setup.xml","junit-setup-py3.12/setup.xml","junit-setup-py3.13/setup.xml","junit-setup-py3.14/setup.xml","junit-setup-py3.15/setup.xml","junit-setup-py3.x/setup.xml"]' }}
+      expected-reports: ${{ needs.vendor-locked.result != 'success' && '["junit-setup-vendor/setup.xml"]' || github.event_name == 'pull_request' && '["junit-setup-vendor/setup.xml","junit-setup-py3.15/setup.xml"]' || '["junit-setup-vendor/setup.xml","junit-setup-py3.11/setup.xml","junit-setup-py3.12/setup.xml","junit-setup-py3.13/setup.xml","junit-setup-py3.14/setup.xml","junit-setup-py3.15/setup.xml","junit-setup-py3.x/setup.xml"]' }}
       artifact-pattern: "junit-setup-*"
       output-artifact: setup-identity
       commit-sha: ${{ github.sha }}
