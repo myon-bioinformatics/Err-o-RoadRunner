@@ -246,3 +246,62 @@ def test_committed_snapshot_harvest_sources_match_the_source_list():
     expected = {"%s/%s" % (sources["org"], name) for name in sources["repos"]}
     flagged = {row["repository"] for row in footprint["repositories"] if row["harvest_source"]}
     assert flagged == expected
+
+
+def test_case_graph_links_saved_evidence_from_cli_and_shares_ci_run(tmp_path):
+    corpus = _corpus(tmp_path)
+    (corpus / "cases").mkdir()
+    (corpus / "cases/demo.xml").write_text("<testsuite/>", encoding="utf-8")
+    manifest = json.loads((corpus / "manifest.json").read_text())
+    manifest.append(dict(manifest[0], id="demo_2"))
+    (corpus / "manifest.json").write_text(json.dumps(manifest))
+    graph = usage_graph.case_graph_from_corpus(corpus)
+    assert usage_graph.violations(graph, usage_graph.CASE_VOCABULARY) == []
+    assert len([n for n in graph["nodes"] if n["type"] == "CIRun"]) == 1
+    expected = {"source": "case:demo_1:assessment", "relation": "supported_by",
+                "target": "case:demo_1:triage"}
+    assert expected in graph["edges"] and expected in graph["expected_links"]
+    result = run_cli(SCRIPT, "case-graph", "--corpus", str(corpus), "--case", "demo_2",
+                     python_options=("-S",), cwd=ROOT)
+    assert result.returncode == 0, result.stderr
+    assert [n["id"] for n in json.loads(result.stdout)["nodes"] if n["type"] == "FailureCase"] == ["case:demo_2"]
+
+
+def test_case_graph_distinguishes_missing_file_and_historical_collision(tmp_path):
+    corpus = _corpus(tmp_path)
+    row = json.loads((corpus / "manifest.json").read_text())[0]
+    (corpus / "unavailable-evidence.json").write_text(json.dumps({"records": [
+        {"original_manifest_row": dict(row, sha256="lost"), "surviving_sha256": "current"}
+    ]}))
+    graph = usage_graph.case_graph_from_corpus(corpus, case_id="demo_1")
+    nodes = [n for n in graph["nodes"] if n["type"] == "JUnitEvidence"]
+    assert {n["status"] for n in nodes} == {"lost-original", "missing"}
+    assert all(n["available"] is False for n in nodes)
+    assert len([e for e in graph["expected_links"] if e["relation"] == "has_junit"]) == 2
+    assert not any(e["relation"] == "has_junit" for e in graph["edges"])
+    assert any(e["relation"] == "documented_by" for e in graph["edges"])
+    assert all(not n.get("path") for n in nodes if n["status"] == "lost-original")
+
+
+def test_case_graph_keeps_expectations_when_producer_omits_assessment(tmp_path, monkeypatch):
+    corpus = _corpus(tmp_path)
+    monkeypatch.setattr(usage_graph, "_add_case_assessment", lambda *args: None)
+    graph = usage_graph.case_graph_from_corpus(corpus)
+    assert not any(n["type"] == "TriageAssessment" for n in graph["nodes"])
+    assert any(n["type"] == "TriageEvidence" and n["available"] for n in graph["nodes"])
+    assert {e["relation"] for e in graph["expected_links"] if "case:demo_1:assessment" in e.values()} == {
+        "has_assessment", "supported_by",
+    }
+
+
+def test_case_markdown_requires_pinned_source(monkeypatch):
+    graph = {"nodes": [{"type": "JUnitEvidence", "name": "JUnit XML", "available": True,
+                       "path": "cases/a.xml", "sha256": "abc"}], "edges": []}
+    monkeypatch.setattr(usage_graph, "mermaid_from_graph", lambda graph: "```mermaid\nflowchart TD\n```\n")
+    for invalid in (None, "main", "a" * 39):
+        with pytest.raises(ValueError, match="full Git commit SHA"):
+            usage_graph.case_markdown(graph, invalid)
+    sha = "a" * 40
+    output = usage_graph.case_markdown(graph, sha)
+    assert f"/blob/{sha}/tests/fixtures/junit_corpus/cases/a.xml" in output
+    assert "SHA-256: `abc`" in output

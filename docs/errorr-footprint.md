@@ -76,3 +76,25 @@ features to outcomes.
 `knowledgegraph.graph_mermaid` does not draw the node `type`. The `name` is the
 label. No ONTO change is required for that; a type badge on the node would be
 the only addition worth making there later.
+
+## Case-level provenance
+
+`usage_graph.py case-graph` reads the current local corpus, independently of the
+saved aggregate. One `FailureCase` is one manifest item, not necessarily one
+failed test. Runs are keyed by repository and run ID, not by artifact name.
+A case links to the saved JUnit XML, triage output and assessment. The
+`derived_from` relation records the manifest pairing, not a re-execution.
+Assessments describe available signals, not established causes. Evidence nodes
+carry corpus-relative paths and SHA-256 digests, not copied log or XML bodies.
+When the original vanished and the same path now holds a different XML, the
+historical record keeps the ledger link, not a link to that replacement.
+
+JSON uses ONTO's `nodes` and `edges` shape, with an independent
+`expected_links` list of directed triples for coverage checks. It allows a
+consumer to tell whether a required link is absent despite both endpoints
+being available, or whether an endpoint is missing or explicitly unavailable.
+A missing file or checksum mismatch is not counted as linked evidence.
+`--format markdown` requires ONTO on `PYTHONPATH`, a case ID, and
+`--revision` with the full Git commit SHA of the inspected corpus. For an
+unmodified checked-in corpus, use `git rev-parse HEAD`. GitHub file links
+use that commit and the displayed digests identify the inspected content.
