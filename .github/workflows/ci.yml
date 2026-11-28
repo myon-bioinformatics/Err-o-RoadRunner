@@ -129,13 +129,13 @@ jobs:
           if-no-files-found: error
           retention-days: 14
       - name: Combo mutation (zero survivors)
-        if: github.event_name != 'pull_request'
+        if: github.event_name == 'push' && matrix.python-version == '3.15'
         run: uv run --locked python scripts/check_mutations.py combo
       - name: Version mutation (zero survivors)
-        if: github.event_name != 'pull_request'
+        if: github.event_name == 'push' && matrix.python-version == '3.15'
         run: uv run --locked python scripts/check_mutations.py version
       - name: Partial-case mutation (zero survivors)
-        if: github.event_name != 'pull_request'
+        if: github.event_name == 'push' && matrix.python-version == '3.15'
         run: uv run --locked python scripts/check_mutations.py partial
       - name: Tests with JUnit
         run: |
