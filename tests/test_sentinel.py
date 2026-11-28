@@ -7,13 +7,13 @@
 
 from __future__ import annotations
 
+import importlib.util
 import json, statistics, sys, time
 from pathlib import Path
 from unittest import mock
 
 import pytest
 
-from vendor import cli_args
 from errlib.junit_redact import find_corpus_leaks
 from sentinel import (
     _fix_rules,
@@ -40,6 +40,19 @@ from sentinel import (
     TIMEOUT_EXIT,
     WatchState,
 )
+
+
+def load_vendored(name, relpath):
+    """Load a vendored file by path under a repo-unique name (cli_args README: Loading a vendored copy)."""
+    if name not in sys.modules:
+        spec = importlib.util.spec_from_file_location(name, Path(__file__).resolve().parents[1] / relpath)
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[name] = module
+        spec.loader.exec_module(module)
+    return sys.modules[name]
+
+
+cli_args = load_vendored("err_o_roadrunner_cli_args", "vendor/cli_args.py")
 
 
 # ──── sentinel ────────────────────────────────────────────────────
