@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites><testsuite name="clipboard-webkit" tests="7" errors="1" failures="0" skipped="1"><testcase classname="clipboard-webkit" name="Install clipboard browser OS dependencies"><error type="SetupError" message="Install clipboard browser OS dependencies failed" /></testcase></testsuite></testsuites>

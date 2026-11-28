@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="16" tests="2518" time="147.945" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_studio" name="test_studio_stylesheets_match_the_generator" time="0.007"><failure message="AssertionError: assert 1 == 0&#10; +  where 1 = &lt;function main at 0x&lt;addr&gt;&gt;(['--check'])&#10; +    where &lt;function main at 0x&lt;addr&gt;&gt; = &lt;module 'build_studio_css' from '&lt;runner-work&gt;/scripts/build_studio_css.py'&gt;.main">tests/test_studio.py:980: in test_studio_stylesheets_match_the_generator
+    assert module.main(['--check']) == 0  # pysaiyanweboo.check_bundle on STYLE_CSS, once (the generator's own check)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   AssertionError: assert 1 == 0
+E    +  where 1 = &lt;function main at 0x&lt;addr&gt;&gt;(['--check'])
+E    +    where &lt;function main at 0x&lt;addr&gt;&gt; = &lt;module 'build_studio_css' from '&lt;runner-work&gt;/scripts/build_studio_css.py'&gt;.main</failure></testcase></testsuite></testsuites>

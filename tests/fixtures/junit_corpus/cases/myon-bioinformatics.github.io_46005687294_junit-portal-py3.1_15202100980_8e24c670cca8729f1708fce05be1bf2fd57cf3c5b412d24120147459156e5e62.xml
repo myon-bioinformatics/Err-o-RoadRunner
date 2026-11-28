@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="1" failures="0" skipped="2" tests="3" time="1.338" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="" name="tests.test_site" time="0.000"><error message="collection failure">tests/test_site.py:34: in &lt;module&gt;
+    SITE, PAGES = _staged_site()
+                  ^^^^^^^^^^^^^^
+tests/test_site.py:30: in _staged_site
+    pages.stage(site)
+scripts/project_pages.py:1218: in stage
+    generate(root)  # Fail closed before copying anything.
+    ^^^^^^^^^^^^^^
+scripts/project_pages.py:1176: in generate
+    raise ValueError(f'generated page hash mismatch: {target}')
+E   ValueError: generated page hash mismatch: tools/demos/world.html</error></testcase></testsuite></testsuites>

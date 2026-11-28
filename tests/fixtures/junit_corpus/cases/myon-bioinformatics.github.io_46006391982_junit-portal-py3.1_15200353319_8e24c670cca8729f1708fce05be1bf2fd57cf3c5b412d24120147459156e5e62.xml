@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="17" tests="487" time="21.834" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_knowledge_flow.KnowledgeFlowTest" name="test_diffusion" time="0.036"><failure message="subprocess.CalledProcessError: Command ['node', 'check.mjs'] returned non-zero exit status 1.">self = &lt;test_knowledge_flow.KnowledgeFlowTest testMethod=test_diffusion&gt;
+
+        @unittest.skipUnless(shutil.which("node"), "Node required")
+        def test_diffusion(self):
+            source = Path(__file__).resolve().parents[1] / "scripts/project_pages.py"
+            tree = ast.parse(source.read_text(encoding="utf-8"))
+            value = next(ast.literal_eval(n.value) for n in tree.body if isinstance(n, ast.Assign) and any(isinstance(t, ast.Name) and t.id == "KNOWLEDGE_FLOW_SOURCE" for t in n.targets))
+            with tempfile.TemporaryDirectory() as tmp:
+                p = Path(tmp) / "knowledge.mjs"
+                p.write_text(value, encoding="utf-8")
+                check = """import {knowledgeStep,parseGraph,seededIndex} from './knowledge.mjs';
+    import assert from 'node:assert/strict';
+    const graph=parseGraph('@prefix ex: &lt;urn:example:&gt; .\\nex:A ex:r ex:B .\\nex:B ex:r ex:C .');
+    assert.equal(graph.nodes.length,3);
+    assert.deepEqual(graph.edges,[[0,1],[1,2]]);
+    let a=[1,0,0];
+    assert.deepEqual(knowledgeStep(a,0,graph.edges),a);
+    assert.deepEqual(knowledgeStep(a,1,graph.edges),[.5,.5,0]);
+    for(let i=0;i&lt;100;i++){a=knowledgeStep(a,1,graph.edges);assert.ok(a.every(x=&gt;x&gt;=0));assert.ok(Math.abs(a.reduce((s,x)=&gt;s+x,0)-1)&lt;1e-12);}
+    assert.throws(()=&gt;knowledgeStep(a,2,graph.edges),RangeError);
+    assert.throws(()=&gt;parseGraph('ex:A ex:r ex:B .'));
+    assert.equal(seededIndex(123,3),seededIndex(123,3));
+    assert.equal(parseGraph('&lt;urn:a&gt; &lt;urn:r&gt; &lt;urn:a&gt; .').nodes.length,1);
+    """
+                (Path(tmp)/"check.mjs").write_text(check, encoding="utf-8")
+&gt;               subprocess.run(["node", "check.mjs"], cwd=tmp, check=True)
+
+tests/test_knowledge_flow.py:33: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+input = None, capture_output = False, timeout = None, check = True
+popenargs = (['node', 'check.mjs'],), kwargs = {'cwd': '/tmp/tmptumfwu2r'}
+
+    def run(*popenargs,
+            input=None, capture_output=False, timeout=None, check=False, **kwargs):
+        """Run command with arguments and return a CompletedProcess instance.
+    
+        The returned instance will have attributes args, returncode, stdout and
+        stderr. By default, stdout and stderr are not captured, and those attributes
+        will be None. Pass stdout=PIPE and/or stderr=PIPE in order to capture them,
+        or pass capture_output=True to capture both.
+    
+        If check is True and the exit code was non-zero, it raises a
+        CalledProcessError. The CalledProcessError object will have the return code
+        in the returncode attribute, and output &amp; stderr attributes if those streams
+        were captured.
+    
+        If timeout (seconds) is given and the process takes too long,
+         a TimeoutExpired exception will be raised.
+    
+        There is an optional argument "input", allowing you to
+        pass bytes or a string to the subprocess's stdin.  If you use this argument
+        you may not also use the Popen constructor's "stdin" argument, as
+        it will be used internally.
+    
+        By default, all communication is in bytes, and therefore any "input" should
+        be bytes, and the stdout and stderr will be bytes. If in text mode, any
+        "input" should be a string, and stdout and stderr will be strings decoded
+        according to locale encoding, or by "encoding" if set. Text mode is
+        triggered by setting any of text, encoding, errors or universal_newlines.
+    
+        The other arguments are the same as for the Popen constructor.
+        """
+        if input is not None:
+            if kwargs.get('stdin') is not None:
+                raise ValueError('stdin and input arguments may not both be used.')
+            kwargs['stdin'] = PIPE
+    
+        if capture_output:
+            if kwargs.get('stdout') is not None or kwargs.get('stderr') is not None:
+                raise ValueError('stdout and stderr arguments may not be used '
+                                 'with capture_output.')
+            kwargs['stdout'] = PIPE
+            kwargs['stderr'] = PIPE
+    
+        with Popen(*popenargs, **kwargs) as process:
+            try:
+                stdout, stderr = process.communicate(input, timeout=timeout)
+            except TimeoutExpired as exc:
+                process.kill()
+                if _mswindows:
+                    # Windows accumulates the output in a single blocking
+                    # read() call run on child threads, with the timeout
+                    # being done in a join() on those threads.  communicate()
+                    # _after_ kill() is required to collect that and add it
+                    # to the exception.
+                    exc.stdout, exc.stderr = process.communicate()
+                else:
+                    # POSIX _communicate already populated the output so
+                    # far into the TimeoutExpired exception.
+                    process.wait()
+                raise
+            except:  # Including KeyboardInterrupt, communicate handled that.
+                process.kill()
+                # We don't call process.wait() as .__exit__ does that for us.
+                raise
+            retcode = process.poll()
+            if check and retcode:
+&gt;               raise CalledProcessError(retcode, process.args,
+                                         output=stdout, stderr=stderr)
+E               subprocess.CalledProcessError: Command ['node', 'check.mjs'] returned non-zero exit status 1.
+
+../../_temp/uv-python-dir/cpython-3.15.2-linux-x86_64-gnu/lib/python3.15/subprocess.py:692: CalledProcessError</failure></testcase></testsuite></testsuites>
