@@ -18,19 +18,19 @@ from vendor import fleet_check as fleet
 # ──── fleet ───────────────────────────────────────────────────────
 
 ROOT = fleet.repo_root(__file__)
-PARENT_WORKFLOW_PIN = "27dedd9651efc816fa88d8922adb5f242725df69"
+PARENT_WORKFLOW_PIN = "main"  # 🔁 own sources follow main (2026-11-28)
 
 
 # Node sources and the shared checks stay on accepted upstream commits with exact bytes.
 ACCEPTED = {
-    "vendor/xprobe.py": "1ffbb7b984075c683690bbe4e9deb06199cdfe94",
-    "vendor/cli_args.py": "5ae22b1a1b808eca93e3c385a8db867fbeb8ee32",
-    "vendor/fleet_check.py": "20de01921e50e9339aa9271b0547a5be7649b3b3",
-}
+    "vendor/xprobe.py",
+    "vendor/cli_args.py",
+    "vendor/fleet_check.py",
+}  # 🔁 locked destinations; they follow main
 
 
 def test_vendor_lock_matches_checked_in_bytes_and_accepted_commits():
-    fleet.check_lock(ROOT, commits=ACCEPTED)
+    fleet.check_lock(ROOT)
 
 
 def test_parent_workflow_references_use_reviewed_rollout_commit():

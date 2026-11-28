@@ -1,6 +1,9 @@
 name: CI
 
 on:
+  schedule:
+    - cron: "21 21 * * *"  # 🔁 follow-main
+  workflow_dispatch:
   push:
     branches: [main]
   pull_request:
@@ -15,7 +18,7 @@ concurrency:
 jobs:
   changes:
     name: Change detection
-    uses: myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-change-detection.yml@27dedd9651efc816fa88d8922adb5f242725df69
+    uses: myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-change-detection.yml@main
 
   vendor-locked:
     name: Vendor locked baseline
@@ -42,7 +45,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           repository: myon-bioinformatics/myon-bioinformatics
-          ref: 26c442bc51b8a2837fe2556782b2937f396932af
+          ref: main
           path: .vendor-sync-tools
           persist-credentials: false
       - name: Verify and recreate locked vendor snapshot
@@ -156,7 +159,7 @@ jobs:
     permissions:
       contents: read
       actions: read
-    uses: myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-junit-identity.yml@27dedd9651efc816fa88d8922adb5f242725df69
+    uses: myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-junit-identity.yml@main
     with:
       expected-reports: ${{ github.event_name == 'pull_request' && '["junit-py3.15/junit.xml"]' || '["junit-py3.11/junit.xml","junit-py3.12/junit.xml","junit-py3.13/junit.xml","junit-py3.14/junit.xml","junit-py3.15/junit.xml","junit-py3.x/junit.xml"]' }}
       artifact-pattern: "junit-py*"
@@ -169,7 +172,7 @@ jobs:
     permissions:
       contents: read
       actions: read
-    uses: myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-junit-identity.yml@27dedd9651efc816fa88d8922adb5f242725df69
+    uses: myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-junit-identity.yml@main
     with:
       # A failed vendor gate blocks the entire pytest matrix; do not invent its setup reports.
       expected-reports: ${{ needs.vendor-locked.result != 'success' && '["junit-setup-vendor/setup.xml"]' || github.event_name == 'pull_request' && '["junit-setup-vendor/setup.xml","junit-setup-py3.15/setup.xml"]' || '["junit-setup-vendor/setup.xml","junit-setup-py3.11/setup.xml","junit-setup-py3.12/setup.xml","junit-setup-py3.13/setup.xml","junit-setup-py3.14/setup.xml","junit-setup-py3.15/setup.xml","junit-setup-py3.x/setup.xml"]' }}
@@ -180,4 +183,15 @@ jobs:
   actionlint:
     needs: changes
     if: needs.changes.outputs.workflow_changed == 'true'
-    uses: myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-actionlint.yml@27dedd9651efc816fa88d8922adb5f242725df69
+    uses: myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-actionlint.yml@main
+
+  # 🔁 own sources follow main: on schedule / manual run, take main of own repositories and push to main
+  follow-main:
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    uses: myon-bioinformatics/myon-bioinformatics/.github/workflows/reusable-follow-main.yml@main
+    permissions:
+      contents: write
+    with:
+      node-version: "26"
+      check: |
+        uv run --locked pytest -q tests

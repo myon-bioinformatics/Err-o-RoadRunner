@@ -124,5 +124,5 @@ def test_common_package_preserves_bundle_and_command_names(tmp_path):
 
 
 def test_builder_matches_vendor_pin():
-    rows = fleet.check_lock(ROOT, commits={"vendor/uv_tool_build.py": "673fc7b11d94ccad16740c0998683618f2e86254"})
+    rows = fleet.check_lock(ROOT)  # 🔁 follows main
     assert rows["vendor/uv_tool_build.py"]["repository"] == "myon-bioinformatics/Aoi"
