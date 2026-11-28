@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1553" time="88.398" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_fleet.Fleet" name="test_parent_workflows_use_the_reviewed_commit" time="0.001"><failure message="AssertionError: Items in the first set but not the second:&#10;'538293c3a4cb3b84ae22ff5a57a79a4abfec715d'">self = &lt;test_fleet.Fleet testMethod=test_parent_workflows_use_the_reviewed_commit&gt;
+
+    def test_parent_workflows_use_the_reviewed_commit(self):
+&gt;       self.assertEqual(set(fleet.parent_refs(ROOT)), {PARENT_PIN})
+E       AssertionError: Items in the first set but not the second:
+E       '538293c3a4cb3b84ae22ff5a57a79a4abfec715d'
+
+tests/test_fleet.py:22: AssertionError</failure></testcase></testsuite></testsuites>

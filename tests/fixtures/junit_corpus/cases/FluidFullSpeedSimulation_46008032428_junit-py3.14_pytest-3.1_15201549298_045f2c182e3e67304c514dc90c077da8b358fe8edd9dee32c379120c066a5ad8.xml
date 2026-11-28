@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="2" skipped="0" tests="1233" time="133.851" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_hub_ttl.HubTTLTest" name="test_roundtrip" time="0.001"><failure message="ValueError: unsupported FFSS TTL profile">self = &lt;test_hub_ttl.HubTTLTest testMethod=test_roundtrip&gt;
+
+    def test_roundtrip(self):
+        ttl = to_ttl(HUB_FLOWS)
+&gt;       restored = from_ttl(ttl)
+                   ^^^^^^^^^^^^^
+
+tests/test_hub_ttl.py:8: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+text = '&lt;urn:ffss:hub:gold&gt; &lt;urn:ffss:field:delay_arm&gt; "2.0"^^&lt;urn:ffss:parameter-json&gt; .\n&lt;urn:ffss:hub:gold&gt; &lt;urn:ffss:fiel...&lt;urn:ffss:parameter-json&gt; .\n&lt;urn:ffss:hub:rare-metal&gt; &lt;urn:ffss:field:unit&gt; "\\"kt\\""^^&lt;urn:ffss:parameter-json&gt; .\n'
+
+    def from_ttl(text):
+        models = {}
+        for line in text.splitlines():
+            if not line.strip():
+                continue
+            match = LINE.fullmatch(line)
+            if not match:
+&gt;               raise ValueError("unsupported FFSS TTL profile")
+E               ValueError: unsupported FFSS TTL profile
+
+hub_ttl.py:47: ValueError</failure></testcase><testcase classname="tests.test_hub_ttl.HubTTLTest" name="test_simulation" time="0.001"><failure message="ValueError: unsupported FFSS TTL profile">self = &lt;test_hub_ttl.HubTTLTest testMethod=test_simulation&gt;
+
+    def test_simulation(self):
+&gt;       restored = from_ttl(to_ttl(HUB_FLOWS))
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_hub_ttl.py:16: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+text = '&lt;urn:ffss:hub:gold&gt; &lt;urn:ffss:field:delay_arm&gt; "2.0"^^&lt;urn:ffss:parameter-json&gt; .\n&lt;urn:ffss:hub:gold&gt; &lt;urn:ffss:fiel...&lt;urn:ffss:parameter-json&gt; .\n&lt;urn:ffss:hub:rare-metal&gt; &lt;urn:ffss:field:unit&gt; "\\"kt\\""^^&lt;urn:ffss:parameter-json&gt; .\n'
+
+    def from_ttl(text):
+        models = {}
+        for line in text.splitlines():
+            if not line.strip():
+                continue
+            match = LINE.fullmatch(line)
+            if not match:
+&gt;               raise ValueError("unsupported FFSS TTL profile")
+E               ValueError: unsupported FFSS TTL profile
+
+hub_ttl.py:47: ValueError</failure></testcase></testsuite></testsuites>

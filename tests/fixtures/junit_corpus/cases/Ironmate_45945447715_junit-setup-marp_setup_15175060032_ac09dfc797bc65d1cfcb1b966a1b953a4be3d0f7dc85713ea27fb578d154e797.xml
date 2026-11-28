@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites><testsuite name="marp" tests="11" errors="1" failures="0" skipped="4"><testcase classname="marp" name="Install Japanese fonts for diagram evidence"><error type="SetupError" message="Install Japanese fonts for diagram evidence failed" /></testcase></testsuite></testsuites>

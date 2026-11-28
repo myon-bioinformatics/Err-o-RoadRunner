@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="16" tests="2515" time="126.206" timestamp="&lt;timestamp&gt;" hostname="&lt;redacted-host&gt;"><testcase classname="tests.test_studio" name="test_studio_html_contains_unique_controls_used_by_initialization" time="0.163"><failure message="AssertionError: ('tools', ['pixel-editor', 'pixel-status', 'pixels'])&#10;assert False&#10; +  where False = all(&lt;generator object test_studio_html_contains_unique_controls_used_by_initialization.&lt;locals&gt;.&lt;genexpr&gt; at 0x&lt;addr&gt;&gt;)">tests/test_studio.py:1371: in test_studio_html_contains_unique_controls_used_by_initialization
+    assert all(len(pages.ids.get(name, [])) == 1 for name in required), (page, sorted(n for n in required if len(pages.ids.get(n, [])) != 1))
+E   AssertionError: ('tools', ['pixel-editor', 'pixel-status', 'pixels'])
+E   assert False
+E    +  where False = all(&lt;generator object test_studio_html_contains_unique_controls_used_by_initialization.&lt;locals&gt;.&lt;genexpr&gt; at 0x&lt;addr&gt;&gt;)</failure></testcase></testsuite></testsuites>
