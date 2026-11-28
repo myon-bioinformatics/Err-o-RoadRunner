@@ -7,10 +7,25 @@ stdlib-only ``vendor/cli_args.py`` at import time.
 
 from __future__ import annotations
 
+import importlib.util
 import json, os, re, sys, tempfile
 from copy import deepcopy; from pathlib import Path; from typing import Any, Mapping, Sequence
 
-from vendor.cli_args import Command, run_cli, run_command
+
+def load_vendored(name, relpath):
+    """Load a vendored file by path under a repo-unique name (cli_args README: Loading a vendored copy)."""
+    if name not in sys.modules:
+        spec = importlib.util.spec_from_file_location(name, Path(__file__).resolve().parents[1] / relpath)
+        module = importlib.util.module_from_spec(spec)
+        sys.modules[name] = module
+        spec.loader.exec_module(module)
+    return sys.modules[name]
+
+
+_cli_args = load_vendored("err_o_roadrunner_cli_args", "vendor/cli_args.py")
+Command = _cli_args.Command
+run_cli = _cli_args.run_cli
+run_command = _cli_args.run_command
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = ROOT / "tests" / "fixtures"
