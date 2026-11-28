@@ -138,6 +138,10 @@
             {
               "label": "📄 triage.py",
               "href": "https://github.com/myon-bioinformatics/Err-o-RoadRunner/blob/main/triage.py"
+            },
+            {
+              "label": "🧯 ブラウザで調べる（ポートフォリオの 💬 /triage）",
+              "href": "https://myon-bioinformatics.github.io/tools/#chat?triage"
             }
           ]
         }
